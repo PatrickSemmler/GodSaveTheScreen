@@ -11,11 +11,13 @@ public sealed class GlobalExceptionHandler
 {
     private readonly ILogger<GlobalExceptionHandler> _logger;
     private readonly IDialogService _dialogs;
+    private readonly GodSaveTheScreen.Core.Settings.IAppPaths _paths;
 
-    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IDialogService dialogs)
+    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IDialogService dialogs, GodSaveTheScreen.Core.Settings.IAppPaths paths)
     {
         _logger = logger;
         _dialogs = dialogs;
+        _paths = paths;
     }
 
     public void Register(Application app)
@@ -47,11 +49,11 @@ public sealed class GlobalExceptionHandler
         var message = string.Format(System.Globalization.CultureInfo.CurrentUICulture, Strings.Error_Unhandled, exception.Message);
         if (app.Dispatcher.CheckAccess())
         {
-            _dialogs.ShowError(Strings.Error_Title, message);
+            _dialogs.ShowCrash(Strings.Error_Title, message, _paths.LogDirectory);
         }
         else
         {
-            app.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => _dialogs.ShowError(Strings.Error_Title, message));
+            app.Dispatcher.BeginInvoke(DispatcherPriority.Normal, () => _dialogs.ShowCrash(Strings.Error_Title, message, _paths.LogDirectory));
         }
     }
 }

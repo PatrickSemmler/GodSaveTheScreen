@@ -64,6 +64,13 @@ public partial class StartWindow : FluentWindow
 
     private void OnPreviewKeyDown(object sender, KeyEventArgs e)
     {
+        if (e.Key == Key.F1)
+        {
+            _viewModel.ShowShortcutsCommand.Execute(null);
+            e.Handled = true;
+            return;
+        }
+
         if (e.Key == Key.V && (Keyboard.Modifiers & ModifierKeys.Control) != 0 && Keyboard.FocusedElement is not TextBoxBase)
         {
             _viewModel.OpenFromClipboardCommand.Execute(null);

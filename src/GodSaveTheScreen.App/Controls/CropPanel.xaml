@@ -19,9 +19,9 @@
           <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <ui:Button Grid.Column="0" Appearance="Primary" Icon="{ui:SymbolIcon Checkmark24}" Content="{l:Loc Crop_Apply}"
-                   Command="{Binding ApplyCommand}" HorizontalAlignment="Stretch" Margin="0,0,3,0" ToolTip="Enter" />
+                   Command="{Binding ApplyCommand}" HorizontalAlignment="Stretch" Margin="0,0,3,0" ToolTip="{l:Shortcut Enter}" />
         <ui:Button Grid.Column="1" Icon="{ui:SymbolIcon Dismiss24}" Content="{l:Loc Crop_Cancel}"
-                   Command="{Binding CancelCommand}" HorizontalAlignment="Stretch" Margin="3,0,0,0" ToolTip="Esc" />
+                   Command="{Binding CancelCommand}" HorizontalAlignment="Stretch" Margin="3,0,0,0" ToolTip="{l:Shortcut Esc}" />
       </Grid>
       <ui:Button Margin="0,6,0,0" Icon="{ui:SymbolIcon ArrowReset24}" Content="{l:Loc Crop_Reset}" Command="{Binding ResetCommand}" HorizontalAlignment="Stretch" />
 

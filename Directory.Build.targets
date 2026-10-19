@@ -1,0 +1,14 @@
+<Project>
+  <!-- Git-Hash in die InformationalVersion ("1.0.0+abcdef12"): das SDK hängt SourceRevisionId automatisch an. Ohne git bleibt die Version ohne Hash. -->
+  <Target Name="SetSourceRevisionIdFromGit" BeforeTargets="InitializeSourceControlInformation" Condition="'$(SourceRevisionId)' == ''">
+    <Exec Command="git rev-parse --short=8 HEAD"
+          ConsoleToMSBuild="true"
+          StandardOutputImportance="low"
+          StandardErrorImportance="low"
+          IgnoreExitCode="true"
+          IgnoreStandardErrorWarningFormat="true"
+          ContinueOnError="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="SourceRevisionId" />
+    </Exec>
+  </Target>
+</Project>

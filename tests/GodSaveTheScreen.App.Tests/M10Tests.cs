@@ -167,6 +167,21 @@ public sealed class ProjectServiceTests : IDisposable
     }
 
     [StaFact]
+    public async Task Pfade_MitSonderzeichen_FunktionierenWieInOneDrive()
+    {
+        // Leerzeichen, Umlaute, ß, CJK, #, [], & und Klammern – wie sie in OneDrive-Ordnern vorkommen.
+        var folder = Path.Combine(_directory, "Ünïcode ü ß 日本 #1 [x] & (co)");
+        var path = Path.Combine(folder, "Bericht – Q3 #2.gsts");
+
+        await _service.SaveAsync(SampleDocument(), path);
+        var loaded = await _service.LoadAsync(path);
+
+        loaded.Document.Annotations.Count.ShouldBe(3);
+        loaded.Document.ProjectPath.ShouldBe(path);
+        (await _service.ReadPreviewAsync(path)).ShouldNotBeNull();
+    }
+
+    [StaFact]
     public async Task ReadPreview_FehlendeDatei_LiefertNull() =>
         (await _service.ReadPreviewAsync(Path.Combine(_directory, "gibtsnicht.gsts"))).ShouldBeNull();
 }

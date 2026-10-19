@@ -153,6 +153,9 @@ public sealed partial class StartViewModel : ObservableObject
     private void OpenSettings() => _shell.ShowSettings();
 
     [RelayCommand]
+    private void ShowShortcuts() => _shell.ShowShortcuts();
+
+    [RelayCommand]
     private async Task OpenRecentAsync(RecentItemViewModel? item)
     {
         if (item is { IsMissing: false })

@@ -141,6 +141,12 @@ public sealed class HotkeyService : IHotkeyService, IHostedService
 
     private async void OnHotkey(CaptureMode mode)
     {
+        if (_services.GetService<ISessionState>() is { IsLocked: true })
+        {
+            _logger.LogInformation("Hotkey ({Mode}) bei gesperrter Sitzung ignoriert", mode);
+            return;
+        }
+
         try
         {
             var coordinator = _services.GetRequiredService<CaptureCoordinator>();

@@ -326,4 +326,61 @@
   <data name="Recovery_Title" xml:space="preserve"><value>Recover unsaved work</value></data>
   <data name="Recovery_Message" xml:space="preserve"><value>The last session ended unexpectedly. {0} unsaved document(s) were found. Do you want to recover them?</value></data>
   <data name="Recovery_Info" xml:space="preserve"><value>Recovered from the automatic backup. Save it to keep your work.</value></data>
+  <data name="Dialog_OpenLogFolder" xml:space="preserve"><value>Open log folder</value></data>
+  <data name="FirstRun_Title" xml:space="preserve"><value>Welcome to GodSaveTheScreen</value></data>
+  <data name="FirstRun_NotAssigned" xml:space="preserve"><value>not assigned</value></data>
+  <data name="FirstRun_Message" xml:space="preserve"><value>GodSaveTheScreen keeps running in the notification area (tray) after you close this window. Left-click the tray icon or use the hotkeys to capture:
+
+Rectangle: {0}
+Window: {1}
+Freeform: {2}
+Full screen: {3}
+
+Tip: You can assign the Print Screen key to a capture mode in the settings. On Windows 11 turn off "Use the Print screen button to open screen capturing" in Settings &gt; Accessibility &gt; Keyboard first. Press F1 at any time for all keyboard shortcuts.</value></data>
+  <data name="LargeImage_Title" xml:space="preserve"><value>Very large image</value></data>
+  <data name="LargeImage_Message" xml:space="preserve"><value>“{0}” is very large ({1} × {2} pixels, about {3} MB of memory for the image alone). Editing it can need several times that and may be slow. Open it anyway?</value></data>
+  <data name="Shortcuts_Title" xml:space="preserve"><value>Keyboard shortcuts</value></data>
+  <data name="Shortcuts_Tip" xml:space="preserve"><value>Keyboard shortcuts (F1)</value></data>
+  <data name="Shortcuts_Filter" xml:space="preserve"><value>Filter shortcuts</value></data>
+  <data name="Shortcuts_Capture" xml:space="preserve"><value>Capture (global)</value></data>
+  <data name="Shortcuts_Tools" xml:space="preserve"><value>Tools</value></data>
+  <data name="Shortcuts_File" xml:space="preserve"><value>File</value></data>
+  <data name="Shortcuts_Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="Shortcuts_View" xml:space="preserve"><value>View</value></data>
+  <data name="Shortcuts_Objects" xml:space="preserve"><value>Objects on the canvas</value></data>
+  <data name="Shortcuts_Crop" xml:space="preserve"><value>Crop mode</value></data>
+  <data name="Shortcut_Open" xml:space="preserve"><value>Open</value></data>
+  <data name="Shortcut_Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Shortcut_SaveAs" xml:space="preserve"><value>Save as</value></data>
+  <data name="Shortcut_Paste" xml:space="preserve"><value>Paste (objects or image)</value></data>
+  <data name="Shortcut_Undo" xml:space="preserve"><value>Undo</value></data>
+  <data name="Shortcut_Redo" xml:space="preserve"><value>Redo</value></data>
+  <data name="Shortcut_Copy" xml:space="preserve"><value>Copy (selection or image)</value></data>
+  <data name="Shortcut_CopyImage" xml:space="preserve"><value>Copy image</value></data>
+  <data name="Shortcut_Cut" xml:space="preserve"><value>Cut</value></data>
+  <data name="Shortcut_Duplicate" xml:space="preserve"><value>Duplicate</value></data>
+  <data name="Shortcut_Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Shortcut_SelectAll" xml:space="preserve"><value>Select all</value></data>
+  <data name="Shortcut_BringToFront" xml:space="preserve"><value>Bring to front</value></data>
+  <data name="Shortcut_BringForward" xml:space="preserve"><value>Bring forward</value></data>
+  <data name="Shortcut_SendBackward" xml:space="preserve"><value>Send backward</value></data>
+  <data name="Shortcut_SendToBack" xml:space="preserve"><value>Send to back</value></data>
+  <data name="Shortcut_ZoomIn" xml:space="preserve"><value>Zoom in</value></data>
+  <data name="Shortcut_ZoomOut" xml:space="preserve"><value>Zoom out</value></data>
+  <data name="Shortcut_Fit" xml:space="preserve"><value>Fit to window</value></data>
+  <data name="Shortcut_ActualSize" xml:space="preserve"><value>Actual size (100 %)</value></data>
+  <data name="Shortcut_Pan" xml:space="preserve"><value>Pan (hold and drag)</value></data>
+  <data name="Shortcut_Ruler" xml:space="preserve"><value>Show or hide ruler</value></data>
+  <data name="Shortcut_Help" xml:space="preserve"><value>Keyboard shortcuts</value></data>
+  <data name="Shortcut_NextObject" xml:space="preserve"><value>Select next object</value></data>
+  <data name="Shortcut_PreviousObject" xml:space="preserve"><value>Select previous object</value></data>
+  <data name="Shortcut_Nudge" xml:space="preserve"><value>Move selection by 1 px</value></data>
+  <data name="Shortcut_Nudge10" xml:space="preserve"><value>Move selection by 10 px</value></data>
+  <data name="Shortcut_Resize" xml:space="preserve"><value>Resize selection by 1 px (with Shift 10 px)</value></data>
+  <data name="Shortcut_CropApply" xml:space="preserve"><value>Apply crop</value></data>
+  <data name="Shortcut_CropCancel" xml:space="preserve"><value>Cancel crop</value></data>
+  <data name="Shortcut_CropNudge" xml:space="preserve"><value>Move crop frame by 1 px</value></data>
+  <data name="Shortcut_CropKeepRatio" xml:space="preserve"><value>Keep the current aspect ratio while dragging</value></data>
+  <data name="Shortcut_CropNoSnap" xml:space="preserve"><value>Disable snapping while dragging</value></data>
+  <data name="Color_Choose" xml:space="preserve"><value>Choose colour</value></data>
 </root>

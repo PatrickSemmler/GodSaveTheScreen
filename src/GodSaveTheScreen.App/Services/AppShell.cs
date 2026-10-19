@@ -12,17 +12,34 @@ public sealed class AppShell : IAppShell
     private readonly IWindowFactory _windows;
     private readonly IDialogService _dialogs;
     private readonly ILogger<AppShell> _logger;
+    private readonly GodSaveTheScreen.Core.Settings.ISettingsService _settings;
 
-    public AppShell(IWindowFactory windows, IDialogService dialogs, ILogger<AppShell> logger)
+    public AppShell(IWindowFactory windows, IDialogService dialogs, GodSaveTheScreen.Core.Settings.ISettingsService settings, ILogger<AppShell> logger)
     {
         _windows = windows;
         _dialogs = dialogs;
+        _settings = settings;
         _logger = logger;
     }
 
     public void ShowStartWindow() => ShowSingle<StartWindow>();
 
     public void ShowSettings() => ShowSingle<SettingsWindow>();
+
+    public void ShowShortcuts(GodSaveTheScreen.App.Editor.Tools.ToolRegistry? tools = null)
+    {
+        var existing = Application.Current.Windows.OfType<ShortcutsWindow>().FirstOrDefault();
+        if (existing is not null)
+        {
+            existing.Activate();
+            return;
+        }
+
+        var entries = GodSaveTheScreen.App.Editor.ShortcutCatalog.Build(tools, _settings.Current);
+        var window = _windows.Create<ShortcutsWindow>(entries);
+        window.Show();
+        window.Activate();
+    }
 
     public void ExitApplication()
     {

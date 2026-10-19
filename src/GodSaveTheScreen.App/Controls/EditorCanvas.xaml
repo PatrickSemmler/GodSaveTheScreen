@@ -21,9 +21,9 @@
       <Grid.LayoutTransform>
         <ScaleTransform x:Name="ZoomTransform" ScaleX="1" ScaleY="1" />
       </Grid.LayoutTransform>
+    <!-- Canvas statt Grid: ein Grid würde die größere Zeichenfläche auf die Rahmengröße zuschneiden (Layout-Clip wandert beim Verschieben mit). -->
+    <Canvas x:Name="SurfaceHost">
     <Grid x:Name="Surface"
-          HorizontalAlignment="Left"
-          VerticalAlignment="Top"
           Focusable="True"
           FocusVisualStyle="{x:Null}"
           Background="Transparent"
@@ -37,22 +37,19 @@
           MouseDown="OnMouseDown"
           MouseUp="OnMouseUp"
           LostMouseCapture="OnLostMouseCapture">
-      <Grid.RenderTransform>
-        <TranslateTransform x:Name="CropOffset" />
-      </Grid.RenderTransform>
       <Grid.ContextMenu>
         <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
-          <MenuItem Header="{l:Loc Menu_Cut}" Command="{Binding CutCommand}" IsEnabled="{Binding HasSelection}" InputGestureText="Ctrl+X" />
-          <MenuItem Header="{l:Loc Menu_Copy}" Command="{Binding CopyCommand}" InputGestureText="Ctrl+C" />
-          <MenuItem Header="{l:Loc Menu_Paste}" Command="{Binding PasteCommand}" InputGestureText="Ctrl+V" />
-          <MenuItem Header="{l:Loc Menu_Duplicate}" Command="{Binding DuplicateCommand}" IsEnabled="{Binding HasSelection}" InputGestureText="Ctrl+D" />
-          <MenuItem Header="{l:Loc Menu_Delete}" Command="{Binding DeleteSelectionCommand}" IsEnabled="{Binding HasSelection}" InputGestureText="Del" />
+          <MenuItem Header="{l:Loc Menu_Cut}" Command="{Binding CutCommand}" IsEnabled="{Binding HasSelection}" InputGestureText="{l:Shortcut Ctrl+X}" />
+          <MenuItem Header="{l:Loc Menu_Copy}" Command="{Binding CopyCommand}" InputGestureText="{l:Shortcut Ctrl+C}" />
+          <MenuItem Header="{l:Loc Menu_Paste}" Command="{Binding PasteCommand}" InputGestureText="{l:Shortcut Ctrl+V}" />
+          <MenuItem Header="{l:Loc Menu_Duplicate}" Command="{Binding DuplicateCommand}" IsEnabled="{Binding HasSelection}" InputGestureText="{l:Shortcut Ctrl+D}" />
+          <MenuItem Header="{l:Loc Menu_Delete}" Command="{Binding DeleteSelectionCommand}" IsEnabled="{Binding HasSelection}" InputGestureText="{l:Shortcut Del}" />
           <Separator />
           <MenuItem Header="{l:Loc Menu_Order}" IsEnabled="{Binding HasSelection}">
-            <MenuItem Header="{l:Loc Menu_BringToFront}" Command="{Binding BringToFrontCommand}" InputGestureText="Ctrl+Shift+]" />
-            <MenuItem Header="{l:Loc Menu_BringForward}" Command="{Binding BringForwardCommand}" InputGestureText="Ctrl+]" />
-            <MenuItem Header="{l:Loc Menu_SendBackward}" Command="{Binding SendBackwardCommand}" InputGestureText="Ctrl+[" />
-            <MenuItem Header="{l:Loc Menu_SendToBack}" Command="{Binding SendToBackCommand}" InputGestureText="Ctrl+Shift+[" />
+            <MenuItem Header="{l:Loc Menu_BringToFront}" Command="{Binding BringToFrontCommand}" InputGestureText="{l:Shortcut Ctrl+Shift+]}" />
+            <MenuItem Header="{l:Loc Menu_BringForward}" Command="{Binding BringForwardCommand}" InputGestureText="{l:Shortcut Ctrl+]}" />
+            <MenuItem Header="{l:Loc Menu_SendBackward}" Command="{Binding SendBackwardCommand}" InputGestureText="{l:Shortcut Ctrl+[}" />
+            <MenuItem Header="{l:Loc Menu_SendToBack}" Command="{Binding SendToBackCommand}" InputGestureText="{l:Shortcut Ctrl+Shift+[}" />
           </MenuItem>
           <MenuItem Header="{l:Loc Menu_Lock}" Command="{Binding ToggleLockSelectionCommand}" IsEnabled="{Binding HasSelection}" />
         </ContextMenu>
@@ -63,6 +60,7 @@
       <controls:InteractionLayer x:Name="Interaction" />
       <Canvas x:Name="Overlay" />
     </Grid>
+    </Canvas>
     </Grid>
   </ScrollViewer>
 </UserControl>

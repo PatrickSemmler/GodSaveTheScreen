@@ -50,6 +50,21 @@ public sealed class ImageCodecService : IImageCodecService
         return new LoadedImage(PixelBufferExtensions.FromBitmapSource(frame), dpiX, dpiY, decoder.Frames.Count);
     }
 
+    public (int Width, int Height)? PeekSize(string path)
+    {
+        try
+        {
+            using var stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
+            var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.DelayCreation | BitmapCreateOptions.IgnoreColorProfile, BitmapCacheOption.None);
+            var frame = decoder.Frames[0];
+            return (frame.PixelWidth, frame.PixelHeight);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or NotSupportedException or InvalidOperationException or System.Runtime.InteropServices.COMException or FileFormatException)
+        {
+            return null;
+        }
+    }
+
     public LoadedImage Decode(byte[] data)
     {
         ArgumentNullException.ThrowIfNull(data);

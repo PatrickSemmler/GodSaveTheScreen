@@ -1,12 +1,12 @@
 # GodSaveTheScreen – Agent Architecture
-Verified against working tree on top of commit bd50364 (M10 uncommitted) on 2026-10-19
-- STATUS: M0–M10 umgesetzt (Rest ist Soll-Architektur aus `docs/Umsetzungsplan.md`). Nach Commit Kopfzeile auf Commit-Hash setzen.
-- Ist-Stand: `Core` (Settings inkl. `ShapeDefaultsMap`/`TextStyle`/`MarkerStyle`, `IAppPaths` inkl. Autosave-/Recent-Pfad, Geometrie inkl. JSON-Konverter, `PixelBuffer`, `ImageDocument` mit `Annotations` + `Undo` + `CropRect`/`ProjectPath`/`DocumentId`, `Imaging/CropGeometry`, `Annotations/` = Modell (Formen, Text, Marker, Strich, Unschärfe, Lupe) + `AnnotationSerializer`, `Undo/` inkl. `CropAction`, `Project/` = `ProjectSerializer`/`ProjectContent`/`IProjectMigration`, `IProjectService`, `RecentFilesService`, Service-Interfaces), `Capture`, `Rendering` (`AnnotationRenderer` partial inkl. `AnnotationOrdering`, `RegionEffectProcessor`/`EffectCache`, `TextLayout`, `LineLayout`, `DocumentExporter`, `ImageCodecService`, `ProjectService`), `App` (`Hosting/`, `Services/` inkl. `EditorService`/`AutoBackupService`/`JumpListService`, `Capture/`, `Editor/` = Kontext/`CropState`/Werkzeuge/Schriften, `Controls/`, `Views/`, `ViewModels/`, `Localization/`, `Resources/`)
+Verified against working tree on top of commit 6ee7fb9 (M11 uncommitted) on 2026-10-19
+- STATUS: M0–M11 umgesetzt (alle Meilensteine; offene manuelle Prüfungen siehe `docs/meilensteine/M11-Feinschliff-Release.md`). Nach Commit Kopfzeile auf Commit-Hash setzen.
+- Ist-Stand: `Core` (Settings inkl. `ShapeDefaultsMap`/`TextStyle`/`MarkerStyle`, `IAppPaths` inkl. Autosave-/Recent-Pfad, Geometrie inkl. JSON-Konverter, `PixelBuffer`, `ImageDocument` mit `Annotations` + `Undo` + `CropRect`/`ProjectPath`/`DocumentId`, `Imaging/CropGeometry`, `Annotations/` = Modell (Formen, Text, Marker, Strich, Unschärfe, Lupe) + `AnnotationSerializer`, `Undo/` inkl. `CropAction`, `Project/` = `ProjectSerializer`/`ProjectContent`/`IProjectMigration`, `IProjectService`, `RecentFilesService`, Service-Interfaces), `Capture`, `Rendering` (`AnnotationRenderer` partial inkl. `AnnotationOrdering`, `RegionEffectProcessor`/`EffectCache`, `TextLayout`, `LineLayout`, `DocumentExporter`, `ImageCodecService`, `ProjectService`), `App` (`Hosting/`, `Services/` inkl. `EditorService`/`AutoBackupService`/`JumpListService`/`SessionState`/`FirstRunHint`, `Capture/`, `Editor/` = Kontext/`CropState`/Werkzeuge/Schriften, `Controls/`, `Views/`, `ViewModels/`, `Localization/`, `Resources/`)
 
 ## Overview
 - Zweck: Screenshot-Tool (Tray + Hotkeys) mit nicht-destruktivem Annotations-Editor
 - Stack: .NET 10, C#, WPF + WPF-UI, MVVM (CommunityToolkit.Mvvm), Generic Host, xUnit v3
-- Layout: `GodSaveTheScreen.slnx`; `src/` 4 Projekte, `tests/` 2 Projekte; Plan in `docs/Umsetzungsplan.md`, Meilensteine in `docs/meilensteine/M*.md`
+- Layout: `GodSaveTheScreen.slnx`; `src/` 4 Projekte, `tests/` 2 Projekte, `build/` (Release-Skripte); Plan in `docs/Umsetzungsplan.md`, Meilensteine in `docs/meilensteine/M*.md`
 
 ## Modules
 | Pfad | Verantwortung | darf abhängen von |
@@ -32,9 +32,12 @@ Verified against working tree on top of commit bd50364 (M10 uncommitted) on 2026
 - Hintergrundbetrieb: `TrayService` + `HotkeyService` (`IHostedService`); `IAppShell` öffnet Start-/Einstellungsfenster und beendet die App
 - Zuschneiden (M9): `CropTool` (Werkzeug `C`) arbeitet auf `EditorContext.Crop` (`CropState`: Arbeitsrahmen, Seitenverhältnis); erst `CropTool.Commit` erzeugt eine `CropAction` (setzt `ImageDocument.CropRect`). `EditorViewModel.ViewRect` = Zuschnitt (im Zuschnittmodus ganzes Bild); `EditorCanvas`: `Frame` (Größe = ViewRect, clippt, Zoom per `LayoutTransform`) enthält `Surface` (volle Bildgröße, `TranslateTransform` = −ViewRect.TopLeft). `CropPanel`/`CropViewModel` ersetzen im Modus das Eigenschaftenpanel; Undo bricht den Modus ab
 - Projektdatei (M10): `ProjectSerializer` (ZIP: `manifest.json`, `document.json`, `base.png`, `preview.png`) liest/schreibt `ProjectContent` (PNG als Bytes, kein WPF im Core); `ProjectService` (Rendering) setzt Dokument ⇄ Inhalt um. Speichern (`EditorViewModel.TrySaveAsync`): bekanntes `ProjectPath` → Projekt; sonst bekannte Bilddatei → Bild; sonst Dialog (`PickDocumentSavePath`, Projekt zuerst); „Exportieren…“ schreibt nur Bilder (`SourcePath` = Exportziel) und lässt den Projektzustand unberührt
+- Hilfe/Start: `F1` (Editor und Startfenster) -> `IAppShell.ShowShortcuts` -> `ShortcutsWindow` mit `ShortcutCatalog` (Werkzeuge aus `ToolRegistry`, feste Befehlsliste `EditorCommands`, globale Hotkeys aus den Einstellungen); `FirstRunHint` zeigt einmalig (`AppSettings.FirstRunHintShown`) nach dem Start Hotkeys/Tray/Druck-Taste; `HotkeyService` ignoriert Hotkeys bei gesperrter/getrennter Sitzung (`ISessionState`)
+- Release: `build/release.ps1` (Tests -> `dotnet publish -p:PublishProfile=win-x64` -> ZIP in `artifacts/release`), Version in `Directory.Build.props`, Git-Hash über `Directory.Build.targets` (`SourceRevisionId`), `THIRD-PARTY-NOTICES.txt` aus `build/generate-notices.ps1`
 - Sicherung/Wiederherstellung: `AutoBackupService` (60 s + 10 s nach Änderung) schreibt `{DocumentId}.gsts` nach `IAppPaths.AutosaveDirectory` (Schnappschuss auf UI-Thread, Schreiben im Hintergrund), löscht beim Speichern/Schließen; `RecoverAsync` beim Start. `RecentFilesService` (`recent.json`, max. 15) speist Startfenster, Tray-Untermenü, Editor-Menü „Öffnen ▾“ und `JumpListService`
 
 ## Conventions
+- Große Bilder: `LargeImageGuard` (> 100 Mio. Pixel) + `IImageCodecService.PeekSize` -> Rückfrage vor dem Laden (`EditorService.OpenImageAsync`)
 - Zuschnitt ist nicht-destruktiv: `ImageDocument.CropRect` (null = voll, immer im Basisbild); Annotationen bleiben in Originalkoordinaten; Export (`DocumentExporter`) rendert `EffectiveBounds` mit `TranslateTransform(-x,-y)`; Statusleiste/Pipette rechnen relativ zum Zuschnitt
 - Koordinaten: Annotationen immer in Bildpixeln des Basisbilds; Capture: virtueller Desktop in physischen Pixeln; Umrechnung im Editor nur über `EditorCanvas.ToImagePoint` (Surface-Grid hat Bildpixelgröße, Zoom per `LayoutTransform`)
 - `EditorContext.Scale` = DIPs je Bildpixel; Griffe/Toleranzen über `ToImageUnits`/`HitTolerance` zoom-unabhängig
@@ -51,7 +54,8 @@ Verified against working tree on top of commit bd50364 (M10 uncommitted) on 2026
 - Objekte, die das Basisbild lesen (`BlurAnnotation`, `MagnifierAnnotation`), brauchen `RenderContext.BasePixels`/`BaseImage`/`Annotations` – ohne diese zeichnen sie nichts (z. B. `RenderObjects` für die Objekt-Zwischenablage)
 - Tastenkürzel zentral in `EditorWindow.OnPreviewKeyDown` (ignoriert Eingabefelder); Werkzeuge bekommen Tasten über `ToolBase.OnKeyDown`
 - MVVM: `[ObservableProperty]`/`[RelayCommand]`; Fenster via DI (`IWindowFactory`, Editor via `IEditorService`)
-- UI-Texte nur über `Strings.resx` + `Strings.de.resx`, XAML `{l:Loc Key}`; beide Dateien im selben Commit
+- UI-Texte nur über `Strings.resx` + `Strings.de.resx`, XAML `{l:Loc Key}`; Tastenkürzel-Texte in XAML als `{l:Shortcut Ctrl+S}` (übersetzt Strg/Umschalt/Entf …); beide Dateien im selben Commit. `LocalizationCompletenessTests` (M11) scannen alle XAML-Dateien: keine Literale in `Content`/`Text`/`Header`/`ToolTip`/`Title`/`PlaceholderText`/`InputGestureText`/`AutomationProperties.Name`, alle `{l:Loc}`-Schlüssel in beiden resx, gleiche Platzhalter
+- Barrierefreiheit: Symbolschaltflächen und Editor-Eingabefelder brauchen `AutomationProperties.Name` (`AccessibilityTests`); Objekte per Tastatur über `SelectTool.OnKeyDown` (`Tab`, Pfeile, `Alt+Pfeil`; `Tab` nur mit Fokus auf der Zeichenfläche, `EditorCanvas.HasSurfaceFocus`); Overlay-Farben in `InteractionLayer` folgen im Hochkontrast `SystemColors`
 - `Strings.Designer.cs` von Hand/Skript synchron zu `Strings.resx`; Schlüssel-Test in `App.Tests` prüft DE/EN-Gleichheit
 - Neue Einstellung = Feld in `AppSettings` (Default!) + Eigenschaft im ViewModel + Strings DE/EN; Dictionary/Listen in `AppSettings` nur als `ShapeDefaultsMap`/`StringList` (Wertgleichheit für Record-Vergleich)
 - Paketversionen nur in `Directory.Packages.props`; Analyzer streng (`TreatWarningsAsErrors`); bewusst aus: CA1304/1305/1716/1863/1873/1707/1848 (siehe `.editorconfig`)
@@ -91,6 +95,8 @@ Verified against working tree on top of commit bd50364 (M10 uncommitted) on 2026
 - JSON-Diskriminatoren nie ändern (bricht `.gsts`-Dateien)
 - Projekt-Leser: nur feste Eintragsnamen, harte Größengrenzen (`ProjectSerializer.Max*`), PNG-Kopf wird vor dem Dekodieren geprüft (ZIP-/PNG-Bomben)
 - `AskSaveChanges` mit `offerProject` und `PickDocumentSavePath` sind neue `IDialogService`-Mitglieder: Test-Mocks nutzen `ReturnsForAnyArgs`
+- `EditorCanvas`: die Zeichenfläche (`Surface`) sitzt in einem `Canvas` (`SurfaceHost`) im `Frame`, verschoben per `Canvas.Left/Top` – ein `Grid` mit `RenderTransform` würde die größere Fläche per Layout-Clip abschneiden (Clip wandert mit)
+- `EffectCache.RemoveImage` wird beim Schließen des Editors (`EditorViewModel.Dispose`) aufgerufen
 - Windows-Sprungliste: „Zuletzt verwendet“ als eigene Kategorie aus `JumpTask`s (Dateizuordnung nicht nötig)
 
 ## Commands
@@ -98,4 +104,4 @@ Verified against working tree on top of commit bd50364 (M10 uncommitted) on 2026
 - Test: `dotnet test` (Solution-Root; `global.json` aktiviert Microsoft.Testing.Platform, xunit v3)
 - Einzeltest: `dotnet test --project tests/GodSaveTheScreen.Core.Tests --filter-class "*UndoManagerTests"`
 - Start: `dotnet run --project src/GodSaveTheScreen.App`
-- Release: `dotnet publish src/GodSaveTheScreen.App -p:PublishProfile=win-x64`
+- Release: `.\build\release.ps1` (oder `dotnet publish src/GodSaveTheScreen.App -p:PublishProfile=win-x64`, Ausgabe in `artifacts/publish/win-x64`)

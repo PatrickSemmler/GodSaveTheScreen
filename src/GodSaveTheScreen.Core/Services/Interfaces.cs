@@ -18,6 +18,12 @@ public interface IDialogService
 {
     void ShowError(string title, string message);
 
+    /// <summary>Hinweis mit „OK“.</summary>
+    void ShowInfo(string title, string message);
+
+    /// <summary>Fehlermeldung mit zusätzlicher Schaltfläche „Log-Ordner öffnen“ (unbehandelte Ausnahmen).</summary>
+    void ShowCrash(string title, string message, string logDirectory);
+
     /// <summary>Ja/Nein-Rückfrage. Gibt <c>true</c> bei „Ja“ zurück.</summary>
     bool Confirm(string title, string message);
 

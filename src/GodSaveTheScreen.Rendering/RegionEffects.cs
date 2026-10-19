@@ -353,6 +353,21 @@ public sealed class EffectCache
         return bitmap;
     }
 
+    /// <summary>Entfernt alle Effekte eines Basisbilds (beim Schließen des Editors).</summary>
+    public void RemoveImage(long baseId)
+    {
+        lock (_gate)
+        {
+            foreach (var key in _map.Keys.Where(k => k.BaseId == baseId).ToList())
+            {
+                var node = _map[key];
+                _order.Remove(node);
+                _map.Remove(key);
+                _bytes -= node.Value.Bytes;
+            }
+        }
+    }
+
     public bool Contains(EffectKey key)
     {
         lock (_gate)

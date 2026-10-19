@@ -164,6 +164,9 @@ public sealed record AppSettings
     /// <summary>Zuletzt verwendete Farben (<c>#AARRGGBB</c>), neueste zuerst.</summary>
     public StringList RecentColors { get; init; } = [];
 
+    /// <summary>Der einmalige Erststart-Hinweis wurde angezeigt.</summary>
+    public bool FirstRunHintShown { get; init; }
+
     // Globale Hotkeys (Format siehe HotkeyGesture; leer = nicht belegt)
 
     public string HotkeyRectangle { get; init; } = "Ctrl+Shift+1";

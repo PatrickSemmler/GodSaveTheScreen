@@ -123,6 +123,15 @@ public sealed class EditorService : IEditorService
     {
         try
         {
+            if (_codec.PeekSize(path) is { } size
+                && LargeImageGuard.IsLarge(size.Width, size.Height)
+                && !_dialogs.Confirm(
+                    Strings.LargeImage_Title,
+                    string.Format(CultureInfo.CurrentUICulture, Strings.LargeImage_Message, Path.GetFileName(path), size.Width, size.Height, LargeImageGuard.BytesFor(size.Width, size.Height) / (1024 * 1024))))
+            {
+                return;
+            }
+
             var loaded = await _codec.LoadAsync(path);
             var document = new ImageDocument(loaded.Image, loaded.DpiX, loaded.DpiY) { SourcePath = path };
             var info = loaded.FrameCount > 1

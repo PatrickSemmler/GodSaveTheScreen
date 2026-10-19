@@ -39,6 +39,7 @@
   </UserControl.Resources>
   <Grid>
     <ToggleButton x:Name="Toggle"
+                  AutomationProperties.Name="{l:Loc Color_Choose}"
                   Height="30"
                   MinWidth="56"
                   Padding="4"

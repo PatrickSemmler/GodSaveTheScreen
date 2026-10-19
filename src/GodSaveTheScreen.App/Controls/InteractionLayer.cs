@@ -27,6 +27,21 @@ public sealed class InteractionLayer : FrameworkElement
     private static readonly Brush CropGrid = Freeze(new SolidColorBrush(Color.FromArgb(0xA0, 0xFF, 0xFF, 0xFF)));
     private static readonly double[] LabelSteps = [100, 200, 500, 1000, 2000, 5000, 10000];
 
+    private static bool HighContrast => SystemParameters.HighContrast;
+
+    /// <summary>Akzentfarbe der Auswahl; im Hochkontrast-Modus die Systemfarbe „Markierung“.</summary>
+    private static Brush Accent => HighContrast ? SystemColors.HighlightBrush : AccentBrush;
+
+    private static Brush HandleBack => HighContrast ? SystemColors.WindowBrush : HandleFill;
+
+    private static Brush LabelBack => HighContrast ? SystemColors.WindowBrush : LabelFill;
+
+    private static Brush LabelText => HighContrast ? SystemColors.WindowTextBrush : Brushes.White;
+
+    private static Brush RulerBack => HighContrast ? SystemColors.WindowBrush : RulerFill;
+
+    private static Brush RulerLine => HighContrast ? SystemColors.WindowTextBrush : RulerInk;
+
     private EditorContext? _context;
 
     public InteractionLayer() => IsHitTestVisible = false;
@@ -87,7 +102,7 @@ public sealed class InteractionLayer : FrameworkElement
         if (_context.Interaction.RubberBand is { } band)
         {
             var rect = Normalize(band);
-            drawingContext.DrawRectangle(BandBrush, new Pen(AccentBrush, unit), rect);
+            drawingContext.DrawRectangle(BandBrush, new Pen(Accent, unit), rect);
         }
     }
 
@@ -105,7 +120,7 @@ public sealed class InteractionLayer : FrameworkElement
             return;
         }
 
-        var outline = new Pen(AccentBrush, unit) { DashStyle = new DashStyle([4, 3], 0) };
+        var outline = new Pen(Accent, unit) { DashStyle = new DashStyle([4, 3], 0) };
         var locked = new Pen(LockedBrush, unit) { DashStyle = new DashStyle([2, 2], 0) };
         foreach (var item in items.Where(i => i.IsVisible))
         {
@@ -121,10 +136,10 @@ public sealed class InteractionLayer : FrameworkElement
 
         var handles = SelectionHandles.Get(items);
         var half = unit * 4;
-        var handlePen = new Pen(AccentBrush, unit);
+        var handlePen = new Pen(Accent, unit);
         if (items is [LineAnnotation line])
         {
-            dc.DrawLine(new Pen(AccentBrush, unit) { DashStyle = new DashStyle([4, 3], 0) }, new Point(line.Start.X, line.Start.Y), new Point(line.End.X, line.End.Y));
+            dc.DrawLine(new Pen(Accent, unit) { DashStyle = new DashStyle([4, 3], 0) }, new Point(line.Start.X, line.Start.Y), new Point(line.End.X, line.End.Y));
         }
 
         foreach (var handle in handles)
@@ -132,11 +147,11 @@ public sealed class InteractionLayer : FrameworkElement
             var center = new Point(handle.Position.X, handle.Position.Y);
             if (handle.Kind is HandleKind.LineStart or HandleKind.LineEnd or HandleKind.PolygonPoint)
             {
-                dc.DrawEllipse(HandleFill, handlePen, center, half, half);
+                dc.DrawEllipse(HandleBack, handlePen, center, half, half);
             }
             else
             {
-                dc.DrawRectangle(HandleFill, handlePen, new Rect(center.X - half, center.Y - half, half * 2, half * 2));
+                dc.DrawRectangle(HandleBack, handlePen, new Rect(center.X - half, center.Y - half, half * 2, half * 2));
             }
         }
     }
@@ -243,11 +258,11 @@ public sealed class InteractionLayer : FrameworkElement
         var width = placement.Width;
         var dpi = VisualTreeHelper.GetDpi(this).PixelsPerDip;
         var scale = Math.Max(_context.Scale, 0.01);
-        var edgePen = new Pen(RulerInk, unit);
-        var tickPen = new Pen(RulerInk, unit);
+        var edgePen = new Pen(RulerLine, unit);
+        var tickPen = new Pen(RulerLine, unit);
 
         dc.PushTransform(new RotateTransform(placement.AngleDegrees, center.X, center.Y));
-        dc.DrawRectangle(RulerFill, edgePen, new Rect(center.X - half, center.Y - (width / 2), placement.Length, width));
+        dc.DrawRectangle(RulerBack, edgePen, new Rect(center.X - half, center.Y - (width / 2), placement.Length, width));
 
         // Skala von der linken Kante aus in Bildpixeln; nur Striche, die auf dem Bildschirm genug Abstand haben.
         var labelStep = LabelSteps.FirstOrDefault(s => s * scale >= 48, LabelSteps[^1]);
@@ -272,7 +287,7 @@ public sealed class InteractionLayer : FrameworkElement
                     FlowDirection.LeftToRight,
                     new Typeface("Segoe UI"),
                     11 * unit,
-                    RulerInk,
+                    RulerLine,
                     dpi);
                 dc.DrawText(text, new Point(x - (text.Width / 2), edgeY + (16 * unit)));
             }
@@ -287,11 +302,11 @@ public sealed class InteractionLayer : FrameworkElement
             FlowDirection.LeftToRight,
             new Typeface(new FontFamily("Segoe UI"), FontStyles.Normal, FontWeights.SemiBold, FontStretches.Normal),
             13 * unit,
-            Brushes.White,
+            LabelText,
             dpi);
         var pad = 4 * unit;
         dc.DrawRoundedRectangle(
-            LabelFill,
+            LabelBack,
             null,
             new Rect(center.X - (angle.Width / 2) - pad, center.Y - (angle.Height / 2) - pad, angle.Width + (2 * pad), angle.Height + (2 * pad)),
             4 * unit,

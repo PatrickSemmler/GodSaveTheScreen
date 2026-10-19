@@ -92,8 +92,8 @@ public partial class EditorCanvas : UserControl
         var view = _viewModel.ViewRect;
         Frame.Width = view.Width;
         Frame.Height = view.Height;
-        CropOffset.X = -view.X;
-        CropOffset.Y = -view.Y;
+        System.Windows.Controls.Canvas.SetLeft(Surface, -view.X);
+        System.Windows.Controls.Canvas.SetTop(Surface, -view.Y);
     }
 
     public void Detach()
@@ -110,7 +110,12 @@ public partial class EditorCanvas : UserControl
 
         Annotations.Detach();
         Interaction.Detach();
+        BaseImage.Source = null;
+        Checker.Fill = null;
     }
+
+    /// <summary>Die Zeichenfläche hat den Tastaturfokus (nur dann gehören <c>Tab</c>/Pfeiltasten den Objekten).</summary>
+    public bool HasSurfaceFocus => Surface.IsKeyboardFocused;
 
     protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
     {

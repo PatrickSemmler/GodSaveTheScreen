@@ -6,7 +6,7 @@ using Wpf.Ui.Controls;
 namespace GodSaveTheScreen.App.Views;
 
 /// <summary>Schaltfläche eines <see cref="MessageDialog"/>; <see cref="Result"/> wird als Antwort geliefert.</summary>
-public sealed record DialogButton(string Label, int Result, bool IsPrimary = false, bool IsCancel = false);
+public sealed record DialogButton(string Label, int Result, bool IsPrimary = false, bool IsCancel = false, Action? Invoke = null);
 
 public enum DialogKind
 {
@@ -51,6 +51,13 @@ public partial class MessageDialog : FluentWindow
             };
             button.Click += (_, _) =>
             {
+                if (definition.Invoke is not null)
+                {
+                    // Aktionsschaltfläche (z. B. Log-Ordner öffnen): der Dialog bleibt offen.
+                    definition.Invoke();
+                    return;
+                }
+
                 Result = definition.Result;
                 Close();
             };

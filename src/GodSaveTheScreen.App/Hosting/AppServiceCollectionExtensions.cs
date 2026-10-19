@@ -25,6 +25,8 @@ public static class AppServiceCollectionExtensions
         services.AddSingleton<IAutostartRegistry, RunKeyAutostartRegistry>();
         services.AddSingleton<IAutostartService, AutostartService>();
         services.AddSingleton<IAppShell, AppShell>();
+        services.AddSingleton<ISessionState, SessionState>();
+        services.AddSingleton<FirstRunHint>();
 
         // Reihenfolge der Nachaufnahme-Aktionen ist fest: Zwischenablage, Auto-Speichern, Editor.
         services.AddSingleton<IPostCaptureAction, CopyToClipboardAction>();

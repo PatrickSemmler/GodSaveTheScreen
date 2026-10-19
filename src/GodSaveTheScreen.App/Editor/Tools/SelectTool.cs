@@ -348,12 +348,95 @@ public sealed class SelectTool : ToolBase
             case Key.A when modifiers == ModifierKeys.Control:
                 selection.Set(Context.Document.Annotations.Where(a => a.IsVisible));
                 return true;
+            case Key.Left or Key.Right or Key.Up or Key.Down when !selection.IsEmpty && _mode == Mode.None && (modifiers & ModifierKeys.Alt) != 0:
+                ResizeByKey(key, (modifiers & ModifierKeys.Shift) != 0 ? 10 : 1);
+                return true;
             case Key.Left or Key.Right or Key.Up or Key.Down when !selection.IsEmpty && _mode == Mode.None && (modifiers & ModifierKeys.Control) == 0:
                 Nudge(key, (modifiers & ModifierKeys.Shift) != 0 ? 10 : 1);
                 return true;
+            case Key.Tab when _mode == Mode.None && (modifiers & (ModifierKeys.Control | ModifierKeys.Alt)) == 0:
+                return CycleSelection((modifiers & ModifierKeys.Shift) != 0);
             default:
                 return false;
         }
+    }
+
+    /// <summary>
+    /// <c>Tab</c> / <c>Umschalt+Tab</c>: wählt das nächste bzw. vorherige sichtbare Objekt (Reihenfolge der Ebenenliste von hinten nach vorn).
+    /// Nach dem letzten Objekt wird die Auswahl aufgehoben und der Fokus darf die Zeichenfläche verlassen (<c>false</c>).
+    /// </summary>
+    public bool CycleSelection(bool backwards)
+    {
+        var visible = Context.Document.Annotations.Where(a => a.IsVisible).ToList();
+        if (visible.Count == 0)
+        {
+            return false;
+        }
+
+        var current = Context.Selection.Items.Count == 1 ? visible.IndexOf(Context.Selection.Items[0]) : -1;
+        int next;
+        if (current < 0)
+        {
+            next = backwards ? visible.Count - 1 : 0;
+        }
+        else
+        {
+            next = current + (backwards ? -1 : 1);
+        }
+
+        if (next < 0 || next >= visible.Count)
+        {
+            Context.Selection.Clear();
+            return false;
+        }
+
+        Context.Selection.Set(visible[next]);
+        return true;
+    }
+
+    /// <summary>
+    /// <c>Alt+Pfeil</c>: ändert die Größe der Auswahl um <paramref name="step"/> Pixel (rechts/unten größer, links/oben kleiner), Ankerpunkt oben links.
+    /// Objekte ohne frei skalierbare Form (Text, Nummer, Lupe …) werden proportional skaliert.
+    /// </summary>
+    public void ResizeByKey(Key key, double step)
+    {
+        var items = Context.Selection.Items.Where(a => !a.IsLocked).ToList();
+        if (items.Count == 0)
+        {
+            return;
+        }
+
+        var bounds = items.Select(a => a.Bounds).Aggregate((x, y) => x.Union(y));
+        var dw = key == Key.Right ? step : key == Key.Left ? -step : 0;
+        var dh = key == Key.Down ? step : key == Key.Up ? -step : 0;
+        var width = Math.Max(1, bounds.Width + dw);
+        var height = Math.Max(1, bounds.Height + dh);
+        var sx = bounds.Width > 0 ? width / bounds.Width : 1;
+        var sy = bounds.Height > 0 ? height / bounds.Height : 1;
+        var proportional = items.Any(a => a is not (ShapeAnnotation or BlurAnnotation));
+        double? uniform = null;
+        if (proportional)
+        {
+            uniform = dw != 0 ? sx : sy;
+            sx = sy = uniform.Value;
+        }
+
+        var origin = bounds.TopLeft;
+        var changes = new List<(Annotation Target, Annotation Before, Annotation After)>();
+        foreach (var item in items)
+        {
+            var before = item.Clone();
+            item.MapPoints(p => new PointD(origin.X + ((p.X - origin.X) * sx), origin.Y + ((p.Y - origin.Y) * sy)));
+            if (uniform is { } factor)
+            {
+                item.ScaleSizes(factor);
+            }
+
+            changes.Add((item, before, item.Clone()));
+        }
+
+        Context.Undo.Execute(new ReplaceGeometryAction(changes, "Größe ändern"));
+        Context.InvalidateInteraction();
     }
 
     public void DeleteSelection()

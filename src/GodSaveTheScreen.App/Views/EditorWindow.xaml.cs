@@ -26,14 +26,16 @@ public partial class EditorWindow : FluentWindow
 
     private readonly EditorViewModel _viewModel;
     private readonly IEditorService _editors;
+    private readonly IAppShell _shell;
     private MonitorInfo? _targetMonitor;
     private bool _closeConfirmed;
     private Point _dragStart;
 
-    public EditorWindow(EditorViewModel viewModel, IEditorService editors, IThemeService themes)
+    public EditorWindow(EditorViewModel viewModel, IEditorService editors, IThemeService themes, IAppShell shell)
     {
         _viewModel = viewModel;
         _editors = editors;
+        _shell = shell;
         DataContext = viewModel;
         InitializeComponent();
         themes.Attach(this);
@@ -172,6 +174,8 @@ public partial class EditorWindow : FluentWindow
         menu.IsOpen = true;
     }
 
+    private void OnShortcutsClick(object sender, RoutedEventArgs e) => _shell.ShowShortcuts(_viewModel.Tools);
+
     // ---- Tastatur ----
 
     private static bool IsTyping => Keyboard.FocusedElement is TextBoxBase or System.Windows.Controls.PasswordBox or ComboBox { IsEditable: true };
@@ -196,6 +200,13 @@ public partial class EditorWindow : FluentWindow
             Canvas.RefreshCursor();
         }
 
+        if (key == Key.F1 || (ctrl && key == Key.OemQuestion))
+        {
+            _shell.ShowShortcuts(_viewModel.Tools);
+            e.Handled = true;
+            return;
+        }
+
         if (ctrl && TryGlobalShortcut(key, shift, typing))
         {
             e.Handled = true;
@@ -211,6 +222,12 @@ public partial class EditorWindow : FluentWindow
         {
             _viewModel.Activate(tool);
             e.Handled = true;
+            return;
+        }
+
+        if (key == Key.Tab && !Canvas.HasSurfaceFocus)
+        {
+            // Außerhalb der Zeichenfläche bleibt Tab die normale Fokusnavigation.
             return;
         }
 

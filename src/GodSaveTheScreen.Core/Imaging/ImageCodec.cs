@@ -37,6 +37,9 @@ public interface IImageCodecService
 
     byte[] Encode(PixelBuffer image, double dpiX, double dpiY, ImageSaveOptions options);
 
+    /// <summary>Liest nur die Bildgröße (ohne zu dekodieren); <c>null</c>, wenn sie nicht ermittelbar ist.</summary>
+    (int Width, int Height)? PeekSize(string path);
+
     /// <summary>Dekodiert ein Bild aus dem Speicher (z. B. <c>base.png</c> eines Projekts).</summary>
     LoadedImage Decode(byte[] data);
 }

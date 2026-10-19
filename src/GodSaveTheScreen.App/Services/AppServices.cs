@@ -48,6 +48,29 @@ public sealed class DialogService : IDialogService
     public void ShowError(string title, string message) =>
         Show(title, message, DialogKind.Error, [new DialogButton(Strings.Dialog_Ok, Primary, IsPrimary: true, IsCancel: true)]);
 
+    public void ShowInfo(string title, string message) =>
+        Show(title, message, DialogKind.Info, [new DialogButton(Strings.Dialog_Ok, Primary, IsPrimary: true, IsCancel: true)]);
+
+    public void ShowCrash(string title, string message, string logDirectory) =>
+        Show(title, message, DialogKind.Error,
+        [
+            new DialogButton(Strings.Dialog_OpenLogFolder, Secondary, Invoke: () => OpenFolder(logDirectory)),
+            new DialogButton(Strings.Dialog_Ok, Primary, IsPrimary: true, IsCancel: true),
+        ]);
+
+    private static void OpenFolder(string directory)
+    {
+        try
+        {
+            Directory.CreateDirectory(directory);
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo("explorer.exe", $"\"{directory}\"") { UseShellExecute = true });
+        }
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException or IOException or UnauthorizedAccessException)
+        {
+            // Der Ordner lässt sich nicht öffnen; die Meldung bleibt stehen.
+        }
+    }
+
     public bool Confirm(string title, string message) =>
         Show(title, message, DialogKind.Question,
             [new DialogButton(Strings.Dialog_Yes, Primary, IsPrimary: true), new DialogButton(Strings.Dialog_No, Secondary, IsCancel: true)]) == Primary;

@@ -84,7 +84,7 @@ public sealed class WindowSmokeTests
     private static void EditorWindowSmoke()
     {
         var h = new EditorHarness();
-        var window = new EditorWindow(h.ViewModel, Substitute.For<IEditorService>(), Substitute.For<IThemeService>());
+        var window = new EditorWindow(h.ViewModel, Substitute.For<IEditorService>(), Substitute.For<IThemeService>(), Substitute.For<IAppShell>());
         window.Show();
         try
         {

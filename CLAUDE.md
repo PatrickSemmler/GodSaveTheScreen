@@ -9,4 +9,4 @@ Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `doc
 - Pfad: `docs/agent/architecture.md` (Index auf weitere Dateien in `docs/agent/`)
 - Lesen vor: Änderungen an Modulstruktur, Abhängigkeiten, übergreifenden Features; bei Unsicherheit über Konventionen
 - Pflicht: Bei Änderung von Modulstruktur, Abhängigkeiten oder Konventionen die Doku im selben Commit aktualisieren (Skill `agent-architecture-doc`)
-- Stand: M0–M8 gegen den Code verifiziert; weitere Meilensteine sind Soll-Architektur (Skill im Update-Modus nutzen)
+- Stand: M0–M11 gegen den Code verifiziert (Skill bei Änderungen im Update-Modus nutzen)

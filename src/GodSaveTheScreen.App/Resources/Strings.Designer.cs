@@ -645,4 +645,104 @@ public static class Strings
     public static string Recovery_Message => ResourceManager.GetString("Recovery_Message", Culture) ?? "Recovery_Message";
 
     public static string Recovery_Info => ResourceManager.GetString("Recovery_Info", Culture) ?? "Recovery_Info";
+
+    public static string Dialog_OpenLogFolder => ResourceManager.GetString("Dialog_OpenLogFolder", Culture) ?? "Dialog_OpenLogFolder";
+
+    public static string FirstRun_Title => ResourceManager.GetString("FirstRun_Title", Culture) ?? "FirstRun_Title";
+
+    public static string FirstRun_NotAssigned => ResourceManager.GetString("FirstRun_NotAssigned", Culture) ?? "FirstRun_NotAssigned";
+
+    public static string FirstRun_Message => ResourceManager.GetString("FirstRun_Message", Culture) ?? "FirstRun_Message";
+
+    public static string LargeImage_Title => ResourceManager.GetString("LargeImage_Title", Culture) ?? "LargeImage_Title";
+
+    public static string LargeImage_Message => ResourceManager.GetString("LargeImage_Message", Culture) ?? "LargeImage_Message";
+
+    public static string Shortcuts_Title => ResourceManager.GetString("Shortcuts_Title", Culture) ?? "Shortcuts_Title";
+
+    public static string Shortcuts_Tip => ResourceManager.GetString("Shortcuts_Tip", Culture) ?? "Shortcuts_Tip";
+
+    public static string Shortcuts_Filter => ResourceManager.GetString("Shortcuts_Filter", Culture) ?? "Shortcuts_Filter";
+
+    public static string Shortcuts_Capture => ResourceManager.GetString("Shortcuts_Capture", Culture) ?? "Shortcuts_Capture";
+
+    public static string Shortcuts_Tools => ResourceManager.GetString("Shortcuts_Tools", Culture) ?? "Shortcuts_Tools";
+
+    public static string Shortcuts_File => ResourceManager.GetString("Shortcuts_File", Culture) ?? "Shortcuts_File";
+
+    public static string Shortcuts_Edit => ResourceManager.GetString("Shortcuts_Edit", Culture) ?? "Shortcuts_Edit";
+
+    public static string Shortcuts_View => ResourceManager.GetString("Shortcuts_View", Culture) ?? "Shortcuts_View";
+
+    public static string Shortcuts_Objects => ResourceManager.GetString("Shortcuts_Objects", Culture) ?? "Shortcuts_Objects";
+
+    public static string Shortcuts_Crop => ResourceManager.GetString("Shortcuts_Crop", Culture) ?? "Shortcuts_Crop";
+
+    public static string Shortcut_Open => ResourceManager.GetString("Shortcut_Open", Culture) ?? "Shortcut_Open";
+
+    public static string Shortcut_Save => ResourceManager.GetString("Shortcut_Save", Culture) ?? "Shortcut_Save";
+
+    public static string Shortcut_SaveAs => ResourceManager.GetString("Shortcut_SaveAs", Culture) ?? "Shortcut_SaveAs";
+
+    public static string Shortcut_Paste => ResourceManager.GetString("Shortcut_Paste", Culture) ?? "Shortcut_Paste";
+
+    public static string Shortcut_Undo => ResourceManager.GetString("Shortcut_Undo", Culture) ?? "Shortcut_Undo";
+
+    public static string Shortcut_Redo => ResourceManager.GetString("Shortcut_Redo", Culture) ?? "Shortcut_Redo";
+
+    public static string Shortcut_Copy => ResourceManager.GetString("Shortcut_Copy", Culture) ?? "Shortcut_Copy";
+
+    public static string Shortcut_CopyImage => ResourceManager.GetString("Shortcut_CopyImage", Culture) ?? "Shortcut_CopyImage";
+
+    public static string Shortcut_Cut => ResourceManager.GetString("Shortcut_Cut", Culture) ?? "Shortcut_Cut";
+
+    public static string Shortcut_Duplicate => ResourceManager.GetString("Shortcut_Duplicate", Culture) ?? "Shortcut_Duplicate";
+
+    public static string Shortcut_Delete => ResourceManager.GetString("Shortcut_Delete", Culture) ?? "Shortcut_Delete";
+
+    public static string Shortcut_SelectAll => ResourceManager.GetString("Shortcut_SelectAll", Culture) ?? "Shortcut_SelectAll";
+
+    public static string Shortcut_BringToFront => ResourceManager.GetString("Shortcut_BringToFront", Culture) ?? "Shortcut_BringToFront";
+
+    public static string Shortcut_BringForward => ResourceManager.GetString("Shortcut_BringForward", Culture) ?? "Shortcut_BringForward";
+
+    public static string Shortcut_SendBackward => ResourceManager.GetString("Shortcut_SendBackward", Culture) ?? "Shortcut_SendBackward";
+
+    public static string Shortcut_SendToBack => ResourceManager.GetString("Shortcut_SendToBack", Culture) ?? "Shortcut_SendToBack";
+
+    public static string Shortcut_ZoomIn => ResourceManager.GetString("Shortcut_ZoomIn", Culture) ?? "Shortcut_ZoomIn";
+
+    public static string Shortcut_ZoomOut => ResourceManager.GetString("Shortcut_ZoomOut", Culture) ?? "Shortcut_ZoomOut";
+
+    public static string Shortcut_Fit => ResourceManager.GetString("Shortcut_Fit", Culture) ?? "Shortcut_Fit";
+
+    public static string Shortcut_ActualSize => ResourceManager.GetString("Shortcut_ActualSize", Culture) ?? "Shortcut_ActualSize";
+
+    public static string Shortcut_Pan => ResourceManager.GetString("Shortcut_Pan", Culture) ?? "Shortcut_Pan";
+
+    public static string Shortcut_Ruler => ResourceManager.GetString("Shortcut_Ruler", Culture) ?? "Shortcut_Ruler";
+
+    public static string Shortcut_Help => ResourceManager.GetString("Shortcut_Help", Culture) ?? "Shortcut_Help";
+
+    public static string Shortcut_NextObject => ResourceManager.GetString("Shortcut_NextObject", Culture) ?? "Shortcut_NextObject";
+
+    public static string Shortcut_PreviousObject => ResourceManager.GetString("Shortcut_PreviousObject", Culture) ?? "Shortcut_PreviousObject";
+
+    public static string Shortcut_Nudge => ResourceManager.GetString("Shortcut_Nudge", Culture) ?? "Shortcut_Nudge";
+
+    public static string Shortcut_Nudge10 => ResourceManager.GetString("Shortcut_Nudge10", Culture) ?? "Shortcut_Nudge10";
+
+    public static string Shortcut_Resize => ResourceManager.GetString("Shortcut_Resize", Culture) ?? "Shortcut_Resize";
+
+    public static string Shortcut_CropApply => ResourceManager.GetString("Shortcut_CropApply", Culture) ?? "Shortcut_CropApply";
+
+    public static string Shortcut_CropCancel => ResourceManager.GetString("Shortcut_CropCancel", Culture) ?? "Shortcut_CropCancel";
+
+    public static string Shortcut_CropNudge => ResourceManager.GetString("Shortcut_CropNudge", Culture) ?? "Shortcut_CropNudge";
+
+    public static string Shortcut_CropKeepRatio => ResourceManager.GetString("Shortcut_CropKeepRatio", Culture) ?? "Shortcut_CropKeepRatio";
+
+    public static string Shortcut_CropNoSnap => ResourceManager.GetString("Shortcut_CropNoSnap", Culture) ?? "Shortcut_CropNoSnap";
+
+    public static string Color_Choose => ResourceManager.GetString("Color_Choose", Culture) ?? "Color_Choose";
 }

@@ -87,6 +87,8 @@ public partial class App : Application
             commandLine.Handle(e.Args);
         }
 
+        services.GetRequiredService<FirstRunHint>().ShowIfNeeded();
+
         // Nach einem Absturz verbliebene Sicherungen anbieten (nach dem Start der Fenster, damit der Dialog sichtbar ist).
         await services.GetRequiredService<IAutoBackupService>().RecoverAsync();
     }

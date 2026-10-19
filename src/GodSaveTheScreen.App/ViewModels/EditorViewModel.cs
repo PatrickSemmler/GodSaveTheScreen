@@ -15,6 +15,7 @@ using GodSaveTheScreen.Core.Project;
 using GodSaveTheScreen.Core.Services;
 using GodSaveTheScreen.Core.Settings;
 using GodSaveTheScreen.Core.Undo;
+using GodSaveTheScreen.Rendering;
 using Microsoft.Extensions.Logging;
 using CaptureMode = GodSaveTheScreen.Core.Capture.CaptureMode;
 
@@ -878,6 +879,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         Context.Ruler.PropertyChanged -= OnRulerChanged;
         Context.Crop.Changed -= OnCropChanged;
         _recents.Changed -= OnRecentsChanged;
+        EffectCache.Shared.RemoveImage(BaseImageIdentity.Get(Document.BaseImage));
         Layers.Dispose();
         Context.Dispose();
     }
