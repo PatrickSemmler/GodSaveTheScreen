@@ -609,4 +609,40 @@ public static class Strings
     public static string Crop_Help => ResourceManager.GetString("Crop_Help", Culture) ?? "Crop_Help";
 
     public static string Layers_OutsideCrop => ResourceManager.GetString("Layers_OutsideCrop", Culture) ?? "Layers_OutsideCrop";
+
+    public static string Dialog_SaveAsProject => ResourceManager.GetString("Dialog_SaveAsProject", Culture) ?? "Dialog_SaveAsProject";
+
+    public static string Dialog_Recover => ResourceManager.GetString("Dialog_Recover", Culture) ?? "Dialog_Recover";
+
+    public static string Dialog_Discard => ResourceManager.GetString("Dialog_Discard", Culture) ?? "Dialog_Discard";
+
+    public static string Open_Projects => ResourceManager.GetString("Open_Projects", Culture) ?? "Open_Projects";
+
+    public static string Open_AllSupported => ResourceManager.GetString("Open_AllSupported", Culture) ?? "Open_AllSupported";
+
+    public static string Project_Warnings => ResourceManager.GetString("Project_Warnings", Culture) ?? "Project_Warnings";
+
+    public static string Project_BlurHint => ResourceManager.GetString("Project_BlurHint", Culture) ?? "Project_BlurHint";
+
+    public static string Editor_Export => ResourceManager.GetString("Editor_Export", Culture) ?? "Editor_Export";
+
+    public static string Editor_ExportTip => ResourceManager.GetString("Editor_ExportTip", Culture) ?? "Editor_ExportTip";
+
+    public static string Recent_Title => ResourceManager.GetString("Recent_Title", Culture) ?? "Recent_Title";
+
+    public static string Recent_Clear => ResourceManager.GetString("Recent_Clear", Culture) ?? "Recent_Clear";
+
+    public static string Recent_RemoveMissing => ResourceManager.GetString("Recent_RemoveMissing", Culture) ?? "Recent_RemoveMissing";
+
+    public static string Recent_Empty => ResourceManager.GetString("Recent_Empty", Culture) ?? "Recent_Empty";
+
+    public static string Recent_Missing => ResourceManager.GetString("Recent_Missing", Culture) ?? "Recent_Missing";
+
+    public static string Recent_Remove => ResourceManager.GetString("Recent_Remove", Culture) ?? "Recent_Remove";
+
+    public static string Recovery_Title => ResourceManager.GetString("Recovery_Title", Culture) ?? "Recovery_Title";
+
+    public static string Recovery_Message => ResourceManager.GetString("Recovery_Message", Culture) ?? "Recovery_Message";
+
+    public static string Recovery_Info => ResourceManager.GetString("Recovery_Info", Culture) ?? "Recovery_Info";
 }

@@ -6,6 +6,7 @@ using System.Windows.Controls;
 using GodSaveTheScreen.App.Capture;
 using GodSaveTheScreen.App.Resources;
 using GodSaveTheScreen.Core.Capture;
+using GodSaveTheScreen.Core.Project;
 using GodSaveTheScreen.Core.Settings;
 using H.NotifyIcon;
 using H.NotifyIcon.Core;
@@ -154,12 +155,47 @@ public sealed class TrayService : IHostedService, INotificationService, IDisposa
         FillTimerMenu(timer);
 
         menu.Items.Add(new Separator());
-        menu.Items.Add(new MenuItem { Header = Strings.Tray_OpenImage, IsEnabled = false });
+        menu.Items.Add(Item(Strings.Tray_OpenImage, OpenFiles));
+        var recent = new MenuItem { Header = Strings.Recent_Title };
+        menu.Items.Add(recent);
+        recent.SubmenuOpened += (_, _) => FillRecentMenu(recent);
+        FillRecentMenu(recent);
         menu.Items.Add(Item(Strings.Tray_StartWindow, _shell.ShowStartWindow));
         menu.Items.Add(Item(Strings.Start_Settings, _shell.ShowSettings));
         menu.Items.Add(new Separator());
         menu.Items.Add(Item(Strings.Tray_Exit, _shell.ExitApplication));
         return menu;
+    }
+
+    private void OpenFiles()
+    {
+        var files = _services.GetRequiredService<GodSaveTheScreen.Core.Services.IDialogService>().PickImageFiles();
+        if (files.Count > 0)
+        {
+            _ = _services.GetRequiredService<IEditorService>().OpenFilesAsync(files);
+        }
+    }
+
+    private void FillRecentMenu(MenuItem parent)
+    {
+        parent.Items.Clear();
+        var items = _services.GetRequiredService<IRecentFilesService>().Items;
+        if (items.Count == 0)
+        {
+            parent.Items.Add(new MenuItem { Header = Strings.Recent_Empty, IsEnabled = false });
+            return;
+        }
+
+        foreach (var file in items)
+        {
+            var entry = new MenuItem { Header = file.Name.Replace("_", "__", StringComparison.Ordinal), ToolTip = file.Path, IsEnabled = !file.IsMissing };
+            var path = file.Path;
+            entry.Click += (_, _) => _ = _services.GetRequiredService<IEditorService>().OpenFilesAsync([path]);
+            parent.Items.Add(entry);
+        }
+
+        parent.Items.Add(new Separator());
+        parent.Items.Add(Item(Strings.Recent_Clear, () => _services.GetRequiredService<IRecentFilesService>().Clear()));
     }
 
     private void FillTimerMenu(MenuItem parent)

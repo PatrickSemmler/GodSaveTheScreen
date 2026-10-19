@@ -6,6 +6,7 @@ using GodSaveTheScreen.Capture;
 using GodSaveTheScreen.Core.Capture;
 using GodSaveTheScreen.Core.Geometry;
 using GodSaveTheScreen.Core.Imaging;
+using GodSaveTheScreen.Core.Project;
 using GodSaveTheScreen.Core.Services;
 using GodSaveTheScreen.Core.Settings;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -241,7 +242,7 @@ public sealed class StartViewModelTimerTests
         }
 
         var coordinator = TestCoordinator.Create(settings).Coordinator;
-        return (new StartViewModel(coordinator, settings, Substitute.For<IAppShell>(), Substitute.For<IEditorService>(), Substitute.For<IDialogService>()), settings);
+        return (new StartViewModel(coordinator, settings, Substitute.For<IAppShell>(), Substitute.For<IEditorService>(), Substitute.For<IDialogService>(), TestDoubles.EmptyRecents(), Substitute.For<IProjectService>()), settings);
     }
 
     [Fact]

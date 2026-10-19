@@ -1,7 +1,7 @@
 # GodSaveTheScreen – Agent Architecture
-Verified against working tree on top of commit 4df1ec9 (M7–M8 uncommitted) on 2026-10-19
-- STATUS: M0–M8 umgesetzt (Rest ist Soll-Architektur aus `docs/Umsetzungsplan.md`). Nach Commit Kopfzeile auf Commit-Hash setzen.
-- Ist-Stand: `Core` (Settings inkl. `ShapeDefaultsMap`/`TextStyle`/`MarkerStyle`, Geometrie, `PixelBuffer`, `ImageDocument` mit `Annotations` + `Undo`, `Annotations/` = Modell (Formen, Text, Marker, Strich, Unschärfe, Lupe) + `AnnotationSerializer`, `Undo/`, `IImageCodecService`/`IDocumentExporter`/`IDialogService`/`IClipboardService`), `Capture`, `Rendering` (`AnnotationRenderer` partial inkl. `AnnotationOrdering`, `RegionEffectProcessor`/`EffectCache`, `TextLayout`, `LineLayout`, `DocumentExporter`, `ImageCodecService`), `App` (`Hosting/`, `Services/`, `Capture/`, `Editor/` = Kontext/Werkzeuge/Schriften, `Controls/`, `Views/`, `ViewModels/`, `Localization/`, `Resources/`)
+Verified against working tree on top of commit bd50364 (M10 uncommitted) on 2026-10-19
+- STATUS: M0–M10 umgesetzt (Rest ist Soll-Architektur aus `docs/Umsetzungsplan.md`). Nach Commit Kopfzeile auf Commit-Hash setzen.
+- Ist-Stand: `Core` (Settings inkl. `ShapeDefaultsMap`/`TextStyle`/`MarkerStyle`, `IAppPaths` inkl. Autosave-/Recent-Pfad, Geometrie inkl. JSON-Konverter, `PixelBuffer`, `ImageDocument` mit `Annotations` + `Undo` + `CropRect`/`ProjectPath`/`DocumentId`, `Imaging/CropGeometry`, `Annotations/` = Modell (Formen, Text, Marker, Strich, Unschärfe, Lupe) + `AnnotationSerializer`, `Undo/` inkl. `CropAction`, `Project/` = `ProjectSerializer`/`ProjectContent`/`IProjectMigration`, `IProjectService`, `RecentFilesService`, Service-Interfaces), `Capture`, `Rendering` (`AnnotationRenderer` partial inkl. `AnnotationOrdering`, `RegionEffectProcessor`/`EffectCache`, `TextLayout`, `LineLayout`, `DocumentExporter`, `ImageCodecService`, `ProjectService`), `App` (`Hosting/`, `Services/` inkl. `EditorService`/`AutoBackupService`/`JumpListService`, `Capture/`, `Editor/` = Kontext/`CropState`/Werkzeuge/Schriften, `Controls/`, `Views/`, `ViewModels/`, `Localization/`, `Resources/`)
 
 ## Overview
 - Zweck: Screenshot-Tool (Tray + Hotkeys) mit nicht-destruktivem Annotations-Editor
@@ -30,12 +30,16 @@ Verified against working tree on top of commit 4df1ec9 (M7–M8 uncommitted) on 
 - Datenfluss Export: `DocumentExporter.Render` -> `AnnotationRenderer` (gleicher Pfad wie Anzeige) -> `PixelBuffer` -> `IImageCodecService.SaveAsync` / `IClipboardService`; ohne sichtbare Objekte wird `BaseImage` selbst geliefert
 - Eigenschaften: `SelectionPropertiesViewModel` (Formen + Deckkraft), `TextPropertiesViewModel`, `MarkerPropertiesViewModel`; ohne Auswahl bearbeiten sie die Standardwerte des aktiven Werkzeugs (`IToolDefaultsService`)
 - Hintergrundbetrieb: `TrayService` + `HotkeyService` (`IHostedService`); `IAppShell` öffnet Start-/Einstellungsfenster und beendet die App
-- Projektdatei (ab M10): `ProjectSerializer` (ZIP: `manifest.json`, `document.json`, `base.png`, `preview.png`)
+- Zuschneiden (M9): `CropTool` (Werkzeug `C`) arbeitet auf `EditorContext.Crop` (`CropState`: Arbeitsrahmen, Seitenverhältnis); erst `CropTool.Commit` erzeugt eine `CropAction` (setzt `ImageDocument.CropRect`). `EditorViewModel.ViewRect` = Zuschnitt (im Zuschnittmodus ganzes Bild); `EditorCanvas`: `Frame` (Größe = ViewRect, clippt, Zoom per `LayoutTransform`) enthält `Surface` (volle Bildgröße, `TranslateTransform` = −ViewRect.TopLeft). `CropPanel`/`CropViewModel` ersetzen im Modus das Eigenschaftenpanel; Undo bricht den Modus ab
+- Projektdatei (M10): `ProjectSerializer` (ZIP: `manifest.json`, `document.json`, `base.png`, `preview.png`) liest/schreibt `ProjectContent` (PNG als Bytes, kein WPF im Core); `ProjectService` (Rendering) setzt Dokument ⇄ Inhalt um. Speichern (`EditorViewModel.TrySaveAsync`): bekanntes `ProjectPath` → Projekt; sonst bekannte Bilddatei → Bild; sonst Dialog (`PickDocumentSavePath`, Projekt zuerst); „Exportieren…“ schreibt nur Bilder (`SourcePath` = Exportziel) und lässt den Projektzustand unberührt
+- Sicherung/Wiederherstellung: `AutoBackupService` (60 s + 10 s nach Änderung) schreibt `{DocumentId}.gsts` nach `IAppPaths.AutosaveDirectory` (Schnappschuss auf UI-Thread, Schreiben im Hintergrund), löscht beim Speichern/Schließen; `RecoverAsync` beim Start. `RecentFilesService` (`recent.json`, max. 15) speist Startfenster, Tray-Untermenü, Editor-Menü „Öffnen ▾“ und `JumpListService`
 
 ## Conventions
+- Zuschnitt ist nicht-destruktiv: `ImageDocument.CropRect` (null = voll, immer im Basisbild); Annotationen bleiben in Originalkoordinaten; Export (`DocumentExporter`) rendert `EffectiveBounds` mit `TranslateTransform(-x,-y)`; Statusleiste/Pipette rechnen relativ zum Zuschnitt
 - Koordinaten: Annotationen immer in Bildpixeln des Basisbilds; Capture: virtueller Desktop in physischen Pixeln; Umrechnung im Editor nur über `EditorCanvas.ToImagePoint` (Surface-Grid hat Bildpixelgröße, Zoom per `LayoutTransform`)
 - `EditorContext.Scale` = DIPs je Bildpixel; Griffe/Toleranzen über `ToImageUnits`/`HitTolerance` zoom-unabhängig
 - Annotation ändern nur via `UndoManager` (Panel, Werkzeuge, Ebenenliste); Ziehen = vorher-/nachher-Klone + `ReplaceGeometryAction`; Eigenschaften = `PropertyChangeAction` (merged im 1,5-s-Fenster) in Transaktion
+- JSON-Formate (Projekt, Objekt-Zwischenablage): reflektionsbasiertes `System.Text.Json` mit gemeinsamen Optionen in `ProjectSerializer`; Geometrie kompakt per `[JsonConverter]` auf `PointD`/`RectD`/`PixelRect`/`StrokePoint` (Arrays), `ArgbColor` als `#AARRGGBB`; Diskriminator-Eigenschaft heißt `type`; defekte/unbekannte Objekte werden beim Lesen übersprungen (Warnung), Formatänderungen nur mit `formatVersion`-Anhebung + `IProjectMigration` + neuer Golden-Datei (`tests/GodSaveTheScreen.Core.Tests/TestData/golden-v1.gsts`, neu erzeugen mit Umgebungsvariable `GSTS_GOLDEN_OUT`)
 - Neue Annotation = Modellklasse (Core, `Clone` läuft über `CopyFrom` per Reflection: nur öffentliche Properties mit Setter, `Id` ausgenommen) + Zweig in `AnnotationRenderer.Render` + `[JsonDerivedType]` mit kurzem stabilem Diskriminator in `Annotation` + Roundtrip-Test
 - Berechnete Core-Properties (`Bounds`, `HasFill` …) mit `[JsonIgnore]`; Listen im Modell als `ImmutableArray`, nie mutieren
 - Core-Farben/Geometrie: eigene Structs (`ArgbColor`, `PointD`, `RectD`, `PixelRect`), nie WPF-Typen; Schriftwerte als string/int
@@ -65,7 +69,7 @@ Verified against working tree on top of commit 4df1ec9 (M7–M8 uncommitted) on 
 - Unschärfe selbst auf `PixelBuffer` statt `BlurEffect` (M8): Quelle immer das Basisbild (`RenderContext.BasePixels`), Ergebnis gecacht (`EffectCache.Shared`, Schlüssel inkl. `BaseImageIdentity`), Form/weicher Rand im Alphakanal; Speichern nur WPF-Encoder, Laden über WIC
 - Objekt-Zwischenablage: Format `GodSaveTheScreen.Annotations` (JSON) + PNG-Fallback
 - Shouldly statt FluentAssertions (Lizenz); Farbwahl `PixiEditor.ColorPicker` (`StandardColorPicker` im `ColorButton`-Popup)
-- Projektformat ZIP+JSON mit `formatVersion` (M10)
+- Projektformat ZIP+JSON mit `formatVersion` (M10); Abweichung vom Plan: kein Source-Generator-Kontext (Annotationen sind `ObservableObject`s mit privaten Settern → Reflection), Diskriminator `type` statt `$type` (Clipboard-Format bleibt kompatibel)
 
 ## Pitfalls
 - `Druck`-Hotkey kann von Windows 11 belegt sein -> Fehler anzeigen, nicht crashen
@@ -85,6 +89,9 @@ Verified against working tree on top of commit 4df1ec9 (M7–M8 uncommitted) on 
 - Lupe ohne Rekursion: sieht nur Objekte unter sich und keine anderen Lupen; ändert sich irgendein Objekt, zeichnet `AnnotationLayer` alle Lupen neu
 - Lineal-Ziehen und Freihand-Einrasten konkurrieren um dieselbe Fläche: Freihandwerkzeuge starten nahe der Kante (24 DIP) einen Strich, sonst verschiebt `EditorCanvas` das Lineal
 - JSON-Diskriminatoren nie ändern (bricht `.gsts`-Dateien)
+- Projekt-Leser: nur feste Eintragsnamen, harte Größengrenzen (`ProjectSerializer.Max*`), PNG-Kopf wird vor dem Dekodieren geprüft (ZIP-/PNG-Bomben)
+- `AskSaveChanges` mit `offerProject` und `PickDocumentSavePath` sind neue `IDialogService`-Mitglieder: Test-Mocks nutzen `ReturnsForAnyArgs`
+- Windows-Sprungliste: „Zuletzt verwendet“ als eigene Kategorie aus `JumpTask`s (Dateizuordnung nicht nötig)
 
 ## Commands
 - Build: `dotnet build GodSaveTheScreen.slnx`

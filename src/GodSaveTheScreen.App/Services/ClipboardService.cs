@@ -48,7 +48,7 @@ public sealed class ClipboardService : IClipboardService
             {
                 return AnnotationSerializer.DeserializeAsCopies(json);
             }
-            catch (JsonException)
+            catch (Exception ex) when (ex is JsonException or GodSaveTheScreen.Core.Project.ProjectFormatException)
             {
                 return [];
             }

@@ -36,7 +36,7 @@ public sealed partial class ImageDocument : ObservableObject
 
     public double DpiY { get; }
 
-    public DateTimeOffset CreatedAt { get; }
+    public DateTimeOffset CreatedAt { get; init; }
 
     /// <summary>Textmarker-Striche hinter allen übrigen Objekten zeichnen (Anzeige und Export).</summary>
     [ObservableProperty]

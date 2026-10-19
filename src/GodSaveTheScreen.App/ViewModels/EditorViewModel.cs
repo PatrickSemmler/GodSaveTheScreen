@@ -11,6 +11,7 @@ using GodSaveTheScreen.Core.Annotations;
 using GodSaveTheScreen.Core.Geometry;
 using GodSaveTheScreen.Core.Imaging;
 using GodSaveTheScreen.Core.Naming;
+using GodSaveTheScreen.Core.Project;
 using GodSaveTheScreen.Core.Services;
 using GodSaveTheScreen.Core.Settings;
 using GodSaveTheScreen.Core.Undo;
@@ -38,7 +39,10 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     private readonly IEditorService _editors;
     private readonly ISettingsService _settings;
     private readonly ICaptureLauncher _capture;
+    private readonly IProjectService _projects;
+    private readonly IRecentFilesService _recents;
     private readonly ILogger<EditorViewModel> _logger;
+    private bool _blurHintShown;
     private ToolBase? _toolBeforePipette;
     private int _pasteCount;
     private string? _lastPasted;
@@ -53,6 +57,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         IEditorService editors,
         ISettingsService settings,
         ICaptureLauncher capture,
+        IProjectService projects,
+        IRecentFilesService recents,
         ILogger<EditorViewModel> logger)
     {
         Context = context;
@@ -64,7 +70,10 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         _editors = editors;
         _settings = settings;
         _capture = capture;
+        _projects = projects;
+        _recents = recents;
         _logger = logger;
+        _recents.Changed += OnRecentsChanged;
 
         _activeTool = tools.Get<SelectTool>();
         Properties = new SelectionPropertiesViewModel(context, () => ActiveTool, StartPipette);
@@ -220,10 +229,18 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     {
         get
         {
-            var name = string.IsNullOrEmpty(Document.SourcePath) ? Strings.Editor_Untitled : Path.GetFileName(Document.SourcePath);
-            return $"{name}{(Document.IsDirty ? " *" : string.Empty)} – {Strings.App_Name}";
+            return $"{DisplayName}{(Document.IsDirty ? " *" : string.Empty)} – {Strings.App_Name}";
         }
     }
+
+    /// <summary>Projektname, sonst Dateiname des Bilds, sonst „Unbenannt“.</summary>
+    public string DisplayName =>
+        !string.IsNullOrEmpty(Document.ProjectPath) ? Path.GetFileName(Document.ProjectPath)
+        : !string.IsNullOrEmpty(Document.SourcePath) ? Path.GetFileName(Document.SourcePath)
+        : Strings.Editor_Untitled;
+
+    /// <summary>Zuletzt verwendete Dateien (für das Menü „Öffnen ▾“).</summary>
+    public IReadOnlyList<RecentFile> RecentItems => _recents.Items;
 
     public bool CanUndo => Context.Undo.CanUndo;
 
@@ -284,6 +301,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
         ruler.IsVisible = visible;
     }
+
+    private void OnRecentsChanged(object? sender, EventArgs e) => OnPropertyChanged(nameof(RecentItems));
 
     private void OnCropChanged(object? sender, EventArgs e)
     {
@@ -409,8 +428,71 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private async Task SaveAsAsync() => await TrySaveAsync(forceDialog: true);
 
-    /// <summary>Speichert; <c>false</c> bei Abbruch oder Fehler.</summary>
+    /// <summary>„Exportieren…“: Bild in einem Bildformat speichern (merkt sich das Ziel getrennt vom Projekt).</summary>
+    [RelayCommand]
+    private async Task ExportAsync() => await ExportImageAsync(forceDialog: true);
+
+    [RelayCommand]
+    private async Task OpenRecentAsync(RecentFile? file)
+    {
+        if (file is not null)
+        {
+            await _editors.OpenFilesAsync([file.Path]);
+        }
+    }
+
+    [RelayCommand]
+    private void ClearRecents() => _recents.Clear();
+
+    [RelayCommand]
+    private void RemoveMissingRecents()
+    {
+        foreach (var item in _recents.Items.Where(i => i.IsMissing))
+        {
+            _recents.Remove(item.Path);
+        }
+    }
+
+    /// <summary>
+    /// Speichert. Ein bekanntes Projekt wird wieder als Projekt geschrieben, eine geöffnete Bilddatei als Bild;
+    /// sonst (oder bei <paramref name="forceDialog"/>) fragt der Dialog – mit dem Projektformat an erster Stelle. <c>false</c> bei Abbruch oder Fehler.
+    /// </summary>
     public async Task<bool> TrySaveAsync(bool forceDialog)
+    {
+        if (!forceDialog && !string.IsNullOrEmpty(Document.ProjectPath))
+        {
+            return await SaveProjectAsync(Document.ProjectPath);
+        }
+
+        var path = Document.SourcePath;
+        var format = ImageFormats.FromExtension(Path.GetExtension(path));
+        if (!forceDialog && !string.IsNullOrEmpty(path) && format is not null)
+        {
+            return await SaveImageAsync(path, format.Value);
+        }
+
+        return await SaveWithDialogAsync(preferProject: Document.Annotations.Count > 0 || !string.IsNullOrEmpty(Document.ProjectPath));
+    }
+
+    private async Task<bool> SaveWithDialogAsync(bool preferProject)
+    {
+        var settings = _settings.Current;
+        var lastFormat = ImageFormats.FromExtension(Path.GetExtension(Document.SourcePath)) ?? settings.LastSaveFormat;
+        var directory = string.IsNullOrWhiteSpace(settings.LastSaveDirectory) ? AutoSaveAction.DefaultDirectory : settings.LastSaveDirectory;
+        var suggestion = !string.IsNullOrEmpty(Document.ProjectPath)
+            ? Path.GetFileName(Document.ProjectPath)
+            : SuggestName(settings, lastFormat);
+        if (_dialogs.PickDocumentSavePath(suggestion, directory, lastFormat, preferProject) is not { } picked)
+        {
+            return false;
+        }
+
+        return picked.Format is { } imageFormat
+            ? await SaveImageAsync(picked.Path, imageFormat)
+            : await SaveProjectAsync(picked.Path);
+    }
+
+    private async Task<bool> ExportImageAsync(bool forceDialog)
     {
         var settings = _settings.Current;
         var path = Document.SourcePath;
@@ -428,10 +510,15 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
             format = picked.Format;
         }
 
+        return await SaveImageAsync(path, format.Value);
+    }
+
+    private async Task<bool> SaveImageAsync(string path, ImageFormatSetting format)
+    {
         try
         {
             var image = _exporter.Render(Document);
-            var options = ImageSaveOptions.FromSettings(_settings.Current, format.Value);
+            var options = ImageSaveOptions.FromSettings(_settings.Current, format);
             await _codec.SaveAsync(image, Document.DpiX, Document.DpiY, path, options);
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or NotSupportedException or System.Runtime.InteropServices.COMException or InvalidOperationException)
@@ -442,12 +529,60 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         }
 
         Document.SourcePath = path;
-        Document.MarkSaved();
-        _settings.Current = _settings.Current with { LastSaveDirectory = Path.GetDirectoryName(path) ?? string.Empty, LastSaveFormat = format.Value };
-        _ = _settings.SaveAsync();
+        if (string.IsNullOrEmpty(Document.ProjectPath))
+        {
+            // Der Bildexport eines Projekts ändert nichts am Zustand des Projekts.
+            Document.MarkSaved();
+        }
+
+        _recents.Add(path);
+        RememberSaveTarget(path, format);
         OnPropertyChanged(nameof(WindowTitle));
         _logger.LogInformation("Bild gespeichert: {Path}", path);
         return true;
+    }
+
+    /// <summary>Schreibt das Dokument als Projekt (<c>.gsts</c>) und merkt sich den Pfad.</summary>
+    public async Task<bool> SaveProjectAsync(string path)
+    {
+        if (!string.Equals(Path.GetExtension(path), ProjectSerializer.Extension, StringComparison.OrdinalIgnoreCase))
+        {
+            path += ProjectSerializer.Extension;
+        }
+
+        try
+        {
+            await _projects.SaveAsync(Document, path);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or NotSupportedException or InvalidOperationException or ProjectFormatException)
+        {
+            _logger.LogError(ex, "Speichern des Projekts nach {Path} fehlgeschlagen", path);
+            _dialogs.ShowError(Strings.Error_Title, string.Format(CultureInfo.CurrentUICulture, Strings.Error_SaveFailed, ex.Message));
+            return false;
+        }
+
+        Document.ProjectPath = path;
+        Document.MarkSaved();
+        _recents.Add(path);
+        _settings.Current = _settings.Current with { LastSaveDirectory = Path.GetDirectoryName(path) ?? string.Empty };
+        _ = _settings.SaveAsync();
+        OnPropertyChanged(nameof(WindowTitle));
+        _logger.LogInformation("Projekt gespeichert: {Path}", path);
+
+        if (!_blurHintShown && Document.Annotations.Any(a => a is BlurAnnotation))
+        {
+            // Das Original bleibt im Projekt unverändert lesbar.
+            _blurHintShown = true;
+            InfoMessage = Strings.Project_BlurHint;
+        }
+
+        return true;
+    }
+
+    private void RememberSaveTarget(string path, ImageFormatSetting format)
+    {
+        _settings.Current = _settings.Current with { LastSaveDirectory = Path.GetDirectoryName(path) ?? string.Empty, LastSaveFormat = format };
+        _ = _settings.SaveAsync();
     }
 
     private static string SuggestName(AppSettings settings, ImageFormatSetting format)
@@ -465,10 +600,12 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
             return true;
         }
 
-        var name = string.IsNullOrEmpty(Document.SourcePath) ? Strings.Editor_Untitled : Path.GetFileName(Document.SourcePath);
-        return _dialogs.AskSaveChanges(Strings.Editor_UnsavedTitle, string.Format(CultureInfo.CurrentUICulture, Strings.Editor_UnsavedMessage, name)) switch
+        // Objekte gehen in einem Bildformat verloren (nicht mehr bearbeitbar): das Projekt anbieten.
+        var offerProject = Document.Annotations.Count > 0 && string.IsNullOrEmpty(Document.ProjectPath);
+        return _dialogs.AskSaveChanges(Strings.Editor_UnsavedTitle, string.Format(CultureInfo.CurrentUICulture, Strings.Editor_UnsavedMessage, DisplayName), offerProject) switch
         {
             SaveChangesAnswer.Save => await TrySaveAsync(forceDialog: false),
+            SaveChangesAnswer.SaveAsProject => await SaveWithDialogAsync(preferProject: true),
             SaveChangesAnswer.Discard => true,
             _ => false,
         };
@@ -691,7 +828,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     private void OnDocumentChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is nameof(ImageDocument.IsDirty) or nameof(ImageDocument.SourcePath))
+        if (e.PropertyName is nameof(ImageDocument.IsDirty) or nameof(ImageDocument.SourcePath) or nameof(ImageDocument.ProjectPath))
         {
             OnPropertyChanged(nameof(WindowTitle));
         }
@@ -740,6 +877,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         Crop.Dispose();
         Context.Ruler.PropertyChanged -= OnRulerChanged;
         Context.Crop.Changed -= OnCropChanged;
+        _recents.Changed -= OnRecentsChanged;
         Layers.Dispose();
         Context.Dispose();
     }

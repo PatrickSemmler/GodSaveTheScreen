@@ -23,6 +23,10 @@ public sealed class AppPaths : IAppPaths
         }
 
         SettingsFilePath = Path.Combine(DataDirectory, "settings.json");
+        RecentFilesPath = Path.Combine(DataDirectory, "recent.json");
+        AutosaveDirectory = IsPortable
+            ? Path.Combine(DataDirectory, "autosave")
+            : Path.Combine(localAppData, AppFolderName, "autosave");
     }
 
     public bool IsPortable { get; }
@@ -32,6 +36,10 @@ public sealed class AppPaths : IAppPaths
     public string LogDirectory { get; }
 
     public string SettingsFilePath { get; }
+
+    public string AutosaveDirectory { get; }
+
+    public string RecentFilesPath { get; }
 
     public static AppPaths ForCurrentProcess() => new(
         AppContext.BaseDirectory,

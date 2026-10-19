@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace GodSaveTheScreen.Core.Geometry;
 
 public readonly record struct VectorD(double X, double Y)
@@ -5,6 +7,7 @@ public readonly record struct VectorD(double X, double Y)
     public double Length => Math.Sqrt((X * X) + (Y * Y));
 }
 
+[JsonConverter(typeof(PointDJsonConverter))]
 public readonly record struct PointD(double X, double Y)
 {
     public static PointD operator +(PointD p, VectorD v) => new(p.X + v.X, p.Y + v.Y);
@@ -23,6 +26,7 @@ public readonly record struct SizeD(double Width, double Height)
     public bool IsEmpty => Width <= 0 || Height <= 0;
 }
 
+[JsonConverter(typeof(RectDJsonConverter))]
 public readonly record struct RectD(double X, double Y, double Width, double Height)
 {
     public static RectD Empty => new(0, 0, 0, 0);
@@ -110,6 +114,7 @@ public readonly record struct RectD(double X, double Y, double Width, double Hei
     }
 }
 
+[JsonConverter(typeof(PixelRectJsonConverter))]
 public readonly record struct PixelRect(int X, int Y, int Width, int Height)
 {
     public static PixelRect Empty => new(0, 0, 0, 0);

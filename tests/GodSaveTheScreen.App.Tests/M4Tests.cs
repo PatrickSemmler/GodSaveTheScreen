@@ -11,6 +11,7 @@ using GodSaveTheScreen.App.ViewModels;
 using GodSaveTheScreen.Core.Annotations;
 using GodSaveTheScreen.Core.Geometry;
 using GodSaveTheScreen.Core.Imaging;
+using GodSaveTheScreen.Core.Project;
 using GodSaveTheScreen.Core.Services;
 using GodSaveTheScreen.Core.Settings;
 using GodSaveTheScreen.Rendering;
@@ -18,6 +19,16 @@ using Microsoft.Extensions.Logging.Abstractions;
 using NSubstitute;
 
 namespace GodSaveTheScreen.App.Tests;
+
+internal static class TestDoubles
+{
+    public static IRecentFilesService EmptyRecents()
+    {
+        var recents = Substitute.For<IRecentFilesService>();
+        recents.Items.Returns([]);
+        return recents;
+    }
+}
 
 /// <summary>Baut Kontext, Werkzeuge und ViewModel eines Editors mit gefälschten Diensten.</summary>
 internal sealed class EditorHarness
@@ -33,9 +44,12 @@ internal sealed class EditorHarness
         Codec = Substitute.For<IImageCodecService>();
         Editors = Substitute.For<IEditorService>();
         Capture = Substitute.For<ICaptureLauncher>();
+        Projects = Substitute.For<IProjectService>();
+        Recents = Substitute.For<IRecentFilesService>();
+        Recents.Items.Returns([]);
         Context = new EditorContext(Document, Defaults, Settings, Exporter);
         Tools = ToolRegistry.Create(Context);
-        ViewModel = new EditorViewModel(Context, Tools, Dialogs, Clipboard, Codec, Exporter, Editors, Settings, Capture, NullLogger<EditorViewModel>.Instance);
+        ViewModel = new EditorViewModel(Context, Tools, Dialogs, Clipboard, Codec, Exporter, Editors, Settings, Capture, Projects, Recents, NullLogger<EditorViewModel>.Instance);
     }
 
     public ImageDocument Document { get; }
@@ -55,6 +69,10 @@ internal sealed class EditorHarness
     public IEditorService Editors { get; }
 
     public ICaptureLauncher Capture { get; }
+
+    public IProjectService Projects { get; }
+
+    public IRecentFilesService Recents { get; }
 
     public EditorContext Context { get; }
 
@@ -1020,7 +1038,7 @@ public sealed class EditorViewModelTests
         var h = new EditorHarness();
         h.AddRectangle(0, 0, 10, 10);
         h.Dialogs.AskSaveChanges(default!, default!).ReturnsForAnyArgs(SaveChangesAnswer.Save);
-        h.Dialogs.PickImageSavePath(default!, default, default).ReturnsForAnyArgs((@"C:\temp\test.jpg", ImageFormatSetting.Jpeg));
+        h.Dialogs.PickDocumentSavePath(default!, default, default, default).ReturnsForAnyArgs((@"C:\temp\test.jpg", (ImageFormatSetting?)ImageFormatSetting.Jpeg));
 
         (await h.ViewModel.ConfirmCloseAsync()).ShouldBeTrue();
 
@@ -1038,7 +1056,7 @@ public sealed class EditorViewModelTests
 
         await h.ViewModel.TrySaveAsync(forceDialog: false);
 
-        h.Dialogs.DidNotReceiveWithAnyArgs().PickImageSavePath(default!, default, default);
+        h.Dialogs.DidNotReceiveWithAnyArgs().PickDocumentSavePath(default!, default, default, default);
         await h.Codec.Received(1).SaveAsync(Arg.Any<PixelBuffer>(), Arg.Any<double>(), Arg.Any<double>(), @"C:\temp\bekannt.png", Arg.Any<ImageSaveOptions>());
     }
 
@@ -1048,7 +1066,7 @@ public sealed class EditorViewModelTests
         var h = new EditorHarness();
         h.Document.SourcePath = @"C:\temp\bekannt.png";
         h.AddRectangle(0, 0, 10, 10);
-        h.Dialogs.PickImageSavePath(default!, default, default).ReturnsForAnyArgs((ValueTuple<string, ImageFormatSetting>?)null);
+        h.Dialogs.PickDocumentSavePath(default!, default, default, default).ReturnsForAnyArgs((ValueTuple<string, ImageFormatSetting?>?)null);
 
         (await h.ViewModel.TrySaveAsync(forceDialog: true)).ShouldBeFalse();
 

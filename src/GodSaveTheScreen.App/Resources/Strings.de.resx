@@ -308,4 +308,22 @@
   <data name="Crop_NoBorder" xml:space="preserve"><value>Es wurde kein Rand einheitlicher Farbe gefunden.</value></data>
   <data name="Crop_Help" xml:space="preserve"><value>Zum Ändern die Griffe ziehen, im Inneren verschieben, außerhalb einen neuen Bereich aufziehen. Umschalt hält das Verhältnis, Alt schaltet das Einrasten aus. Eingabe übernimmt, Esc bricht ab.</value></data>
   <data name="Layers_OutsideCrop" xml:space="preserve"><value>Außerhalb des Zuschnitts (im Ergebnis nicht sichtbar)</value></data>
+  <data name="Dialog_SaveAsProject" xml:space="preserve"><value>Als Projekt speichern</value></data>
+  <data name="Dialog_Recover" xml:space="preserve"><value>Wiederherstellen</value></data>
+  <data name="Dialog_Discard" xml:space="preserve"><value>Verwerfen</value></data>
+  <data name="Open_Projects" xml:space="preserve"><value>GodSaveTheScreen-Projekt (Objekte bearbeitbar)</value></data>
+  <data name="Open_AllSupported" xml:space="preserve"><value>Alle unterstützten Dateien</value></data>
+  <data name="Project_Warnings" xml:space="preserve"><value>{0} Objekt(e) im Projekt konnten nicht gelesen werden und wurden übersprungen. {1}</value></data>
+  <data name="Project_BlurHint" xml:space="preserve"><value>Hinweis: Das Projekt enthält das unveränderte Originalbild. Unscharf oder geschwärzt gemachte Bereiche bleiben in der Projektdatei lesbar – geben Sie besser das exportierte Bild weiter.</value></data>
+  <data name="Editor_Export" xml:space="preserve"><value>Exportieren…</value></data>
+  <data name="Editor_ExportTip" xml:space="preserve"><value>Ergebnis als Bilddatei exportieren</value></data>
+  <data name="Recent_Title" xml:space="preserve"><value>Zuletzt verwendet</value></data>
+  <data name="Recent_Clear" xml:space="preserve"><value>Liste leeren</value></data>
+  <data name="Recent_RemoveMissing" xml:space="preserve"><value>Fehlende Einträge entfernen</value></data>
+  <data name="Recent_Empty" xml:space="preserve"><value>Keine zuletzt verwendeten Dateien</value></data>
+  <data name="Recent_Missing" xml:space="preserve"><value>Datei existiert nicht mehr</value></data>
+  <data name="Recent_Remove" xml:space="preserve"><value>Aus Liste entfernen</value></data>
+  <data name="Recovery_Title" xml:space="preserve"><value>Nicht gespeicherte Arbeit wiederherstellen</value></data>
+  <data name="Recovery_Message" xml:space="preserve"><value>Die letzte Sitzung wurde unerwartet beendet. Es wurden {0} nicht gespeicherte Dokument(e) gefunden. Möchten Sie sie wiederherstellen?</value></data>
+  <data name="Recovery_Info" xml:space="preserve"><value>Aus der automatischen Sicherung wiederhergestellt. Speichern Sie das Dokument, um die Arbeit zu behalten.</value></data>
 </root>

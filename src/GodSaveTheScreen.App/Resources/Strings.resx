@@ -308,4 +308,22 @@
   <data name="Crop_NoBorder" xml:space="preserve"><value>No border of a single colour was found.</value></data>
   <data name="Crop_Help" xml:space="preserve"><value>Drag the handles to resize, drag inside to move, drag outside to draw a new area. Shift keeps the ratio, Alt disables snapping. Enter applies, Esc cancels.</value></data>
   <data name="Layers_OutsideCrop" xml:space="preserve"><value>Outside the crop (not visible in the result)</value></data>
+  <data name="Dialog_SaveAsProject" xml:space="preserve"><value>Save as project</value></data>
+  <data name="Dialog_Recover" xml:space="preserve"><value>Recover</value></data>
+  <data name="Dialog_Discard" xml:space="preserve"><value>Discard</value></data>
+  <data name="Open_Projects" xml:space="preserve"><value>GodSaveTheScreen project (objects stay editable)</value></data>
+  <data name="Open_AllSupported" xml:space="preserve"><value>All supported files</value></data>
+  <data name="Project_Warnings" xml:space="preserve"><value>{0} object(s) in the project could not be read and were skipped. {1}</value></data>
+  <data name="Project_BlurHint" xml:space="preserve"><value>Note: the project keeps the unchanged original image. Areas hidden by blur or redaction stay readable inside the project file – share the exported image instead.</value></data>
+  <data name="Editor_Export" xml:space="preserve"><value>Export…</value></data>
+  <data name="Editor_ExportTip" xml:space="preserve"><value>Export the result as an image file</value></data>
+  <data name="Recent_Title" xml:space="preserve"><value>Recent files</value></data>
+  <data name="Recent_Clear" xml:space="preserve"><value>Clear list</value></data>
+  <data name="Recent_RemoveMissing" xml:space="preserve"><value>Remove missing entries</value></data>
+  <data name="Recent_Empty" xml:space="preserve"><value>No recent files</value></data>
+  <data name="Recent_Missing" xml:space="preserve"><value>File no longer exists</value></data>
+  <data name="Recent_Remove" xml:space="preserve"><value>Remove from list</value></data>
+  <data name="Recovery_Title" xml:space="preserve"><value>Recover unsaved work</value></data>
+  <data name="Recovery_Message" xml:space="preserve"><value>The last session ended unexpectedly. {0} unsaved document(s) were found. Do you want to recover them?</value></data>
+  <data name="Recovery_Info" xml:space="preserve"><value>Recovered from the automatic backup. Save it to keep your work.</value></data>
 </root>

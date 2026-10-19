@@ -3,6 +3,7 @@ using System.Windows;
 using GodSaveTheScreen.App.Resources;
 using GodSaveTheScreen.App.Views;
 using GodSaveTheScreen.Core.Imaging;
+using GodSaveTheScreen.Core.Project;
 using GodSaveTheScreen.Core.Services;
 using GodSaveTheScreen.Core.Settings;
 using Microsoft.Extensions.DependencyInjection;
@@ -42,6 +43,7 @@ public sealed class DialogService : IDialogService
     private const int Primary = 0;
     private const int Secondary = 1;
     private const int Cancelled = 2;
+    private const int SaveProject = 3;
 
     public void ShowError(string title, string message) =>
         Show(title, message, DialogKind.Error, [new DialogButton(Strings.Dialog_Ok, Primary, IsPrimary: true, IsCancel: true)]);
@@ -50,18 +52,31 @@ public sealed class DialogService : IDialogService
         Show(title, message, DialogKind.Question,
             [new DialogButton(Strings.Dialog_Yes, Primary, IsPrimary: true), new DialogButton(Strings.Dialog_No, Secondary, IsCancel: true)]) == Primary;
 
-    public SaveChangesAnswer AskSaveChanges(string title, string message) =>
-        Show(title, message, DialogKind.Warning,
+    public SaveChangesAnswer AskSaveChanges(string title, string message, bool offerProject = false)
+    {
+        List<DialogButton> buttons =
         [
             new DialogButton(Strings.Dialog_Save, Primary, IsPrimary: true),
             new DialogButton(Strings.Dialog_DontSave, Secondary),
             new DialogButton(Strings.Dialog_Cancel, Cancelled, IsCancel: true),
-        ]) switch
+        ];
+        if (offerProject)
+        {
+            buttons.Insert(1, new DialogButton(Strings.Dialog_SaveAsProject, SaveProject));
+        }
+
+        return Show(title, message, DialogKind.Warning, buttons) switch
         {
             Primary => SaveChangesAnswer.Save,
+            SaveProject => SaveChangesAnswer.SaveAsProject,
             Secondary => SaveChangesAnswer.Discard,
             _ => SaveChangesAnswer.Cancel,
         };
+    }
+
+    public bool AskRecovery(string title, string message) =>
+        Show(title, message, DialogKind.Question,
+            [new DialogButton(Strings.Dialog_Recover, Primary, IsPrimary: true), new DialogButton(Strings.Dialog_Discard, Secondary, IsCancel: true)]) == Primary;
 
     /// <summary>Zeigt den themenkonformen Dialog modal; Besitzer ist das aktive App-Fenster.</summary>
     private static int Show(string title, string message, DialogKind kind, IReadOnlyList<DialogButton> buttons)
@@ -127,14 +142,59 @@ public sealed class DialogService : IDialogService
         return (dialog.FileName, chosen);
     }
 
+    public (string Path, ImageFormatSetting? Format)? PickDocumentSavePath(string suggestedName, string? initialDirectory, ImageFormatSetting format, bool preferProject)
+    {
+        var formats = ImageFormats.All;
+        var project = $"{Strings.Open_Projects} (*{ProjectSerializer.Extension})|*{ProjectSerializer.Extension}";
+        var dialog = new SaveFileDialog
+        {
+            FileName = System.IO.Path.GetFileNameWithoutExtension(suggestedName),
+            InitialDirectory = initialDirectory is not null && Directory.Exists(initialDirectory) ? initialDirectory : string.Empty,
+            Filter = project + "|" + string.Join('|', formats.Select(f =>
+            {
+                var patterns = string.Join(';', ImageFormats.Extensions(f).Select(e => "*" + e));
+                return $"{ImageFormats.DisplayName(f)} ({patterns})|{patterns}";
+            })),
+            FilterIndex = preferProject ? 1 : formats.ToList().IndexOf(format) + 2,
+            AddExtension = true,
+            OverwritePrompt = true,
+            Title = Strings.Editor_SaveAs,
+        };
+        if (dialog.ShowDialog() != true)
+        {
+            return null;
+        }
+
+        var extension = System.IO.Path.GetExtension(dialog.FileName);
+        if (string.Equals(extension, ProjectSerializer.Extension, StringComparison.OrdinalIgnoreCase))
+        {
+            return (dialog.FileName, null);
+        }
+
+        var chosen = ImageFormats.FromExtension(extension);
+        if (chosen is null)
+        {
+            // Filter 1 = Projekt, 2… = Bildformate.
+            return dialog.FilterIndex == 1
+                ? (dialog.FileName + ProjectSerializer.Extension, null)
+                : (dialog.FileName, formats[Math.Clamp(dialog.FilterIndex - 2, 0, formats.Count - 1)]);
+        }
+
+        return (dialog.FileName, chosen);
+    }
+
     public IReadOnlyList<string> PickImageFiles()
     {
-        var all = string.Join(';', ImageFileFilter.GetOpenExtensions().Select(e => "*" + e));
+        var images = string.Join(';', ImageFileFilter.GetOpenExtensions().Select(e => "*" + e));
+        var all = images + ";*" + ProjectSerializer.Extension;
         var dialog = new OpenFileDialog
         {
             Multiselect = true,
             CheckFileExists = true,
-            Filter = $"{Strings.Open_AllImages} ({all})|{all}|{Strings.Open_AllFiles} (*.*)|*.*",
+            Filter = $"{Strings.Open_AllSupported} ({all})|{all}"
+                + $"|{Strings.Open_Projects} (*{ProjectSerializer.Extension})|*{ProjectSerializer.Extension}"
+                + $"|{Strings.Open_AllImages} ({images})|{images}"
+                + $"|{Strings.Open_AllFiles} (*.*)|*.*",
             Title = Strings.Start_Open,
         };
         return dialog.ShowDialog() == true ? dialog.FileNames : [];

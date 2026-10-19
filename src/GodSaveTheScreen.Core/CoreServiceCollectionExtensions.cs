@@ -1,3 +1,4 @@
+using GodSaveTheScreen.Core.Project;
 using GodSaveTheScreen.Core.Settings;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -9,6 +10,7 @@ public static class CoreServiceCollectionExtensions
     {
         services.AddSingleton(paths ?? AppPaths.ForCurrentProcess());
         services.AddSingleton<ISettingsService, JsonSettingsService>();
+        services.AddSingleton<IRecentFilesService, RecentFilesService>();
         return services;
     }
 }

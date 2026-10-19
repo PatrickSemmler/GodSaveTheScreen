@@ -165,7 +165,11 @@ public sealed class CaptureCoordinator : ICaptureLauncher
             return null;
         }
 
-        var document = new ImageDocument(image, currentMonitor.DpiX, currentMonitor.DpiY) { IsDirty = true };
+        var document = new ImageDocument(image, currentMonitor.DpiX, currentMonitor.DpiY)
+        {
+            IsDirty = true,
+            Metadata = new DocumentMetadata(request.Mode.ToString(), windowTitle),
+        };
         return new CaptureResultContext(document, request.Mode, windowTitle, DateTimeOffset.Now);
     }
 

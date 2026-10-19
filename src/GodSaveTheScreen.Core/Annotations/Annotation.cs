@@ -72,6 +72,14 @@ public abstract partial class Annotation : ObservableObject
         return copy;
     }
 
+    /// <summary>Tiefe Kopie mit derselben <see cref="Id"/> (Momentaufnahme für Speichern und Sicherungen).</summary>
+    public Annotation Snapshot()
+    {
+        var copy = Clone();
+        copy.Id = Id;
+        return copy;
+    }
+
     /// <summary>Übernimmt alle veränderlichen Eigenschaften (außer <see cref="Id"/>) von einem Objekt desselben Typs.</summary>
     public void CopyFrom(Annotation source)
     {

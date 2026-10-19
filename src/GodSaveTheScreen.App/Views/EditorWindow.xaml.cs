@@ -5,6 +5,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Interop;
 using GodSaveTheScreen.App.Editor.Tools;
+using GodSaveTheScreen.App.Resources;
 using GodSaveTheScreen.App.Services;
 using GodSaveTheScreen.App.ViewModels;
 using GodSaveTheScreen.Capture;
@@ -128,6 +129,47 @@ public partial class EditorWindow : FluentWindow
             menu.Placement = PlacementMode.Bottom;
             menu.IsOpen = true;
         }
+    }
+
+    /// <summary>Menü „Zuletzt verwendet“ unter dem Öffnen-Knopf; fehlende Dateien sind ausgegraut und lassen sich entfernen.</summary>
+    private void OnRecentClick(object sender, RoutedEventArgs e)
+    {
+        var menu = new ContextMenu { PlacementTarget = RecentButton, Placement = PlacementMode.Bottom };
+        var items = _viewModel.RecentItems;
+        if (items.Count == 0)
+        {
+            menu.Items.Add(new System.Windows.Controls.MenuItem { Header = Strings.Recent_Empty, IsEnabled = false });
+        }
+
+        foreach (var file in items)
+        {
+            var path = file;
+            var item = new System.Windows.Controls.MenuItem
+            {
+                Header = file.Name.Replace("_", "__", StringComparison.Ordinal),
+                ToolTip = file.IsMissing ? $"{file.Path} – {Strings.Recent_Missing}" : file.Path,
+                IsEnabled = !file.IsMissing,
+            };
+            item.Click += (_, _) => _viewModel.OpenRecentCommand.Execute(path);
+            menu.Items.Add(item);
+        }
+
+        if (items.Count > 0)
+        {
+            menu.Items.Add(new Separator());
+            if (items.Any(i => i.IsMissing))
+            {
+                var remove = new System.Windows.Controls.MenuItem { Header = Strings.Recent_RemoveMissing };
+                remove.Click += (_, _) => _viewModel.RemoveMissingRecentsCommand.Execute(null);
+                menu.Items.Add(remove);
+            }
+
+            var clear = new System.Windows.Controls.MenuItem { Header = Strings.Recent_Clear };
+            clear.Click += (_, _) => _viewModel.ClearRecentsCommand.Execute(null);
+            menu.Items.Add(clear);
+        }
+
+        menu.IsOpen = true;
     }
 
     // ---- Tastatur ----

@@ -6,6 +6,7 @@ using GodSaveTheScreen.App.ViewModels;
 using GodSaveTheScreen.App.Views;
 using GodSaveTheScreen.App.Views.Settings;
 using GodSaveTheScreen.Core.Capture;
+using GodSaveTheScreen.Core.Project;
 using GodSaveTheScreen.Core.Services;
 using GodSaveTheScreen.Core.Settings;
 using NSubstitute;
@@ -74,7 +75,7 @@ public sealed class WindowSmokeTests
     private static void StartWindowSmoke()
     {
         var coordinator = TestCoordinator.Create(new FakeSettings()).Coordinator;
-        var viewModel = new StartViewModel(coordinator, new FakeSettings(), Substitute.For<IAppShell>(), Substitute.For<IEditorService>(), Substitute.For<IDialogService>());
+        var viewModel = new StartViewModel(coordinator, new FakeSettings(), Substitute.For<IAppShell>(), Substitute.For<IEditorService>(), Substitute.For<IDialogService>(), TestDoubles.EmptyRecents(), Substitute.For<IProjectService>());
         var window = new StartWindow(viewModel, Substitute.For<IThemeService>());
         window.Show();
         window.Close();

@@ -36,6 +36,9 @@ public interface IImageCodecService
     Task SaveAsync(PixelBuffer image, double dpiX, double dpiY, string path, ImageSaveOptions options, CancellationToken cancellationToken = default);
 
     byte[] Encode(PixelBuffer image, double dpiX, double dpiY, ImageSaveOptions options);
+
+    /// <summary>Dekodiert ein Bild aus dem Speicher (z. B. <c>base.png</c> eines Projekts).</summary>
+    LoadedImage Decode(byte[] data);
 }
 
 /// <summary>Rendert das Dokument (Basisbild + sichtbare Annotationen) in einen Pixelpuffer.</summary>

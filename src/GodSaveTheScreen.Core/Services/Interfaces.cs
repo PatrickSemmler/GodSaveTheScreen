@@ -9,6 +9,9 @@ public enum SaveChangesAnswer
     Save,
     Discard,
     Cancel,
+
+    /// <summary>Als bearbeitbares Projekt (<c>.gsts</c>) speichern.</summary>
+    SaveAsProject,
 }
 
 public interface IDialogService
@@ -18,8 +21,14 @@ public interface IDialogService
     /// <summary>Ja/Nein-Rückfrage. Gibt <c>true</c> bei „Ja“ zurück.</summary>
     bool Confirm(string title, string message);
 
-    /// <summary>Speichern / Nicht speichern / Abbrechen.</summary>
-    SaveChangesAnswer AskSaveChanges(string title, string message);
+    /// <summary>
+    /// Speichern / Nicht speichern / Abbrechen. Mit <paramref name="offerProject"/> zusätzlich „Als Projekt speichern“
+    /// (Dokument enthält Objekte, die in einem Bildformat nicht mehr bearbeitbar wären).
+    /// </summary>
+    SaveChangesAnswer AskSaveChanges(string title, string message, bool offerProject = false);
+
+    /// <summary>Wiederherstellen (<c>true</c>) oder Verwerfen (<c>false</c>) nicht gespeicherter Dokumente nach einem Absturz.</summary>
+    bool AskRecovery(string title, string message);
 
     /// <summary>Fragt nach einem Ordner. Gibt <c>null</c> bei Abbruch zurück.</summary>
     string? PickFolder(string? initialDirectory);
@@ -30,7 +39,13 @@ public interface IDialogService
     /// <summary>Speichern-Dialog mit allen Formaten; liefert Pfad und gewähltes Format oder <c>null</c> bei Abbruch.</summary>
     (string Path, Settings.ImageFormatSetting Format)? PickImageSavePath(string suggestedName, string? initialDirectory, Settings.ImageFormatSetting format);
 
-    /// <summary>Öffnen-Dialog für Bilder (mehrfach); leer bei Abbruch.</summary>
+    /// <summary>
+    /// Speichern-Dialog mit „GodSaveTheScreen-Projekt“ als erstem Format und allen Bildformaten.
+    /// <c>Format == null</c> bedeutet Projekt. <c>null</c> bei Abbruch.
+    /// </summary>
+    (string Path, Settings.ImageFormatSetting? Format)? PickDocumentSavePath(string suggestedName, string? initialDirectory, Settings.ImageFormatSetting format, bool preferProject);
+
+    /// <summary>Öffnen-Dialog für Bilder und Projekte (mehrfach); leer bei Abbruch.</summary>
     IReadOnlyList<string> PickImageFiles();
 }
 

@@ -57,9 +57,12 @@
             </ContextMenu>
           </ui:Button.ContextMenu>
         </ui:Button>
-        <ui:Button Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon FolderOpen24}" Content="{l:Loc Editor_Open}" Command="{Binding OpenCommand}" ToolTip="Ctrl+O" />
+        <ui:Button Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon FolderOpen24}" Content="{l:Loc Editor_Open}" Command="{Binding OpenCommand}" ToolTip="Ctrl+O" Margin="0" />
+        <ui:Button x:Name="RecentButton" Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon ChevronDown16}" Padding="4,6"
+                   Click="OnRecentClick" ToolTip="{l:Loc Recent_Title}" AutomationProperties.Name="{l:Loc Recent_Title}" />
         <ui:Button Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon Save24}" Content="{l:Loc Editor_Save}" Command="{Binding SaveCommand}" ToolTip="Ctrl+S" />
         <ui:Button Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon SaveEdit24}" Command="{Binding SaveAsCommand}" ToolTip="{l:Loc Editor_SaveAs}" AutomationProperties.Name="{l:Loc Editor_SaveAs}" />
+        <ui:Button Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon ArrowExportUp24}" Command="{Binding ExportCommand}" ToolTip="{l:Loc Editor_ExportTip}" AutomationProperties.Name="{l:Loc Editor_Export}" />
         <ToggleButton x:Name="OptionsToggle" Margin="0,0,2,0" Padding="8,6" ToolTip="{l:Loc Editor_SaveOptions}" AutomationProperties.Name="{l:Loc Editor_SaveOptions}" Background="Transparent" BorderThickness="0">
           <ui:SymbolIcon Symbol="Options24" />
         </ToggleButton>

@@ -1,10 +1,13 @@
+using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GodSaveTheScreen.App.Capture;
 using GodSaveTheScreen.App.Resources;
 using GodSaveTheScreen.App.Services;
 using GodSaveTheScreen.Core.Capture;
+using GodSaveTheScreen.Core.Project;
 using GodSaveTheScreen.Core.Services;
 using GodSaveTheScreen.Core.Settings;
 
@@ -24,14 +27,27 @@ public sealed partial class StartViewModel : ObservableObject
     private readonly IAppShell _shell;
     private readonly IEditorService _editors;
     private readonly IDialogService _dialogs;
+    private readonly IRecentFilesService _recents;
+    private readonly IProjectService _projects;
 
-    public StartViewModel(CaptureCoordinator coordinator, ISettingsService settings, IAppShell shell, IEditorService editors, IDialogService dialogs)
+    public StartViewModel(
+        CaptureCoordinator coordinator,
+        ISettingsService settings,
+        IAppShell shell,
+        IEditorService editors,
+        IDialogService dialogs,
+        IRecentFilesService recents,
+        IProjectService projects)
     {
         _coordinator = coordinator;
         _settings = settings;
         _shell = shell;
         _editors = editors;
         _dialogs = dialogs;
+        _recents = recents;
+        _projects = projects;
+        _recents.Changed += OnRecentsChanged;
+        RefreshRecents();
 
         Modes =
         [
@@ -64,6 +80,11 @@ public sealed partial class StartViewModel : ObservableObject
 
         _selectedTimer = preset;
     }
+
+    /// <summary>Zuletzt verwendete Dateien (neueste zuerst).</summary>
+    public ObservableCollection<RecentItemViewModel> RecentItems { get; } = [];
+
+    public bool HasRecents => RecentItems.Count > 0;
 
     public IReadOnlyList<CaptureModeOption> Modes { get; }
 
@@ -130,4 +151,50 @@ public sealed partial class StartViewModel : ObservableObject
 
     [RelayCommand]
     private void OpenSettings() => _shell.ShowSettings();
+
+    [RelayCommand]
+    private async Task OpenRecentAsync(RecentItemViewModel? item)
+    {
+        if (item is { IsMissing: false })
+        {
+            await _editors.OpenFilesAsync([item.Path]);
+        }
+    }
+
+    [RelayCommand]
+    private void RemoveRecent(RecentItemViewModel? item)
+    {
+        if (item is not null)
+        {
+            _recents.Remove(item.Path);
+        }
+    }
+
+    [RelayCommand]
+    private void ClearRecents() => _recents.Clear();
+
+    private void OnRecentsChanged(object? sender, EventArgs e)
+    {
+        if (Application.Current?.Dispatcher is { } dispatcher && !dispatcher.CheckAccess())
+        {
+            dispatcher.BeginInvoke(RefreshRecents);
+        }
+        else
+        {
+            RefreshRecents();
+        }
+    }
+
+    private void RefreshRecents()
+    {
+        RecentItems.Clear();
+        foreach (var file in _recents.Items)
+        {
+            var item = new RecentItemViewModel(file);
+            RecentItems.Add(item);
+            _ = item.LoadThumbnailAsync(_projects);
+        }
+
+        OnPropertyChanged(nameof(HasRecents));
+    }
 }

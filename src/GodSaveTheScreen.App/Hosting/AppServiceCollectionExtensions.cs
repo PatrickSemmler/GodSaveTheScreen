@@ -33,6 +33,10 @@ public static class AppServiceCollectionExtensions
         services.AddSingleton<CaptureCoordinator>();
         services.AddSingleton<ICaptureLauncher>(sp => sp.GetRequiredService<CaptureCoordinator>());
         services.AddSingleton<IEditorService, EditorService>();
+        services.AddSingleton<AutoBackupService>();
+        services.AddSingleton<IAutoBackupService>(sp => sp.GetRequiredService<AutoBackupService>());
+        services.AddSingleton<IHostedService>(sp => sp.GetRequiredService<AutoBackupService>());
+        services.AddSingleton<IHostedService, JumpListService>();
         services.AddSingleton<IToolDefaultsService, ToolDefaultsService>();
 
         services.AddSingleton<TrayService>();

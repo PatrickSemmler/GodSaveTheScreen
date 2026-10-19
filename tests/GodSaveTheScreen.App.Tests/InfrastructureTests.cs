@@ -56,18 +56,18 @@ public sealed class CommandLineParserTests
     }
 }
 
+/// <summary>Findet das Repository-Verzeichnis anhand des Quelltextpfads (unabhängig vom Ausgabeordner der Tests).</summary>
+internal static class RepoPaths
+{
+    public static string Root([System.Runtime.CompilerServices.CallerFilePath] string sourceFile = "") =>
+        Path.GetFullPath(Path.Combine(Path.GetDirectoryName(sourceFile)!, "..", ".."));
+}
+
 public sealed class LocalizationTests
 {
     private static HashSet<string> Keys(string fileName)
     {
-        var dir = new DirectoryInfo(AppContext.BaseDirectory);
-        while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "GodSaveTheScreen.slnx")))
-        {
-            dir = dir.Parent;
-        }
-
-        dir.ShouldNotBeNull("Solution-Verzeichnis nicht gefunden");
-        var path = Path.Combine(dir.FullName, "src", "GodSaveTheScreen.App", "Resources", fileName);
+        var path = Path.Combine(RepoPaths.Root(), "src", "GodSaveTheScreen.App", "Resources", fileName);
         return XDocument.Load(path).Root!.Elements("data").Select(e => (string)e.Attribute("name")!).ToHashSet();
     }
 

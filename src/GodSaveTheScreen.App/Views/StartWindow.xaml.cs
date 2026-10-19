@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using GodSaveTheScreen.App.Services;
@@ -31,6 +32,33 @@ public partial class StartWindow : FluentWindow
         if (e.Data.GetData(DataFormats.FileDrop) is string[] files && files.Length > 0)
         {
             await _viewModel.OpenFilesAsync(files);
+        }
+    }
+
+    private void OnRecentDoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (RecentList.SelectedItem is RecentItemViewModel item && ItemsControl.ContainerFromElement(RecentList, (DependencyObject)e.OriginalSource) is not null)
+        {
+            _viewModel.OpenRecentCommand.Execute(item);
+        }
+    }
+
+    private void OnRecentKeyDown(object sender, KeyEventArgs e)
+    {
+        if (RecentList.SelectedItem is not RecentItemViewModel item)
+        {
+            return;
+        }
+
+        if (e.Key == Key.Enter)
+        {
+            _viewModel.OpenRecentCommand.Execute(item);
+            e.Handled = true;
+        }
+        else if (e.Key == Key.Delete)
+        {
+            _viewModel.RemoveRecentCommand.Execute(item);
+            e.Handled = true;
         }
     }
 

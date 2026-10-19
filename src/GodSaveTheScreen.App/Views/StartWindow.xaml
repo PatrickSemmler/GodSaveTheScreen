@@ -6,6 +6,7 @@
                  Title="{l:Loc Start_Title}"
                  Width="760"
                  SizeToContent="Height"
+                 MaxHeight="760"
                  ResizeMode="CanMinimize"
                  WindowStartupLocation="CenterScreen"
                  ExtendsContentIntoTitleBar="True"
@@ -15,6 +16,9 @@
                  Drop="OnDrop"
                  PreviewKeyDown="OnPreviewKeyDown">
   <StackPanel>
+    <StackPanel.Resources>
+      <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    </StackPanel.Resources>
     <ui:TitleBar Title="{l:Loc Start_Title}" />
     <Grid Margin="16,8,16,8">
       <Grid.ColumnDefinitions>
@@ -84,5 +88,61 @@
         </ui:NumberBox.Style>
       </ui:NumberBox>
     </StackPanel>
+    <!-- Zuletzt verwendet -->
+    <Grid Margin="16,0,16,16" Visibility="{Binding HasRecents, Converter={StaticResource BoolToVisibility}}">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="*" />
+      </Grid.RowDefinitions>
+      <DockPanel>
+        <ui:Button DockPanel.Dock="Right" Appearance="Transparent" Content="{l:Loc Recent_Clear}" Command="{Binding ClearRecentsCommand}" Padding="8,2" />
+        <TextBlock Text="{l:Loc Recent_Title}" FontWeight="SemiBold" VerticalAlignment="Center" />
+      </DockPanel>
+      <ListBox x:Name="RecentList"
+               Grid.Row="1"
+               Margin="0,6,0,0"
+               MaxHeight="300"
+               ItemsSource="{Binding RecentItems}"
+               HorizontalContentAlignment="Stretch"
+               ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+               MouseDoubleClick="OnRecentDoubleClick"
+               KeyDown="OnRecentKeyDown"
+               AutomationProperties.Name="{l:Loc Recent_Title}">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Grid Margin="2" ToolTip="{Binding Path}">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="88" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Border Width="80" Height="52" CornerRadius="3" Background="{DynamicResource ControlFillColorSecondaryBrush}" ClipToBounds="True">
+                <Image Source="{Binding Thumbnail}" Stretch="UniformToFill" />
+              </Border>
+              <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="4,0">
+                <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" FontWeight="SemiBold" />
+                <TextBlock Text="{Binding Directory}" TextTrimming="CharacterEllipsis" Opacity="0.65" FontSize="11" />
+                <TextBlock Text="{l:Loc Recent_Missing}" Foreground="{DynamicResource SystemFillColorCautionBrush}" FontSize="11"
+                           Visibility="{Binding IsMissing, Converter={StaticResource BoolToVisibility}}" />
+              </StackPanel>
+              <ui:Button Grid.Column="2" Appearance="Transparent" Icon="{ui:SymbolIcon Dismiss16}" VerticalAlignment="Center"
+                         Command="{Binding DataContext.RemoveRecentCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
+                         CommandParameter="{Binding}"
+                         ToolTip="{l:Loc Recent_Remove}"
+                         AutomationProperties.Name="{l:Loc Recent_Remove}" />
+            </Grid>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+        <ListBox.ItemContainerStyle>
+          <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding IsMissing}" Value="True">
+                <Setter Property="Opacity" Value="0.5" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </ListBox.ItemContainerStyle>
+      </ListBox>
+    </Grid>
   </StackPanel>
 </ui:FluentWindow>

@@ -6,6 +6,7 @@ using GodSaveTheScreen.Core.Geometry;
 namespace GodSaveTheScreen.Core.Annotations;
 
 /// <summary>Stützpunkt eines Freihandstrichs in Bildpixeln; <paramref name="Pressure"/> 0–1 (Maus: 1).</summary>
+[JsonConverter(typeof(StrokePointJsonConverter))]
 public readonly record struct StrokePoint(double X, double Y, double Pressure = 1)
 {
     [JsonIgnore]

@@ -50,6 +50,19 @@ public sealed class ImageCodecService : IImageCodecService
         return new LoadedImage(PixelBufferExtensions.FromBitmapSource(frame), dpiX, dpiY, decoder.Frames.Count);
     }
 
+    public LoadedImage Decode(byte[] data)
+    {
+        ArgumentNullException.ThrowIfNull(data);
+        using var stream = new MemoryStream(data, writable: false);
+        var decoder = BitmapDecoder.Create(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad);
+        var frame = decoder.Frames[0];
+        return new LoadedImage(
+            PixelBufferExtensions.FromBitmapSource(frame),
+            frame.DpiX > 0 ? frame.DpiX : 96,
+            frame.DpiY > 0 ? frame.DpiY : 96,
+            decoder.Frames.Count);
+    }
+
     public async Task SaveAsync(
         PixelBuffer image, double dpiX, double dpiY, string path, ImageSaveOptions options, CancellationToken cancellationToken = default)
     {
