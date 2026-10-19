@@ -532,14 +532,12 @@ public sealed class EffectCacheCleanupTests
         harness.Document.Undo.Execute(new GodSaveTheScreen.Core.Undo.AddAnnotationAction(harness.Document.Annotations, new BlurAnnotation { Rect = new RectD(5, 5, 20, 20) }));
         harness.Exporter.Render(harness.Document);
         var id = BaseImageIdentity.Get(image);
-        // Der Cache ist prozessweit; andere Tests (parallel oder zuvor) können eigene Einträge hinterlassen haben.
-        var before = EffectCache.Shared.Count;
-        before.ShouldBeGreaterThan(0);
+        // Der Cache ist prozessweit: nur die Einträge des eigenen Bildes zählen (andere Tests laufen parallel).
+        EffectCache.Shared.CountFor(id).ShouldBeGreaterThan(0);
 
         harness.ViewModel.Dispose();
 
-        EffectCache.Shared.RemoveImage(id); // idempotent
-        EffectCache.Shared.Count.ShouldBeLessThan(before);
+        EffectCache.Shared.CountFor(id).ShouldBe(0);
     }
 }
 

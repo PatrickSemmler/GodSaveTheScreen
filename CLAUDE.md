@@ -17,7 +17,7 @@ Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `doc
 - IDs sind stabil, nie neu vergeben; nicht mehr zutreffende Punkte auf „Obsolet“ setzen statt löschen
 - Pro Änderungspunkt ein eigener Commit (Code + Liste + Eintrag in der Änderungshistorie zusammen)
 - Tests: `dotnet test` im Solution-Root führt hier 0 Tests aus (Exitcode 5, Punkt #7); funktionierend: Testprojekt-`.exe` aus der Ausgabe starten, z. B. `dotnet build -p:ArtifactsPath=C:/Temp/gsts-art` und dann `C:/Temp/gsts-art/bin/GodSaveTheScreen.Core.Tests/debug/GodSaveTheScreen.Core.Tests.exe`
-- Baseline 19.10.2026: Core.Tests 266 grün; App.Tests 448, 1 Fehler (`SchliessenDesEditors_LeertDenEffektCache`, Punkt #5)
+- Baseline 19.10.2026: Core.Tests 266 grün; App.Tests 448, 1 Fehler (inzwischen behoben, #5)
 
 ## Änderungshistorie
 
@@ -28,3 +28,11 @@ Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `doc
 - **Was wurde gemacht**: `SaveAsync` fängt `IOException`/`UnauthorizedAccessException` und protokolliert sie
 - **Warum**: Aufrufer starten `SaveAsync` fire-and-forget (`_ = ...`); Fehler waren unbeobachtet und unsichtbar
 - **Seiteneffekte / Hinweise**: `SaveAsync` wirft bei diesen Fehlern nicht mehr; der Benutzer bekommt keine Meldung, nur Log-Eintrag
+
+### Instabilen Cache-Test repariert – 19.10.2026
+- **Kategorie**: Technik
+- **Verbesserungsliste-ID**: #5
+- **Geänderte Dateien**: `src/GodSaveTheScreen.Rendering/RegionEffects.cs`, `tests/GodSaveTheScreen.App.Tests/M11Tests.cs`
+- **Was wurde gemacht**: `EffectCache.CountFor(baseId)` ergänzt; der Test prüft nur noch Einträge des eigenen Bildes und ruft `RemoveImage` nicht mehr selbst auf (das hatte die Prüfung von `Dispose` verdeckt)
+- **Warum**: Vergleich des globalen Zählers von `EffectCache.Shared` war durch parallele Tests unzuverlässig
+- **Seiteneffekte / Hinweise**: App.Tests 448/448 grün in 3 Läufen

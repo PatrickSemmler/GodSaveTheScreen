@@ -313,6 +313,15 @@ public sealed class EffectCache
         }
     }
 
+    /// <summary>Anzahl der Effekte eines Basisbilds (unabhängig von anderen Bildern im Cache).</summary>
+    public int CountFor(long baseId)
+    {
+        lock (_gate)
+        {
+            return _map.Keys.Count(k => k.BaseId == baseId);
+        }
+    }
+
     /// <summary>Anzahl der Berechnungen (für Tests).</summary>
     public int Misses { get; private set; }
 
