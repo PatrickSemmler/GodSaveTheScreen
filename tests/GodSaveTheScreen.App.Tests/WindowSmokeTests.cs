@@ -153,11 +153,28 @@ public sealed class WindowSmokeTests
                 Idle(window);
             }
 
-            h.Document.MarkSaved();
+            // Schließen mit ungespeicherten Änderungen und „Nicht speichern“: Fenster schließt ohne Ausnahme.
+            h.Document.IsDirty.ShouldBeTrue();
+            h.Dialogs.AskSaveChanges(default!, default!).ReturnsForAnyArgs(GodSaveTheScreen.Core.Services.SaveChangesAnswer.Discard);
+            var closed = false;
+            window.Closed += (_, _) => closed = true;
+            window.Close();
+            for (var i = 0; i < 50 && !closed; i++)
+            {
+                window.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+                Thread.Sleep(20);
+            }
+
+            closed.ShouldBeTrue("Fenster muss nach „Nicht speichern“ geschlossen sein");
         }
         finally
         {
-            window.Close();
+            if (window.IsVisible)
+            {
+                window.Closing += (_, e) => e.Cancel = false;
+                h.Document.MarkSaved();
+                window.Close();
+            }
         }
     }
 

@@ -91,6 +91,9 @@ public partial class EditorWindow : FluentWindow
 
     private async Task ConfirmAndCloseAsync()
     {
+        // Erst nach Rückkehr aus OnClosing fragen: ein modaler Dialog mit diesem Fenster als Besitzer
+        // darf nicht erscheinen, solange das Fenster noch im Schließvorgang steckt.
+        await Dispatcher.InvokeAsync(() => { }, System.Windows.Threading.DispatcherPriority.Background);
         if (await _viewModel.ConfirmCloseAsync())
         {
             _closeConfirmed = true;
