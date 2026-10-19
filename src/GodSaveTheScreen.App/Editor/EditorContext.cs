@@ -123,7 +123,11 @@ public sealed class EditorContext : IDisposable
         Exporter = exporter;
         Document.HighlightersBehind = settings.Current.HighlighterBehind;
         Document.Annotations.CollectionChanged += OnAnnotationsChanged;
+        Crop = new CropState(document);
     }
+
+    /// <summary>Zustand des Zuschnittmodus.</summary>
+    public CropState Crop { get; }
 
     public ImageDocument Document { get; }
 

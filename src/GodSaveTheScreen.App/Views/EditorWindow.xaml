@@ -168,6 +168,7 @@
                Grid.Column="0"
                Margin="8,0,4,8"
                Padding="2"
+               IsEnabled="{Binding AreToolsEnabled}"
                ItemsSource="{Binding Tools.PaletteTools}"
                SelectedItem="{Binding ActiveTool, Mode=OneWay}"
                SelectionChanged="OnToolSelectionChanged"
@@ -212,8 +213,11 @@
       <Border Grid.Column="2"
               Width="300"
               Margin="4,0,8,8"
-              Visibility="{Binding IsPanelOpen, Converter={StaticResource BoolToVisibility}}">
-        <controls:PropertyPanel />
+              Visibility="{Binding IsSidebarVisible, Converter={StaticResource BoolToVisibility}}">
+        <Grid>
+          <controls:PropertyPanel Visibility="{Binding IsPropertyPanelVisible, Converter={StaticResource BoolToVisibility}}" />
+          <controls:CropPanel Visibility="{Binding IsCropping, Converter={StaticResource BoolToVisibility}}" />
+        </Grid>
       </Border>
     </Grid>
 

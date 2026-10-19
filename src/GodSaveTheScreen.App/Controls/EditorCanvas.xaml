@@ -12,10 +12,18 @@
                 Background="{DynamicResource ApplicationBackgroundBrush}"
                 PreviewMouseWheel="OnPreviewMouseWheel"
                 SizeChanged="OnScrollerSizeChanged">
-    <Grid x:Name="Surface"
+    <!-- Rahmen = sichtbarer Bereich (Zuschnitt); die Zeichenfläche liegt in Originalkoordinaten darin und wird verschoben. -->
+    <Grid x:Name="Frame"
           HorizontalAlignment="Center"
           VerticalAlignment="Center"
           Margin="24"
+          ClipToBounds="True">
+      <Grid.LayoutTransform>
+        <ScaleTransform x:Name="ZoomTransform" ScaleX="1" ScaleY="1" />
+      </Grid.LayoutTransform>
+    <Grid x:Name="Surface"
+          HorizontalAlignment="Left"
+          VerticalAlignment="Top"
           Focusable="True"
           FocusVisualStyle="{x:Null}"
           Background="Transparent"
@@ -29,9 +37,9 @@
           MouseDown="OnMouseDown"
           MouseUp="OnMouseUp"
           LostMouseCapture="OnLostMouseCapture">
-      <Grid.LayoutTransform>
-        <ScaleTransform x:Name="ZoomTransform" ScaleX="1" ScaleY="1" />
-      </Grid.LayoutTransform>
+      <Grid.RenderTransform>
+        <TranslateTransform x:Name="CropOffset" />
+      </Grid.RenderTransform>
       <Grid.ContextMenu>
         <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
           <MenuItem Header="{l:Loc Menu_Cut}" Command="{Binding CutCommand}" IsEnabled="{Binding HasSelection}" InputGestureText="Ctrl+X" />
@@ -54,6 +62,7 @@
       <controls:AnnotationLayer x:Name="Annotations" />
       <controls:InteractionLayer x:Name="Interaction" />
       <Canvas x:Name="Overlay" />
+    </Grid>
     </Grid>
   </ScrollViewer>
 </UserControl>

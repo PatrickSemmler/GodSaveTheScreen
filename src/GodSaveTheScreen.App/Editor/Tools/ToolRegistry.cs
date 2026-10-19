@@ -41,7 +41,9 @@ public sealed class PipetteTool : ToolBase
             return;
         }
 
-        var color = Sample(_rendered, args.Position);
+        // Das gerenderte Bild enthält nur den Zuschnitt; Positionen sind in Originalkoordinaten.
+        var origin = Context.Document.EffectiveBounds;
+        var color = Sample(_rendered, new PointD(args.Position.X - origin.X, args.Position.Y - origin.Y));
         Picked?.Invoke(color);
     }
 
@@ -101,6 +103,7 @@ public sealed class ToolRegistry
         new EraserTool(context),
         new BlurTool(context),
         new MagnifierTool(context),
+        new CropTool(context),
         new PipetteTool(context),
     ]);
 }

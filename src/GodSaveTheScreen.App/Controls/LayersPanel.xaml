@@ -43,6 +43,16 @@
       <ListBox.ItemTemplate>
         <DataTemplate>
           <Grid>
+            <Grid.Style>
+              <Style TargetType="Grid">
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding IsOutsideCrop}" Value="True">
+                    <Setter Property="Opacity" Value="0.4" />
+                    <Setter Property="ToolTip" Value="{l:Loc Layers_OutsideCrop}" />
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Grid.Style>
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="Auto" />
               <ColumnDefinition Width="*" />

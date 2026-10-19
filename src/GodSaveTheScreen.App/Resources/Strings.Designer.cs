@@ -565,4 +565,48 @@ public static class Strings
     public static string Magnifier_Circle => ResourceManager.GetString("Magnifier_Circle", Culture) ?? "Magnifier_Circle";
 
     public static string Magnifier_Rectangle => ResourceManager.GetString("Magnifier_Rectangle", Culture) ?? "Magnifier_Rectangle";
+
+    public static string Tool_Crop => ResourceManager.GetString("Tool_Crop", Culture) ?? "Tool_Crop";
+
+    public static string Crop_Title => ResourceManager.GetString("Crop_Title", Culture) ?? "Crop_Title";
+
+    public static string Crop_Apply => ResourceManager.GetString("Crop_Apply", Culture) ?? "Crop_Apply";
+
+    public static string Crop_Cancel => ResourceManager.GetString("Crop_Cancel", Culture) ?? "Crop_Cancel";
+
+    public static string Crop_Reset => ResourceManager.GetString("Crop_Reset", Culture) ?? "Crop_Reset";
+
+    public static string Crop_Aspect => ResourceManager.GetString("Crop_Aspect", Culture) ?? "Crop_Aspect";
+
+    public static string Crop_Free => ResourceManager.GetString("Crop_Free", Culture) ?? "Crop_Free";
+
+    public static string Crop_Original => ResourceManager.GetString("Crop_Original", Culture) ?? "Crop_Original";
+
+    public static string Crop_Custom => ResourceManager.GetString("Crop_Custom", Culture) ?? "Crop_Custom";
+
+    public static string Crop_CustomWidth => ResourceManager.GetString("Crop_CustomWidth", Culture) ?? "Crop_CustomWidth";
+
+    public static string Crop_CustomHeight => ResourceManager.GetString("Crop_CustomHeight", Culture) ?? "Crop_CustomHeight";
+
+    public static string Crop_Position => ResourceManager.GetString("Crop_Position", Culture) ?? "Crop_Position";
+
+    public static string Crop_Size => ResourceManager.GetString("Crop_Size", Culture) ?? "Crop_Size";
+
+    public static string Crop_Width => ResourceManager.GetString("Crop_Width", Culture) ?? "Crop_Width";
+
+    public static string Crop_Height => ResourceManager.GetString("Crop_Height", Culture) ?? "Crop_Height";
+
+    public static string Crop_Commands => ResourceManager.GetString("Crop_Commands", Culture) ?? "Crop_Commands";
+
+    public static string Crop_ToObjects => ResourceManager.GetString("Crop_ToObjects", Culture) ?? "Crop_ToObjects";
+
+    public static string Crop_RemoveBorder => ResourceManager.GetString("Crop_RemoveBorder", Culture) ?? "Crop_RemoveBorder";
+
+    public static string Crop_NoObjects => ResourceManager.GetString("Crop_NoObjects", Culture) ?? "Crop_NoObjects";
+
+    public static string Crop_NoBorder => ResourceManager.GetString("Crop_NoBorder", Culture) ?? "Crop_NoBorder";
+
+    public static string Crop_Help => ResourceManager.GetString("Crop_Help", Culture) ?? "Crop_Help";
+
+    public static string Layers_OutsideCrop => ResourceManager.GetString("Layers_OutsideCrop", Culture) ?? "Layers_OutsideCrop";
 }

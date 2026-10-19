@@ -76,8 +76,24 @@ public partial class EditorCanvas : UserControl
         viewModel.Context.VisibleCenterProvider = VisibleCenter;
         viewModel.PropertyChanged += OnViewModelChanged;
         viewModel.Context.InteractionInvalidated += OnInteractionInvalidated;
+        ApplyViewRect();
         ApplyZoom();
         UpdateCursor();
+    }
+
+    /// <summary>Zeigt nur den sichtbaren Bereich (Zuschnitt, im Zuschnittmodus das ganze Bild) und verschiebt die Zeichenfläche entsprechend.</summary>
+    private void ApplyViewRect()
+    {
+        if (_viewModel is null)
+        {
+            return;
+        }
+
+        var view = _viewModel.ViewRect;
+        Frame.Width = view.Width;
+        Frame.Height = view.Height;
+        CropOffset.X = -view.X;
+        CropOffset.Y = -view.Y;
     }
 
     public void Detach()
@@ -129,6 +145,10 @@ public partial class EditorCanvas : UserControl
                 break;
             case nameof(EditorViewModel.ActiveTool):
                 UpdateCursor();
+                break;
+            case nameof(EditorViewModel.ViewRect):
+                ApplyViewRect();
+                ApplyZoom();
                 break;
         }
     }
@@ -191,7 +211,7 @@ public partial class EditorCanvas : UserControl
             return _viewModel?.Zoom ?? 1;
         }
 
-        var image = _viewModel.Document.BaseImage;
+        var image = _viewModel.ViewRect;
         var dpi = DpiScale;
         var availableWidth = Math.Max(1, Scroller.ActualWidth - (2 * SurfaceMargin)) * dpi;
         var availableHeight = Math.Max(1, Scroller.ActualHeight - (2 * SurfaceMargin)) * dpi;
@@ -567,10 +587,10 @@ public partial class EditorCanvas : UserControl
     /// <summary>Mitte des sichtbaren Bildausschnitts in Bildpixeln.</summary>
     private PointD VisibleCenter()
     {
-        var image = _viewModel!.Document.BaseImage;
+        var view = _viewModel!.ViewRect;
         var viewportCenter = new Point(Scroller.ViewportWidth / 2, Scroller.ViewportHeight / 2);
         var point = Scroller.TranslatePoint(viewportCenter, Surface);
-        return new PointD(Math.Clamp(point.X, 0, image.Width), Math.Clamp(point.Y, 0, image.Height));
+        return new PointD(Math.Clamp(point.X, view.X, view.Right), Math.Clamp(point.Y, view.Y, view.Bottom));
     }
 
     private void OnContextMenuOpening(object sender, ContextMenuEventArgs e)

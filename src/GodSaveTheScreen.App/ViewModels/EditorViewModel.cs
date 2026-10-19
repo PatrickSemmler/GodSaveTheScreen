@@ -73,7 +73,9 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         TextProperties = new TextPropertiesViewModel(context, () => ActiveTool);
         MarkerProperties = new MarkerPropertiesViewModel(context, () => ActiveTool);
         ToolOptions = new ToolOptionsViewModel(context, () => ActiveTool);
+        Crop = new CropViewModel(context, () => tools.Get<CropTool>());
         context.Ruler.PropertyChanged += OnRulerChanged;
+        context.Crop.Changed += OnCropChanged;
         ZoomChoices =
         [
             new ZoomChoice(Strings.Editor_Fit, null),
@@ -104,6 +106,21 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     public MarkerPropertiesViewModel MarkerProperties { get; }
 
     public ToolOptionsViewModel ToolOptions { get; }
+
+    public CropViewModel Crop { get; }
+
+    /// <summary>Der Zuschnittmodus ist aktiv: alle übrigen Werkzeuge sind deaktiviert.</summary>
+    public bool IsCropping => ActiveTool is CropTool;
+
+    public bool AreToolsEnabled => !IsCropping;
+
+    /// <summary>Angezeigter Bildbereich: der Zuschnitt, im Zuschnittmodus das gesamte Originalbild.</summary>
+    public PixelRect ViewRect => IsCropping ? Document.BaseImage.Bounds : Document.EffectiveBounds;
+
+    /// <summary>Seitenleiste sichtbar (im Zuschnittmodus immer, wegen der Zuschnitt-Einstellungen).</summary>
+    public bool IsSidebarVisible => IsPanelOpen || IsCropping;
+
+    public bool IsPropertyPanelVisible => IsPanelOpen && !IsCropping;
 
     /// <summary>Virtuelles Lineal ein- oder ausblenden (beim Einblenden zentriert im sichtbaren Bereich).</summary>
     public bool IsRulerVisible
@@ -146,6 +163,12 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ActiveToolId))]
+    [NotifyPropertyChangedFor(nameof(IsCropping))]
+    [NotifyPropertyChangedFor(nameof(AreToolsEnabled))]
+    [NotifyPropertyChangedFor(nameof(ViewRect))]
+    [NotifyPropertyChangedFor(nameof(IsSidebarVisible))]
+    [NotifyPropertyChangedFor(nameof(IsPropertyPanelVisible))]
+    [NotifyPropertyChangedFor(nameof(ImageSizeText))]
     private ToolBase _activeTool;
 
     public string ActiveToolId => ActiveTool.Id;
@@ -163,6 +186,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     private string _pointerText = string.Empty;
 
     [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(IsSidebarVisible))]
+    [NotifyPropertyChangedFor(nameof(IsPropertyPanelVisible))]
     private bool _isPanelOpen = true;
 
     public string ZoomText
@@ -182,7 +207,14 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         }
     }
 
-    public string ImageSizeText => string.Format(CultureInfo.CurrentUICulture, Strings.Editor_ImageSize, Document.BaseImage.Width, Document.BaseImage.Height);
+    public string ImageSizeText
+    {
+        get
+        {
+            var size = IsCropping ? Context.Crop.Rect : Document.EffectiveBounds;
+            return string.Format(CultureInfo.CurrentUICulture, Strings.Editor_ImageSize, size.Width, size.Height);
+        }
+    }
 
     public string WindowTitle
     {
@@ -251,6 +283,14 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         }
 
         ruler.IsVisible = visible;
+    }
+
+    private void OnCropChanged(object? sender, EventArgs e)
+    {
+        if (IsCropping)
+        {
+            OnPropertyChanged(nameof(ImageSizeText));
+        }
     }
 
     private void OnRulerChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -340,8 +380,14 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         }
     }
 
-    public void SetPointer(PointD? position) =>
-        PointerText = position is { } p ? string.Format(CultureInfo.CurrentUICulture, Strings.Editor_PointerPosition, (int)Math.Floor(p.X), (int)Math.Floor(p.Y)) : string.Empty;
+    public void SetPointer(PointD? position)
+    {
+        // Koordinaten relativ zum Zuschnitt (im Zuschnittmodus zum Originalbild).
+        var origin = IsCropping ? default : Document.EffectiveBounds;
+        PointerText = position is { } p
+            ? string.Format(CultureInfo.CurrentUICulture, Strings.Editor_PointerPosition, (int)Math.Floor(p.X) - origin.X, (int)Math.Floor(p.Y) - origin.Y)
+            : string.Empty;
+    }
 
     private static string FormatZoom(double zoom) => string.Format(CultureInfo.CurrentUICulture, Strings.Editor_ZoomPercent, Math.Round(zoom * 100));
 
@@ -649,10 +695,21 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         {
             OnPropertyChanged(nameof(WindowTitle));
         }
+        else if (e.PropertyName is nameof(ImageDocument.CropRect))
+        {
+            OnPropertyChanged(nameof(ViewRect));
+            OnPropertyChanged(nameof(ImageSizeText));
+        }
     }
 
     private void OnUndoChanged(object? sender, EventArgs e)
     {
+        if (IsCropping)
+        {
+            // Undo/Redo (und das Übernehmen selbst) beendet den Zuschnittmodus.
+            Tools.Get<CropTool>().CancelMode();
+        }
+
         OnPropertyChanged(nameof(PanelHeader));
         OnPropertyChanged(nameof(HasPanelContent));
         OnPropertyChanged(nameof(CanUndo));
@@ -680,7 +737,9 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         TextProperties.Dispose();
         MarkerProperties.Dispose();
         ToolOptions.Dispose();
+        Crop.Dispose();
         Context.Ruler.PropertyChanged -= OnRulerChanged;
+        Context.Crop.Changed -= OnCropChanged;
         Layers.Dispose();
         Context.Dispose();
     }

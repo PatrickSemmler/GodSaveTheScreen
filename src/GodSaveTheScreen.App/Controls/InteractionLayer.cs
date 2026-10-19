@@ -23,6 +23,8 @@ public sealed class InteractionLayer : FrameworkElement
     private static readonly Brush RulerInk = Freeze(new SolidColorBrush(Color.FromRgb(0x4A, 0x3B, 0x00)));
     private static readonly Brush LabelFill = Freeze(new SolidColorBrush(Color.FromArgb(0xD8, 0x20, 0x20, 0x20)));
     private static readonly Brush DangerBrush = Freeze(new SolidColorBrush(Color.FromRgb(0xE5, 0x39, 0x35)));
+    private static readonly Brush CropDim = Freeze(new SolidColorBrush(Color.FromArgb(0x99, 0, 0, 0)));
+    private static readonly Brush CropGrid = Freeze(new SolidColorBrush(Color.FromArgb(0xA0, 0xFF, 0xFF, 0xFF)));
     private static readonly double[] LabelSteps = [100, 200, 500, 1000, 2000, 5000, 10000];
 
     private EditorContext? _context;
@@ -39,6 +41,7 @@ public sealed class InteractionLayer : FrameworkElement
         context.InteractionInvalidated += OnInvalidated;
         context.Selection.Changed += OnInvalidated;
         context.Ruler.PropertyChanged += OnInvalidated;
+        context.Crop.Changed += OnInvalidated;
         InvalidateVisual();
     }
 
@@ -52,6 +55,7 @@ public sealed class InteractionLayer : FrameworkElement
         _context.InteractionInvalidated -= OnInvalidated;
         _context.Selection.Changed -= OnInvalidated;
         _context.Ruler.PropertyChanged -= OnInvalidated;
+        _context.Crop.Changed -= OnInvalidated;
         _context = null;
     }
 
@@ -67,6 +71,12 @@ public sealed class InteractionLayer : FrameworkElement
         if (_context.Interaction.Preview is { } preview)
         {
             AnnotationRenderer.Render(drawingContext, preview, RenderContext);
+        }
+
+        if (_context.Crop.IsActive)
+        {
+            DrawCrop(drawingContext, unit);
+            return;
         }
 
         DrawMarked(drawingContext, unit);
@@ -129,6 +139,64 @@ public sealed class InteractionLayer : FrameworkElement
                 dc.DrawRectangle(HandleFill, handlePen, new Rect(center.X - half, center.Y - half, half * 2, half * 2));
             }
         }
+    }
+
+    /// <summary>Zuschnittmodus: Außenbereich abgedunkelt, Rahmen, L-förmige Eckgriffe, Kantengriffe, beim Ziehen Drittel-Raster.</summary>
+    private void DrawCrop(DrawingContext dc, double unit)
+    {
+        var crop = _context!.Crop;
+        var full = crop.FullBounds;
+        var r = crop.Rect;
+        var fullRect = new Rect(full.X, full.Y, full.Width, full.Height);
+        var cropRect = new Rect(r.X, r.Y, r.Width, r.Height);
+        var dim = new CombinedGeometry(GeometryCombineMode.Exclude, new RectangleGeometry(fullRect), new RectangleGeometry(cropRect));
+        dim.Freeze();
+        dc.DrawGeometry(CropDim, null, dim);
+
+        dc.DrawRectangle(null, new Pen(Brushes.White, unit), cropRect);
+
+        if (crop.IsDragging)
+        {
+            var thin = new Pen(CropGrid, unit);
+            for (var i = 1; i <= 2; i++)
+            {
+                var x = cropRect.X + (cropRect.Width * i / 3);
+                var y = cropRect.Y + (cropRect.Height * i / 3);
+                dc.DrawLine(thin, new Point(x, cropRect.Y), new Point(x, cropRect.Bottom));
+                dc.DrawLine(thin, new Point(cropRect.X, y), new Point(cropRect.Right, y));
+            }
+        }
+
+        var thick = new Pen(Brushes.White, unit * 3) { StartLineCap = PenLineCap.Flat, EndLineCap = PenLineCap.Flat, LineJoin = PenLineJoin.Miter };
+        var length = Math.Min(unit * 18, Math.Min(cropRect.Width, cropRect.Height) / 3);
+        var half = thick.Thickness / 2;
+        var left = cropRect.X - half;
+        var top = cropRect.Y - half;
+        var right = cropRect.Right + half;
+        var bottom = cropRect.Bottom + half;
+
+        void Corner(double x, double y, double dx, double dy)
+        {
+            var figure = new PathFigure { StartPoint = new Point(x, y + (dy * length)), IsClosed = false };
+            figure.Segments.Add(new LineSegment(new Point(x, y), true));
+            figure.Segments.Add(new LineSegment(new Point(x + (dx * length), y), true));
+            var geometry = new PathGeometry([figure]);
+            geometry.Freeze();
+            dc.DrawGeometry(null, thick, geometry);
+        }
+
+        Corner(left, top, 1, 1);
+        Corner(right, top, -1, 1);
+        Corner(left, bottom, 1, -1);
+        Corner(right, bottom, -1, -1);
+
+        var bar = Math.Min(unit * 18, Math.Min(cropRect.Width, cropRect.Height) / 3);
+        var midX = cropRect.X + (cropRect.Width / 2);
+        var midY = cropRect.Y + (cropRect.Height / 2);
+        dc.DrawLine(thick, new Point(midX - (bar / 2), top), new Point(midX + (bar / 2), top));
+        dc.DrawLine(thick, new Point(midX - (bar / 2), bottom), new Point(midX + (bar / 2), bottom));
+        dc.DrawLine(thick, new Point(left, midY - (bar / 2)), new Point(left, midY + (bar / 2)));
+        dc.DrawLine(thick, new Point(right, midY - (bar / 2)), new Point(right, midY + (bar / 2)));
     }
 
     private void DrawMarked(DrawingContext dc, double unit)

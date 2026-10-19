@@ -45,7 +45,7 @@ public partial class EditorWindow : FluentWindow
     {
         _targetMonitor = monitor;
         var scale = monitor.Scale;
-        var image = _viewModel.Document.BaseImage;
+        var image = _viewModel.Document.EffectiveBounds;
         var maxWidth = monitor.WorkArea.Width / scale * WorkAreaFraction;
         var maxHeight = monitor.WorkArea.Height / scale * WorkAreaFraction;
         Width = Math.Clamp((image.Width / scale) + SideChrome, MinWidth, Math.Max(MinWidth, maxWidth));
@@ -165,7 +165,7 @@ public partial class EditorWindow : FluentWindow
             return;
         }
 
-        if ((modifiers & ~ModifierKeys.Shift) == 0 && !shift && _viewModel.Tools.FindByKey(key) is { } tool && _viewModel.ActiveTool is not PolygonTool)
+        if ((modifiers & ~ModifierKeys.Shift) == 0 && !shift && _viewModel.Tools.FindByKey(key) is { } tool && _viewModel.ActiveTool is not PolygonTool && !_viewModel.IsCropping)
         {
             _viewModel.Activate(tool);
             e.Handled = true;

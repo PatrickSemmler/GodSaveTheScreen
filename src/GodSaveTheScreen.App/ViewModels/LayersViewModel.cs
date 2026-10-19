@@ -4,6 +4,7 @@ using CommunityToolkit.Mvvm.Input;
 using GodSaveTheScreen.App.Editor;
 using GodSaveTheScreen.App.Editor.Tools;
 using GodSaveTheScreen.Core.Annotations;
+using GodSaveTheScreen.Core.Imaging;
 using GodSaveTheScreen.Core.Undo;
 
 namespace GodSaveTheScreen.App.ViewModels;
@@ -11,9 +12,12 @@ namespace GodSaveTheScreen.App.ViewModels;
 /// <summary>Zeile der Ebenenliste.</summary>
 public sealed class LayerItem : System.ComponentModel.INotifyPropertyChanged, IDisposable
 {
-    public LayerItem(Annotation annotation)
+    private readonly ImageDocument? _document;
+
+    public LayerItem(Annotation annotation, ImageDocument? document = null)
     {
         Annotation = annotation;
+        _document = document;
         annotation.PropertyChanged += OnAnnotationChanged;
     }
 
@@ -27,6 +31,14 @@ public sealed class LayerItem : System.ComponentModel.INotifyPropertyChanged, ID
 
     public bool IsLocked => Annotation.IsLocked;
 
+    /// <summary>Das Objekt liegt vollständig außerhalb des Zuschnitts (bleibt im Modell, ist im Ergebnis nicht sichtbar).</summary>
+    public bool IsOutsideCrop =>
+        _document?.CropRect is { } crop && crop.ToRectD().Intersect(Annotation.VisualBounds).IsEmpty;
+
+    /// <summary>Der Zuschnitt des Dokuments hat sich geändert.</summary>
+    public void RefreshCrop() =>
+        PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(nameof(IsOutsideCrop)));
+
     public void Dispose() => Annotation.PropertyChanged -= OnAnnotationChanged;
 
     private void OnAnnotationChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -34,6 +46,10 @@ public sealed class LayerItem : System.ComponentModel.INotifyPropertyChanged, ID
         if (e.PropertyName is nameof(Annotation.Name) or nameof(Annotation.IsVisible) or nameof(Annotation.IsLocked))
         {
             PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(string.Empty));
+        }
+        else if (_document?.CropRect is not null)
+        {
+            RefreshCrop();
         }
     }
 }
@@ -51,7 +67,19 @@ public sealed partial class LayersViewModel : IDisposable
         _context = context;
         _context.Document.Annotations.CollectionChanged += OnCollectionChanged;
         _context.Selection.Changed += OnSelectionChanged;
+        _context.Document.PropertyChanged += OnDocumentChanged;
         Rebuild();
+    }
+
+    private void OnDocumentChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ImageDocument.CropRect))
+        {
+            foreach (var item in Items)
+            {
+                item.RefreshCrop();
+            }
+        }
     }
 
     /// <summary>Die Auswahl des Dokuments hat sich geändert (die Liste gleicht ihre Markierung an).</summary>
@@ -67,6 +95,7 @@ public sealed partial class LayersViewModel : IDisposable
     {
         _context.Document.Annotations.CollectionChanged -= OnCollectionChanged;
         _context.Selection.Changed -= OnSelectionChanged;
+        _context.Document.PropertyChanged -= OnDocumentChanged;
         foreach (var item in Items)
         {
             item.Dispose();
@@ -152,7 +181,7 @@ public sealed partial class LayersViewModel : IDisposable
         Items.Clear();
         foreach (var annotation in _context.Document.Annotations.Reverse())
         {
-            Items.Add(new LayerItem(annotation));
+            Items.Add(new LayerItem(annotation, _context.Document));
         }
     }
 }

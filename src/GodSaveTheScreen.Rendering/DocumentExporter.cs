@@ -16,10 +16,11 @@ public sealed class DocumentExporter : IDocumentExporter
     {
         ArgumentNullException.ThrowIfNull(document);
         var visible = document.Annotations.Where(a => a.IsVisible && a.Opacity > 0).ToList();
+        var crop = document.EffectiveBounds;
         if (visible.Count == 0)
         {
-            // Unverändertes Basisbild: exakt, ohne Vormultiplikations-Umweg.
-            return document.BaseImage;
+            // Unverändertes Basisbild (ggf. zugeschnitten): exakt, ohne Vormultiplikations-Umweg.
+            return document.CropRect is null ? document.BaseImage : document.BaseImage.Crop(crop);
         }
 
         var baseImage = document.BaseImage;
@@ -34,14 +35,18 @@ public sealed class DocumentExporter : IDocumentExporter
         var visual = CreateVisual();
         using (var dc = visual.RenderOpen())
         {
+            // Annotationen bleiben in Originalkoordinaten; der Zuschnitt verschiebt nur den Ausschnitt.
+            dc.PushTransform(new TranslateTransform(-crop.X, -crop.Y));
             dc.DrawImage(baseSource, new Rect(0, 0, baseImage.Width, baseImage.Height));
             foreach (var annotation in AnnotationOrdering.RenderOrder(visible, document.HighlightersBehind))
             {
                 AnnotationRenderer.Render(dc, annotation, context);
             }
+
+            dc.Pop();
         }
 
-        return ToPixelBuffer(visual, baseImage.Width, baseImage.Height);
+        return ToPixelBuffer(visual, crop.Width, crop.Height);
     }
 
     public PixelBuffer? RenderObjects(IReadOnlyList<Annotation> annotations)
