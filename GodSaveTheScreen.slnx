@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/GodSaveTheScreen.App/GodSaveTheScreen.App.csproj" />
+    <Project Path="src/GodSaveTheScreen.Capture/GodSaveTheScreen.Capture.csproj" />
+    <Project Path="src/GodSaveTheScreen.Core/GodSaveTheScreen.Core.csproj" />
+    <Project Path="src/GodSaveTheScreen.Rendering/GodSaveTheScreen.Rendering.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/GodSaveTheScreen.App.Tests/GodSaveTheScreen.App.Tests.csproj" />
+    <Project Path="tests/GodSaveTheScreen.Core.Tests/GodSaveTheScreen.Core.Tests.csproj" />
+  </Folder>
+</Solution>

@@ -1,6 +1,7 @@
 # GodSaveTheScreen – Agent Architecture
-Verified against commit no-code (planning only) on 2026-10-19
-- STATUS: Soll-Architektur aus `docs/Umsetzungsplan.md`; noch kein Code. Ab M0 jede Zeile gegen Code prüfen, Abweichung → Doku oder Code korrigieren, Kopfzeile auf Commit setzen.
+Verified against working tree after M0+M1 (uncommitted) on 2026-10-19
+- STATUS: M0 + M1 umgesetzt (Rest ist Soll-Architektur aus `docs/Umsetzungsplan.md`). Nach Commit Kopfzeile auf Commit-Hash setzen.
+- Ist-Stand M0/M1: `Core` (Settings, Geometrie, `PixelBuffer`, `ImageDocument`, `IDialogService`/`IClipboardService`), `Capture` (`MonitorService`, `ScreenCaptureService`, `ScreenSnapshot`), `Rendering` (`PixelBufferExtensions`), `App` (`Hosting/`, `Services/`, `Capture/` = Koordinator + Overlay, `Views/StartWindow`+`EditorWindow` (vorläufig), `ViewModels/`, `Localization/`, `Resources/`)
 
 ## Overview
 - Zweck: Screenshot-Tool (Tray + Hotkeys) mit nicht-destruktivem Annotations-Editor
@@ -19,7 +20,7 @@ Verified against commit no-code (planning only) on 2026-10-19
 - Verboten: `Core` -> WPF-Typen (`System.Windows.*`), `Capture` <-> `Rendering`, ViewModels -> Win32/P/Invoke direkt
 
 ## Entry Points
-- `src/GodSaveTheScreen.App/App.xaml.cs:OnStartup` – Host-Aufbau, Single-Instance, Tray; `ShutdownMode=OnExplicitShutdown`
+- `src/GodSaveTheScreen.App/App.xaml.cs:OnStartup` – Single-Instance (Mutex+Pipe), Serilog, Host-Aufbau, Theme, StartWindow (Tray ab M3); `ShutdownMode=OnExplicitShutdown`
 - Datenfluss Aufnahme: Hotkey/Tray/Pipe -> `CaptureCoordinator` -> `IScreenCaptureService.CaptureVirtualScreen` -> `SelectionOverlayWindow` je Monitor -> `PixelBuffer` -> `ImageDocument` -> Nachaufnahme-Aktionen -> `EditorWindow`
 - Datenfluss Bearbeiten: `ToolBase.OnPointer*` -> `IUndoableAction` -> `UndoManager.Execute` -> `Annotation` (ObservableObject) -> `AnnotationElement.OnRender` -> `AnnotationRenderer`
 - Datenfluss Export: `DocumentExporter.Render` -> `AnnotationRenderer` (gleicher Pfad wie Anzeige) -> `RenderTargetBitmap` -> `ImageCodecService` / `IClipboardService`
@@ -35,6 +36,10 @@ Verified against commit no-code (planning only) on 2026-10-19
 - MVVM: `[ObservableProperty]`/`[RelayCommand]`; Fenster via DI (`IWindowFactory`); je Editorfenster eigener `IServiceScope`
 - UI-Texte nur über `Strings.resx` + `Strings.de.resx`, XAML `{l:Loc Key}`; beide Dateien im selben Commit
 - Paketversionen nur in `Directory.Packages.props`
+- `Strings.Designer.cs` wird von Hand/Skript synchron zu `Strings.resx` gehalten (kein VS-Generator im CLI-Build); Schlüssel-Test in `App.Tests` prüft DE/EN-Gleichheit
+- Analyzer streng (`TreatWarningsAsErrors`, `latest-recommended`); bewusst aus: CA1304/1305/1863/1873/1707/1848 (siehe `.editorconfig`)
+- Enum-Namen in Core mit Suffix `Setting` (`ThemeSetting`, `LogLevelSetting`) wegen WPF-Namenskollisionen
+- Bis M3 (Tray) endet die App, wenn das letzte Fenster schließt (`WindowFactory.OnWindowClosed`)
 - Tests: `<Klasse>Tests.cs`, Methoden `Methode_Fall_Erwartung`; WPF-Objekte nur in `[StaFact]`
 - Logging: `ILogger<T>`; keine `Debug.WriteLine`/`Console`
 
@@ -51,6 +56,8 @@ Verified against commit no-code (planning only) on 2026-10-19
 
 ## Pitfalls
 - `Druck`-Hotkey kann von Windows 11 (Snipping Tool) belegt sein -> `RegisterHotKey` schlägt fehl; Fehler anzeigen, nicht crashen
+- CsWin32 gibt es in `Capture` und `App` (je eigene `NativeMethods.txt`, internal); `Capture` nutzt Delegate-/Pointer-Overloads ohne Marshaling
+- Overlay: bei `DpiChanged` Bounds erneut per `SetWindowPos` setzen (WPF skaliert sonst auf Vorschlagsgröße)
 - Overlay erst nach `SourceInitialized` per `SetWindowPos` (physische Pixel) positionieren
 - Eigene Fenster: `SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE)`; sonst landen sie im Snapshot
 - Zwischenablage: `COMException` bei Sperre -> Retry; immer `CF_DIB` + `"PNG"` setzen (Alpha)
@@ -62,7 +69,7 @@ Verified against commit no-code (planning only) on 2026-10-19
 
 ## Commands
 - Build: `dotnet build GodSaveTheScreen.slnx`
-- Test: `dotnet test GodSaveTheScreen.slnx`
-- Einzeltest: `dotnet test --filter "FullyQualifiedName~UndoManagerTests"`
+- Test: `dotnet test` (Solution-Root; `global.json` aktiviert Microsoft.Testing.Platform, xunit v3)
+- Einzeltest: `dotnet test --project tests/GodSaveTheScreen.Core.Tests --filter-class "*UndoManagerTests"`
 - Start: `dotnet run --project src/GodSaveTheScreen.App`
 - Release: `dotnet publish src/GodSaveTheScreen.App -p:PublishProfile=win-x64`

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="App_Name" xml:space="preserve"><value>GodSaveTheScreen</value></data>
+  <data name="Start_Title" xml:space="preserve"><value>GodSaveTheScreen</value></data>
+  <data name="Start_New" xml:space="preserve"><value>Neu</value></data>
+  <data name="Start_Mode" xml:space="preserve"><value>Modus</value></data>
+  <data name="Start_Open" xml:space="preserve"><value>Öffnen</value></data>
+  <data name="Start_Settings" xml:space="preserve"><value>Einstellungen</value></data>
+  <data name="Start_Ready" xml:space="preserve"><value>Bereit</value></data>
+  <data name="Mode_Rectangle" xml:space="preserve"><value>Rechteck</value></data>
+  <data name="Mode_FullscreenMonitor" xml:space="preserve"><value>Vollbild (aktueller Monitor)</value></data>
+  <data name="Mode_FullscreenAll" xml:space="preserve"><value>Vollbild (alle Monitore)</value></data>
+  <data name="Editor_Title" xml:space="preserve"><value>Aufnahme</value></data>
+  <data name="Editor_Fit" xml:space="preserve"><value>Einpassen</value></data>
+  <data name="Editor_ActualSize" xml:space="preserve"><value>100 %</value></data>
+  <data name="Editor_SaveAs" xml:space="preserve"><value>Speichern unter…</value></data>
+  <data name="Editor_Copy" xml:space="preserve"><value>Kopieren</value></data>
+  <data name="Editor_SaveFilter" xml:space="preserve"><value>PNG-Bild (*.png)|*.png</value></data>
+  <data name="Editor_SaveDefaultName" xml:space="preserve"><value>Bildschirmfoto {0:yyyy-MM-dd HH-mm-ss}.png</value></data>
+  <data name="Overlay_Hint" xml:space="preserve"><value>Bereich mit gedrückter Maustaste auswählen · Esc zum Abbrechen</value></data>
+  <data name="Error_Title" xml:space="preserve"><value>Fehler</value></data>
+  <data name="Error_Unhandled" xml:space="preserve"><value>Es ist ein unerwarteter Fehler aufgetreten:
+{0}</value></data>
+  <data name="Error_SaveFailed" xml:space="preserve"><value>Das Bild konnte nicht gespeichert werden:
+{0}</value></data>
+  <data name="Error_CopyFailed" xml:space="preserve"><value>Das Bild konnte nicht in die Zwischenablage kopiert werden:
+{0}</value></data>
+  <data name="Error_CaptureFailed" xml:space="preserve"><value>Die Aufnahme ist fehlgeschlagen:
+{0}</value></data>
+  <data name="Capture_ModeUnavailable" xml:space="preserve"><value>Dieser Aufnahmemodus ist noch nicht verfügbar.</value></data>
+</root>
