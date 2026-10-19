@@ -4,6 +4,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using GodSaveTheScreen.App.Editor;
+using GodSaveTheScreen.App.Editor.Tools;
+using GodSaveTheScreen.App.Resources;
 using GodSaveTheScreen.App.ViewModels;
 using GodSaveTheScreen.Core.Annotations;
 using GodSaveTheScreen.Core.Geometry;
@@ -29,6 +31,8 @@ public partial class EditorCanvas : UserControl
     private object? _lastHidden;
     private TextBox? _textEditor;
     private bool _committingText;
+    private bool _rulerDrag;
+    private VectorD _rulerGrab;
 
     public EditorCanvas() => InitializeComponent();
 
@@ -59,8 +63,17 @@ public partial class EditorCanvas : UserControl
         Surface.Height = document.BaseImage.Height;
         Checker.Fill = CreateCheckerBrush();
 
-        Annotations.Attach(document, viewModel.Context.Interaction, new RenderContext { BaseImage = source });
+        var renderContext = new RenderContext
+        {
+            BaseImage = source,
+            BasePixels = document.BaseImage,
+            Annotations = document.Annotations,
+            HighlightersBehind = document.HighlightersBehind,
+        };
+        Annotations.Attach(document, viewModel.Context.Interaction, renderContext);
+        Interaction.RenderContext = renderContext;
         Interaction.Attach(viewModel.Context);
+        viewModel.Context.VisibleCenterProvider = VisibleCenter;
         viewModel.PropertyChanged += OnViewModelChanged;
         viewModel.Context.InteractionInvalidated += OnInteractionInvalidated;
         ApplyZoom();
@@ -196,6 +209,15 @@ public partial class EditorCanvas : UserControl
 
     private void OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
     {
+        if (_viewModel is not null && IsOnRuler(new PointD(e.GetPosition(Surface).X, e.GetPosition(Surface).Y)))
+        {
+            var modifiers = Keyboard.Modifiers;
+            var step = (modifiers & ModifierKeys.Shift) != 0 ? 15 : (modifiers & ModifierKeys.Control) != 0 ? 0.1 : 1;
+            _viewModel.Context.Ruler.Rotate(Math.Sign(e.Delta) * step);
+            e.Handled = true;
+            return;
+        }
+
         if (_viewModel is null || (Keyboard.Modifiers & ModifierKeys.Control) == 0)
         {
             return;
@@ -394,6 +416,12 @@ public partial class EditorCanvas : UserControl
             return;
         }
 
+        if (TryBeginRulerDrag(e))
+        {
+            e.Handled = true;
+            return;
+        }
+
         Surface.CaptureMouse();
         _toolCaptured = true;
         _viewModel.ActiveTool.OnPointerDown(Args(e, e.ClickCount));
@@ -427,6 +455,11 @@ public partial class EditorCanvas : UserControl
         }
 
         Surface.Focus();
+        if (IsOnRuler(ToImagePoint(e)))
+        {
+            return;
+        }
+
         _viewModel.SelectAt(ToImagePoint(e));
     }
 
@@ -442,6 +475,13 @@ public partial class EditorCanvas : UserControl
             var current = e.GetPosition(Scroller);
             Scroller.ScrollToHorizontalOffset(_panHorizontal - (current.X - _panStart.X));
             Scroller.ScrollToVerticalOffset(_panVertical - (current.Y - _panStart.Y));
+            return;
+        }
+
+        if (_rulerDrag)
+        {
+            var position = ToImagePoint(e);
+            _viewModel.Context.Ruler.Center = new PointD(position.X + _rulerGrab.X, position.Y + _rulerGrab.Y);
             return;
         }
 
@@ -465,6 +505,14 @@ public partial class EditorCanvas : UserControl
             return;
         }
 
+        if (_rulerDrag)
+        {
+            _rulerDrag = false;
+            Surface.ReleaseMouseCapture();
+            e.Handled = true;
+            return;
+        }
+
         if (_toolCaptured)
         {
             _toolCaptured = false;
@@ -484,7 +532,76 @@ public partial class EditorCanvas : UserControl
             _viewModel.ActiveTool.Cancel();
         }
 
+        _rulerDrag = false;
         _panning = false;
+    }
+
+    private bool IsOnRuler(PointD position)
+    {
+        var context = _viewModel?.Context;
+        return context is { Ruler.IsVisible: true } && RulerGeometry.Contains(position, context.Ruler.Placement(context.Scale));
+    }
+
+    /// <summary>Ziehen am Lineal verschiebt es – außer ein Freihandwerkzeug beginnt nahe der Kante (dort rastet der Strich ein).</summary>
+    private bool TryBeginRulerDrag(MouseEventArgs e)
+    {
+        var context = _viewModel!.Context;
+        var position = ToImagePoint(e);
+        if (!IsOnRuler(position))
+        {
+            return false;
+        }
+
+        var placement = context.Ruler.Placement(context.Scale);
+        if (_viewModel.ActiveTool is FreehandToolBase && RulerGeometry.NearestEdge(position, placement, context.ToImageUnits(RulerViewModel.SnapDistanceDip)) is not null)
+        {
+            return false;
+        }
+
+        _rulerDrag = true;
+        _rulerGrab = context.Ruler.Center - position;
+        Surface.CaptureMouse();
+        return true;
+    }
+
+    /// <summary>Mitte des sichtbaren Bildausschnitts in Bildpixeln.</summary>
+    private PointD VisibleCenter()
+    {
+        var image = _viewModel!.Document.BaseImage;
+        var viewportCenter = new Point(Scroller.ViewportWidth / 2, Scroller.ViewportHeight / 2);
+        var point = Scroller.TranslatePoint(viewportCenter, Surface);
+        return new PointD(Math.Clamp(point.X, 0, image.Width), Math.Clamp(point.Y, 0, image.Height));
+    }
+
+    private void OnContextMenuOpening(object sender, ContextMenuEventArgs e)
+    {
+        if (_viewModel is null)
+        {
+            return;
+        }
+
+        var p = Mouse.GetPosition(Surface);
+        if (!IsOnRuler(new PointD(p.X, p.Y)))
+        {
+            return;
+        }
+
+        e.Handled = true;
+        var ruler = _viewModel.Context.Ruler;
+        var menu = new ContextMenu { PlacementTarget = Surface };
+        foreach (var angle in new[] { 0, 45, 90, 135 })
+        {
+            var value = angle;
+            var item = new MenuItem { Header = string.Format(System.Globalization.CultureInfo.CurrentUICulture, Strings.Ruler_SetAngle, value) };
+            item.Click += (_, _) => ruler.Angle = value;
+            menu.Items.Add(item);
+        }
+
+        menu.Items.Add(new Separator());
+        var hide = new MenuItem { Header = Strings.Ruler_Hide };
+        hide.Click += (_, _) => ruler.IsVisible = false;
+        menu.Items.Add(hide);
+        menu.IsOpen = true;
     }
 
     private void OnMouseLeave(object sender, MouseEventArgs e) => _viewModel?.SetPointer(null);

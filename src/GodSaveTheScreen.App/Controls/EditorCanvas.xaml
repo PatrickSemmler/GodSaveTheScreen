@@ -24,6 +24,7 @@
           MouseLeftButtonUp="OnMouseLeftButtonUp"
           MouseRightButtonDown="OnMouseRightButtonDown"
           MouseMove="OnMouseMove"
+          ContextMenuOpening="OnContextMenuOpening"
           MouseLeave="OnMouseLeave"
           MouseDown="OnMouseDown"
           MouseUp="OnMouseUp"

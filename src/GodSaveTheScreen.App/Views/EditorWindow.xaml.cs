@@ -216,6 +216,9 @@ public partial class EditorWindow : FluentWindow
             case Key.D:
                 vm.DuplicateCommand.Execute(null);
                 return true;
+            case Key.R:
+                vm.ToggleRulerCommand.Execute(null);
+                return true;
             case Key.D0 or Key.NumPad0:
                 vm.FitCommand.Execute(null);
                 return true;

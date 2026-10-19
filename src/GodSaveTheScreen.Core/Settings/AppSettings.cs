@@ -145,6 +145,9 @@ public sealed record AppSettings
     /// <summary>Nach dem Zeichnen eines Objekts zum Auswahlwerkzeug wechseln.</summary>
     public bool SwitchToSelectAfterDraw { get; init; }
 
+    /// <summary>Textmarker hinter Formen und Text zeichnen.</summary>
+    public bool HighlighterBehind { get; init; } = true;
+
     /// <summary>Standardwerte der Formwerkzeuge (Schlüssel = Werkzeug-ID).</summary>
     public ShapeDefaultsMap ShapeDefaults { get; init; } = [];
 

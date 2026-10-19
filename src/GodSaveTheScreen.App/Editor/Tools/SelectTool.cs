@@ -19,6 +19,10 @@ public enum HandleKind
     LineStart,
     LineEnd,
     PolygonPoint,
+    SourceTopLeft,
+    SourceTopRight,
+    SourceBottomRight,
+    SourceBottomLeft,
 }
 
 public readonly record struct SelectionHandle(HandleKind Kind, PointD Position, int Index = 0);
@@ -42,6 +46,18 @@ public static class SelectionHandles
         if (movable is [PolygonAnnotation polygon])
         {
             return [.. polygon.Points.Select((p, i) => new SelectionHandle(HandleKind.PolygonPoint, p, i))];
+        }
+
+        if (movable is [MagnifierAnnotation magnifier])
+        {
+            var s = magnifier.SourceRect.Normalize();
+            return
+            [
+                new(HandleKind.SourceTopLeft, new PointD(s.X, s.Y)),
+                new(HandleKind.SourceTopRight, new PointD(s.Right, s.Y)),
+                new(HandleKind.SourceBottomRight, new PointD(s.Right, s.Bottom)),
+                new(HandleKind.SourceBottomLeft, new PointD(s.X, s.Bottom)),
+            ];
         }
 
         var bounds = movable.Select(a => a.Bounds).Aggregate((x, y) => x.Union(y));
@@ -156,7 +172,15 @@ public sealed class SelectTool : ToolBase
         Resize,
         LineHandle,
         PolygonPoint,
+        MagnifierSource,
         RubberBand,
+    }
+
+    private enum MovePart
+    {
+        Both,
+        Target,
+        Source,
     }
 
     private const double MoveThreshold = 0.5;
@@ -170,6 +194,7 @@ public sealed class SelectTool : ToolBase
     private RectD _groupRect;
     private List<Annotation> _baseSelection = [];
     private Cursor _cursor = Cursors.Arrow;
+    private MovePart _part;
 
     public SelectTool(EditorContext context)
         : base(context)
@@ -190,7 +215,7 @@ public sealed class SelectTool : ToolBase
 
     public override void Cancel()
     {
-        if (_mode is Mode.Move or Mode.Resize or Mode.LineHandle or Mode.PolygonPoint)
+        if (_mode is Mode.Move or Mode.Resize or Mode.LineHandle or Mode.PolygonPoint or Mode.MagnifierSource)
         {
             foreach (var (target, before) in _snapshots)
             {
@@ -271,6 +296,9 @@ public sealed class SelectTool : ToolBase
                 break;
             case Mode.PolygonPoint:
                 DragPolygonPoint(args);
+                break;
+            case Mode.MagnifierSource:
+                DragMagnifierSource(args);
                 break;
             case Mode.RubberBand:
                 UpdateRubberBand(args.Position);
@@ -408,6 +436,14 @@ public sealed class SelectTool : ToolBase
             return;
         }
 
+        _part = MovePart.Both;
+        if (items is [MagnifierAnnotation magnifier])
+        {
+            // Lupe: Ziehen am Lupenkörper verschiebt nur das Ziel, am Quellrahmen nur die Quelle.
+            var target = magnifier.TargetRect.Inflate(Context.HitTolerance, Context.HitTolerance);
+            _part = target.Contains(_start) ? MovePart.Target : MovePart.Source;
+        }
+
         _snapshots = [.. items.Select(a => (a, a.Clone()))];
         _mode = Mode.Move;
     }
@@ -421,6 +457,7 @@ public sealed class SelectTool : ToolBase
         {
             HandleKind.LineStart or HandleKind.LineEnd => Mode.LineHandle,
             HandleKind.PolygonPoint => Mode.PolygonPoint,
+            HandleKind.SourceTopLeft or HandleKind.SourceTopRight or HandleKind.SourceBottomRight or HandleKind.SourceBottomLeft => Mode.MagnifierSource,
             _ => Mode.Resize,
         };
         _groupRect = items.Select(a => a.Bounds).Aggregate((x, y) => x.Union(y));
@@ -438,7 +475,21 @@ public sealed class SelectTool : ToolBase
         _last = position;
         foreach (var (target, _) in _snapshots)
         {
-            target.Translate(delta);
+            if (target is MagnifierAnnotation magnifier && _part != MovePart.Both)
+            {
+                if (_part == MovePart.Target)
+                {
+                    magnifier.TargetCenter += delta;
+                }
+                else
+                {
+                    magnifier.SourceRect = magnifier.SourceRect with { X = magnifier.SourceRect.X + delta.X, Y = magnifier.SourceRect.Y + delta.Y };
+                }
+            }
+            else
+            {
+                target.Translate(delta);
+            }
         }
 
         Context.InvalidateInteraction();
@@ -454,7 +505,7 @@ public sealed class SelectTool : ToolBase
             return;
         }
 
-        var (map, factor) = SelectionHandles.ResizeMap(_groupRect, _handle.Kind, args.Position, args.Shift || _snapshots.Any(s => s.Before is not ShapeAnnotation));
+        var (map, factor) = SelectionHandles.ResizeMap(_groupRect, _handle.Kind, args.Position, args.Shift || _snapshots.Any(s => s.Before is not (ShapeAnnotation or BlurAnnotation)));
         foreach (var (target, before) in _snapshots)
         {
             target.CopyFrom(before);
@@ -508,6 +559,32 @@ public sealed class SelectTool : ToolBase
         Context.InvalidateInteraction();
     }
 
+    private void DragMagnifierSource(EditorPointerArgs args)
+    {
+        _moved = true;
+        if (_snapshots is not [(MagnifierAnnotation magnifier, MagnifierAnnotation before)])
+        {
+            return;
+        }
+
+        var s = before.SourceRect.Normalize();
+        var anchor = _handle.Kind switch
+        {
+            HandleKind.SourceTopLeft => new PointD(s.Right, s.Bottom),
+            HandleKind.SourceTopRight => new PointD(s.X, s.Bottom),
+            HandleKind.SourceBottomRight => new PointD(s.X, s.Y),
+            _ => new PointD(s.Right, s.Y),
+        };
+        var square = args.Shift || magnifier.Shape == MagnifierShape.Circle;
+        var rect = ShapeGeometry.ConstrainBox(anchor, args.Position, square ? ModifierKeys.Shift : ModifierKeys.None);
+        if (rect.Width >= 4 && rect.Height >= 4)
+        {
+            magnifier.SourceRect = rect;
+        }
+
+        Context.InvalidateInteraction();
+    }
+
     private void DragPolygonPoint(EditorPointerArgs args)
     {
         _moved = true;
@@ -541,8 +618,8 @@ public sealed class SelectTool : ToolBase
             {
                 HandleKind.Top or HandleKind.Bottom => Cursors.SizeNS,
                 HandleKind.Left or HandleKind.Right => Cursors.SizeWE,
-                HandleKind.TopLeft or HandleKind.BottomRight => Cursors.SizeNWSE,
-                HandleKind.TopRight or HandleKind.BottomLeft => Cursors.SizeNESW,
+                HandleKind.TopLeft or HandleKind.BottomRight or HandleKind.SourceTopLeft or HandleKind.SourceBottomRight => Cursors.SizeNWSE,
+                HandleKind.TopRight or HandleKind.BottomLeft or HandleKind.SourceTopRight or HandleKind.SourceBottomLeft => Cursors.SizeNESW,
                 _ => Cursors.Cross,
             }
             : Context.HitTest(position) is { IsLocked: false } ? Cursors.SizeAll : Cursors.Arrow;

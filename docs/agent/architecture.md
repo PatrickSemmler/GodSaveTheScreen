@@ -1,7 +1,7 @@
 # GodSaveTheScreen – Agent Architecture
-Verified against working tree on top of commit d45b2ec (M4–M6 uncommitted) on 2026-10-19
-- STATUS: M0–M6 umgesetzt (Rest ist Soll-Architektur aus `docs/Umsetzungsplan.md`). Nach Commit Kopfzeile auf Commit-Hash setzen.
-- Ist-Stand: `Core` (Settings inkl. `ShapeDefaultsMap`/`TextStyle`/`MarkerStyle`, Geometrie, `PixelBuffer`, `ImageDocument` mit `Annotations` + `Undo`, `Annotations/` = Modell + `AnnotationSerializer`, `Undo/`, `IImageCodecService`/`IDocumentExporter`/`IDialogService`/`IClipboardService`), `Capture`, `Rendering` (`AnnotationRenderer`, `TextLayout`, `LineLayout`, `DocumentExporter`, `ImageCodecService`), `App` (`Hosting/`, `Services/`, `Capture/`, `Editor/` = Kontext/Werkzeuge/Schriften, `Controls/`, `Views/`, `ViewModels/`, `Localization/`, `Resources/`)
+Verified against working tree on top of commit 4df1ec9 (M7–M8 uncommitted) on 2026-10-19
+- STATUS: M0–M8 umgesetzt (Rest ist Soll-Architektur aus `docs/Umsetzungsplan.md`). Nach Commit Kopfzeile auf Commit-Hash setzen.
+- Ist-Stand: `Core` (Settings inkl. `ShapeDefaultsMap`/`TextStyle`/`MarkerStyle`, Geometrie, `PixelBuffer`, `ImageDocument` mit `Annotations` + `Undo`, `Annotations/` = Modell (Formen, Text, Marker, Strich, Unschärfe, Lupe) + `AnnotationSerializer`, `Undo/`, `IImageCodecService`/`IDocumentExporter`/`IDialogService`/`IClipboardService`), `Capture`, `Rendering` (`AnnotationRenderer` partial inkl. `AnnotationOrdering`, `RegionEffectProcessor`/`EffectCache`, `TextLayout`, `LineLayout`, `DocumentExporter`, `ImageCodecService`), `App` (`Hosting/`, `Services/`, `Capture/`, `Editor/` = Kontext/Werkzeuge/Schriften, `Controls/`, `Views/`, `ViewModels/`, `Localization/`, `Resources/`)
 
 ## Overview
 - Zweck: Screenshot-Tool (Tray + Hotkeys) mit nicht-destruktivem Annotations-Editor
@@ -24,6 +24,8 @@ Verified against working tree on top of commit d45b2ec (M4–M6 uncommitted) on 
 - Datenfluss Aufnahme: Hotkey/Tray/Startfenster/Pipe -> `CaptureRequest` -> `CaptureCoordinator` (Fenster ausblenden -> Countdown -> `CaptureVirtualScreen` -> `ISelectionService` -> `PixelBuffer` -> `ImageDocument`) -> `IPostCaptureAction`-Kette `CopyToClipboardAction` -> `AutoSaveAction` -> `OpenEditorAction` (-> `IEditorService.Open`)
 - Editor öffnen: `IEditorService` (`EditorService`) erzeugt je Fenster `EditorContext` + `ToolRegistry.Create` + `EditorViewModel` + `EditorWindow` per `ActivatorUtilities`; Quellen: Aufnahme, Datei (`OpenFilesAsync`, auch Kommandozeile/Drop/Dialog), Zwischenablage
 - Datenfluss Bearbeiten: Maus -> `EditorCanvas` (Bildpixel) -> `ToolBase.OnPointer*` -> `IUndoableAction` -> `UndoManager.Execute` -> `Annotation` (ObservableObject) -> `AnnotationElement.OnRender` -> `AnnotationRenderer`
+- Freihand: `FreehandToolBase` (Stift/Textmarker) sammelt `StrokePoint`s (mit Stiftdruck), rastet am Lineal ein (`RulerGeometry.Snap`), reduziert per RDP und fügt EINEN `StrokeAnnotation` ein; `EraserTool` markiert (`Interaction.Marked`) und entfernt beim Loslassen in einer Undo-Aktion
+- Lupe: `MagnifierAnnotation` rendert Basisbild + Objekte unter sich (`RenderContext.Annotations`, ohne andere Lupen) im Clip; `AnnotationLayer` zeichnet Lupen bei jeder Objektänderung neu; Quelle/Ziel getrennt verschiebbar (`SelectTool`, `MovePart`)
 - Textbearbeitung: Werkzeug/Doppelklick -> `EditorContext.BeginTextEdit` -> `TextBox` im `Overlay` von `EditorCanvas` -> `CommitTextEdit` (eine Undo-Aktion)
 - Datenfluss Export: `DocumentExporter.Render` -> `AnnotationRenderer` (gleicher Pfad wie Anzeige) -> `PixelBuffer` -> `IImageCodecService.SaveAsync` / `IClipboardService`; ohne sichtbare Objekte wird `BaseImage` selbst geliefert
 - Eigenschaften: `SelectionPropertiesViewModel` (Formen + Deckkraft), `TextPropertiesViewModel`, `MarkerPropertiesViewModel`; ohne Auswahl bearbeiten sie die Standardwerte des aktiven Werkzeugs (`IToolDefaultsService`)
@@ -40,6 +42,9 @@ Verified against working tree on top of commit d45b2ec (M4–M6 uncommitted) on 
 - Text-Core braucht Messung: `TextAnnotation.MeasureProvider` setzt `TextLayout.Install()` (in `AddRendering`, `DocumentExporter`, `AnnotationRenderer`)
 - Pixel: `PixelBuffer` BGRA32, nicht vormultipliziert
 - Neues Werkzeug = `ToolBase`-Ableitung (`Id`, `NameKey`, `Symbol`/`IconPath`, `ShortcutKey`) + Eintrag in `ToolRegistry.Create` + Strings `Tool_*`; `UsesShapeStyle` nur bei Formwerkzeugen (`ShapeStyle`), Text/Marker haben `TextStyle`/`MarkerStyle`
+- Zeichenreihenfolge nur über `AnnotationOrdering.RenderOrder` (Textmarker-Striche zuerst, wenn `ImageDocument.HighlightersBehind`); Anzeige (`AnnotationLayer`) und Export (`DocumentExporter`) nutzen sie beide
+- `StrokeAnnotation` erbt von `ShapeAnnotation` (Farbe/Dicke/Deckkraft über das Formpanel); Glättung, Druck, Unschärfe- und Lupenoptionen im `ToolOptionsViewModel`, das ohne Auswahl die Fenster-Vorlagen (`EditorContext.Freehand`/`BlurTemplate`/`MagnifierTemplate`) bearbeitet (nicht persistiert)
+- Objekte, die das Basisbild lesen (`BlurAnnotation`, `MagnifierAnnotation`), brauchen `RenderContext.BasePixels`/`BaseImage`/`Annotations` – ohne diese zeichnen sie nichts (z. B. `RenderObjects` für die Objekt-Zwischenablage)
 - Tastenkürzel zentral in `EditorWindow.OnPreviewKeyDown` (ignoriert Eingabefelder); Werkzeuge bekommen Tasten über `ToolBase.OnKeyDown`
 - MVVM: `[ObservableProperty]`/`[RelayCommand]`; Fenster via DI (`IWindowFactory`, Editor via `IEditorService`)
 - UI-Texte nur über `Strings.resx` + `Strings.de.resx`, XAML `{l:Loc Key}`; beide Dateien im selben Commit
@@ -56,8 +61,8 @@ Verified against working tree on top of commit d45b2ec (M4–M6 uncommitted) on 
 - Freeze-Frame (Snapshot vor Overlay); ein Overlay-Fenster je Monitor (Misch-DPI)
 - Eigenes Strichmodell statt `InkCanvas`; Modell-Objekte direkt `ObservableObject` (keine Wrapper-VMs)
 - Anzeige: je Objekt ein bildgroßes `AnnotationElement` (Clip auf Bild = wie Export), `AnnotationLayer` baut bei Listenänderung neu auf
-- Interaktionsebene (`InteractionLayer`): Vorschau, Auswahl, Griffe, Aufziehrahmen; nie exportiert; Lineal (M7) wird `RulerViewModel`-Zustand
-- Unschärfe selbst auf `PixelBuffer` statt `BlurEffect` (M8); Speichern nur WPF-Encoder, Laden über WIC
+- Interaktionsebene (`InteractionLayer`): Vorschau, Auswahl, Griffe, Aufziehrahmen, Radierer-Markierung, Pinselvorschau und Lineal (`RulerViewModel` in `EditorContext.Ruler`, nur UI-Zustand); nie exportiert
+- Unschärfe selbst auf `PixelBuffer` statt `BlurEffect` (M8): Quelle immer das Basisbild (`RenderContext.BasePixels`), Ergebnis gecacht (`EffectCache.Shared`, Schlüssel inkl. `BaseImageIdentity`), Form/weicher Rand im Alphakanal; Speichern nur WPF-Encoder, Laden über WIC
 - Objekt-Zwischenablage: Format `GodSaveTheScreen.Annotations` (JSON) + PNG-Fallback
 - Shouldly statt FluentAssertions (Lizenz); Farbwahl `PixiEditor.ColorPicker` (`StandardColorPicker` im `ColorButton`-Popup)
 - Projektformat ZIP+JSON mit `formatVersion` (M10)
@@ -77,6 +82,8 @@ Verified against working tree on top of commit d45b2ec (M4–M6 uncommitted) on 
 - Mausereignisse aus dem `Overlay` (Textfeld) in `EditorCanvas` ignorieren (`IsFromOverlay`)
 - Zwischenablage: `COMException` bei Sperre -> Retry; Bild immer `CF_DIB` + `"PNG"`
 - WPF nicht trimmbar -> kein `PublishTrimmed`
+- Lupe ohne Rekursion: sieht nur Objekte unter sich und keine anderen Lupen; ändert sich irgendein Objekt, zeichnet `AnnotationLayer` alle Lupen neu
+- Lineal-Ziehen und Freihand-Einrasten konkurrieren um dieselbe Fläche: Freihandwerkzeuge starten nahe der Kante (24 DIP) einen Strich, sonst verschiebt `EditorCanvas` das Lineal
 - JSON-Diskriminatoren nie ändern (bricht `.gsts`-Dateien)
 
 ## Commands

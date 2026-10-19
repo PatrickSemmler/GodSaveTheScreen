@@ -248,4 +248,42 @@
   <data name="Dialog_Save" xml:space="preserve"><value>Speichern</value></data>
   <data name="Dialog_DontSave" xml:space="preserve"><value>Nicht speichern</value></data>
   <data name="Dialog_Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="Tool_Pen" xml:space="preserve"><value>Stift (B)</value></data>
+  <data name="Tool_Highlighter" xml:space="preserve"><value>Textmarker (H)</value></data>
+  <data name="Tool_Eraser" xml:space="preserve"><value>Radierer (X)</value></data>
+  <data name="Tool_Blur" xml:space="preserve"><value>Unschärfe, Verpixeln, Schwärzen (U)</value></data>
+  <data name="Tool_Magnifier" xml:space="preserve"><value>Lupe (Z)</value></data>
+  <data name="Shape_Pen" xml:space="preserve"><value>Strich</value></data>
+  <data name="Shape_Highlighter" xml:space="preserve"><value>Textmarker</value></data>
+  <data name="Shape_Blur" xml:space="preserve"><value>Unschärfe</value></data>
+  <data name="Shape_Magnifier" xml:space="preserve"><value>Lupe</value></data>
+  <data name="Editor_Ruler" xml:space="preserve"><value>Lineal</value></data>
+  <data name="Editor_RulerTip" xml:space="preserve"><value>Lineal ein-/ausblenden (Strg+R)</value></data>
+  <data name="Ruler_SetAngle" xml:space="preserve"><value>Winkel auf {0}° setzen</value></data>
+  <data name="Ruler_Hide" xml:space="preserve"><value>Lineal ausblenden</value></data>
+  <data name="Opt_Smoothing" xml:space="preserve"><value>Glättung</value></data>
+  <data name="Opt_Pressure" xml:space="preserve"><value>Stiftdruck steuert die Breite</value></data>
+  <data name="Opt_HighlighterBehind" xml:space="preserve"><value>Textmarker hinter anderen Objekten zeichnen</value></data>
+  <data name="Opt_EraserHint" xml:space="preserve"><value>Über Striche ziehen, um sie zu entfernen.</value></data>
+  <data name="Opt_EraserAll" xml:space="preserve"><value>Alle Objekte radieren, nicht nur Striche</value></data>
+  <data name="Blur_Mode" xml:space="preserve"><value>Modus</value></data>
+  <data name="Blur_Pixelate" xml:space="preserve"><value>Verpixeln</value></data>
+  <data name="Blur_Gaussian" xml:space="preserve"><value>Weichzeichnen</value></data>
+  <data name="Blur_Redact" xml:space="preserve"><value>Schwärzen (deckend)</value></data>
+  <data name="Blur_Strength" xml:space="preserve"><value>Stärke / Blockgröße (px)</value></data>
+  <data name="Blur_RedactColor" xml:space="preserve"><value>Farbe der Schwärzung</value></data>
+  <data name="Blur_Shape" xml:space="preserve"><value>Form</value></data>
+  <data name="Blur_Feather" xml:space="preserve"><value>Weicher Rand (px)</value></data>
+  <data name="Blur_Warning" xml:space="preserve"><value>Leichtes Weichzeichnen lässt sich teils rekonstruieren. Für sensible Daten „Schwärzen“ verwenden.</value></data>
+  <data name="Region_Rectangle" xml:space="preserve"><value>Rechteck</value></data>
+  <data name="Region_Ellipse" xml:space="preserve"><value>Ellipse</value></data>
+  <data name="Mag_Zoom" xml:space="preserve"><value>Vergrößerung</value></data>
+  <data name="Mag_Shape" xml:space="preserve"><value>Form</value></data>
+  <data name="Mag_Border" xml:space="preserve"><value>Rahmen</value></data>
+  <data name="Mag_Connector" xml:space="preserve"><value>Verbindung anzeigen</value></data>
+  <data name="Mag_SourceFrame" xml:space="preserve"><value>Quellrahmen anzeigen</value></data>
+  <data name="Mag_BaseOnly" xml:space="preserve"><value>Nur Basisbild vergrößern</value></data>
+  <data name="Mag_Smooth" xml:space="preserve"><value>Glatte Skalierung</value></data>
+  <data name="Magnifier_Circle" xml:space="preserve"><value>Kreis</value></data>
+  <data name="Magnifier_Rectangle" xml:space="preserve"><value>Rechteck</value></data>
 </root>

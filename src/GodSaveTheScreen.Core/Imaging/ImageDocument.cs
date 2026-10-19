@@ -37,6 +37,10 @@ public sealed partial class ImageDocument : ObservableObject
 
     public DateTimeOffset CreatedAt { get; }
 
+    /// <summary>Textmarker-Striche hinter allen übrigen Objekten zeichnen (Anzeige und Export).</summary>
+    [ObservableProperty]
+    private bool _highlightersBehind = true;
+
     [ObservableProperty]
     private string? _sourcePath;
 

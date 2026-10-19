@@ -490,4 +490,79 @@ public static class Strings
     public static string Dialog_DontSave => ResourceManager.GetString("Dialog_DontSave", Culture) ?? "Dialog_DontSave";
 
     public static string Dialog_Cancel => ResourceManager.GetString("Dialog_Cancel", Culture) ?? "Dialog_Cancel";
+    public static string Tool_Pen => ResourceManager.GetString("Tool_Pen", Culture) ?? "Tool_Pen";
+
+    public static string Tool_Highlighter => ResourceManager.GetString("Tool_Highlighter", Culture) ?? "Tool_Highlighter";
+
+    public static string Tool_Eraser => ResourceManager.GetString("Tool_Eraser", Culture) ?? "Tool_Eraser";
+
+    public static string Tool_Blur => ResourceManager.GetString("Tool_Blur", Culture) ?? "Tool_Blur";
+
+    public static string Tool_Magnifier => ResourceManager.GetString("Tool_Magnifier", Culture) ?? "Tool_Magnifier";
+
+    public static string Shape_Pen => ResourceManager.GetString("Shape_Pen", Culture) ?? "Shape_Pen";
+
+    public static string Shape_Highlighter => ResourceManager.GetString("Shape_Highlighter", Culture) ?? "Shape_Highlighter";
+
+    public static string Shape_Blur => ResourceManager.GetString("Shape_Blur", Culture) ?? "Shape_Blur";
+
+    public static string Shape_Magnifier => ResourceManager.GetString("Shape_Magnifier", Culture) ?? "Shape_Magnifier";
+
+    public static string Editor_Ruler => ResourceManager.GetString("Editor_Ruler", Culture) ?? "Editor_Ruler";
+
+    public static string Editor_RulerTip => ResourceManager.GetString("Editor_RulerTip", Culture) ?? "Editor_RulerTip";
+
+    public static string Ruler_SetAngle => ResourceManager.GetString("Ruler_SetAngle", Culture) ?? "Ruler_SetAngle";
+
+    public static string Ruler_Hide => ResourceManager.GetString("Ruler_Hide", Culture) ?? "Ruler_Hide";
+
+    public static string Opt_Smoothing => ResourceManager.GetString("Opt_Smoothing", Culture) ?? "Opt_Smoothing";
+
+    public static string Opt_Pressure => ResourceManager.GetString("Opt_Pressure", Culture) ?? "Opt_Pressure";
+
+    public static string Opt_HighlighterBehind => ResourceManager.GetString("Opt_HighlighterBehind", Culture) ?? "Opt_HighlighterBehind";
+
+    public static string Opt_EraserHint => ResourceManager.GetString("Opt_EraserHint", Culture) ?? "Opt_EraserHint";
+
+    public static string Opt_EraserAll => ResourceManager.GetString("Opt_EraserAll", Culture) ?? "Opt_EraserAll";
+
+    public static string Blur_Mode => ResourceManager.GetString("Blur_Mode", Culture) ?? "Blur_Mode";
+
+    public static string Blur_Pixelate => ResourceManager.GetString("Blur_Pixelate", Culture) ?? "Blur_Pixelate";
+
+    public static string Blur_Gaussian => ResourceManager.GetString("Blur_Gaussian", Culture) ?? "Blur_Gaussian";
+
+    public static string Blur_Redact => ResourceManager.GetString("Blur_Redact", Culture) ?? "Blur_Redact";
+
+    public static string Blur_Strength => ResourceManager.GetString("Blur_Strength", Culture) ?? "Blur_Strength";
+
+    public static string Blur_RedactColor => ResourceManager.GetString("Blur_RedactColor", Culture) ?? "Blur_RedactColor";
+
+    public static string Blur_Shape => ResourceManager.GetString("Blur_Shape", Culture) ?? "Blur_Shape";
+
+    public static string Blur_Feather => ResourceManager.GetString("Blur_Feather", Culture) ?? "Blur_Feather";
+
+    public static string Blur_Warning => ResourceManager.GetString("Blur_Warning", Culture) ?? "Blur_Warning";
+
+    public static string Region_Rectangle => ResourceManager.GetString("Region_Rectangle", Culture) ?? "Region_Rectangle";
+
+    public static string Region_Ellipse => ResourceManager.GetString("Region_Ellipse", Culture) ?? "Region_Ellipse";
+
+    public static string Mag_Zoom => ResourceManager.GetString("Mag_Zoom", Culture) ?? "Mag_Zoom";
+
+    public static string Mag_Shape => ResourceManager.GetString("Mag_Shape", Culture) ?? "Mag_Shape";
+
+    public static string Mag_Border => ResourceManager.GetString("Mag_Border", Culture) ?? "Mag_Border";
+
+    public static string Mag_Connector => ResourceManager.GetString("Mag_Connector", Culture) ?? "Mag_Connector";
+
+    public static string Mag_SourceFrame => ResourceManager.GetString("Mag_SourceFrame", Culture) ?? "Mag_SourceFrame";
+
+    public static string Mag_BaseOnly => ResourceManager.GetString("Mag_BaseOnly", Culture) ?? "Mag_BaseOnly";
+
+    public static string Mag_Smooth => ResourceManager.GetString("Mag_Smooth", Culture) ?? "Mag_Smooth";
+
+    public static string Magnifier_Circle => ResourceManager.GetString("Magnifier_Circle", Culture) ?? "Magnifier_Circle";
+
+    public static string Magnifier_Rectangle => ResourceManager.GetString("Magnifier_Rectangle", Culture) ?? "Magnifier_Rectangle";
 }

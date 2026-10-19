@@ -120,6 +120,11 @@
         <Rectangle Style="{StaticResource BarSeparator}" />
         <ui:Button Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon ArrowUndo24}" Command="{Binding UndoCommand}" ToolTip="{l:Loc Editor_UndoTip}" AutomationProperties.Name="{l:Loc Editor_Undo}" />
         <ui:Button Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon ArrowRedo24}" Command="{Binding RedoCommand}" ToolTip="{l:Loc Editor_RedoTip}" AutomationProperties.Name="{l:Loc Editor_Redo}" />
+        <Rectangle Style="{StaticResource BarSeparator}" />
+        <ToggleButton Margin="0,0,2,0" Padding="8,6" Background="Transparent" BorderThickness="0"
+                      IsChecked="{Binding IsRulerVisible, Mode=TwoWay}" ToolTip="{l:Loc Editor_RulerTip}" AutomationProperties.Name="{l:Loc Editor_Ruler}">
+          <ui:SymbolIcon Symbol="Ruler24" />
+        </ToggleButton>
       </StackPanel>
 
       <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">

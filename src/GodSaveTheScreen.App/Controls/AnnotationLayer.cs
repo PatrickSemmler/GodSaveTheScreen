@@ -27,6 +27,9 @@ public sealed class AnnotationElement : FrameworkElement
 
     public Annotation Annotation { get; }
 
+    /// <summary>Wird bei jeder Änderung des Objekts ausgelöst (Lupen müssen dann neu zeichnen).</summary>
+    public event EventHandler? AnnotationChanged;
+
     public void Detach() => Annotation.PropertyChanged -= OnAnnotationChanged;
 
     protected override void OnRender(DrawingContext drawingContext)
@@ -39,7 +42,11 @@ public sealed class AnnotationElement : FrameworkElement
         AnnotationRenderer.Render(drawingContext, Annotation, _context);
     }
 
-    private void OnAnnotationChanged(object? sender, PropertyChangedEventArgs e) => InvalidateVisual();
+    private void OnAnnotationChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        InvalidateVisual();
+        AnnotationChanged?.Invoke(this, EventArgs.Empty);
+    }
 }
 
 /// <summary>
@@ -68,6 +75,7 @@ public sealed class AnnotationLayer : Canvas
         _interaction = interaction;
         _context = context;
         document.Annotations.CollectionChanged += OnCollectionChanged;
+        document.PropertyChanged += OnDocumentChanged;
         Rebuild();
     }
 
@@ -85,6 +93,7 @@ public sealed class AnnotationLayer : Canvas
         if (_document is not null)
         {
             _document.Annotations.CollectionChanged -= OnCollectionChanged;
+            _document.PropertyChanged -= OnDocumentChanged;
         }
 
         ClearChildren();
@@ -93,10 +102,32 @@ public sealed class AnnotationLayer : Canvas
 
     private void OnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e) => Rebuild();
 
+    private void OnDocumentChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(ImageDocument.HighlightersBehind))
+        {
+            _context = _context with { HighlightersBehind = _document!.HighlightersBehind };
+            Rebuild();
+        }
+    }
+
+    /// <summary>Lupen zeigen die Objekte unter sich: ändert sich eines, zeichnen alle Lupen neu.</summary>
+    private void OnElementChanged(object? sender, EventArgs e)
+    {
+        foreach (var element in Children.OfType<AnnotationElement>())
+        {
+            if (element.Annotation is MagnifierAnnotation && !ReferenceEquals(element, sender))
+            {
+                element.InvalidateVisual();
+            }
+        }
+    }
+
     private void ClearChildren()
     {
         foreach (var element in Children.OfType<AnnotationElement>())
         {
+            element.AnnotationChanged -= OnElementChanged;
             element.Detach();
         }
 
@@ -112,13 +143,15 @@ public sealed class AnnotationLayer : Canvas
         }
 
         var interaction = _interaction;
-        foreach (var annotation in _document.Annotations)
+        foreach (var annotation in AnnotationOrdering.RenderOrder(_document.Annotations, _document.HighlightersBehind))
         {
-            Children.Add(new AnnotationElement(annotation, _context, () => interaction.Hidden)
+            var element = new AnnotationElement(annotation, _context, () => interaction.Hidden)
             {
                 Width = _document.BaseImage.Width,
                 Height = _document.BaseImage.Height,
-            });
+            };
+            element.AnnotationChanged += OnElementChanged;
+            Children.Add(element);
         }
     }
 }

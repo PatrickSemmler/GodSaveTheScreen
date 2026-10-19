@@ -21,6 +21,10 @@ public static class AnnotationNames
         TextAnnotation => "Shape_Text",
         MarkerAnnotation => "Shape_Marker",
         PolygonAnnotation => "Shape_Polygon",
+        StrokeAnnotation { IsHighlighter: true } => "Shape_Highlighter",
+        StrokeAnnotation => "Shape_Pen",
+        BlurAnnotation => "Shape_Blur",
+        MagnifierAnnotation => "Shape_Magnifier",
         LineAnnotation { EndCap: not LineEndStyle.None } or LineAnnotation { StartCap: not LineEndStyle.None } => "Shape_Arrow",
         LineAnnotation => "Shape_Line",
         _ => annotation.GetType().Name,
@@ -47,7 +51,7 @@ public static class AnnotationNames
 
 /// <summary>Gemeinsame Logik der Formwerkzeuge: Aufziehen mit Vorschau, Einrasten, Übernehmen als Undo-Schritt.</summary>
 public abstract class ShapeToolBase<T> : ToolBase
-    where T : ShapeAnnotation, new()
+    where T : Annotation, new()
 {
     private const double MinimumSize = 2;
 
@@ -157,12 +161,13 @@ public abstract class ShapeToolBase<T> : ToolBase
     protected T CreateShape()
     {
         var style = Context.Defaults.GetShape(Id, BuiltInStyle);
-        var shape = new T
+        var shape = new T { Opacity = style.Opacity };
+        if (shape is ShapeAnnotation styled)
         {
-            Stroke = style.Stroke,
-            Fill = style.Fill,
-            Opacity = style.Opacity,
-        };
+            styled.Stroke = style.Stroke;
+            styled.Fill = style.Fill;
+        }
+
         ApplyExtra(shape, style);
         return shape;
     }

@@ -187,6 +187,105 @@
                        Command="{Binding RenumberCommand}" CommandParameter="{x:Static core:MarkerOrder.Creation}" />
           </StackPanel>
 
+          <!-- Freihand, Radierer, Unschärfe, Lupe -->
+          <StackPanel DataContext="{Binding ToolOptions}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
+            <StackPanel Visibility="{Binding ShowStroke, Converter={StaticResource BoolToVisibility}}">
+              <TextBlock Text="{l:Loc Opt_Smoothing}" Style="{StaticResource FieldLabel}" />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Slider Minimum="0" Maximum="100" SmallChange="1" LargeChange="10" VerticalAlignment="Center"
+                        Value="{Binding SmoothingPercent, Mode=TwoWay, TargetNullValue=0}"
+                        AutomationProperties.Name="{l:Loc Opt_Smoothing}" />
+                <TextBlock Grid.Column="1" Width="40" Margin="8,0,0,0" TextAlignment="Right" VerticalAlignment="Center"
+                           Text="{Binding SmoothingPercent, StringFormat={}{0:0} %}" />
+              </Grid>
+              <CheckBox Content="{l:Loc Opt_Pressure}" Margin="0,10,0,0" IsChecked="{Binding UsePressure, Mode=TwoWay}" />
+              <CheckBox Content="{l:Loc Opt_HighlighterBehind}" Margin="0,6,0,0" IsChecked="{Binding HighlightersBehind, Mode=TwoWay}" />
+            </StackPanel>
+
+            <StackPanel Visibility="{Binding ShowEraser, Converter={StaticResource BoolToVisibility}}">
+              <TextBlock Text="{l:Loc Opt_EraserHint}" TextWrapping="Wrap" Opacity="0.75" Margin="0,10,0,0" />
+              <CheckBox Content="{l:Loc Opt_EraserAll}" Margin="0,10,0,0" IsChecked="{Binding EraserAllObjects, Mode=TwoWay}" />
+            </StackPanel>
+
+            <StackPanel Visibility="{Binding ShowBlur, Converter={StaticResource BoolToVisibility}}">
+              <TextBlock Text="{l:Loc Blur_Mode}" Style="{StaticResource FieldLabel}" />
+              <ComboBox ItemsSource="{Binding ModeChoices}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                        SelectedValue="{Binding Mode, Mode=TwoWay}" HorizontalAlignment="Stretch"
+                        AutomationProperties.Name="{l:Loc Blur_Mode}" />
+              <StackPanel Visibility="{Binding ShowStrength, Converter={StaticResource BoolToVisibility}}">
+                <TextBlock Text="{l:Loc Blur_Strength}" Style="{StaticResource FieldLabel}" />
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+                  <Slider Minimum="2" Maximum="100" SmallChange="1" LargeChange="5" VerticalAlignment="Center"
+                          Value="{Binding Strength, Mode=TwoWay, TargetNullValue=2}"
+                          AutomationProperties.Name="{l:Loc Blur_Strength}" />
+                  <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                                Minimum="2" Maximum="100" SmallChange="1" LargeChange="5" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                                Value="{Binding Strength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                AutomationProperties.Name="{l:Loc Blur_Strength}" />
+                </Grid>
+              </StackPanel>
+              <StackPanel Visibility="{Binding ShowRedactColor, Converter={StaticResource BoolToVisibility}}">
+                <TextBlock Text="{l:Loc Blur_RedactColor}" Style="{StaticResource FieldLabel}" />
+                <controls:ColorButton Style="{StaticResource PanelColorButton}" SelectedColor="{Binding RedactColor, Mode=TwoWay}" />
+              </StackPanel>
+              <TextBlock Text="{l:Loc Blur_Shape}" Style="{StaticResource FieldLabel}" />
+              <ComboBox ItemsSource="{Binding RegionShapeChoices}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                        SelectedValue="{Binding RegionShapeValue, Mode=TwoWay}" HorizontalAlignment="Stretch"
+                        AutomationProperties.Name="{l:Loc Blur_Shape}" />
+              <TextBlock Text="{l:Loc Blur_Feather}" Style="{StaticResource FieldLabel}" />
+              <ui:NumberBox Minimum="0" Maximum="100" SmallChange="1" LargeChange="5" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                            Value="{Binding FeatherEdge, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            AutomationProperties.Name="{l:Loc Blur_Feather}" />
+              <TextBlock Text="{l:Loc Blur_Warning}" TextWrapping="Wrap" Foreground="#F5A623" Margin="0,10,0,0"
+                         Visibility="{Binding ShowBlurWarning, Converter={StaticResource BoolToVisibility}}" />
+            </StackPanel>
+
+            <StackPanel Visibility="{Binding ShowMagnifier, Converter={StaticResource BoolToVisibility}}">
+              <TextBlock Text="{l:Loc Mag_Zoom}" Style="{StaticResource FieldLabel}" />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Slider Minimum="1.5" Maximum="8" SmallChange="0.5" LargeChange="1" VerticalAlignment="Center"
+                        Value="{Binding Zoom, Mode=TwoWay, TargetNullValue=2}"
+                        AutomationProperties.Name="{l:Loc Mag_Zoom}" />
+                <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                              Minimum="1.5" Maximum="8" SmallChange="0.5" LargeChange="1" MaxDecimalPlaces="1" ClearButtonEnabled="False"
+                              Value="{Binding Zoom, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              AutomationProperties.Name="{l:Loc Mag_Zoom}" />
+              </Grid>
+              <TextBlock Text="{l:Loc Mag_Shape}" Style="{StaticResource FieldLabel}" />
+              <ComboBox ItemsSource="{Binding MagnifierShapeChoices}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                        SelectedValue="{Binding MagnifierShapeValue, Mode=TwoWay}" HorizontalAlignment="Stretch"
+                        AutomationProperties.Name="{l:Loc Mag_Shape}" />
+              <TextBlock Text="{l:Loc Mag_Border}" Style="{StaticResource FieldLabel}" />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <controls:ColorButton Style="{StaticResource PanelColorButton}" SelectedColor="{Binding BorderColor, Mode=TwoWay}" />
+                <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                              Minimum="0" Maximum="50" SmallChange="0.5" LargeChange="2" MaxDecimalPlaces="1" ClearButtonEnabled="False"
+                              Value="{Binding BorderThickness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              AutomationProperties.Name="{l:Loc Mag_Border}" />
+              </Grid>
+              <CheckBox Content="{l:Loc Mag_Connector}" Margin="0,10,0,0" IsChecked="{Binding ShowConnector, Mode=TwoWay}" />
+              <CheckBox Content="{l:Loc Mag_SourceFrame}" Margin="0,6,0,0" IsChecked="{Binding ShowSourceFrame, Mode=TwoWay}" />
+              <CheckBox Content="{l:Loc Mag_BaseOnly}" Margin="0,6,0,0" IsChecked="{Binding BaseImageOnly, Mode=TwoWay}" />
+              <CheckBox Content="{l:Loc Mag_Smooth}" Margin="0,6,0,0" IsChecked="{Binding SmoothScaling, Mode=TwoWay}" />
+            </StackPanel>
+          </StackPanel>
+
           <!-- Formen -->
           <StackPanel DataContext="{Binding Properties}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
             <TextBlock Text="{l:Loc Props_StrokeColor}" Style="{StaticResource FieldLabel}" />
@@ -219,13 +318,15 @@
                             AutomationProperties.Name="{l:Loc Props_Thickness}" />
             </Grid>
 
-            <TextBlock Text="{l:Loc Props_Dash}" Style="{StaticResource FieldLabel}" />
+            <StackPanel Visibility="{Binding ShowDash, Converter={StaticResource BoolToVisibility}}">
+              <TextBlock Text="{l:Loc Props_Dash}" Style="{StaticResource FieldLabel}" />
             <ComboBox ItemsSource="{Binding DashChoices}"
                       DisplayMemberPath="Label"
                       SelectedValuePath="Value"
                       SelectedValue="{Binding Dash, Mode=TwoWay}"
                       HorizontalAlignment="Stretch"
                       AutomationProperties.Name="{l:Loc Props_Dash}" />
+            </StackPanel>
 
             <StackPanel Visibility="{Binding ShowCornerRadius, Converter={StaticResource BoolToVisibility}}">
               <TextBlock Text="{l:Loc Props_CornerRadius}" Style="{StaticResource FieldLabel}" />

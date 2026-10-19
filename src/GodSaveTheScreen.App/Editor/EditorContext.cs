@@ -41,6 +41,9 @@ public sealed class EditorPointerArgs
     public bool Alt => (Modifiers & ModifierKeys.Alt) != 0;
 }
 
+/// <summary>Glättung und Druckempfindlichkeit neuer Freihandstriche.</summary>
+public sealed record FreehandOptions(double Smoothing = 0.5, bool UsePressure = true);
+
 /// <summary>Auswahl von Objekten des Dokuments.</summary>
 public sealed class SelectionModel
 {
@@ -96,6 +99,12 @@ public sealed class InteractionState
 
     /// <summary>Während der Textbearbeitung ausgeblendetes Objekt.</summary>
     public Annotation? Hidden { get; set; }
+
+    /// <summary>Vom Radierer markierte Objekte (werden beim Loslassen entfernt).</summary>
+    public IReadOnlyList<Annotation> Marked { get; set; } = [];
+
+    /// <summary>Größenvorschau des Stifts bzw. Radierers: Mittelpunkt und Durchmesser in Bildpixeln.</summary>
+    public (PointD Center, double Diameter)? BrushPreview { get; set; }
 }
 
 /// <summary>Laufende Textbearbeitung: das Objekt (bei <see cref="IsNew"/> noch nicht im Dokument).</summary>
@@ -112,6 +121,7 @@ public sealed class EditorContext : IDisposable
         Defaults = defaults;
         Settings = settings;
         Exporter = exporter;
+        Document.HighlightersBehind = settings.Current.HighlighterBehind;
         Document.Annotations.CollectionChanged += OnAnnotationsChanged;
     }
 
@@ -122,6 +132,24 @@ public sealed class EditorContext : IDisposable
     public SelectionModel Selection { get; } = new();
 
     public InteractionState Interaction { get; } = new();
+
+    /// <summary>Virtuelles Lineal (UI-Zustand, nicht Teil des Dokuments).</summary>
+    public RulerViewModel Ruler { get; } = new();
+
+    /// <summary>Glättung und Druck neuer Freihandstriche (gilt für die Dauer des Fensters).</summary>
+    public FreehandOptions Freehand { get; set; } = new();
+
+    /// <summary>Vorlage für neue Unschärfe-Bereiche (Eigenschaftenpanel ohne Auswahl).</summary>
+    public BlurAnnotation BlurTemplate { get; } = new();
+
+    /// <summary>Vorlage für neue Lupen.</summary>
+    public MagnifierAnnotation MagnifierTemplate { get; } = new();
+
+    /// <summary>Radierer entfernt alle Objekte, nicht nur Freihandstriche.</summary>
+    public bool EraserAllObjects { get; set; }
+
+    /// <summary>Liefert die Mitte des sichtbaren Bildausschnitts in Bildpixeln (von der Zeichenfläche gesetzt).</summary>
+    public Func<PointD>? VisibleCenterProvider { get; set; }
 
     public IToolDefaultsService Defaults { get; }
 

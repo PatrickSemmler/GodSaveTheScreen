@@ -72,6 +72,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         SaveOptions = new SaveOptionsViewModel(settings);
         TextProperties = new TextPropertiesViewModel(context, () => ActiveTool);
         MarkerProperties = new MarkerPropertiesViewModel(context, () => ActiveTool);
+        ToolOptions = new ToolOptionsViewModel(context, () => ActiveTool);
+        context.Ruler.PropertyChanged += OnRulerChanged;
         ZoomChoices =
         [
             new ZoomChoice(Strings.Editor_Fit, null),
@@ -101,6 +103,15 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     public MarkerPropertiesViewModel MarkerProperties { get; }
 
+    public ToolOptionsViewModel ToolOptions { get; }
+
+    /// <summary>Virtuelles Lineal ein- oder ausblenden (beim Einblenden zentriert im sichtbaren Bereich).</summary>
+    public bool IsRulerVisible
+    {
+        get => Context.Ruler.IsVisible;
+        set => SetRulerVisible(value);
+    }
+
     /// <summary>Überschrift des Eigenschaftenbereichs: Objektname, „N Objekte“ oder „Standardwerte: Werkzeug“.</summary>
     public string PanelHeader
     {
@@ -125,7 +136,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     /// <summary>Im Eigenschaftenbereich gibt es etwas zu bearbeiten.</summary>
     public bool HasPanelContent =>
-        Properties.IsApplicable || TextProperties.IsApplicable || MarkerProperties.IsApplicable || Properties.ShowOpacity;
+        Properties.IsApplicable || TextProperties.IsApplicable || MarkerProperties.IsApplicable || ToolOptions.IsApplicable || Properties.ShowOpacity;
 
     public IReadOnlyList<ZoomChoice> ZoomChoices { get; }
 
@@ -221,11 +232,41 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         Context.InvalidateInteraction();
     }
 
+    [RelayCommand]
+    private void ToggleRuler() => SetRulerVisible(!Context.Ruler.IsVisible);
+
+    private void SetRulerVisible(bool visible)
+    {
+        var ruler = Context.Ruler;
+        if (ruler.IsVisible == visible)
+        {
+            return;
+        }
+
+        if (visible)
+        {
+            var image = Document.BaseImage;
+            ruler.Center = Context.VisibleCenterProvider?.Invoke() ?? new PointD(image.Width / 2.0, image.Height / 2.0);
+            ruler.Length = Math.Clamp(image.Width * 0.6, 200, 2000);
+        }
+
+        ruler.IsVisible = visible;
+    }
+
+    private void OnRulerChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(RulerViewModel.IsVisible))
+        {
+            OnPropertyChanged(nameof(IsRulerVisible));
+        }
+    }
+
     private void RefreshProperties()
     {
         Properties.Refresh();
         TextProperties.Refresh();
         MarkerProperties.Refresh();
+        ToolOptions.Refresh();
         OnPropertyChanged(nameof(PanelHeader));
         OnPropertyChanged(nameof(HasPanelContent));
     }
@@ -638,6 +679,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         Properties.Dispose();
         TextProperties.Dispose();
         MarkerProperties.Dispose();
+        ToolOptions.Dispose();
+        Context.Ruler.PropertyChanged -= OnRulerChanged;
         Layers.Dispose();
         Context.Dispose();
     }

@@ -96,6 +96,11 @@ public sealed class ToolRegistry
         new PolygonTool(context),
         new TextTool(context),
         new MarkerTool(context),
+        new PenTool(context),
+        new HighlighterTool(context),
+        new EraserTool(context),
+        new BlurTool(context),
+        new MagnifierTool(context),
         new PipetteTool(context),
     ]);
 }

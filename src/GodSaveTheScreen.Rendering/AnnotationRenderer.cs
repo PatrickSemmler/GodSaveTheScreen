@@ -15,6 +15,17 @@ public sealed record RenderContext
 
     public BitmapSource? BaseImage { get; init; }
 
+    /// <summary>Pixel des Basisbilds (Quelle der Unschärfe-Effekte).</summary>
+    public Core.Imaging.PixelBuffer? BasePixels { get; init; }
+
+    /// <summary>Alle Objekte des Dokuments in Z-Reihenfolge (die Lupe zeigt die Objekte unter sich).</summary>
+    public IReadOnlyList<Annotation>? Annotations { get; init; }
+
+    /// <summary>Textmarker-Striche hinter allen übrigen Objekten zeichnen.</summary>
+    public bool HighlightersBehind { get; init; } = true;
+
+    public EffectCache Effects { get; init; } = EffectCache.Shared;
+
     public static RenderContext Default { get; } = new();
 }
 
@@ -93,7 +104,7 @@ public static class BrushCache
 }
 
 /// <summary>Zeichnet Annotationen. Anzeige im Editor und Export nutzen denselben Pfad.</summary>
-public static class AnnotationRenderer
+public static partial class AnnotationRenderer
 {
     static AnnotationRenderer() => TextLayout.Install();
 
@@ -141,6 +152,15 @@ public static class AnnotationRenderer
                 break;
             case MarkerAnnotation marker:
                 DrawMarker(dc, marker);
+                break;
+            case StrokeAnnotation stroke:
+                DrawStroke(dc, stroke);
+                break;
+            case BlurAnnotation blur:
+                DrawBlur(dc, blur, context);
+                break;
+            case MagnifierAnnotation magnifier:
+                DrawMagnifier(dc, magnifier, context);
                 break;
         }
 

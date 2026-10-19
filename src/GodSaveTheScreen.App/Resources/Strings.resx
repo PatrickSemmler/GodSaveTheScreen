@@ -248,4 +248,42 @@
   <data name="Dialog_Save" xml:space="preserve"><value>Save</value></data>
   <data name="Dialog_DontSave" xml:space="preserve"><value>Don't save</value></data>
   <data name="Dialog_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Tool_Pen" xml:space="preserve"><value>Pen (B)</value></data>
+  <data name="Tool_Highlighter" xml:space="preserve"><value>Highlighter (H)</value></data>
+  <data name="Tool_Eraser" xml:space="preserve"><value>Eraser (X)</value></data>
+  <data name="Tool_Blur" xml:space="preserve"><value>Blur / pixelate / redact (U)</value></data>
+  <data name="Tool_Magnifier" xml:space="preserve"><value>Magnifier (Z)</value></data>
+  <data name="Shape_Pen" xml:space="preserve"><value>Stroke</value></data>
+  <data name="Shape_Highlighter" xml:space="preserve"><value>Highlighter</value></data>
+  <data name="Shape_Blur" xml:space="preserve"><value>Blur area</value></data>
+  <data name="Shape_Magnifier" xml:space="preserve"><value>Magnifier</value></data>
+  <data name="Editor_Ruler" xml:space="preserve"><value>Ruler</value></data>
+  <data name="Editor_RulerTip" xml:space="preserve"><value>Show or hide ruler (Ctrl+R)</value></data>
+  <data name="Ruler_SetAngle" xml:space="preserve"><value>Set angle to {0}°</value></data>
+  <data name="Ruler_Hide" xml:space="preserve"><value>Hide ruler</value></data>
+  <data name="Opt_Smoothing" xml:space="preserve"><value>Smoothing</value></data>
+  <data name="Opt_Pressure" xml:space="preserve"><value>Pen pressure changes width</value></data>
+  <data name="Opt_HighlighterBehind" xml:space="preserve"><value>Draw highlighter behind other objects</value></data>
+  <data name="Opt_EraserHint" xml:space="preserve"><value>Drag over strokes to remove them.</value></data>
+  <data name="Opt_EraserAll" xml:space="preserve"><value>Erase all objects, not only strokes</value></data>
+  <data name="Blur_Mode" xml:space="preserve"><value>Mode</value></data>
+  <data name="Blur_Pixelate" xml:space="preserve"><value>Pixelate</value></data>
+  <data name="Blur_Gaussian" xml:space="preserve"><value>Blur</value></data>
+  <data name="Blur_Redact" xml:space="preserve"><value>Redact (solid)</value></data>
+  <data name="Blur_Strength" xml:space="preserve"><value>Strength / block size (px)</value></data>
+  <data name="Blur_RedactColor" xml:space="preserve"><value>Redaction color</value></data>
+  <data name="Blur_Shape" xml:space="preserve"><value>Shape</value></data>
+  <data name="Blur_Feather" xml:space="preserve"><value>Soft edge (px)</value></data>
+  <data name="Blur_Warning" xml:space="preserve"><value>A light blur can sometimes be reversed. Use "Redact" for sensitive data.</value></data>
+  <data name="Region_Rectangle" xml:space="preserve"><value>Rectangle</value></data>
+  <data name="Region_Ellipse" xml:space="preserve"><value>Ellipse</value></data>
+  <data name="Mag_Zoom" xml:space="preserve"><value>Zoom</value></data>
+  <data name="Mag_Shape" xml:space="preserve"><value>Shape</value></data>
+  <data name="Mag_Border" xml:space="preserve"><value>Border</value></data>
+  <data name="Mag_Connector" xml:space="preserve"><value>Show connector</value></data>
+  <data name="Mag_SourceFrame" xml:space="preserve"><value>Show source frame</value></data>
+  <data name="Mag_BaseOnly" xml:space="preserve"><value>Magnify base image only</value></data>
+  <data name="Mag_Smooth" xml:space="preserve"><value>Smooth scaling</value></data>
+  <data name="Magnifier_Circle" xml:space="preserve"><value>Circle</value></data>
+  <data name="Magnifier_Rectangle" xml:space="preserve"><value>Rectangle</value></data>
 </root>

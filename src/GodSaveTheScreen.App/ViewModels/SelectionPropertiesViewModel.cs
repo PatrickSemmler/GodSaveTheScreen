@@ -67,8 +67,10 @@ public sealed partial class SelectionPropertiesViewModel : ObservableObject, IDi
     public bool ShowOpacity => HasSelection || DefaultsTool is not null;
 
     public bool ShowFill => DefaultsTool is { } tool
-        ? tool is not LineTool
-        : Shapes.Any(s => s is not LineAnnotation);
+        ? tool is not (LineTool or FreehandToolBase)
+        : Shapes.Any(s => s is not (LineAnnotation or StrokeAnnotation));
+
+    public bool ShowDash => DefaultsTool is { } tool ? tool is not FreehandToolBase : Shapes.Any(s => s is not StrokeAnnotation);
 
     public bool ShowCornerRadius => DefaultsTool is { } tool ? tool is RectangleTool : Shapes.Any(s => s is RectangleAnnotation);
 

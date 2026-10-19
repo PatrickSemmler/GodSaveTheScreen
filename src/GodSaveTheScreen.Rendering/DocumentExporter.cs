@@ -24,12 +24,18 @@ public sealed class DocumentExporter : IDocumentExporter
 
         var baseImage = document.BaseImage;
         var baseSource = baseImage.ToBitmapSource();
-        var context = new RenderContext { BaseImage = baseSource };
+        var context = new RenderContext
+        {
+            BaseImage = baseSource,
+            BasePixels = baseImage,
+            Annotations = document.Annotations,
+            HighlightersBehind = document.HighlightersBehind,
+        };
         var visual = CreateVisual();
         using (var dc = visual.RenderOpen())
         {
             dc.DrawImage(baseSource, new Rect(0, 0, baseImage.Width, baseImage.Height));
-            foreach (var annotation in visible)
+            foreach (var annotation in AnnotationOrdering.RenderOrder(visible, document.HighlightersBehind))
             {
                 AnnotationRenderer.Render(dc, annotation, context);
             }
