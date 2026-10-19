@@ -92,6 +92,20 @@ public static class PresetStyles
         }
     }
 
+    /// <summary>
+    /// Übernimmt die Werte der Auswahl als Standardwerte des Werkzeugs, wenn die Auswahl einheitlich zu diesem
+    /// Werkzeug gehört, damit sie beim Zurückwechseln erhalten bleiben.
+    /// </summary>
+    public static void RememberSelectionAsDefaults(EditorContext context, ToolBase tool)
+    {
+        if (context.Selection.Items.Count == 0 || KindOf(tool.Id) is null || Resolve(context.Selection.Items, tool) != tool.Id)
+        {
+            return;
+        }
+
+        ApplyToDefaults(context, tool.Id, Capture(context, tool.Id, tool.BuiltInStyle, string.Empty));
+    }
+
     /// <summary>Wendet die Vorlage an. Gibt die Anzahl geänderter Objekte zurück (0 bei Anwendung auf die Standardwerte).</summary>
     public static int Apply(EditorContext context, string toolId, ToolPreset preset)
     {

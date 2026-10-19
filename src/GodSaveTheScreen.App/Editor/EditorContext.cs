@@ -285,6 +285,11 @@ public sealed class EditorContext : IDisposable
 
     public void ActivateTool(string id) => ActivateToolHandler?.Invoke(id);
 
+    /// <summary>Eigenschaften der ausgewählten Objekte wurden im Panel geändert (Werte werden Standard des Werkzeugs).</summary>
+    public event EventHandler? SelectionStyleEdited;
+
+    public void RaiseSelectionStyleEdited() => SelectionStyleEdited?.Invoke(this, EventArgs.Empty);
+
     public void InvalidateInteraction() => InteractionInvalidated?.Invoke(this, EventArgs.Empty);
 
     /// <summary>Oberstes Objekt unter dem Punkt (sichtbar).</summary>

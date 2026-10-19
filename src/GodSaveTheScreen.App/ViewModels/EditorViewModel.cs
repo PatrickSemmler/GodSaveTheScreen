@@ -96,6 +96,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         ];
 
         context.ActivateToolHandler = ActivateToolById;
+        context.SelectionStyleEdited += OnSelectionStyleEdited;
         Document.PropertyChanged += OnDocumentChanged;
         Context.Undo.Changed += OnUndoChanged;
         Context.Selection.Changed += OnSelectionChanged;
@@ -270,6 +271,15 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         if (tool is not null)
         {
             Activate(tool);
+        }
+    }
+
+    /// <summary>Geänderte Werte der Auswahl werden die Standardwerte ihres Werkzeugs und bleiben so beim Werkzeugwechsel erhalten.</summary>
+    private void OnSelectionStyleEdited(object? sender, EventArgs e)
+    {
+        if (PresetStyles.Resolve(Context.Selection.Items, ActiveTool) is { } id && Tools.Find(id) is { } owner)
+        {
+            PresetStyles.RememberSelectionAsDefaults(Context, owner);
         }
     }
 
@@ -890,6 +900,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         Document.PropertyChanged -= OnDocumentChanged;
         Context.Undo.Changed -= OnUndoChanged;
         Context.Selection.Changed -= OnSelectionChanged;
+        Context.SelectionStyleEdited -= OnSelectionStyleEdited;
         Properties.Dispose();
         TextProperties.Dispose();
         MarkerProperties.Dispose();

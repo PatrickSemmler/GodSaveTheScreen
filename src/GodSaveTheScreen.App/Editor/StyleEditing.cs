@@ -39,5 +39,7 @@ public static class StyleEditing
                 context.Undo.Execute(new PropertyChangeAction<TV>(target, key, old, value, v => set(target, v), description));
             }
         }
+
+        context.RaiseSelectionStyleEdited();
     }
 }

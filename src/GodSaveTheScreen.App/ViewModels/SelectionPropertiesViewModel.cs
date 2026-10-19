@@ -280,5 +280,7 @@ public sealed partial class SelectionPropertiesViewModel : ObservableObject, IDi
                 _context.Undo.Execute(new PropertyChangeAction<TV>(target, key, old, value, v => set(target, v)));
             }
         }
+
+        _context.RaiseSelectionStyleEdited();
     }
 }

@@ -44,7 +44,7 @@ public partial class MessageDialog : FluentWindow
             {
                 Content = definition.Label,
                 MinWidth = 88,
-                Margin = new Thickness(8, 0, 0, 0),
+                Margin = new Thickness(8, 0, 0, 8),
                 Appearance = definition.IsPrimary ? ControlAppearance.Primary : ControlAppearance.Secondary,
                 IsDefault = definition.IsPrimary,
                 IsCancel = definition.IsCancel,
