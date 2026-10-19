@@ -1,6 +1,7 @@
 using System.Windows.Input;
 using GodSaveTheScreen.App.Resources;
 using GodSaveTheScreen.Core.Annotations;
+using GodSaveTheScreen.Core.Emoji;
 using GodSaveTheScreen.Core.Geometry;
 using GodSaveTheScreen.Core.Settings;
 using GodSaveTheScreen.Core.Undo;
@@ -25,6 +26,7 @@ public static class AnnotationNames
         StrokeAnnotation => "Shape_Pen",
         BlurAnnotation => "Shape_Blur",
         MagnifierAnnotation => "Shape_Magnifier",
+        EmojiAnnotation => "Shape_Emoji",
         LineAnnotation { EndCap: not LineEndStyle.None } or LineAnnotation { StartCap: not LineEndStyle.None } => "Shape_Arrow",
         LineAnnotation => "Shape_Line",
         _ => annotation.GetType().Name,
@@ -43,6 +45,11 @@ public static class AnnotationNames
         if (!string.IsNullOrWhiteSpace(annotation.Name))
         {
             return annotation.Name;
+        }
+
+        if (annotation is EmojiAnnotation emoji)
+        {
+            return EmojiCatalog.Shared.Find(emoji.Sequence)?.GetName() ?? KindName(annotation);
         }
 
         return annotation is TextAnnotation { Text.Length: > 0 } text ? text.Text.Split('\n')[0] : KindName(annotation);

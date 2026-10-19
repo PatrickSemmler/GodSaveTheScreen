@@ -26,6 +26,14 @@ public sealed record RenderContext
 
     public EffectCache Effects { get; init; } = EffectCache.Shared;
 
+    /// <summary>Geräte-Pixel je Bildpixel (Zoom × DPI in der Anzeige, 1 im Export): bestimmt die Rastergröße von Emojis.</summary>
+    public double EmojiPixelScale { get; init; } = 1;
+
+    /// <summary>Größte Rastergröße eines Emojis in Pixeln (Anzeige 2048, Export 4096); darüber wird skaliert.</summary>
+    public int EmojiMaxPixels { get; init; } = EmojiRasterizer.MaxPixelSize;
+
+    public EmojiCache Emojis { get; init; } = EmojiCache.Shared;
+
     public static RenderContext Default { get; } = new();
 }
 
@@ -162,12 +170,70 @@ public static partial class AnnotationRenderer
             case MagnifierAnnotation magnifier:
                 DrawMagnifier(dc, magnifier, context);
                 break;
+            case EmojiAnnotation emoji:
+                DrawEmoji(dc, emoji, context);
+                break;
         }
 
         if (pushed)
         {
             dc.Pop();
         }
+    }
+
+    private static void DrawEmoji(DrawingContext dc, EmojiAnnotation a, RenderContext context)
+    {
+        var rect = ToRect(a.Rect);
+        if (rect.Width <= 0 || rect.Height <= 0)
+        {
+            return;
+        }
+
+        var pivot = new Point(rect.X + (rect.Width / 2), rect.Y + (rect.Height / 2));
+        var pushes = 0;
+        if (a.Rotation != 0)
+        {
+            dc.PushTransform(new RotateTransform(a.Rotation, pivot.X, pivot.Y));
+            pushes++;
+        }
+
+        if (a.FlipHorizontal || a.FlipVertical)
+        {
+            dc.PushTransform(new ScaleTransform(a.FlipHorizontal ? -1 : 1, a.FlipVertical ? -1 : 1, pivot.X, pivot.Y));
+            pushes++;
+        }
+
+        var wanted = Math.Max(rect.Width, rect.Height) * Math.Max(context.EmojiPixelScale, 0.01);
+        var size = EmojiCache.Quantize(wanted, context.EmojiMaxPixels);
+        var bitmap = context.Emojis.Get(a.Sequence, size);
+        if (bitmap is not null)
+        {
+            dc.DrawImage(bitmap, rect);
+        }
+        else
+        {
+            DrawEmojiPlaceholder(dc, rect);
+        }
+
+        for (var i = 0; i < pushes; i++)
+        {
+            dc.Pop();
+        }
+    }
+
+    /// <summary>Platzhalter für ein Emoji, das die installierte Schrift nicht darstellen kann: gestrichelter Rahmen mit „?“.</summary>
+    private static void DrawEmojiPlaceholder(DrawingContext dc, Rect rect)
+    {
+        var pen = new Pen(Brushes.Gray, Math.Max(1, Math.Min(rect.Width, rect.Height) / 32))
+        {
+            DashStyle = new DashStyle([3.0, 2.0], 0),
+        };
+        pen.Freeze();
+        dc.DrawRoundedRectangle(null, pen, rect, 4, 4);
+        var fontSize = Math.Max(4, Math.Min(rect.Width, rect.Height) * 0.5);
+        var typeface = new Typeface("Segoe UI");
+        var text = new FormattedText("?", CultureInfo.InvariantCulture, FlowDirection.LeftToRight, typeface, fontSize, Brushes.Gray, 1.0);
+        dc.DrawText(text, new Point(rect.X + ((rect.Width - text.Width) / 2), rect.Y + ((rect.Height - text.Height) / 2)));
     }
 
     private static void DrawText(DrawingContext dc, TextAnnotation a)

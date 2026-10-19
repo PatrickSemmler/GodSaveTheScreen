@@ -773,4 +773,90 @@ public static class Strings
     public static string Shortcut_CropNoSnap => ResourceManager.GetString("Shortcut_CropNoSnap", Culture) ?? "Shortcut_CropNoSnap";
 
     public static string Color_Choose => ResourceManager.GetString("Color_Choose", Culture) ?? "Color_Choose";
+
+    public static string Tool_Emoji => ResourceManager.GetString("Tool_Emoji", Culture) ?? "Tool_Emoji";
+
+    public static string Shape_Emoji => ResourceManager.GetString("Shape_Emoji", Culture) ?? "Shape_Emoji";
+
+    public static string Emoji_Search => ResourceManager.GetString("Emoji_Search", Culture) ?? "Emoji_Search";
+
+    public static string Emoji_Categories => ResourceManager.GetString("Emoji_Categories", Culture) ?? "Emoji_Categories";
+
+    public static string Emoji_Grid => ResourceManager.GetString("Emoji_Grid", Culture) ?? "Emoji_Grid";
+
+    public static string Emoji_Loading => ResourceManager.GetString("Emoji_Loading", Culture) ?? "Emoji_Loading";
+
+    public static string Emoji_NoResults => ResourceManager.GetString("Emoji_NoResults", Culture) ?? "Emoji_NoResults";
+
+    public static string Emoji_Cat_Favorites => ResourceManager.GetString("Emoji_Cat_Favorites", Culture) ?? "Emoji_Cat_Favorites";
+
+    public static string Emoji_Cat_Recent => ResourceManager.GetString("Emoji_Cat_Recent", Culture) ?? "Emoji_Cat_Recent";
+
+    public static string Emoji_Cat_smileys => ResourceManager.GetString("Emoji_Cat_smileys", Culture) ?? "Emoji_Cat_smileys";
+
+    public static string Emoji_Cat_people => ResourceManager.GetString("Emoji_Cat_people", Culture) ?? "Emoji_Cat_people";
+
+    public static string Emoji_Cat_nature => ResourceManager.GetString("Emoji_Cat_nature", Culture) ?? "Emoji_Cat_nature";
+
+    public static string Emoji_Cat_food => ResourceManager.GetString("Emoji_Cat_food", Culture) ?? "Emoji_Cat_food";
+
+    public static string Emoji_Cat_travel => ResourceManager.GetString("Emoji_Cat_travel", Culture) ?? "Emoji_Cat_travel";
+
+    public static string Emoji_Cat_activities => ResourceManager.GetString("Emoji_Cat_activities", Culture) ?? "Emoji_Cat_activities";
+
+    public static string Emoji_Cat_objects => ResourceManager.GetString("Emoji_Cat_objects", Culture) ?? "Emoji_Cat_objects";
+
+    public static string Emoji_Cat_symbols => ResourceManager.GetString("Emoji_Cat_symbols", Culture) ?? "Emoji_Cat_symbols";
+
+    public static string Emoji_Cat_flags => ResourceManager.GetString("Emoji_Cat_flags", Culture) ?? "Emoji_Cat_flags";
+
+    public static string Emoji_SkinTone => ResourceManager.GetString("Emoji_SkinTone", Culture) ?? "Emoji_SkinTone";
+
+    public static string Emoji_Tone_Default => ResourceManager.GetString("Emoji_Tone_Default", Culture) ?? "Emoji_Tone_Default";
+
+    public static string Emoji_Tone_Light => ResourceManager.GetString("Emoji_Tone_Light", Culture) ?? "Emoji_Tone_Light";
+
+    public static string Emoji_Tone_MediumLight => ResourceManager.GetString("Emoji_Tone_MediumLight", Culture) ?? "Emoji_Tone_MediumLight";
+
+    public static string Emoji_Tone_Medium => ResourceManager.GetString("Emoji_Tone_Medium", Culture) ?? "Emoji_Tone_Medium";
+
+    public static string Emoji_Tone_MediumDark => ResourceManager.GetString("Emoji_Tone_MediumDark", Culture) ?? "Emoji_Tone_MediumDark";
+
+    public static string Emoji_Tone_Dark => ResourceManager.GetString("Emoji_Tone_Dark", Culture) ?? "Emoji_Tone_Dark";
+
+    public static string Emoji_AddFavorite => ResourceManager.GetString("Emoji_AddFavorite", Culture) ?? "Emoji_AddFavorite";
+
+    public static string Emoji_RemoveFavorite => ResourceManager.GetString("Emoji_RemoveFavorite", Culture) ?? "Emoji_RemoveFavorite";
+
+    public static string Emoji_Insert => ResourceManager.GetString("Emoji_Insert", Culture) ?? "Emoji_Insert";
+
+    public static string Emoji_Swap => ResourceManager.GetString("Emoji_Swap", Culture) ?? "Emoji_Swap";
+
+    public static string Emoji_Size => ResourceManager.GetString("Emoji_Size", Culture) ?? "Emoji_Size";
+
+    public static string Emoji_Width => ResourceManager.GetString("Emoji_Width", Culture) ?? "Emoji_Width";
+
+    public static string Emoji_Height => ResourceManager.GetString("Emoji_Height", Culture) ?? "Emoji_Height";
+
+    public static string Emoji_ResetAspect => ResourceManager.GetString("Emoji_ResetAspect", Culture) ?? "Emoji_ResetAspect";
+
+    public static string Emoji_Rotation => ResourceManager.GetString("Emoji_Rotation", Culture) ?? "Emoji_Rotation";
+
+    public static string Emoji_ResetRotation => ResourceManager.GetString("Emoji_ResetRotation", Culture) ?? "Emoji_ResetRotation";
+
+    public static string Emoji_FlipH => ResourceManager.GetString("Emoji_FlipH", Culture) ?? "Emoji_FlipH";
+
+    public static string Emoji_FlipV => ResourceManager.GetString("Emoji_FlipV", Culture) ?? "Emoji_FlipV";
+
+    public static string Emoji_Flip => ResourceManager.GetString("Emoji_Flip", Culture) ?? "Emoji_Flip";
+
+    public static string Emoji_DefaultSize => ResourceManager.GetString("Emoji_DefaultSize", Culture) ?? "Emoji_DefaultSize";
+
+    public static string Emoji_Placeholder => ResourceManager.GetString("Emoji_Placeholder", Culture) ?? "Emoji_Placeholder";
+
+    public static string Shortcut_Rotate => ResourceManager.GetString("Shortcut_Rotate", Culture) ?? "Shortcut_Rotate";
+
+    public static string Shortcut_FlipHorizontal => ResourceManager.GetString("Shortcut_FlipHorizontal", Culture) ?? "Shortcut_FlipHorizontal";
+
+    public static string Shortcut_FlipVertical => ResourceManager.GetString("Shortcut_FlipVertical", Culture) ?? "Shortcut_FlipVertical";
 }

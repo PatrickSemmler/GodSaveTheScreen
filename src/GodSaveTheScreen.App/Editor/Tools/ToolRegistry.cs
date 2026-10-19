@@ -103,6 +103,7 @@ public sealed class ToolRegistry
         new EraserTool(context),
         new BlurTool(context),
         new MagnifierTool(context),
+        new EmojiTool(context),
         new CropTool(context),
         new PipetteTool(context),
     ]);

@@ -147,6 +147,29 @@ public sealed class WindowSmokeTests
             Idle(window);
             h.Document.Annotations.OfType<GodSaveTheScreen.Core.Annotations.MarkerAnnotation>().Count().ShouldBe(1);
 
+            // Emoji: Auswahl lädt im Hintergrund, Emoji lässt sich einfügen, drehen und im Panel bearbeiten.
+            h.ViewModel.Activate(h.Tools.Get<EmojiTool>());
+            Idle(window);
+            h.ViewModel.EmojiProperties.IsApplicable.ShouldBeTrue();
+            for (var i = 0; i < 200 && h.ViewModel.EmojiPicker.IsLoading; i++)
+            {
+                Idle(window);
+                Thread.Sleep(20);
+            }
+
+            h.ViewModel.EmojiPicker.IsLoading.ShouldBeFalse();
+            var emojiTool = h.ViewModel.ActiveTool;
+            emojiTool.OnPointerDown(EditorHarness.Pointer(120, 90));
+            emojiTool.OnPointerUp(EditorHarness.Pointer(120, 90));
+            Idle(window);
+            var emoji = h.Document.Annotations.OfType<GodSaveTheScreen.Core.Annotations.EmojiAnnotation>().Single();
+            h.ViewModel.EmojiProperties.HasEmojis.ShouldBeTrue();
+            h.ViewModel.EmojiProperties.Rotation = 30;
+            Idle(window);
+            emoji.Rotation.ShouldBe(30);
+            h.ViewModel.Layers.Items.Count.ShouldBe(4);
+            Screenshot(window, "emoji-panel");
+
             // Alle Werkzeuge lassen sich aktivieren, ohne dass die Bindungen brechen.
             foreach (var t in h.Tools.PaletteTools)
             {
@@ -196,6 +219,28 @@ public sealed class WindowSmokeTests
                 yield return nested;
             }
         }
+    }
+
+    private static void Screenshot(Window window, string name)
+    {
+        if (Environment.GetEnvironmentVariable("GSTS_SHOT_DIR") is not { Length: > 0 } directory)
+        {
+            return;
+        }
+
+        for (var i = 0; i < 100; i++)
+        {
+            Idle(window); // Vorschaubilder der Emoji-Auswahl laden im Hintergrund nach
+            Thread.Sleep(20);
+        }
+
+        window.UpdateLayout();
+        var bitmap = new System.Windows.Media.Imaging.RenderTargetBitmap((int)window.ActualWidth, (int)window.ActualHeight, 96, 96, System.Windows.Media.PixelFormats.Pbgra32);
+        bitmap.Render(window);
+        var encoder = new System.Windows.Media.Imaging.PngBitmapEncoder();
+        encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bitmap));
+        using var stream = System.IO.File.Create(System.IO.Path.Combine(directory, name + ".png"));
+        encoder.Save(stream);
     }
 
     private static void Idle(Window window) =>

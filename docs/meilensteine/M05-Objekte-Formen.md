@@ -78,7 +78,7 @@ Das Herzstück des Editors: ein nicht-destruktives Objektmodell, in dem Formen (
 - **Ein Renderpfad:** Anzeige (`AnnotationElement.OnRender`) und Export (`DocumentExporter`) nutzen denselben `AnnotationRenderer` – Abweichungen zwischen Bildschirm und Datei sind damit ausgeschlossen.
 - **Warum Modell-Objekte direkt als `ObservableObject`:** Keine doppelte Wrapper-ViewModel-Hierarchie; die Undo-Invariante wird über das Eigenschaften-ViewModel und die Werkzeuge erzwungen.
 - **Koordinaten:** Bildpixel; Linienstärken ebenfalls in Bildpixeln (skalieren mit dem Zoom, wie in Paint/Snipping Tool).
-- **Ausblick Rotation:** `Annotation` erhält später optional `Rotation` + `Center`; Renderer wendet `PushTransform` an, Hit-Test transformiert den Punkt invers. Nicht Teil von v1.
+- **Ausblick Rotation:** `Annotation` erhält später optional `Rotation` + `Center`; Renderer wendet `PushTransform` an, Hit-Test transformiert den Punkt invers. Nicht Teil von v1; seit M13 umgesetzt für Emojis (`IRotatableAnnotation`, siehe [M13](M13-Emojis.md)).
 
 ## Tests
 

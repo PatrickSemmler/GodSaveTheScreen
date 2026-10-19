@@ -4,6 +4,7 @@
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  xmlns:l="clr-namespace:GodSaveTheScreen.App.Localization">
   <UserControl.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
     <Style x:Key="LayerIconButton" TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
       <Setter Property="Appearance" Value="Transparent" />
       <Setter Property="Padding" Value="4" />
@@ -80,10 +81,23 @@
               </ui:SymbolIcon>
             </ui:Button>
             <Grid Grid.Column="1" Margin="6,0">
+              <Image Source="{Binding Preview}" Width="18" Height="18" HorizontalAlignment="Left" VerticalAlignment="Center"
+                     RenderOptions.BitmapScalingMode="HighQuality"
+                     Visibility="{Binding HasPreview, Converter={StaticResource BoolToVisibility}}" />
               <TextBlock Text="{Binding DisplayName}"
                          VerticalAlignment="Center"
                          TextTrimming="CharacterEllipsis"
-                         MouseLeftButtonDown="OnNameMouseDown" />
+                         MouseLeftButtonDown="OnNameMouseDown">
+                <TextBlock.Style>
+                  <Style TargetType="TextBlock">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding HasPreview}" Value="True">
+                        <Setter Property="Margin" Value="24,0,0,0" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                  </Style>
+                </TextBlock.Style>
+              </TextBlock>
               <TextBox Visibility="Collapsed"
                        VerticalAlignment="Center"
                        KeyDown="OnRenameKeyDown"

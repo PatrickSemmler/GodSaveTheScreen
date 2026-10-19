@@ -4,6 +4,9 @@
     <RootNamespace>GodSaveTheScreen.Core</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Emoji\emoji-data.json.gz" LogicalName="GodSaveTheScreen.Core.Emoji.emoji-data.json.gz" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />

@@ -13,10 +13,10 @@ namespace GodSaveTheScreen.App.Controls;
 /// <summary>Zeichnet ein Objekt über den gemeinsamen <see cref="AnnotationRenderer"/> (Bildpixel-Koordinaten).</summary>
 public sealed class AnnotationElement : FrameworkElement
 {
-    private readonly RenderContext _context;
+    private readonly Func<RenderContext> _context;
     private readonly Func<Annotation?> _hidden;
 
-    public AnnotationElement(Annotation annotation, RenderContext context, Func<Annotation?> hidden)
+    public AnnotationElement(Annotation annotation, Func<RenderContext> context, Func<Annotation?> hidden)
     {
         Annotation = annotation;
         _context = context;
@@ -39,7 +39,7 @@ public sealed class AnnotationElement : FrameworkElement
             return;
         }
 
-        AnnotationRenderer.Render(drawingContext, Annotation, _context);
+        AnnotationRenderer.Render(drawingContext, Annotation, _context());
     }
 
     private void OnAnnotationChanged(object? sender, PropertyChangedEventArgs e)
@@ -55,6 +55,8 @@ public sealed class AnnotationElement : FrameworkElement
 /// </summary>
 public sealed class AnnotationLayer : Canvas
 {
+    private const int MaxDisplayEmojiPixels = 2048;
+
     private ImageDocument? _document;
     private InteractionState? _interaction;
     private RenderContext _context = RenderContext.Default;
@@ -73,10 +75,28 @@ public sealed class AnnotationLayer : Canvas
         Detach();
         _document = document;
         _interaction = interaction;
-        _context = context;
+        _context = context with { EmojiMaxPixels = MaxDisplayEmojiPixels };
         document.Annotations.CollectionChanged += OnCollectionChanged;
         document.PropertyChanged += OnDocumentChanged;
         Rebuild();
+    }
+
+    /// <summary>
+    /// Geräte-Pixel je Bildpixel (Zoom): Emojis werden in dieser Auflösung neu gerastert, damit sie bei jeder Zoomstufe scharf bleiben.
+    /// </summary>
+    public void SetPixelScale(double pixelsPerImagePixel)
+    {
+        var scale = Math.Max(pixelsPerImagePixel, 0.01);
+        if (Math.Abs(scale - _context.EmojiPixelScale) < 1e-9)
+        {
+            return;
+        }
+
+        _context = _context with { EmojiPixelScale = scale, EmojiMaxPixels = MaxDisplayEmojiPixels };
+        foreach (var element in Children.OfType<AnnotationElement>().Where(e => e.Annotation is EmojiAnnotation))
+        {
+            element.InvalidateVisual();
+        }
     }
 
     /// <summary>Zeichnet alle Objekte neu (z. B. nach Änderung des ausgeblendeten Objekts).</summary>
@@ -145,7 +165,7 @@ public sealed class AnnotationLayer : Canvas
         var interaction = _interaction;
         foreach (var annotation in AnnotationOrdering.RenderOrder(_document.Annotations, _document.HighlightersBehind))
         {
-            var element = new AnnotationElement(annotation, _context, () => interaction.Hidden)
+            var element = new AnnotationElement(annotation, () => _context, () => interaction.Hidden)
             {
                 Width = _document.BaseImage.Width,
                 Height = _document.BaseImage.Height,

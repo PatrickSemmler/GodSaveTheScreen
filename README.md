@@ -16,6 +16,7 @@ Screenshot- und Annotationstool für Windows (.NET 10, WPF). Es läuft im Infobe
 - Formen (Rechteck, Ellipse, Linie, Pfeil, Dreieck, Polygon), Text, nummerierte Marker, Stift, Textmarker, Radierer, virtuelles Lineal
 - Eigene Vorlagen für jedes Zeichenwerkzeug (speichern, anwenden, umbenennen, löschen); jedes Werkzeug merkt sich seine zuletzt gewählte Konfiguration
 - Unschärfe (Weichzeichnen, Verpixeln, Schwärzen) und Lupe
+- Farbige Emojis (alle Windows-Emojis außer Länderflaggen) mit Suche auf Deutsch und Englisch, Kategorien, „Zuletzt verwendet“, Favoriten und Hauttönen; frei skalier-, dreh- und spiegelbar, mit Deckkraft
 - Alle Objekte bleiben bearbeitbar: Auswahl, Griffe, Ebenenliste, Z-Reihenfolge, Sperren, Undo/Redo
 - Zuschneiden wie im Snipping Tool (nicht-destruktiv, später wieder erweiterbar), Seitenverhältnisse, Pixel-Eingabe, Einrasten, „Auf Objekte zuschneiden“, „Leeren Rand entfernen“
 - Zoom und Verschieben, Bild per Drag & Drop ein- und ausgeben
@@ -36,11 +37,12 @@ Screenshot- und Annotationstool für Windows (.NET 10, WPF). Es läuft im Infobe
 |---|---|
 | `Strg+Umschalt+1` … `4` | Aufnahme: Rechteck / Fenster / Freiform / Vollbild (Standard, änderbar) |
 | `V` `R` `E` `L` `A` `G` `P` | Auswahl, Rechteck, Ellipse, Linie, Pfeil, Dreieck, Polygon |
-| `T` `M` `B` `H` `X` `U` `Z` `C` | Text, Marker, Stift, Textmarker, Radierer, Unschärfe, Lupe, Zuschneiden |
+| `T` `M` `B` `H` `X` `U` `Z` `C` `J` | Text, Marker, Stift, Textmarker, Radierer, Unschärfe, Lupe, Zuschneiden, Emoji |
 | `Strg+Z` / `Strg+Y` | Rückgängig / Wiederholen |
 | `Strg+C` / `Strg+Umschalt+C` | Auswahl bzw. Bild kopieren / Bild immer kopieren |
 | `Strg+S` / `Strg+Umschalt+S` | Speichern / Speichern unter (Projekt oder Bild) |
 | `Tab` / `Umschalt+Tab` | nächstes / vorheriges Objekt auswählen |
+| `[` / `]` | ausgewähltes Emoji um 15° drehen (`Umschalt` am Drehgriff rastet ein); `Umschalt+H` / `Umschalt+V` spiegeln |
 | Pfeiltasten (+`Umschalt`) | Auswahl um 1 px (10 px) verschieben, mit `Alt` Größe ändern |
 | `F1` | Alle Tastenkürzel |
 

@@ -1,8 +1,9 @@
-<#
+﻿<#
 .SYNOPSIS
   Erzeugt THIRD-PARTY-NOTICES.txt aus den NuGet-Paketen des App-Projekts (direkte und transitive Abhängigkeiten).
 .DESCRIPTION
   Liest Lizenzangaben aus den .nuspec-Dateien im NuGet-Cache (Voraussetzung: dotnet restore wurde ausgeführt).
+  Mit PowerShell 7 (pwsh) ausführen: Windows PowerShell 5 liest diese Datei sonst nicht als UTF-8 (Umlaute).
   Reine Build-Werkzeuge (Analyzer, Source-Generatoren) sind ebenfalls aufgeführt, weil sie im Paketbaum stehen.
 #>
 [CmdletBinding()]
@@ -52,6 +53,37 @@ foreach ($package in $packages) {
     if ($url) { [void]$sb.AppendLine("  Projekt:    $url") }
     [void]$sb.AppendLine('')
 }
+
+# Feste Abschnitte: Daten, die nicht über NuGet kommen (Emoji-Katalog aus build\generate-emoji-data.ps1).
+[void]$sb.AppendLine('Unicode-Daten (emoji-test.txt, CLDR) / Unicode data files (emoji-test.txt, CLDR)')
+[void]$sb.AppendLine('  Verwendet für den Emoji-Katalog (Liste, Gruppen, Namen und Stichwörter in Deutsch und Englisch).')
+[void]$sb.AppendLine('  Used for the emoji catalog (list, groups, names and keywords in German and English).')
+[void]$sb.AppendLine('  Lizenz:     Unicode License v3')
+[void]$sb.AppendLine('  Projekt:    https://www.unicode.org/license.txt')
+[void]$sb.AppendLine('')
+[void]$sb.AppendLine('  COPYRIGHT AND PERMISSION NOTICE')
+[void]$sb.AppendLine('  Copyright © 1991-2026 Unicode, Inc.')
+[void]$sb.AppendLine('  Permission is hereby granted, free of charge, to any person obtaining a copy of data files and any associated')
+[void]$sb.AppendLine('  documentation (the "Data Files") or software and any associated documentation (the "Software") to deal in the')
+[void]$sb.AppendLine('  Data Files or Software without restriction, including without limitation the rights to use, copy, modify, merge,')
+[void]$sb.AppendLine('  publish, distribute, and/or sell copies of the Data Files or Software, and to permit persons to whom the Data Files')
+[void]$sb.AppendLine('  or Software are furnished to do so, provided that either (a) this copyright and permission notice appear with all')
+[void]$sb.AppendLine('  copies of the Data Files or Software, or (b) this copyright and permission notice appear in associated Documentation.')
+[void]$sb.AppendLine('  THE DATA FILES AND SOFTWARE ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT')
+[void]$sb.AppendLine('  LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF THIRD PARTY')
+[void]$sb.AppendLine('  RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY')
+[void]$sb.AppendLine('  SPECIAL INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,')
+[void]$sb.AppendLine('  WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE')
+[void]$sb.AppendLine('  OR PERFORMANCE OF THE DATA FILES OR SOFTWARE.')
+[void]$sb.AppendLine('  Except as contained in this notice, the name of a copyright holder shall not be used in advertising or otherwise to')
+[void]$sb.AppendLine('  promote the sale, use or other dealings in these Data Files or Software without prior written authorization of the')
+[void]$sb.AppendLine('  copyright holder.')
+[void]$sb.AppendLine('')
+[void]$sb.AppendLine('Segoe UI Emoji')
+[void]$sb.AppendLine('  Die Emoji-Grafiken stammen aus der auf dem Rechner installierten Windows-Schrift und werden zur Laufzeit gezeichnet;')
+[void]$sb.AppendLine('  sie sind nicht Bestandteil dieses Programms. / The emoji artwork comes from the Windows font installed on the')
+[void]$sb.AppendLine('  computer and is drawn at runtime; it is not part of this program.')
+[void]$sb.AppendLine('')
 
 Set-Content -Path $Output -Value $sb.ToString() -Encoding UTF8
 Write-Host "Geschrieben: $Output ($($packages.Count) Pakete)"

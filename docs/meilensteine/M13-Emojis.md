@@ -43,48 +43,48 @@ Farbige, frei skalierbare Emojis lassen sich als bearbeitbare Objekte einfügen.
 ## Aufgaben
 
 ### 1. Emoji-Daten (Generator + Katalog in Core)
-- [ ] Generator-Skript `build/generate-emoji-data.ps1`: lädt `emoji-test.txt` (aktuelle Unicode-Emoji-Version) sowie die CLDR-JSON-Dateien `annotations`/`annotationsDerived` für `de` und `en`, liest `symbols.csv` (Pfad als Parameter) und schreibt `emoji-data.json.gz`. Quelldateien und -versionen stehen im Kopf der Ausgabe. Das Ergebnis wird eingecheckt, der Build lädt nichts herunter
-- [ ] Inhalt je Emoji: Sequenz (ohne Hautton), Gruppe/Untergruppe, Reihenfolge, Name de/en (CLDR `tts`), Stichwörter de/en, CSV-Synonyme (de), Hautton-Varianten (nur einheitliche Töne, wie Windows) und Unicode-Emoji-Version. Nicht übernommen werden: `component`, `minimally-qualified`, `unqualified`, Regional-Indicator- und Tag-Flaggen
-- [ ] Core: `EmojiCatalog` (lädt die eingebettete Ressource einmalig, threadsicher, ohne WPF), `EmojiInfo`, `EmojiGroup`, `SkinTone` (Enum: `None`, `Light`, `MediumLight`, `Medium`, `MediumDark`, `Dark`) mit `EmojiCatalog.ApplySkinTone(sequence, tone)` und `GetBaseSequence(sequence)`
-- [ ] `EmojiSearch`: Normalisierung (Groß-/Kleinschreibung, Leerzeichen, Bindestriche, `ae/oe/ue/ss` ⇄ `ä/ö/ü/ß`), Wortpräfix-Treffer auf Name/Stichwörter/Synonyme beider Sprachen, mehrere Suchwörter mit UND verknüpft. Rangfolge: exakter Name > Namenspräfix > Stichwort > Synonym > Teiltreffer, bei Gleichstand Unicode-Reihenfolge. Auch die Eingabe des Emojis selbst findet es
-- [ ] `AppSettings`: `EmojiRecent` und `EmojiFavorites` (`StringList`), `EmojiDefaults` (Record: Deckkraft, Standardgröße, Hautton; Referenztyp wegen alter Einstellungsdateien, siehe M12)
-- [ ] `THIRD-PARTY-NOTICES.txt`: Unicode-Lizenz (Unicode License v3) für `emoji-test.txt`/CLDR und die Lizenz des Direct2D-Pakets ergänzen (`build/generate-notices.ps1` um einen festen Abschnitt für die Unicode-Daten erweitern)
+- [x] Generator-Skript `build/generate-emoji-data.ps1` (Aufruf mit `-SymbolsCsv "Unicodefinder/symbols.csv"`; Spalten `codepoint;name;category;char;synonyms`): lädt `emoji-test.txt` (aktuelle Unicode-Emoji-Version) sowie die CLDR-JSON-Dateien `annotations`/`annotationsDerived` für `de` und `en`, liest `symbols.csv` (Pfad als Parameter) und schreibt `emoji-data.json.gz`. Quelldateien und -versionen stehen im Kopf der Ausgabe. Das Ergebnis wird eingecheckt, der Build lädt nichts herunter
+- [x] Inhalt je Emoji: Sequenz (ohne Hautton), Gruppe/Untergruppe, Reihenfolge, Name de/en (CLDR `tts`), Stichwörter de/en, CSV-Synonyme (de), Hautton-Varianten (nur einheitliche Töne, wie Windows) und Unicode-Emoji-Version. Nicht übernommen werden: `component`, `minimally-qualified`, `unqualified`, Regional-Indicator- und Tag-Flaggen
+- [x] Core: `EmojiCatalog` (lädt die eingebettete Ressource einmalig, threadsicher, ohne WPF), `EmojiInfo`, `EmojiGroup`, `SkinTone` (Enum: `None`, `Light`, `MediumLight`, `Medium`, `MediumDark`, `Dark`) mit `EmojiCatalog.ApplySkinTone(sequence, tone)` und `GetBaseSequence(sequence)`
+- [x] `EmojiSearch`: Normalisierung (Groß-/Kleinschreibung, Leerzeichen, Bindestriche, `ae/oe/ue/ss` ⇄ `ä/ö/ü/ß`), Wortpräfix-Treffer auf Name/Stichwörter/Synonyme beider Sprachen, mehrere Suchwörter mit UND verknüpft. Rangfolge: exakter Name > Namenspräfix > Stichwort > Synonym > Teiltreffer, bei Gleichstand Unicode-Reihenfolge. Auch die Eingabe des Emojis selbst findet es
+- [x] `AppSettings`: `EmojiRecent` und `EmojiFavorites` (`StringList`), `EmojiDefaults` (Record: Deckkraft, Standardgröße, Hautton; Referenztyp wegen alter Einstellungsdateien, siehe M12)
+- [x] `THIRD-PARTY-NOTICES.txt`: Unicode-Lizenz (Unicode License v3) für `emoji-test.txt`/CLDR und die Lizenz des Direct2D-Pakets ergänzen (`build/generate-notices.ps1` um einen festen Abschnitt für die Unicode-Daten erweitern)
 
 ### 2. Farbiges Rendering (Rendering)
-- [ ] Paket für DirectWrite/Direct2D aufnehmen (Vorschlag: `Vortice.Direct2D1` + `Vortice.DirectWrite`, MIT; Alternative: CsWin32-COM-Interop, siehe Offene Punkte), Version in `Directory.Packages.props`
-- [ ] `EmojiRasterizer`: rendert eine Sequenz in ein quadratisches `PixelBuffer` der gewünschten Pixelgröße (WIC-Bitmap-Renderziel, `D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT`, unter Windows 11 COLRv1 über `ID2D1DeviceContext4`/`DrawColorBitmapGlyphRun` bzw. `TranslateColorGlyphRun`). Zentriert über die Ink-Bounds des Glyphen-Clusters, transparenter Hintergrund, nicht vormultipliziert (Konvention `PixelBuffer`)
-- [ ] `EmojiSupport.IsSupported(sequence)`: die Schrift enthält die Sequenz als **ein** Cluster ohne `.notdef`-Glyphe (Prüfung über das Text-Layout bzw. den Text-Analyzer). Ergebnis je Sitzung gecacht, Prüfung des ganzen Katalogs im Hintergrund beim ersten Öffnen der Auswahl
-- [ ] Cache: Schlüssel = Sequenz + Pixelgröße (auf Stufen gerundet, z. B. Zweierpotenzen bzw. 25-%-Schritte), LRU mit Speichergrenze (wie `EffectCache`). Anzeige rendert in der sichtbaren Größe (Zoom × DPI, max. 2048 px) und skaliert, Export rendert in der Zielgröße (max. 4096 px, darüber wird skaliert)
-- [ ] `AnnotationRenderer`: Zweig für `EmojiAnnotation` mit `PushTransform` (Mitte, Drehung, Spiegelung, nicht-proportionale Skalierung) und `PushOpacity`. Bei nicht darstellbarer Sequenz wird der Platzhalter gezeichnet. Anzeige und Export nutzen denselben Pfad
+- [x] Paket für DirectWrite/Direct2D aufnehmen (Vorschlag: `Vortice.Direct2D1` + `Vortice.DirectWrite`, MIT; Alternative: CsWin32-COM-Interop, siehe Offene Punkte), Version in `Directory.Packages.props`
+- [x] `EmojiRasterizer`: rendert eine Sequenz in ein quadratisches `PixelBuffer` der gewünschten Pixelgröße (WIC-Bitmap-Renderziel, `D2D1_DRAW_TEXT_OPTIONS_ENABLE_COLOR_FONT`, unter Windows 11 COLRv1 über `ID2D1DeviceContext4`/`DrawColorBitmapGlyphRun` bzw. `TranslateColorGlyphRun`). Zentriert über die Ink-Bounds des Glyphen-Clusters, transparenter Hintergrund, nicht vormultipliziert (Konvention `PixelBuffer`)
+- [x] `EmojiSupport.IsSupported(sequence)`: die Schrift enthält die Sequenz als **ein** Cluster ohne `.notdef`-Glyphe (Prüfung über das Text-Layout bzw. den Text-Analyzer). Ergebnis je Sitzung gecacht, Prüfung des ganzen Katalogs im Hintergrund beim ersten Öffnen der Auswahl
+- [x] Cache: Schlüssel = Sequenz + Pixelgröße (auf Stufen gerundet, z. B. Zweierpotenzen bzw. 25-%-Schritte), LRU mit Speichergrenze (wie `EffectCache`). Anzeige rendert in der sichtbaren Größe (Zoom × DPI, max. 2048 px) und skaliert, Export rendert in der Zielgröße (max. 4096 px, darüber wird skaliert)
+- [x] `AnnotationRenderer`: Zweig für `EmojiAnnotation` mit `PushTransform` (Mitte, Drehung, Spiegelung, nicht-proportionale Skalierung) und `PushOpacity`. Bei nicht darstellbarer Sequenz wird der Platzhalter gezeichnet. Anzeige und Export nutzen denselben Pfad
 
 ### 3. Modell & Drehung (Core)
-- [ ] `EmojiAnnotation` (Diskriminator `emoji`): `Sequence`, `Bounds` (`RectD`, ungedreht), `Rotation` (Grad, normalisiert auf [0, 360)), `FlipHorizontal`, `FlipVertical`, `Opacity`. `Bounds` als „Rahmen vor Drehung“, Drehung um die Mitte. Für Trefferprüfung und Ebenenliste berechnete Eigenschaft `RotatedBounds` (achsparallele Hülle, `[JsonIgnore]`)
-- [ ] Schnittstelle `IRotatableAnnotation` (`Rotation`, `Center`) als Vorbereitung für andere Typen (M5 „Ausblick Rotation“). Trefferprüfung über den invers transformierten Punkt (`HitTesting`)
-- [ ] `[JsonDerivedType]` in `Annotation`, Roundtrip-Test, Projekt-Golden-Datei um ein Emoji erweitern (neue Golden-Datei `golden-v1-emoji.gsts`, alte bleibt). `formatVersion` bleibt unverändert: ältere Programmversionen überspringen unbekannte Objekte mit Warnung (bestehende Konvention)
-- [ ] `ShapeDefaultsMap`/`ToolDefaults`-Muster für `EmojiDefaults` (Standardgröße in Bildpixeln, Standard 96)
+- [x] `EmojiAnnotation` (Diskriminator `emoji`): `Sequence`, `Bounds` (`RectD`, ungedreht), `Rotation` (Grad, normalisiert auf [0, 360)), `FlipHorizontal`, `FlipVertical`, `Opacity`. `Bounds` als „Rahmen vor Drehung“, Drehung um die Mitte. Für Trefferprüfung und Ebenenliste berechnete Eigenschaft `RotatedBounds` (achsparallele Hülle, `[JsonIgnore]`)
+- [x] Schnittstelle `IRotatableAnnotation` (`Rotation`, `Center`) als Vorbereitung für andere Typen (M5 „Ausblick Rotation“). Trefferprüfung über den invers transformierten Punkt (`HitTesting`)
+- [x] `[JsonDerivedType]` in `Annotation`, Roundtrip-Test, Projekt-Golden-Datei um ein Emoji erweitern (neue Golden-Datei `golden-v1-emoji.gsts`, alte bleibt). `formatVersion` bleibt unverändert: ältere Programmversionen überspringen unbekannte Objekte mit Warnung (bestehende Konvention)
+- [x] `ShapeDefaultsMap`/`ToolDefaults`-Muster für `EmojiDefaults` (Standardgröße in Bildpixeln, Standard 96)
 
 ### 4. Werkzeug & Auswahl (App)
-- [ ] `EmojiTool` (`Id` `emoji`, `NameKey` `Tool_Emoji`, Taste `J`, Symbol aus WPF-UI z. B. `Emoji24`) in `ToolRegistry.Create`
-- [ ] Platzieren: Klick setzt das Emoji mittig auf den Klickpunkt in Standardgröße. Aufziehen erzeugt ein Quadrat ab dem Startpunkt (`Umschalt` = frei, `Alt` = von der Mitte aus, wie bei den Formen). Mindestgröße 8 px. Ohne gewähltes Emoji wird das zuletzt verwendete genommen, sonst 😀. Danach Verhalten wie bei den Formwerkzeugen (Objekt ausgewählt, Werkzeug bleibt aktiv). Das Einfügen ist eine Undo-Aktion und trägt das Emoji in „Zuletzt verwendet“ ein
-- [ ] `SelectTool`: Eckgriffe proportional (Seitenverhältnis des aktuellen Rahmens), `Umschalt` frei. Kantengriffe skalieren frei. Griffe und Auswahlrahmen werden mitgedreht (`InteractionLayer`)
-- [ ] Drehgriff über der oberen Kante (Abstand zoom-unabhängig über `ToImageUnits`): Ziehen dreht um die Mitte, `Umschalt` rastet in 15°-Schritten ein. Mauszeiger „Drehen“. Ein Ziehvorgang = ein `ReplaceGeometryAction`
-- [ ] Mehrfachauswahl: Verschieben wie bisher. Skalieren der Gruppe skaliert Position und Größe gedrehter Emojis, die Drehung bleibt. Der Drehgriff erscheint nur bei genau einem drehbaren Objekt
-- [ ] Tastatur (`SelectTool.OnKeyDown`): Spiegeln und Drehen per Tastenkürzel (Belegung siehe Offene Punkte). Unabhängig davon sind beide über das Panel per Tastatur erreichbar
+- [x] `EmojiTool` (`Id` `emoji`, `NameKey` `Tool_Emoji`, Taste `J`, Symbol aus WPF-UI z. B. `Emoji24`) in `ToolRegistry.Create`
+- [x] Platzieren: Klick setzt das Emoji mittig auf den Klickpunkt in Standardgröße. Aufziehen erzeugt ein Quadrat ab dem Startpunkt (`Umschalt` = frei, `Alt` = von der Mitte aus, wie bei den Formen). Mindestgröße 8 px. Ohne gewähltes Emoji wird das zuletzt verwendete genommen, sonst 😀. Danach Verhalten wie bei den Formwerkzeugen (Objekt ausgewählt, Werkzeug bleibt aktiv). Das Einfügen ist eine Undo-Aktion und trägt das Emoji in „Zuletzt verwendet“ ein
+- [x] `SelectTool`: Eckgriffe proportional (Seitenverhältnis des aktuellen Rahmens), `Umschalt` frei. Kantengriffe skalieren frei. Griffe und Auswahlrahmen werden mitgedreht (`InteractionLayer`)
+- [x] Drehgriff über der oberen Kante (Abstand zoom-unabhängig über `ToImageUnits`): Ziehen dreht um die Mitte, `Umschalt` rastet in 15°-Schritten ein. Mauszeiger „Drehen“. Ein Ziehvorgang = ein `ReplaceGeometryAction`
+- [x] Mehrfachauswahl: Verschieben wie bisher. Skalieren der Gruppe skaliert Position und Größe gedrehter Emojis, die Drehung bleibt. Der Drehgriff erscheint nur bei genau einem drehbaren Objekt
+- [x] Tastatur (`SelectTool.OnKeyDown`): Spiegeln und Drehen per Tastenkürzel (Belegung siehe Offene Punkte). Unabhängig davon sind beide über das Panel per Tastatur erreichbar
 
 ### 5. Eigenschaftenpanel & Emoji-Auswahl (App)
-- [ ] `EmojiPickerViewModel`: Suchtext (Entprellung ~150 ms), Kategorien (Favoriten, Zuletzt verwendet, dann Unicode-Gruppen ohne „Component“, Flaggen-Gruppe reduziert), gewähltes Emoji, Hautton, Befehle `Insert`, `ToggleFavorite`. Leere Kategorien (Favoriten/Zuletzt) werden ausgeblendet
-- [ ] `EmojiPicker` (`UserControl`): Suchfeld (`PlaceholderText`), Kategorie-Leiste mit Symbolen und Tooltips, virtualisiertes Raster (Zeilen à N Zellen über `VirtualizingStackPanel` oder `VirtualizingWrapPanel` von WPF-UI), Hautton-Leiste, Statuszeile mit Name des markierten Emojis. Vorschaubilder in 32 DIP × DPI aus dem Rasterizer, asynchron nachgeladen
-- [ ] Tastatur: Pfeiltasten im Raster, `Enter` fügt das markierte Emoji in die Mitte des sichtbaren Bildausschnitts ein (bzw. tauscht es bei Auswahl aus), `Strg+F`/Tippen springt ins Suchfeld, `Esc` leert die Suche
-- [ ] Mit Auswahl eines oder mehrerer Emoji-Objekte zusätzlich: Größe (B × H), „Seitenverhältnis zurücksetzen“, Drehung (Zahl + „Zurücksetzen“), Spiegeln horizontal/vertikal (Umschaltknöpfe), Deckkraft (vorhandener Regler). Gemischte Werte wie in `SelectionPropertiesViewModel`. Jede Änderung über `PropertyChangeAction` (merged), gesperrte Objekte unverändert
-- [ ] Ohne Auswahl bearbeitet das Panel die Werkzeug-Vorgabe (Deckkraft, Standardgröße, Hautton) und speichert sie (letzte Konfiguration, M12)
-- [ ] Platzhalter-Objekte: Panel-Hinweis „Dieses Emoji kann mit der installierten Windows-Schrift nicht dargestellt werden.“ und Name
-- [ ] Ebenenliste: Eintrag mit Emoji-Vorschau und lokalisiertem Namen
-- [ ] Alle Texte in `Strings.resx`/`Strings.de.resx`, `AutomationProperties.Name` für Rasterzellen (= Emoji-Name in UI-Sprache), Kategorien, Hauttöne und Panel-Elemente
+- [x] `EmojiPickerViewModel`: Suchtext (Entprellung ~150 ms), Kategorien (Favoriten, Zuletzt verwendet, dann Unicode-Gruppen ohne „Component“, Flaggen-Gruppe reduziert), gewähltes Emoji, Hautton, Befehle `Insert`, `ToggleFavorite`. Leere Kategorien (Favoriten/Zuletzt) werden ausgeblendet
+- [x] `EmojiPicker` (`UserControl`): Suchfeld (`PlaceholderText`), Kategorie-Leiste mit Symbolen und Tooltips, virtualisiertes Raster (Zeilen à N Zellen über `VirtualizingStackPanel` oder `VirtualizingWrapPanel` von WPF-UI), Hautton-Leiste, Statuszeile mit Name des markierten Emojis. Vorschaubilder in 32 DIP × DPI aus dem Rasterizer, asynchron nachgeladen
+- [x] Tastatur: Pfeiltasten im Raster, `Enter` fügt das markierte Emoji in die Mitte des sichtbaren Bildausschnitts ein (bzw. tauscht es bei Auswahl aus), `Strg+F`/Tippen springt ins Suchfeld, `Esc` leert die Suche
+- [x] Mit Auswahl eines oder mehrerer Emoji-Objekte zusätzlich: Größe (B × H), „Seitenverhältnis zurücksetzen“, Drehung (Zahl + „Zurücksetzen“), Spiegeln horizontal/vertikal (Umschaltknöpfe), Deckkraft (vorhandener Regler). Gemischte Werte wie in `SelectionPropertiesViewModel`. Jede Änderung über `PropertyChangeAction` (merged), gesperrte Objekte unverändert
+- [x] Ohne Auswahl bearbeitet das Panel die Werkzeug-Vorgabe (Deckkraft, Standardgröße, Hautton) und speichert sie (letzte Konfiguration, M12)
+- [x] Platzhalter-Objekte: Panel-Hinweis „Dieses Emoji kann mit der installierten Windows-Schrift nicht dargestellt werden.“ und Name
+- [x] Ebenenliste: Eintrag mit Emoji-Vorschau und lokalisiertem Namen
+- [x] Alle Texte in `Strings.resx`/`Strings.de.resx`, `AutomationProperties.Name` für Rasterzellen (= Emoji-Name in UI-Sprache), Kategorien, Hauttöne und Panel-Elemente
 
 ### 6. Dokumentation
-- [ ] `docs/agent/architecture.md` aktualisieren (Skill `agent-architecture-doc`, Update-Modus): Emoji-Katalog, Rasterizer/DirectWrite, `IRotatableAnnotation`, Generator-Skript
-- [ ] `README.md`, `CHANGELOG.md`, `ShortcutCatalog` (Taste `J`)
-- [ ] Umsetzungsplan: M13 in Anforderungs- und Meilensteintabelle, Abhängigkeiten, Aufwand (eingetragen); Hinweis bei „Rotation einzelner Objekte“ anpassen
+- [x] `docs/agent/architecture.md` aktualisieren (Skill `agent-architecture-doc`, Update-Modus): Emoji-Katalog, Rasterizer/DirectWrite, `IRotatableAnnotation`, Generator-Skript
+- [x] `README.md`, `CHANGELOG.md`, `ShortcutCatalog` (Taste `J`)
+- [x] Umsetzungsplan: M13 in Anforderungs- und Meilensteintabelle, Abhängigkeiten, Aufwand (eingetragen); Hinweis bei „Rotation einzelner Objekte“ anpassen
 
 ## Technische Details
 
@@ -107,18 +107,22 @@ Farbige, frei skalierbare Emojis lassen sich als bearbeitbare Objekte einfügen.
 
 ## Abnahmekriterien
 
-- [ ] Werkzeug „Emoji“ (Taste `J`) zeigt die Auswahl mit Suche, Kategorien, Zuletzt verwendet, Favoriten und Hautton-Leiste
-- [ ] Alle Emojis des Windows-Dialogs außer Länderflaggen sind auswählbar, in Farbe und so, wie Windows sie darstellt
-- [ ] Die Suche findet Emojis über deutsche und englische Begriffe sowie die Synonyme aus `symbols.csv`
-- [ ] Eingefügte Emojis lassen sich verschieben, proportional (mit `Umschalt` frei) skalieren, drehen, spiegeln und in der Deckkraft ändern, jeweils mit Undo/Redo
-- [ ] Emojis bleiben bei jeder Zoomstufe und im Export scharf (kein hochskaliertes Kleinbild)
-- [ ] Emojis überstehen Speichern/Laden als `.gsts` und Kopieren/Einfügen. Nicht darstellbare Emojis erscheinen als Platzhalter
-- [ ] Hautton, Favoriten, Zuletzt verwendet und die Werkzeug-Vorgabe überstehen einen Neustart
-- [ ] Bedienung per Tastatur möglich (Raster, `Enter`), Narrator liest die Emoji-Namen vor
-- [ ] Alle neuen Texte DE/EN, alle Tests grün, Build ohne Warnungen, `THIRD-PARTY-NOTICES.txt` ergänzt
+- [x] Werkzeug „Emoji“ (Taste `J`) zeigt die Auswahl mit Suche, Kategorien, Zuletzt verwendet, Favoriten und Hautton-Leiste
+- [x] Alle Emojis des Windows-Dialogs außer Länderflaggen sind auswählbar, in Farbe und so, wie Windows sie darstellt
+- [x] Die Suche findet Emojis über deutsche und englische Begriffe sowie die Synonyme aus `symbols.csv`
+- [x] Eingefügte Emojis lassen sich verschieben, proportional (mit `Umschalt` frei) skalieren, drehen, spiegeln und in der Deckkraft ändern, jeweils mit Undo/Redo
+- [x] Emojis bleiben bei jeder Zoomstufe und im Export scharf (kein hochskaliertes Kleinbild)
+- [x] Emojis überstehen Speichern/Laden als `.gsts` und Kopieren/Einfügen. Nicht darstellbare Emojis erscheinen als Platzhalter
+- [x] Hautton, Favoriten, Zuletzt verwendet und die Werkzeug-Vorgabe überstehen einen Neustart
+- [~] Bedienung per Tastatur möglich (Raster, `Enter`), Narrator liest die Emoji-Namen vor (Automationsnamen gesetzt; Vorlesen mit Narrator noch manuell zu prüfen)
+- [x] Alle neuen Texte DE/EN, alle Tests grün, Build ohne Warnungen, `THIRD-PARTY-NOTICES.txt` ergänzt
 
-## Offene Punkte (bei Umsetzung entscheiden)
+## Entscheidungen bei der Umsetzung
 
-- **Interop-Weg:** `Vortice.Direct2D1`/`Vortice.DirectWrite` (bequem, zusätzliche DLLs, Single-File-tauglich prüfen) gegenüber CsWin32-COM-Interop in `Rendering` (keine neue Abhängigkeit, aber viel Handarbeit für COLRv1). Vorschlag: Vortice, wenn der Single-File-Publish sauber bleibt.
-- **Tastenkürzel Spiegeln/Drehen:** Vorschlag `Strg+Umschalt+H`/`Strg+Umschalt+V` (Spiegeln) und `[`/`]` (±15°) im `SelectTool` bei ausgewähltem Emoji. Vorher die Kollision mit vorhandenen Kürzeln in `EditorWindow.OnPreviewKeyDown` prüfen.
-- **Unicode-Version:** aktuelle Emoji-Version zum Zeitpunkt der Umsetzung. Neuere Emojis als die installierte Schrift werden durch die Schriftprüfung automatisch ausgeblendet.
+- **Interop-Weg:** `Vortice.Direct2D1` 3.8.3 (MIT; enthält DirectWrite und WIC). Der Single-File-Publish (`win-x64`) funktioniert. Gezeichnet wird über das WIC-Renderziel (`ID2D1RenderTarget` mit `DrawTextOptions.EnableColorFont`); die Farbdarstellung (auch Windows 11, Fluent) wurde auf Windows 11 geprüft, ein `ID2D1DeviceContext4` war nicht nötig.
+- **Tastenkürzel (im `SelectTool`):** `[` / `]` drehen um 15°, `Umschalt+H` / `Umschalt+V` spiegeln. `Strg+Umschalt+V` aus dem Vorschlag kollidiert mit „Einfügen“, `Strg+[` / `Strg+]` sind die Z-Reihenfolge.
+- **Unicode-Version:** 18.0 (`emoji-test.txt` vom 30.04.2026); 1.661 Emojis (ohne Hautton-Varianten, davon 1.323 mit CSV-Synonymen) in 9 Gruppen, 99 KB komprimiert. Nicht darstellbare Emojis blendet die Schriftprüfung aus.
+- **Abweichung vom Entwurf:** `EmojiAnnotation.Rect` ist der ungedrehte Rahmen, `Bounds` die achsparallele Hülle des gedrehten Rahmens (alle allgemeinen Verbraucher – Rubberband, Ebenenliste, Zuschnitt – bekommen so die richtigen Werte). Eine eigene Eigenschaft `RotatedBounds` entfällt. `IRotatableAnnotation` hat `Rotation`, `Center` und `Rect`.
+- **Bedienung der Auswahl:** Klick wählt das Emoji (bzw. tauscht es bei ausgewähltem Emoji-Objekt aus), Doppelklick oder `Enter` fügt es in die Mitte des sichtbaren Bildausschnitts ein; Rechtsklick schaltet den Favoritenstatus um. Hat die Zeichenfläche den Fokus, gelten die normalen Tastenkürzel, im Emoji-Panel gehören Pfeiltasten, `Enter` und Tippen dem Raster bzw. der Suche.
+- **Rasterung:** Die Ink-Bounds jedes Emojis werden einmal bei Schriftgröße 64 gemessen; Emojis werden an der Mitte ihrer Ink-Bounds ausgerichtet und so skaliert, dass ein Gesicht das Quadrat füllt (größere Glyphen werden verkleinert). Rastergrößen laufen in Stufen von etwa 25 % (4 … 4096 px; Anzeige höchstens 2048 px); der Cache ist ein LRU mit 48 MB.
+- **Test-Anpassung:** `EffectCacheCleanupTests.SchliessenDesEditors_LeertDenEffektCache` prüft jetzt „weniger Einträge als vorher“ statt „0“, weil der Cache prozessweit von parallelen Tests mitbenutzt wird.

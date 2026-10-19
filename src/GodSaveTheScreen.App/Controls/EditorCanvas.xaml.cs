@@ -198,6 +198,8 @@ public partial class EditorCanvas : UserControl
         ZoomTransform.ScaleX = scale;
         ZoomTransform.ScaleY = scale;
         _viewModel.Context.Scale = scale;
+        Annotations.SetPixelScale(_viewModel.Zoom);
+        Interaction.RenderContext = Interaction.RenderContext with { EmojiPixelScale = _viewModel.Zoom, EmojiMaxPixels = 2048 };
         BaseImage.SetValue(RenderOptions.BitmapScalingModeProperty, _viewModel.Zoom >= 2 ? BitmapScalingMode.NearestNeighbor : BitmapScalingMode.HighQuality);
         if (Checker.Fill is DrawingBrush brush)
         {

@@ -270,6 +270,78 @@
             </StackPanel>
           </StackPanel>
 
+          <!-- Emoji -->
+          <StackPanel DataContext="{Binding EmojiProperties}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
+            <controls:EmojiPicker Margin="0,8,0,0"
+                                  DataContext="{Binding DataContext.EmojiPicker, RelativeSource={RelativeSource AncestorType=controls:PropertyPanel}}" />
+
+            <StackPanel Visibility="{Binding HasPlaceholder, Converter={StaticResource BoolToVisibility}}">
+              <TextBlock Text="{l:Loc Emoji_Placeholder}" TextWrapping="Wrap" Foreground="#F5A623" Margin="0,10,0,0" />
+              <TextBlock Text="{Binding PlaceholderName}" TextWrapping="Wrap" Opacity="0.75" Margin="0,2,0,0" />
+            </StackPanel>
+
+            <StackPanel Visibility="{Binding HasEmojis, Converter={StaticResource BoolToVisibility}}">
+              <TextBlock Text="{l:Loc Emoji_Size}" Style="{StaticResource FieldLabel}" />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ui:NumberBox Minimum="8" Maximum="10000" SmallChange="1" LargeChange="10" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                              Value="{Binding Width, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              AutomationProperties.Name="{l:Loc Emoji_Width}" ToolTip="{l:Loc Emoji_Width}" />
+                <TextBlock Grid.Column="1" Text="×" Margin="6,0" VerticalAlignment="Center" />
+                <ui:NumberBox Grid.Column="2" Minimum="8" Maximum="10000" SmallChange="1" LargeChange="10" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                              Value="{Binding Height, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              AutomationProperties.Name="{l:Loc Emoji_Height}" ToolTip="{l:Loc Emoji_Height}" />
+              </Grid>
+              <ui:Button Content="{l:Loc Emoji_ResetAspect}" Margin="0,6,0,0" HorizontalAlignment="Stretch" Command="{Binding ResetAspectCommand}" />
+
+              <TextBlock Text="{l:Loc Emoji_Rotation}" Style="{StaticResource FieldLabel}" />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <ui:NumberBox Minimum="0" Maximum="359.9" SmallChange="1" LargeChange="15" MaxDecimalPlaces="1" ClearButtonEnabled="False"
+                              Value="{Binding Rotation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              AutomationProperties.Name="{l:Loc Emoji_Rotation}" />
+                <ui:Button Grid.Column="1" Content="{l:Loc Emoji_ResetRotation}" Margin="8,0,0,0" Command="{Binding ResetRotationCommand}" />
+              </Grid>
+
+              <WrapPanel Margin="0,10,0,0">
+                <ToggleButton Style="{StaticResource IconToggle}" IsChecked="{Binding FlipHorizontal, Mode=TwoWay}" ToolTip="{l:Loc Emoji_FlipH}" AutomationProperties.Name="{l:Loc Emoji_FlipH}">
+                  <ui:SymbolIcon Symbol="FlipHorizontal24" />
+                </ToggleButton>
+                <ToggleButton Style="{StaticResource IconToggle}" IsChecked="{Binding FlipVertical, Mode=TwoWay}" ToolTip="{l:Loc Emoji_FlipV}" AutomationProperties.Name="{l:Loc Emoji_FlipV}">
+                  <ui:SymbolIcon Symbol="FlipVertical24" />
+                </ToggleButton>
+              </WrapPanel>
+            </StackPanel>
+
+            <StackPanel Visibility="{Binding ShowDefaults, Converter={StaticResource BoolToVisibility}}">
+              <TextBlock Text="{l:Loc Emoji_DefaultSize}" Style="{StaticResource FieldLabel}" />
+              <ui:NumberBox Minimum="8" Maximum="2000" SmallChange="1" LargeChange="10" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                            Value="{Binding DefaultSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            AutomationProperties.Name="{l:Loc Emoji_DefaultSize}" />
+              <TextBlock Text="{l:Loc Props_Opacity}" Style="{StaticResource FieldLabel}" />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Slider Minimum="0" Maximum="100" SmallChange="1" LargeChange="10" VerticalAlignment="Center"
+                        Value="{Binding DefaultOpacityValue, Mode=TwoWay}"
+                        AutomationProperties.Name="{l:Loc Props_Opacity}" />
+                <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                              Minimum="0" Maximum="100" SmallChange="1" LargeChange="10" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                              Value="{Binding DefaultOpacityPercent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              AutomationProperties.Name="{l:Loc Props_Opacity}" />
+              </Grid>
+            </StackPanel>
+          </StackPanel>
+
           <!-- Formen -->
           <StackPanel DataContext="{Binding Properties}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
             <TextBlock Text="{l:Loc Props_StrokeColor}" Style="{StaticResource FieldLabel}" />

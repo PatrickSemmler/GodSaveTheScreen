@@ -27,6 +27,12 @@ public sealed class LayerItem : System.ComponentModel.INotifyPropertyChanged, ID
 
     public string DisplayName => AnnotationNames.DisplayName(Annotation);
 
+    /// <summary>Kleine Farbvorschau bei Emojis (sonst <c>null</c>).</summary>
+    public System.Windows.Media.ImageSource? Preview =>
+        Annotation is EmojiAnnotation emoji ? Rendering.EmojiCache.Shared.Get(emoji.Sequence, 36) : null;
+
+    public bool HasPreview => Annotation is EmojiAnnotation;
+
     public bool IsVisible => Annotation.IsVisible;
 
     public bool IsLocked => Annotation.IsLocked;
@@ -43,7 +49,7 @@ public sealed class LayerItem : System.ComponentModel.INotifyPropertyChanged, ID
 
     private void OnAnnotationChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is nameof(Annotation.Name) or nameof(Annotation.IsVisible) or nameof(Annotation.IsLocked))
+        if (e.PropertyName is nameof(Annotation.Name) or nameof(Annotation.IsVisible) or nameof(Annotation.IsLocked) or nameof(EmojiAnnotation.Sequence))
         {
             PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(string.Empty));
         }

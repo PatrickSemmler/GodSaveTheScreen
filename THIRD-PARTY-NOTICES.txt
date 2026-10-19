@@ -258,6 +258,42 @@ Serilog.Sinks.File 7.0.0
   Lizenz:     Apache-2.0
   Projekt:    https://github.com/serilog/serilog-sinks-file
 
+SharpGen.Runtime 2.4.2-beta
+  Autor(en):  jkoritzinsky
+  Copyright:  (c) 2010-2017 Alexandre Mutel, 2017-2023 Jeremy Koritzinsky, 2023-2024 Amer Koleci
+  Lizenz:     MIT
+  Projekt:    https://github.com/SharpGenTools/SharpGenTools
+
+SharpGen.Runtime.COM 2.4.2-beta
+  Autor(en):  jkoritzinsky
+  Copyright:  (c) 2010-2017 Alexandre Mutel, 2017-2023 Jeremy Koritzinsky, 2023-2024 Amer Koleci
+  Lizenz:     MIT
+  Projekt:    https://github.com/SharpGenTools/SharpGenTools
+
+Vortice.Direct2D1 3.8.3
+  Autor(en):  Amer Koleci
+  Copyright:  Copyright (c) Amer Koleci and Contributors
+  Lizenz:     MIT
+  Projekt:    https://github.com/amerkoleci/Vortice.Windows
+
+Vortice.DirectX 3.8.3
+  Autor(en):  Amer Koleci
+  Copyright:  Copyright (c) Amer Koleci and Contributors
+  Lizenz:     MIT
+  Projekt:    https://github.com/amerkoleci/Vortice.Windows
+
+Vortice.DXGI 3.8.3
+  Autor(en):  Amer Koleci
+  Copyright:  Copyright (c) Amer Koleci and Contributors
+  Lizenz:     MIT
+  Projekt:    https://github.com/amerkoleci/Vortice.Windows
+
+Vortice.Mathematics 2.1.0
+  Autor(en):  Amer Koleci
+  Copyright:  Copyright (c) Amer Koleci and Contributors
+  Lizenz:     MIT
+  Projekt:    https://github.com/amerkoleci/Vortice.Mathematics
+
 WPF-UI 4.3.0
   Autor(en):  lepo.co
   Copyright:  Copyright (C) 2021-2026 Leszek Pomianowski and WPF UI Contributors
@@ -269,5 +305,34 @@ WPF-UI.Abstractions 4.3.0
   Copyright:  Copyright (C) 2021-2026 Leszek Pomianowski and WPF UI Contributors
   Lizenz:     MIT
   Projekt:    https://github.com/lepoco/wpfui
+
+Unicode-Daten (emoji-test.txt, CLDR) / Unicode data files (emoji-test.txt, CLDR)
+  Verwendet für den Emoji-Katalog (Liste, Gruppen, Namen und Stichwörter in Deutsch und Englisch).
+  Used for the emoji catalog (list, groups, names and keywords in German and English).
+  Lizenz:     Unicode License v3
+  Projekt:    https://www.unicode.org/license.txt
+
+  COPYRIGHT AND PERMISSION NOTICE
+  Copyright © 1991-2026 Unicode, Inc.
+  Permission is hereby granted, free of charge, to any person obtaining a copy of data files and any associated
+  documentation (the "Data Files") or software and any associated documentation (the "Software") to deal in the
+  Data Files or Software without restriction, including without limitation the rights to use, copy, modify, merge,
+  publish, distribute, and/or sell copies of the Data Files or Software, and to permit persons to whom the Data Files
+  or Software are furnished to do so, provided that either (a) this copyright and permission notice appear with all
+  copies of the Data Files or Software, or (b) this copyright and permission notice appear in associated Documentation.
+  THE DATA FILES AND SOFTWARE ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+  LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT OF THIRD PARTY
+  RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY
+  SPECIAL INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+  WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE
+  OR PERFORMANCE OF THE DATA FILES OR SOFTWARE.
+  Except as contained in this notice, the name of a copyright holder shall not be used in advertising or otherwise to
+  promote the sale, use or other dealings in these Data Files or Software without prior written authorization of the
+  copyright holder.
+
+Segoe UI Emoji
+  Die Emoji-Grafiken stammen aus der auf dem Rechner installierten Windows-Schrift und werden zur Laufzeit gezeichnet;
+  sie sind nicht Bestandteil dieses Programms. / The emoji artwork comes from the Windows font installed on the
+  computer and is drawn at runtime; it is not part of this program.
 
 

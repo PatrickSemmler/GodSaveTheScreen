@@ -397,4 +397,47 @@ Tipp: In den Einstellungen können Sie die Taste Druck einem Aufnahmemodus zuwei
   <data name="Shortcut_CropKeepRatio" xml:space="preserve"><value>Beim Ziehen das aktuelle Seitenverhältnis halten</value></data>
   <data name="Shortcut_CropNoSnap" xml:space="preserve"><value>Beim Ziehen das Einrasten ausschalten</value></data>
   <data name="Color_Choose" xml:space="preserve"><value>Farbe wählen</value></data>
+  <data name="Tool_Emoji" xml:space="preserve"><value>Emoji (J)</value></data>
+  <data name="Shape_Emoji" xml:space="preserve"><value>Emoji</value></data>
+  <data name="Emoji_Search" xml:space="preserve"><value>Emojis suchen</value></data>
+  <data name="Emoji_Categories" xml:space="preserve"><value>Emoji-Kategorien</value></data>
+  <data name="Emoji_Grid" xml:space="preserve"><value>Emojis</value></data>
+  <data name="Emoji_Loading" xml:space="preserve"><value>Emojis werden geladen …</value></data>
+  <data name="Emoji_NoResults" xml:space="preserve"><value>Keine Emojis gefunden.</value></data>
+  <data name="Emoji_Cat_Favorites" xml:space="preserve"><value>Favoriten</value></data>
+  <data name="Emoji_Cat_Recent" xml:space="preserve"><value>Zuletzt verwendet</value></data>
+  <data name="Emoji_Cat_smileys" xml:space="preserve"><value>Smileys &amp; Emotionen</value></data>
+  <data name="Emoji_Cat_people" xml:space="preserve"><value>Menschen &amp; Körper</value></data>
+  <data name="Emoji_Cat_nature" xml:space="preserve"><value>Tiere &amp; Natur</value></data>
+  <data name="Emoji_Cat_food" xml:space="preserve"><value>Essen &amp; Trinken</value></data>
+  <data name="Emoji_Cat_travel" xml:space="preserve"><value>Reisen &amp; Orte</value></data>
+  <data name="Emoji_Cat_activities" xml:space="preserve"><value>Aktivitäten</value></data>
+  <data name="Emoji_Cat_objects" xml:space="preserve"><value>Objekte</value></data>
+  <data name="Emoji_Cat_symbols" xml:space="preserve"><value>Symbole</value></data>
+  <data name="Emoji_Cat_flags" xml:space="preserve"><value>Flaggen</value></data>
+  <data name="Emoji_SkinTone" xml:space="preserve"><value>Hautton</value></data>
+  <data name="Emoji_Tone_Default" xml:space="preserve"><value>Standard (gelb)</value></data>
+  <data name="Emoji_Tone_Light" xml:space="preserve"><value>Helle Hautfarbe</value></data>
+  <data name="Emoji_Tone_MediumLight" xml:space="preserve"><value>Mittelhelle Hautfarbe</value></data>
+  <data name="Emoji_Tone_Medium" xml:space="preserve"><value>Mittlere Hautfarbe</value></data>
+  <data name="Emoji_Tone_MediumDark" xml:space="preserve"><value>Mitteldunkle Hautfarbe</value></data>
+  <data name="Emoji_Tone_Dark" xml:space="preserve"><value>Dunkle Hautfarbe</value></data>
+  <data name="Emoji_AddFavorite" xml:space="preserve"><value>Zu Favoriten hinzufügen</value></data>
+  <data name="Emoji_RemoveFavorite" xml:space="preserve"><value>Aus Favoriten entfernen</value></data>
+  <data name="Emoji_Insert" xml:space="preserve"><value>Emoji einfügen</value></data>
+  <data name="Emoji_Swap" xml:space="preserve"><value>Emoji austauschen</value></data>
+  <data name="Emoji_Size" xml:space="preserve"><value>Größe</value></data>
+  <data name="Emoji_Width" xml:space="preserve"><value>Breite</value></data>
+  <data name="Emoji_Height" xml:space="preserve"><value>Höhe</value></data>
+  <data name="Emoji_ResetAspect" xml:space="preserve"><value>Seitenverhältnis zurücksetzen</value></data>
+  <data name="Emoji_Rotation" xml:space="preserve"><value>Drehung (°)</value></data>
+  <data name="Emoji_ResetRotation" xml:space="preserve"><value>Zurücksetzen</value></data>
+  <data name="Emoji_FlipH" xml:space="preserve"><value>Horizontal spiegeln</value></data>
+  <data name="Emoji_FlipV" xml:space="preserve"><value>Vertikal spiegeln</value></data>
+  <data name="Emoji_Flip" xml:space="preserve"><value>Spiegeln</value></data>
+  <data name="Emoji_DefaultSize" xml:space="preserve"><value>Standardgröße (px)</value></data>
+  <data name="Emoji_Placeholder" xml:space="preserve"><value>Dieses Emoji kann mit der installierten Windows-Schrift nicht dargestellt werden.</value></data>
+  <data name="Shortcut_Rotate" xml:space="preserve"><value>Emoji um 15° drehen (gegen / im Uhrzeigersinn)</value></data>
+  <data name="Shortcut_FlipHorizontal" xml:space="preserve"><value>Emoji horizontal spiegeln</value></data>
+  <data name="Shortcut_FlipVertical" xml:space="preserve"><value>Emoji vertikal spiegeln</value></data>
 </root>

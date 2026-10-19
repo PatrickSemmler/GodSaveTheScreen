@@ -25,6 +25,17 @@ public sealed record FreehandStyle
     public bool UsePressure { get; init; } = true;
 }
 
+/// <summary>Letzte Konfiguration des Emoji-Werkzeugs.</summary>
+public sealed record EmojiStyle
+{
+    public double Opacity { get; init; } = 1;
+
+    /// <summary>Kantenlänge neuer Emojis in Bildpixeln bei einem Klick ohne Aufziehen.</summary>
+    public double DefaultSize { get; init; } = 96;
+
+    public Emoji.SkinTone SkinTone { get; init; }
+}
+
 /// <summary>Standardwerte des Lupen-Werkzeugs.</summary>
 public sealed record MagnifierStyle
 {

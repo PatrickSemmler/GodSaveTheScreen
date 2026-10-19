@@ -1,6 +1,6 @@
 # GodSaveTheScreen – Agent Architecture
-Verified against working tree on top of commit 6ee7fb9 (M11 uncommitted) on 2026-10-19
-- STATUS: M0–M11 umgesetzt (alle Meilensteine; offene manuelle Prüfungen siehe `docs/meilensteine/M11-Feinschliff-Release.md`). Nach Commit Kopfzeile auf Commit-Hash setzen.
+Verified against working tree on top of commit ebd5f29 (M13 uncommitted) on 2026-10-19
+- STATUS: M0–M13 umgesetzt (offene manuelle Prüfungen: `docs/meilensteine/M11-Feinschliff-Release.md`; M13: Narrator-Test offen). Nach Commit Kopfzeile auf Commit-Hash setzen.
 - Ist-Stand: `Core` (Settings inkl. `ShapeDefaultsMap`/`TextStyle`/`MarkerStyle`, `IAppPaths` inkl. Autosave-/Recent-Pfad, Geometrie inkl. JSON-Konverter, `PixelBuffer`, `ImageDocument` mit `Annotations` + `Undo` + `CropRect`/`ProjectPath`/`DocumentId`, `Imaging/CropGeometry`, `Annotations/` = Modell (Formen, Text, Marker, Strich, Unschärfe, Lupe) + `AnnotationSerializer`, `Undo/` inkl. `CropAction`, `Project/` = `ProjectSerializer`/`ProjectContent`/`IProjectMigration`, `IProjectService`, `RecentFilesService`, Service-Interfaces), `Capture`, `Rendering` (`AnnotationRenderer` partial inkl. `AnnotationOrdering`, `RegionEffectProcessor`/`EffectCache`, `TextLayout`, `LineLayout`, `DocumentExporter`, `ImageCodecService`, `ProjectService`), `App` (`Hosting/`, `Services/` inkl. `EditorService`/`AutoBackupService`/`JumpListService`/`SessionState`/`FirstRunHint`, `Capture/`, `Editor/` = Kontext/`CropState`/Werkzeuge/Schriften, `Controls/`, `Views/`, `ViewModels/`, `Localization/`, `Resources/`)
 
 ## Overview
@@ -13,7 +13,7 @@ Verified against working tree on top of commit 6ee7fb9 (M11 uncommitted) on 2026
 |---|---|---|
 | `src/GodSaveTheScreen.Core` | Dokumentmodell, Annotationen, Undo, Serialisierung, Settings, Service-Interfaces; `net10.0`, kein WPF/Win32 | – |
 | `src/GodSaveTheScreen.Capture` | Monitore, Fenster, Bildschirmabbild (CsWin32) | `Core` |
-| `src/GodSaveTheScreen.Rendering` | `AnnotationRenderer`, Textlayout, Export, Codecs (WPF) | `Core` |
+| `src/GodSaveTheScreen.Rendering` | `AnnotationRenderer`, Textlayout, Export, Codecs (WPF), `EmojiRasterizer`/`EmojiCache` (Vortice.Direct2D1) | `Core` |
 | `src/GodSaveTheScreen.App` | Views, ViewModels, Werkzeuge, Overlay, Tray, Hotkeys, DI-Root | `Core`, `Capture`, `Rendering` |
 | `tests/GodSaveTheScreen.Core.Tests` | Modell-/Undo-/Serializer-Tests | `Core` |
 | `tests/GodSaveTheScreen.App.Tests` | ViewModels, Werkzeuge, Rendering (`[StaFact]`) | alle `src` |
@@ -34,6 +34,9 @@ Verified against working tree on top of commit 6ee7fb9 (M11 uncommitted) on 2026
 - Hintergrundbetrieb: `TrayService` + `HotkeyService` (`IHostedService`); `IAppShell` öffnet Start-/Einstellungsfenster und beendet die App
 - Zuschneiden (M9): `CropTool` (Werkzeug `C`) arbeitet auf `EditorContext.Crop` (`CropState`: Arbeitsrahmen, Seitenverhältnis); erst `CropTool.Commit` erzeugt eine `CropAction` (setzt `ImageDocument.CropRect`). `EditorViewModel.ViewRect` = Zuschnitt (im Zuschnittmodus ganzes Bild); `EditorCanvas`: `Frame` (Größe = ViewRect, clippt, Zoom per `LayoutTransform`) enthält `Surface` (volle Bildgröße, `TranslateTransform` = −ViewRect.TopLeft). `CropPanel`/`CropViewModel` ersetzen im Modus das Eigenschaftenpanel; Undo bricht den Modus ab
 - Projektdatei (M10): `ProjectSerializer` (ZIP: `manifest.json`, `document.json`, `base.png`, `preview.png`) liest/schreibt `ProjectContent` (PNG als Bytes, kein WPF im Core); `ProjectService` (Rendering) setzt Dokument ⇄ Inhalt um. Speichern (`EditorViewModel.TrySaveAsync`): bekanntes `ProjectPath` → Projekt; sonst bekannte Bilddatei → Bild; sonst Dialog (`PickDocumentSavePath`, Projekt zuerst); „Exportieren…“ schreibt nur Bilder (`SourcePath` = Exportziel) und lässt den Projektzustand unberührt
+- Emoji (M13): `Core/Emoji/` = `EmojiCatalog` (eingebettete `emoji-data.json.gz`, Lazy `Shared`, `ApplySkinTone`/`GetBaseSequence`), `EmojiSearch` (de+en, UND, Rang), `SkinTone`; Daten nur über `build/generate-emoji-data.ps1` (pwsh; Unicode `emoji-test.txt` + CLDR, optional `-SymbolsCsv`), Ergebnis eingecheckt. `EmojiRasterizer` rendert Sequenz farbig (DirectWrite/WIC-Renderziel, `EnableColorFont`) in `PixelBuffer`, `IsSupported` = alle Zeichen in „Segoe UI Emoji“ + genau 1 Cluster (Länderflaggen nie); `EmojiCache` LRU, Größen quantisiert (`Quantize`). `AnnotationRenderer.DrawEmoji` (Drehung/Spiegelung per `PushTransform`, Platzhalter bei nicht darstellbar) nutzt `RenderContext.EmojiPixelScale`/`EmojiMaxPixels` (Anzeige: `AnnotationLayer.SetPixelScale(Zoom)`, 2048; Export 1, 4096)
+- Emoji-UI: `EmojiTool` (`J`) platziert; `EditorContext.Emoji` (`EmojiToolState`: gewähltes Emoji, Hautton, Recent/Favoriten, `EmojiDefaults` in `AppSettings`); `EmojiPickerViewModel` (+`EmojiPicker`-Control, lädt Support-Set im Hintergrund bei erster Anwendbarkeit) und `EmojiPropertiesViewModel` im `PropertyPanel`; Klick in Auswahl tauscht Emoji ausgewählter Objekte, Doppelklick/Enter fügt ein
+- Drehung: `IRotatableAnnotation` (`Rotation`, `Center`, `Rect`) + `RotationMath` in Core; bisher nur `EmojiAnnotation` (`Rect` = ungedreht, `Bounds` = Hülle des gedrehten Rahmens). `SelectionHandles.Get(selection, rotateOffset)` liefert gedrehte Griffe + `HandleKind.Rotate`; `SelectTool` skaliert einzelne drehbare Objekte im lokalen Koordinatensystem (`ResizeRotated`), `[`/`]` drehen, `Umschalt+H/V` spiegeln
 - Hilfe/Start: `F1` (Editor und Startfenster) -> `IAppShell.ShowShortcuts` -> `ShortcutsWindow` mit `ShortcutCatalog` (Werkzeuge aus `ToolRegistry`, feste Befehlsliste `EditorCommands`, globale Hotkeys aus den Einstellungen); `FirstRunHint` zeigt einmalig (`AppSettings.FirstRunHintShown`) nach dem Start Hotkeys/Tray/Druck-Taste; `HotkeyService` ignoriert Hotkeys bei gesperrter/getrennter Sitzung (`ISessionState`)
 - Release: `build/release.ps1` (Tests -> `dotnet publish -p:PublishProfile=win-x64` -> ZIP in `artifacts/release`), Version in `Directory.Build.props`, Git-Hash über `Directory.Build.targets` (`SourceRevisionId`), `THIRD-PARTY-NOTICES.txt` aus `build/generate-notices.ps1`
 - Sicherung/Wiederherstellung: `AutoBackupService` (60 s + 10 s nach Änderung) schreibt `{DocumentId}.gsts` nach `IAppPaths.AutosaveDirectory` (Schnappschuss auf UI-Thread, Schreiben im Hintergrund), löscht beim Speichern/Schließen; `RecoverAsync` beim Start. `RecentFilesService` (`recent.json`, max. 15) speist Startfenster, Tray-Untermenü, Editor-Menü „Öffnen ▾“ und `JumpListService`
@@ -60,6 +63,7 @@ Verified against working tree on top of commit 6ee7fb9 (M11 uncommitted) on 2026
 - Barrierefreiheit: Symbolschaltflächen und Editor-Eingabefelder brauchen `AutomationProperties.Name` (`AccessibilityTests`); Objekte per Tastatur über `SelectTool.OnKeyDown` (`Tab`, Pfeile, `Alt+Pfeil`; `Tab` nur mit Fokus auf der Zeichenfläche, `EditorCanvas.HasSurfaceFocus`); Overlay-Farben in `InteractionLayer` folgen im Hochkontrast `SystemColors`
 - `Strings.Designer.cs` von Hand/Skript synchron zu `Strings.resx`; Schlüssel-Test in `App.Tests` prüft DE/EN-Gleichheit
 - Neue Einstellung = Feld in `AppSettings` (Default!) + Eigenschaft im ViewModel + Strings DE/EN; Dictionary/Listen in `AppSettings` nur als `ShapeDefaultsMap`/`StringList` (Wertgleichheit für Record-Vergleich)
+- Emoji: Katalog-Sequenzen immer mit `EmojiCatalog.Find`/`GetBaseSequence` auflösen (U+FE0F wird ignoriert); Favoriten speichern Basis-Sequenz, Recent die exakte Sequenz; `EmojiAnnotation.Name` leer lassen (Anzeigename kommt lokalisiert aus dem Katalog)
 - Paketversionen nur in `Directory.Packages.props`; Analyzer streng (`TreatWarningsAsErrors`); bewusst aus: CA1304/1305/1716/1863/1873/1707/1848 (siehe `.editorconfig`)
 - Enum-Namen in Core mit Suffix `Setting`/`Kind` bei WPF-Kollision (`ThemeSetting`, `FontStyleKind`); in Dateien mit `using System.Windows.Input` Alias für `CaptureMode`
 - Alle Fenster über `IWindowFactory` bzw. `EditorService` erzeugen (Registrierung beim `IWindowExclusionService`)
@@ -100,6 +104,10 @@ Verified against working tree on top of commit 6ee7fb9 (M11 uncommitted) on 2026
 - `EditorCanvas`: die Zeichenfläche (`Surface`) sitzt in einem `Canvas` (`SurfaceHost`) im `Frame`, verschoben per `Canvas.Left/Top` – ein `Grid` mit `RenderTransform` würde die größere Fläche per Layout-Clip abschneiden (Clip wandert mit)
 - `EffectCache.RemoveImage` wird beim Schließen des Editors (`EditorViewModel.Dispose`) aufgerufen
 - Windows-Sprungliste: „Zuletzt verwendet“ als eigene Kategorie aus `JumpTask`s (Dateizuordnung nicht nötig)
+
+- Emoji-Tests mit Schrift: `EmojiTestSupport.RequireFont()` (überspringt ohne „Segoe UI Emoji“); Golden-Datei `golden-v1-emoji.gsts` neu erzeugen mit `GSTS_GOLDEN_EMOJI_OUT`
+- `IsTyping` in `EditorWindow` ist auch im `EmojiPicker` wahr (Pfeile/Enter/Tippen gehören dem Raster, keine Werkzeug-Kürzel)
+- `build/generate-notices.ps1` mit `pwsh` ausführen (Windows PowerShell 5 zerstört Umlaute)
 
 ## Commands
 - Build: `dotnet build GodSaveTheScreen.slnx`

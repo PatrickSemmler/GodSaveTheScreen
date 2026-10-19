@@ -5,10 +5,12 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 ## [Unveröffentlicht]
 
 ### Neu
+- **Farbige Emojis (M13):** Neues Werkzeug „Emoji“ (`J`). Alle Emojis des Windows-Emoji-Dialogs außer Länderflaggen, gezeichnet in Farbe mit der Windows-Schrift „Segoe UI Emoji“ (Aussehen je nach Windows-Version) und bei jeder Zoomstufe sowie im Export scharf. Die Auswahl im Eigenschaftenpanel bietet Suche (deutsch und englisch, mit Synonymen), Kategorien, „Zuletzt verwendet“, Favoriten (Rechtsklick) und Hauttöne. Klick setzt ein Emoji, Aufziehen bestimmt die Größe; Emojis lassen sich proportional oder frei skalieren, **drehen** (Drehgriff, `Umschalt` = 15°-Raster, Eingabe in Grad), spiegeln und mit Deckkraft versehen. Ein Klick in der Auswahl tauscht das Emoji eines ausgewählten Objekts aus. Emojis überstehen Speichern/Laden (`.gsts`) und Kopieren/Einfügen; Emojis, die die installierte Schrift nicht darstellen kann, erscheinen als Platzhalter.
 - **Werkzeugvorlagen (M12):** Alle Zeichenwerkzeuge (Formen, Linie/Pfeil, Stift, Textmarker, Text, Marker, Unschärfe, Lupe) haben eine Vorlagenliste im Eigenschaftenpanel statt Schaltflächen. Aktuelle Einstellungen lassen sich unter eigenem Namen speichern (Dialog mit Autovervollständigung, Rückfrage beim Überschreiben ohne Beachtung der Groß-/Kleinschreibung); Vorlagen können umbenannt und gelöscht werden, die mitgelieferten Textvorlagen ebenfalls („Standardvorlagen wiederherstellen“).
 - **Letzte Konfiguration:** Unschärfe, Lupe sowie Glättung und Druck des Stifts werden wie die übrigen Werkzeuge dauerhaft gemerkt.
 
 ### Geändert
+- Das Dateiformat `.gsts` kennt den neuen Objekttyp `emoji` (`formatVersion` bleibt 1; ältere Programmversionen überspringen unbekannte Objekte mit Warnung).
 - Textvorlagen übernehmen jetzt den ganzen Stil inklusive Schriftart und Ausrichtung.
 
 ## [1.0.0] – 2026-10-19

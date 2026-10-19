@@ -397,4 +397,47 @@ Tip: You can assign the Print Screen key to a capture mode in the settings. On W
   <data name="Shortcut_CropKeepRatio" xml:space="preserve"><value>Keep the current aspect ratio while dragging</value></data>
   <data name="Shortcut_CropNoSnap" xml:space="preserve"><value>Disable snapping while dragging</value></data>
   <data name="Color_Choose" xml:space="preserve"><value>Choose colour</value></data>
+  <data name="Tool_Emoji" xml:space="preserve"><value>Emoji (J)</value></data>
+  <data name="Shape_Emoji" xml:space="preserve"><value>Emoji</value></data>
+  <data name="Emoji_Search" xml:space="preserve"><value>Search emojis</value></data>
+  <data name="Emoji_Categories" xml:space="preserve"><value>Emoji categories</value></data>
+  <data name="Emoji_Grid" xml:space="preserve"><value>Emojis</value></data>
+  <data name="Emoji_Loading" xml:space="preserve"><value>Loading emojis…</value></data>
+  <data name="Emoji_NoResults" xml:space="preserve"><value>No emojis found.</value></data>
+  <data name="Emoji_Cat_Favorites" xml:space="preserve"><value>Favorites</value></data>
+  <data name="Emoji_Cat_Recent" xml:space="preserve"><value>Recently used</value></data>
+  <data name="Emoji_Cat_smileys" xml:space="preserve"><value>Smileys &amp; emotion</value></data>
+  <data name="Emoji_Cat_people" xml:space="preserve"><value>People &amp; body</value></data>
+  <data name="Emoji_Cat_nature" xml:space="preserve"><value>Animals &amp; nature</value></data>
+  <data name="Emoji_Cat_food" xml:space="preserve"><value>Food &amp; drink</value></data>
+  <data name="Emoji_Cat_travel" xml:space="preserve"><value>Travel &amp; places</value></data>
+  <data name="Emoji_Cat_activities" xml:space="preserve"><value>Activities</value></data>
+  <data name="Emoji_Cat_objects" xml:space="preserve"><value>Objects</value></data>
+  <data name="Emoji_Cat_symbols" xml:space="preserve"><value>Symbols</value></data>
+  <data name="Emoji_Cat_flags" xml:space="preserve"><value>Flags</value></data>
+  <data name="Emoji_SkinTone" xml:space="preserve"><value>Skin tone</value></data>
+  <data name="Emoji_Tone_Default" xml:space="preserve"><value>Default (yellow)</value></data>
+  <data name="Emoji_Tone_Light" xml:space="preserve"><value>Light skin tone</value></data>
+  <data name="Emoji_Tone_MediumLight" xml:space="preserve"><value>Medium-light skin tone</value></data>
+  <data name="Emoji_Tone_Medium" xml:space="preserve"><value>Medium skin tone</value></data>
+  <data name="Emoji_Tone_MediumDark" xml:space="preserve"><value>Medium-dark skin tone</value></data>
+  <data name="Emoji_Tone_Dark" xml:space="preserve"><value>Dark skin tone</value></data>
+  <data name="Emoji_AddFavorite" xml:space="preserve"><value>Add to favorites</value></data>
+  <data name="Emoji_RemoveFavorite" xml:space="preserve"><value>Remove from favorites</value></data>
+  <data name="Emoji_Insert" xml:space="preserve"><value>Insert emoji</value></data>
+  <data name="Emoji_Swap" xml:space="preserve"><value>Replace emoji</value></data>
+  <data name="Emoji_Size" xml:space="preserve"><value>Size</value></data>
+  <data name="Emoji_Width" xml:space="preserve"><value>Width</value></data>
+  <data name="Emoji_Height" xml:space="preserve"><value>Height</value></data>
+  <data name="Emoji_ResetAspect" xml:space="preserve"><value>Reset aspect ratio</value></data>
+  <data name="Emoji_Rotation" xml:space="preserve"><value>Rotation (°)</value></data>
+  <data name="Emoji_ResetRotation" xml:space="preserve"><value>Reset</value></data>
+  <data name="Emoji_FlipH" xml:space="preserve"><value>Flip horizontally</value></data>
+  <data name="Emoji_FlipV" xml:space="preserve"><value>Flip vertically</value></data>
+  <data name="Emoji_Flip" xml:space="preserve"><value>Flip</value></data>
+  <data name="Emoji_DefaultSize" xml:space="preserve"><value>Default size (px)</value></data>
+  <data name="Emoji_Placeholder" xml:space="preserve"><value>This emoji cannot be displayed with the installed Windows font.</value></data>
+  <data name="Shortcut_Rotate" xml:space="preserve"><value>Rotate emoji by 15° (counter-clockwise / clockwise)</value></data>
+  <data name="Shortcut_FlipHorizontal" xml:space="preserve"><value>Flip emoji horizontally</value></data>
+  <data name="Shortcut_FlipVertical" xml:space="preserve"><value>Flip emoji vertically</value></data>
 </root>

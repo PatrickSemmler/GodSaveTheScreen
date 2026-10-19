@@ -1,5 +1,6 @@
 using GodSaveTheScreen.Core.Annotations;
 using GodSaveTheScreen.Core.Capture;
+using GodSaveTheScreen.Core.Emoji;
 
 namespace GodSaveTheScreen.Core.Settings;
 
@@ -61,6 +62,8 @@ public enum TiffCompressionSetting
 /// <summary>Persistierte Anwendungseinstellungen. Fehlende Felder in der Datei behalten ihre Standardwerte.</summary>
 public sealed record AppSettings
 {
+    public const int MaxRecentEmojis = 30;
+
     public const string DefaultFileNamePattern = "Screenshot {date:yyyy-MM-dd} {time:HH-mm-ss}";
 
     // Allgemein
@@ -164,6 +167,15 @@ public sealed record AppSettings
     /// <summary>Letzte Konfiguration von Stift und Textmarker (Glättung, Druck).</summary>
     public FreehandStyle FreehandDefaults { get; init; } = new();
 
+    /// <summary>Letzte Konfiguration des Emoji-Werkzeugs (Deckkraft, Standardgröße, Hautton).</summary>
+    public EmojiStyle EmojiDefaults { get; init; } = new();
+
+    /// <summary>Zuletzt verwendete Emojis (Sequenz), neueste zuerst, höchstens <see cref="MaxRecentEmojis"/>.</summary>
+    public StringList EmojiRecent { get; init; } = [];
+
+    /// <summary>Favorisierte Emojis (Sequenz) in der Reihenfolge des Hinzufügens.</summary>
+    public StringList EmojiFavorites { get; init; } = [];
+
     /// <summary>Benutzer-Vorlagen je Werkzeug (Schlüssel = Werkzeug-ID).</summary>
     public ToolPresetMap ToolPresets { get; init; } = [];
 
@@ -209,6 +221,7 @@ public sealed record AppSettings
         var blur = BlurDefaults ?? new BlurStyle();
         var magnifier = MagnifierDefaults ?? new MagnifierStyle();
         var freehand = FreehandDefaults ?? new FreehandStyle();
+        var emoji = EmojiDefaults ?? new EmojiStyle();
         var presets = new ToolPresetMap();
         foreach (var (key, list) in ToolPresets ?? [])
         {
@@ -222,6 +235,9 @@ public sealed record AppSettings
             FreehandDefaults = freehand,
             MagnifierDefaults = magnifier with { Border = magnifier.Border ?? new MagnifierStyle().Border },
             ShapeDefaults = shapes,
+            EmojiDefaults = emoji with { DefaultSize = emoji.DefaultSize > 0 ? emoji.DefaultSize : 96 },
+            EmojiRecent = EmojiRecent ?? [],
+            EmojiFavorites = EmojiFavorites ?? [],
             RecentColors = RecentColors ?? [],
             RecentFonts = RecentFonts ?? [],
             TextDefaults = text with { Stroke = text.Stroke ?? new StrokeStyle(ArgbColor.White, 0), FontFamilyName = text.FontFamilyName ?? "Segoe UI" },

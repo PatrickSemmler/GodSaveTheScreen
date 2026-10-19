@@ -23,6 +23,9 @@ public enum HandleKind
     SourceTopRight,
     SourceBottomRight,
     SourceBottomLeft,
+
+    /// <summary>Drehgriff über der oberen Kante (nur bei genau einem drehbaren Objekt).</summary>
+    Rotate,
 }
 
 public readonly record struct SelectionHandle(HandleKind Kind, PointD Position, int Index = 0);
@@ -30,7 +33,9 @@ public readonly record struct SelectionHandle(HandleKind Kind, PointD Position, 
 /// <summary>Lage der Griffe einer Auswahl: Box-Griffe, Endpunkte von Linien, Eckpunkte von Polygonen.</summary>
 public static class SelectionHandles
 {
-    public static IReadOnlyList<SelectionHandle> Get(IReadOnlyList<Annotation> selection)
+    /// <param name="selection">Ausgewählte Objekte.</param>
+    /// <param name="rotateOffset">Abstand des Drehgriffs von der oberen Kante in Bildpixeln (0 = kein Drehgriff).</param>
+    public static IReadOnlyList<SelectionHandle> Get(IReadOnlyList<Annotation> selection, double rotateOffset = 0)
     {
         var movable = selection.Where(a => !a.IsLocked && a.IsVisible).ToList();
         if (movable.Count == 0)
@@ -46,6 +51,11 @@ public static class SelectionHandles
         if (movable is [PolygonAnnotation polygon])
         {
             return [.. polygon.Points.Select((p, i) => new SelectionHandle(HandleKind.PolygonPoint, p, i))];
+        }
+
+        if (movable is [IRotatableAnnotation rotatable])
+        {
+            return RotatedBoxHandles(rotatable.Rect.Normalize(), rotatable.Rotation, rotateOffset);
         }
 
         if (movable is [MagnifierAnnotation magnifier])
@@ -88,6 +98,21 @@ public static class SelectionHandles
             new(HandleKind.BottomLeft, new PointD(r.X, r.Bottom)),
             new(HandleKind.Left, new PointD(r.X, cy)),
         ];
+    }
+
+    /// <summary>Griffe eines um seine Mitte gedrehten Rahmens samt Drehgriff.</summary>
+    public static IReadOnlyList<SelectionHandle> RotatedBoxHandles(RectD rect, double rotation, double rotateOffset)
+    {
+        var center = rect.Center;
+        var handles = BoxHandles(rect)
+            .Select(h => h with { Position = RotationMath.Rotate(h.Position, center, rotation) })
+            .ToList();
+        if (rotateOffset > 0)
+        {
+            handles.Add(new SelectionHandle(HandleKind.Rotate, RotationMath.Rotate(new PointD(center.X, rect.Y - rotateOffset), center, rotation)));
+        }
+
+        return handles;
     }
 
     public static SelectionHandle? HitTest(IReadOnlyList<SelectionHandle> handles, PointD point, double radius)
@@ -173,6 +198,7 @@ public sealed class SelectTool : ToolBase
         LineHandle,
         PolygonPoint,
         MagnifierSource,
+        Rotate,
         RubberBand,
     }
 
@@ -184,6 +210,9 @@ public sealed class SelectTool : ToolBase
     }
 
     private const double MoveThreshold = 0.5;
+
+    /// <summary>Abstand des Drehgriffs von der oberen Kante in Bildschirm-DIPs.</summary>
+    private const double RotateHandleOffset = 26;
 
     private Mode _mode;
     private PointD _start;
@@ -215,7 +244,7 @@ public sealed class SelectTool : ToolBase
 
     public override void Cancel()
     {
-        if (_mode is Mode.Move or Mode.Resize or Mode.LineHandle or Mode.PolygonPoint or Mode.MagnifierSource)
+        if (_mode is Mode.Move or Mode.Resize or Mode.LineHandle or Mode.PolygonPoint or Mode.MagnifierSource or Mode.Rotate)
         {
             foreach (var (target, before) in _snapshots)
             {
@@ -240,7 +269,7 @@ public sealed class SelectTool : ToolBase
         _moved = false;
         var selection = Context.Selection;
 
-        var handles = SelectionHandles.Get(selection.Items);
+        var handles = SelectionHandles.Get(selection.Items, Context.ToImageUnits(RotateHandleOffset));
         var radius = Context.ToImageUnits(7);
         if (SelectionHandles.HitTest(handles, args.Position, radius) is { } handle)
         {
@@ -300,6 +329,9 @@ public sealed class SelectTool : ToolBase
             case Mode.MagnifierSource:
                 DragMagnifierSource(args);
                 break;
+            case Mode.Rotate:
+                DragRotate(args);
+                break;
             case Mode.RubberBand:
                 UpdateRubberBand(args.Position);
                 break;
@@ -320,7 +352,7 @@ public sealed class SelectTool : ToolBase
         }
         else if (mode != Mode.None && _moved)
         {
-            Commit(mode == Mode.Move ? "Verschieben" : "Größe ändern");
+            Commit(mode switch { Mode.Move => "Verschieben", Mode.Rotate => "Drehen", _ => "Größe ändern" });
         }
 
         _snapshots = [];
@@ -353,6 +385,12 @@ public sealed class SelectTool : ToolBase
                 return true;
             case Key.Left or Key.Right or Key.Up or Key.Down when !selection.IsEmpty && _mode == Mode.None && (modifiers & ModifierKeys.Control) == 0:
                 Nudge(key, (modifiers & ModifierKeys.Shift) != 0 ? 10 : 1);
+                return true;
+            case Key.OemOpenBrackets or Key.OemCloseBrackets when modifiers == ModifierKeys.None && _mode == Mode.None && HasRotatable():
+                RotateByKey(key == Key.OemCloseBrackets ? ShapeGeometry.AngleStepDegrees : -ShapeGeometry.AngleStepDegrees);
+                return true;
+            case Key.H or Key.V when modifiers == ModifierKeys.Shift && _mode == Mode.None && HasRotatable():
+                FlipSelection(horizontal: key == Key.H);
                 return true;
             case Key.Tab when _mode == Mode.None && (modifiers & (ModifierKeys.Control | ModifierKeys.Alt)) == 0:
                 return CycleSelection((modifiers & ModifierKeys.Shift) != 0);
@@ -436,6 +474,67 @@ public sealed class SelectTool : ToolBase
         }
 
         Context.Undo.Execute(new ReplaceGeometryAction(changes, "Größe ändern"));
+        Context.InvalidateInteraction();
+    }
+
+    private bool HasRotatable() => Context.Selection.Items.Any(a => a is EmojiAnnotation { IsLocked: false });
+
+    /// <summary><c>[</c> / <c>]</c>: dreht alle drehbaren Objekte der Auswahl um <paramref name="degrees"/> (ein Undo-Schritt).</summary>
+    public void RotateByKey(double degrees)
+    {
+        var items = Context.Selection.Items.OfType<EmojiAnnotation>().Where(e => !e.IsLocked).ToList();
+        if (items.Count == 0)
+        {
+            return;
+        }
+
+        using (Context.Undo.BeginTransaction("Drehen"))
+        {
+            foreach (var item in items)
+            {
+                var target = item;
+                Context.Undo.Execute(new PropertyChangeAction<double>(target, nameof(EmojiAnnotation.Rotation), target.Rotation, RotationMath.Normalize(target.Rotation + degrees), v => target.Rotation = v, "Drehen"));
+            }
+        }
+
+        Context.InvalidateInteraction();
+    }
+
+    /// <summary><c>Umschalt+H</c> / <c>Umschalt+V</c>: spiegelt alle Emojis der Auswahl (ein Undo-Schritt).</summary>
+    public void FlipSelection(bool horizontal)
+    {
+        var items = Context.Selection.Items.OfType<EmojiAnnotation>().Where(e => !e.IsLocked).ToList();
+        if (items.Count == 0)
+        {
+            return;
+        }
+
+        using (Context.Undo.BeginTransaction("Spiegeln"))
+        {
+            foreach (var item in items)
+            {
+                var target = item;
+                var old = horizontal ? target.FlipHorizontal : target.FlipVertical;
+                Context.Undo.Execute(new PropertyChangeAction<bool>(
+                    target,
+                    horizontal ? nameof(EmojiAnnotation.FlipHorizontal) : nameof(EmojiAnnotation.FlipVertical),
+                    old,
+                    !old,
+                    v =>
+                    {
+                        if (horizontal)
+                        {
+                            target.FlipHorizontal = v;
+                        }
+                        else
+                        {
+                            target.FlipVertical = v;
+                        }
+                    },
+                    "Spiegeln"));
+            }
+        }
+
         Context.InvalidateInteraction();
     }
 
@@ -541,6 +640,7 @@ public sealed class SelectTool : ToolBase
             HandleKind.LineStart or HandleKind.LineEnd => Mode.LineHandle,
             HandleKind.PolygonPoint => Mode.PolygonPoint,
             HandleKind.SourceTopLeft or HandleKind.SourceTopRight or HandleKind.SourceBottomRight or HandleKind.SourceBottomLeft => Mode.MagnifierSource,
+            HandleKind.Rotate => Mode.Rotate,
             _ => Mode.Resize,
         };
         _groupRect = items.Select(a => a.Bounds).Aggregate((x, y) => x.Union(y));
@@ -588,6 +688,13 @@ public sealed class SelectTool : ToolBase
             return;
         }
 
+        if (_snapshots is [(EmojiAnnotation emojiTarget, EmojiAnnotation emojiBefore)])
+        {
+            ResizeRotated(emojiTarget, emojiBefore, args);
+            Context.InvalidateInteraction();
+            return;
+        }
+
         var (map, factor) = SelectionHandles.ResizeMap(_groupRect, _handle.Kind, args.Position, args.Shift || _snapshots.Any(s => s.Before is not (ShapeAnnotation or BlurAnnotation)));
         foreach (var (target, before) in _snapshots)
         {
@@ -599,6 +706,47 @@ public sealed class SelectTool : ToolBase
             }
         }
 
+        Context.InvalidateInteraction();
+    }
+
+    /// <summary>
+    /// Skaliert ein gedrehtes Objekt im eigenen Koordinatensystem: Der Zeiger wird zurückgedreht, der gegenüberliegende Rand
+    /// bleibt auf dem Bildschirm stehen. Eckgriffe skalieren proportional, mit <c>Umschalt</c> frei; Kantengriffe immer frei.
+    /// </summary>
+    private void ResizeRotated(EmojiAnnotation target, EmojiAnnotation before, EditorPointerArgs args)
+    {
+        var rect = before.Rect.Normalize();
+        var center = rect.Center;
+        var local = RotationMath.Unrotate(args.Position, center, before.Rotation);
+        var (map, _) = SelectionHandles.ResizeMap(rect, _handle.Kind, local, proportional: !args.Shift);
+        var resized = RectD.FromPoints(map(rect.TopLeft), map(rect.BottomRight));
+        if (resized.Width < EmojiAnnotation.MinSize || resized.Height < EmojiAnnotation.MinSize)
+        {
+            return;
+        }
+
+        var worldCenter = RotationMath.Rotate(resized.Center, center, before.Rotation);
+        var shift = new VectorD(worldCenter.X - resized.Center.X, worldCenter.Y - resized.Center.Y);
+        target.Rect = new RectD(resized.X + shift.X, resized.Y + shift.Y, resized.Width, resized.Height);
+    }
+
+    /// <summary>Drehgriff: dreht um die Mitte; <c>Umschalt</c> rastet in 15°-Schritten ein.</summary>
+    private void DragRotate(EditorPointerArgs args)
+    {
+        _moved = true;
+        if (_snapshots is not [(EmojiAnnotation target, EmojiAnnotation before)])
+        {
+            return;
+        }
+
+        var center = before.Center;
+        var angle = (Math.Atan2(args.Position.Y - center.Y, args.Position.X - center.X) * 180 / Math.PI) + 90;
+        if (args.Shift)
+        {
+            angle = Math.Round(angle / ShapeGeometry.AngleStepDegrees) * ShapeGeometry.AngleStepDegrees;
+        }
+
+        target.Rotation = angle;
         Context.InvalidateInteraction();
     }
 
@@ -694,7 +842,7 @@ public sealed class SelectTool : ToolBase
 
     private void UpdateHoverCursor(PointD position)
     {
-        var handles = SelectionHandles.Get(Context.Selection.Items);
+        var handles = SelectionHandles.Get(Context.Selection.Items, Context.ToImageUnits(RotateHandleOffset));
         var handle = SelectionHandles.HitTest(handles, position, Context.ToImageUnits(7));
         _cursor = handle is { } h
             ? h.Kind switch
@@ -703,6 +851,7 @@ public sealed class SelectTool : ToolBase
                 HandleKind.Left or HandleKind.Right => Cursors.SizeWE,
                 HandleKind.TopLeft or HandleKind.BottomRight or HandleKind.SourceTopLeft or HandleKind.SourceBottomRight => Cursors.SizeNWSE,
                 HandleKind.TopRight or HandleKind.BottomLeft or HandleKind.SourceTopRight or HandleKind.SourceBottomLeft => Cursors.SizeNESW,
+                HandleKind.Rotate => Cursors.Hand,
                 _ => Cursors.Cross,
             }
             : Context.HitTest(position) is { IsLocked: false } ? Cursors.SizeAll : Cursors.Arrow;

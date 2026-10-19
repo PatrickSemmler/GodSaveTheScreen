@@ -122,6 +122,7 @@ public sealed class EditorContext : IDisposable
         Settings = settings;
         Exporter = exporter;
         Presets = new ToolPresetService(settings);
+        Emoji = new EmojiToolState(settings);
         Document.HighlightersBehind = settings.Current.HighlighterBehind;
         Document.Annotations.CollectionChanged += OnAnnotationsChanged;
         Crop = new CropState(document);
@@ -131,6 +132,9 @@ public sealed class EditorContext : IDisposable
 
     /// <summary>Benutzer-Vorlagen der Werkzeuge.</summary>
     public ToolPresetService Presets { get; }
+
+    /// <summary>Gewähltes Emoji, Hautton, Zuletzt verwendet und Favoriten des Emoji-Werkzeugs.</summary>
+    public EmojiToolState Emoji { get; }
 
     /// <summary>Zustand des Zuschnittmodus.</summary>
     public CropState Crop { get; }

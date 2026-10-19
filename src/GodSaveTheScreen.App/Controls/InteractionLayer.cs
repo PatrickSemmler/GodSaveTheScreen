@@ -129,12 +129,28 @@ public sealed class InteractionLayer : FrameworkElement
                 continue;
             }
 
+            if (item is IRotatableAnnotation { Rotation: not 0 } rotated)
+            {
+                // Gedrehtes Objekt: Rahmen mitdrehen.
+                var corners = RotationMath.Corners(rotated.Rect.Inflate(unit * 2, unit * 2), rotated.Rotation);
+                var figure = new PathFigure { StartPoint = new Point(corners[0].X, corners[0].Y), IsClosed = true };
+                for (var i = 1; i < corners.Length; i++)
+                {
+                    figure.Segments.Add(new LineSegment(new Point(corners[i].X, corners[i].Y), true));
+                }
+
+                var path = new PathGeometry([figure]);
+                path.Freeze();
+                dc.DrawGeometry(null, item.IsLocked ? locked : outline, path);
+                continue;
+            }
+
             var bounds = Normalize(item.Bounds);
             bounds.Inflate(unit * 2, unit * 2);
             dc.DrawRectangle(null, item.IsLocked ? locked : outline, bounds);
         }
 
-        var handles = SelectionHandles.Get(items);
+        var handles = SelectionHandles.Get(items, unit * 26);
         var half = unit * 4;
         var handlePen = new Pen(Accent, unit);
         if (items is [LineAnnotation line])
@@ -145,7 +161,14 @@ public sealed class InteractionLayer : FrameworkElement
         foreach (var handle in handles)
         {
             var center = new Point(handle.Position.X, handle.Position.Y);
-            if (handle.Kind is HandleKind.LineStart or HandleKind.LineEnd or HandleKind.PolygonPoint)
+            if (handle.Kind == HandleKind.Rotate && items is [IRotatableAnnotation anchor])
+            {
+                // Stiel von der oberen Kantenmitte zum Drehgriff.
+                var top = RotationMath.Rotate(new PointD(anchor.Center.X, anchor.Rect.Normalize().Y), anchor.Center, anchor.Rotation);
+                dc.DrawLine(handlePen, new Point(top.X, top.Y), center);
+                dc.DrawEllipse(HandleBack, handlePen, center, half, half);
+            }
+            else if (handle.Kind is HandleKind.LineStart or HandleKind.LineEnd or HandleKind.PolygonPoint)
             {
                 dc.DrawEllipse(HandleBack, handlePen, center, half, half);
             }

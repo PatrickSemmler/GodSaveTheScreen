@@ -20,6 +20,7 @@ namespace GodSaveTheScreen.Core.Annotations;
 [JsonDerivedType(typeof(StrokeAnnotation), "stroke")]
 [JsonDerivedType(typeof(BlurAnnotation), "blur")]
 [JsonDerivedType(typeof(MagnifierAnnotation), "magnifier")]
+[JsonDerivedType(typeof(EmojiAnnotation), "emoji")]
 public abstract partial class Annotation : ObservableObject
 {
     private static readonly Dictionary<Type, PropertyInfo[]> CopyableProperties = [];

@@ -86,6 +86,16 @@ internal static class ProjectSamples
                 BaseImageOnly = true,
                 SmoothScaling = false,
             },
+            new EmojiAnnotation
+            {
+                Name = "Daumen",
+                Sequence = "👍🏽",
+                Rect = new RectD(30, 40, 96, 64),
+                Rotation = 37.5,
+                FlipHorizontal = true,
+                FlipVertical = true,
+                Opacity = 0.6,
+            },
         ];
     }
 
@@ -177,7 +187,7 @@ public sealed class ProjectSerializerTests
     public void Roundtrip_JederAnnotationstyp_MitAllenEigenschaften()
     {
         var originals = ProjectSamples.OneOfEach();
-        originals.Select(a => a.GetType()).Distinct().Count().ShouldBe(10);
+        originals.Select(a => a.GetType()).Distinct().Count().ShouldBe(11);
 
         var restored = ProjectSamples.Load(ProjectSamples.Save(ProjectSamples.Content(originals)));
 

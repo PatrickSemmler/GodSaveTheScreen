@@ -178,7 +178,23 @@ public partial class EditorWindow : FluentWindow
 
     // ---- Tastatur ----
 
-    private static bool IsTyping => Keyboard.FocusedElement is TextBoxBase or System.Windows.Controls.PasswordBox or ComboBox { IsEditable: true };
+    /// <summary>Eingabefelder und die Emoji-Auswahl (Pfeiltasten, Enter, Tippen gehören dem Raster) bekommen die Tasten selbst.</summary>
+    private static bool IsTyping =>
+        Keyboard.FocusedElement is TextBoxBase or System.Windows.Controls.PasswordBox or ComboBox { IsEditable: true }
+        || (Keyboard.FocusedElement is DependencyObject focused && IsInsideEmojiPicker(focused));
+
+    private static bool IsInsideEmojiPicker(DependencyObject element)
+    {
+        for (var current = element; current is not null; current = current is System.Windows.Media.Visual or System.Windows.Media.Media3D.Visual3D ? System.Windows.Media.VisualTreeHelper.GetParent(current) : LogicalTreeHelper.GetParent(current))
+        {
+            if (current is Controls.EmojiPicker)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
     private void OnPreviewKeyUp(object sender, KeyEventArgs e)
     {

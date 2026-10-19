@@ -41,7 +41,7 @@ GodSaveTheScreen ist ein Screenshot- und Bildannotationswerkzeug für Windows. E
 - Moderne Speicherformate außerhalb von WPF (WebP, AVIF, HEIC) – **Laden** funktioniert trotzdem, sofern der passende WIC-Codec in Windows installiert ist (z. B. „WebP-Bilderweiterungen“).
 - Installer, Auto-Update, Store-Paket
 - Cloud-Upload, OCR, Teilen-Dialoge
-- Rotation einzelner Objekte (Datenmodell ist vorbereitet, siehe M5 „Ausblick“); ab M13 nur für Emoji-Objekte
+- Rotation einzelner Objekte außer Emojis (seit M13 gibt es `IRotatableAnnotation`, `RotationMath` und Drehgriff in der Auswahl – bisher nur `EmojiAnnotation` ist drehbar; weitere Typen können die Schnittstelle übernehmen)
 
 ## 2. Technologie-Stack
 
