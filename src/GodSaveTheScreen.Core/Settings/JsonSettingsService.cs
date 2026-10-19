@@ -55,6 +55,11 @@ public sealed class JsonSettingsService : ISettingsService, IDisposable
                 File.Move(temp, target);
             }
         }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            // Die meisten Aufrufer starten das Speichern ohne zu warten: der Fehler darf nicht als unbeobachtete Task-Ausnahme enden.
+            _logger.LogError(ex, "Einstellungen konnten nicht gespeichert werden");
+        }
         finally
         {
             _saveLock.Release();

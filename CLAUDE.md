@@ -20,3 +20,11 @@ Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `doc
 - Baseline 19.10.2026: Core.Tests 266 grün; App.Tests 448, 1 Fehler (`SchliessenDesEditors_LeertDenEffektCache`, Punkt #5)
 
 ## Änderungshistorie
+
+### Settings-Speichern fängt IO-Fehler ab – 19.10.2026
+- **Kategorie**: Stabilität
+- **Verbesserungsliste-ID**: #1
+- **Geänderte Dateien**: `src/GodSaveTheScreen.Core/Settings/JsonSettingsService.cs`, `tests/GodSaveTheScreen.Core.Tests/JsonSettingsServiceTests.cs`
+- **Was wurde gemacht**: `SaveAsync` fängt `IOException`/`UnauthorizedAccessException` und protokolliert sie
+- **Warum**: Aufrufer starten `SaveAsync` fire-and-forget (`_ = ...`); Fehler waren unbeobachtet und unsichtbar
+- **Seiteneffekte / Hinweise**: `SaveAsync` wirft bei diesen Fehlern nicht mehr; der Benutzer bekommt keine Meldung, nur Log-Eintrag

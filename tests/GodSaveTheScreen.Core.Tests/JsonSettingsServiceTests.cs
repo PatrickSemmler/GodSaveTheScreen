@@ -109,6 +109,24 @@ public sealed class JsonSettingsServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task Save_DateiGesperrt_WirftNichtUndBehaeltWerteImSpeicher()
+    {
+        var dir = Path.Combine(_root, "roaming", "GodSaveTheScreen");
+        Directory.CreateDirectory(dir);
+        var service = Create();
+        service.Current = service.Current with { Language = "en" };
+
+        // Die temporäre Zieldatei ist durch einen anderen Prozess gesperrt.
+        using (new FileStream(Path.Combine(dir, "settings.json.tmp"), FileMode.Create, FileAccess.ReadWrite, FileShare.None))
+        {
+            await service.SaveAsync(TestContext.Current.CancellationToken);
+        }
+
+        service.Current.Language.ShouldBe("en");
+        File.Exists(Path.Combine(dir, "settings.json")).ShouldBeFalse();
+    }
+
+    [Fact]
     public void Load_BeschaedigteDatei_LiefertStandardwerte()
     {
         var path = Path.Combine(_root, "roaming", "GodSaveTheScreen");
