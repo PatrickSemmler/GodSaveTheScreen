@@ -6,7 +6,7 @@
       xmlns:l="clr-namespace:GodSaveTheScreen.App.Localization"
       Title="CapturePage">
   <Page.Resources>
-    <Style TargetType="CheckBox"><Setter Property="Margin" Value="0,0,0,8" /></Style>
+    <Style TargetType="CheckBox" BasedOn="{StaticResource {x:Type CheckBox}}"><Setter Property="Margin" Value="0,0,0,8" /></Style>
     <Style x:Key="Label" TargetType="TextBlock"><Setter Property="Margin" Value="0,8,0,4" /></Style>
   </Page.Resources>
   <ScrollViewer VerticalScrollBarVisibility="Auto">
