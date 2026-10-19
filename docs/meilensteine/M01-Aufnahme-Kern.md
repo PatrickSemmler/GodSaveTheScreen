@@ -27,41 +27,41 @@ Erstes nutzbares Produkt: Über ein Startfenster wird ein Rechteck oder der Voll
 ## Aufgaben
 
 ### 1. Core
-- [ ] Geometrie-Primitive `PointD`, `SizeD`, `RectD` (readonly record structs, Hilfsmethoden `Normalize`, `Intersect`, `Contains`, `Inflate`), `PixelRect` (int)
-- [ ] `PixelBuffer`: `Width`, `Height`, `Stride`, `byte[] Pixels` (BGRA32, nicht vormultipliziert), `Crop(PixelRect)`, `Clone()`
-- [ ] `ImageDocument` (Grundform): `BaseImage`, `DpiX/DpiY`, `SourcePath`, `CreatedAt`, `IsDirty`
+- [x] Geometrie-Primitive `PointD`, `SizeD`, `RectD` (readonly record structs, Hilfsmethoden `Normalize`, `Intersect`, `Contains`, `Inflate`), `PixelRect` (int)
+- [x] `PixelBuffer`: `Width`, `Height`, `Stride`, `byte[] Pixels` (BGRA32, nicht vormultipliziert), `Crop(PixelRect)`, `Clone()`
+- [x] `ImageDocument` (Grundform): `BaseImage`, `DpiX/DpiY`, `SourcePath`, `CreatedAt`, `IsDirty`
 
 ### 2. Capture
-- [ ] `NativeMethods.txt` (CsWin32): `EnumDisplayMonitors`, `GetMonitorInfo`, `GetDpiForMonitor`, `GetDC`, `ReleaseDC`, `CreateCompatibleDC`, `CreateCompatibleBitmap`, `SelectObject`, `BitBlt`, `GetDIBits`, `DeleteObject`, `DeleteDC`, `GetSystemMetrics`, `GetCursorPos`, `MonitorFromPoint`
-- [ ] `MonitorInfo` (Handle, Bounds/WorkArea in physischen Pixeln, DPI, IsPrimary, DeviceName)
-- [ ] `IMonitorService.GetMonitors()`
-- [ ] `IScreenCaptureService.CaptureVirtualScreen()` → `ScreenSnapshot` (`PixelBuffer` des virtuellen Desktops + Ursprung `VirtualLeft/Top` + Monitore)
+- [x] `NativeMethods.txt` (CsWin32): `EnumDisplayMonitors`, `GetMonitorInfo`, `GetDpiForMonitor`, `GetDC`, `ReleaseDC`, `CreateCompatibleDC`, `CreateCompatibleBitmap`, `SelectObject`, `BitBlt`, `GetDIBits`, `DeleteObject`, `DeleteDC`, `GetSystemMetrics`, `GetCursorPos`, `MonitorFromPoint`
+- [x] `MonitorInfo` (Handle, Bounds/WorkArea in physischen Pixeln, DPI, IsPrimary, DeviceName)
+- [x] `IMonitorService.GetMonitors()`
+- [x] `IScreenCaptureService.CaptureVirtualScreen()` → `ScreenSnapshot` (`PixelBuffer` des virtuellen Desktops + Ursprung `VirtualLeft/Top` + Monitore)
   - `BitBlt` mit `SRCCOPY | CAPTUREBLT` vom Desktop-DC, `GetDIBits` als 32-bpp Top-Down-DIB, Alpha auf 255 setzen
   - Optional Mauszeiger mitzeichnen (Einstellung, Standard aus) via `GetCursorInfo`/`DrawIconEx`
-- [ ] `ScreenSnapshot.Crop(PixelRect inVirtualCoords)` → `PixelBuffer`
-- [ ] Alle Handles in `try/finally` bzw. `SafeHandle` freigeben
+- [x] `ScreenSnapshot.Crop(PixelRect inVirtualCoords)` → `PixelBuffer`
+- [x] Alle Handles in `try/finally` bzw. `SafeHandle` freigeben
 
 ### 3. Auswahl-Overlay (App)
-- [ ] `CaptureCoordinator`: steuert Ablauf Snapshot → Overlays → Ergebnis; nur eine Aufnahme gleichzeitig
-- [ ] `SelectionOverlayWindow` (randlos, `Topmost`, `ShowInTaskbar=false`, `AllowsTransparency=false` – Snapshot ist Hintergrund, daher keine Transparenz nötig)
+- [x] `CaptureCoordinator`: steuert Ablauf Snapshot → Overlays → Ergebnis; nur eine Aufnahme gleichzeitig
+- [x] `SelectionOverlayWindow` (randlos, `Topmost`, `ShowInTaskbar=false`, `AllowsTransparency=false` – Snapshot ist Hintergrund, daher keine Transparenz nötig)
   - Positionierung je Monitor über `SetWindowPos` in physischen Pixeln nach `SourceInitialized`
   - Hintergrund: Monitorausschnitt des Snapshots als `BitmapSource`, darüber halbtransparente Abdunklung; ausgewählter Bereich wird ausgespart (`CombinedGeometry` Exclude)
   - Eingaben: Ziehen = Rechteck; `Esc` = Abbruch; Rechtsklick = Abbruch; Pfeiltasten verschieben Endpunkt pixelgenau; `Enter` übernimmt
   - Fadenkreuz-Linien, Pixellupe (z. B. 8×, 15×15 px, mit Farbwert-Anzeige `#RRGGBB`), Größenlabel `W × H`
   - Auswahl über Monitorgrenzen hinweg: Overlays teilen ein gemeinsames `SelectionState` in **virtuellen** Pixelkoordinaten; jedes Overlay zeichnet seinen Anteil
-- [ ] `SelectionOverlayViewModel` + `SelectionState` (testbar ohne Fenster)
-- [ ] Vollbild-Modi: „Aktueller Monitor“ ohne Overlay direkt; „Alle Monitore“ = gesamter virtueller Desktop (leere Bereiche bei ungleichen Monitorgrößen schwarz)
+- [x] `SelectionOverlayViewModel` + `SelectionState` (testbar ohne Fenster)
+- [x] Vollbild-Modi: „Aktueller Monitor“ ohne Overlay direkt; „Alle Monitore“ = gesamter virtueller Desktop (leere Bereiche bei ungleichen Monitorgrößen schwarz)
 
 ### 4. Startfenster
-- [ ] `StartWindow` (kompakt, `ui:FluentWindow`): Split-Button „Neu“ + Modus-Auswahl (Rechteck, Vollbild-Monitor, Vollbild-Alle; weitere Modi in M2 vorgesehen), Button „Öffnen“ (deaktiviert bis M4), Einstellungen (deaktiviert bis M3)
-- [ ] Startfenster blendet sich vor der Aufnahme aus (Hide + kurze Wartezeit ~150 ms für Fensteranimation) und danach wieder ein
+- [x] `StartWindow` (kompakt, `ui:FluentWindow`): Button „Neu“ + Modus-ComboBox (kein Split-Button) (Rechteck, Vollbild-Monitor, Vollbild-Alle; weitere Modi in M2 vorgesehen), Button „Öffnen“ (deaktiviert bis M4), Einstellungen (deaktiviert bis M3)
+- [x] Startfenster blendet sich vor der Aufnahme aus (Hide + kurze Wartezeit ~150 ms für Fensteranimation) und danach wieder ein
 
 ### 5. Ergebnisfenster (vorläufig, wird in M4 zum Editor)
-- [ ] `EditorWindow` (Grundform) mit `Image` in `ScrollViewer`, Buttons „Einpassen“, „100 %“
-- [ ] 100 % = 1 Bildpixel pro physischem Bildschirmpixel (Skalierung mit `1 / (monitorDpi/96)` kompensieren)
-- [ ] „Speichern unter…“ (nur PNG in M1) und „Kopieren“
-- [ ] `IClipboardService.SetImage(PixelBuffer)`: setzt `CF_DIB` (`BitmapSource`) **und** Format `"PNG"` (Stream) für Alpha-fähige Ziele; Wiederholung bei `COMException` (5× 50 ms)
-- [ ] `PixelBufferExtensions.ToBitmapSource()` / `FromBitmapSource()` in Rendering (`BitmapSource.Create` + `Freeze()`)
+- [x] `EditorWindow` (Grundform) mit `Image` in `ScrollViewer`, Buttons „Einpassen“, „100 %“
+- [x] 100 % = 1 Bildpixel pro physischem Bildschirmpixel (Skalierung mit `1 / (monitorDpi/96)` kompensieren)
+- [x] „Speichern unter…“ (nur PNG in M1) und „Kopieren“
+- [x] `IClipboardService.SetImage(PixelBuffer)`: setzt `CF_DIB` (`BitmapSource`) **und** Format `"PNG"` (Stream) für Alpha-fähige Ziele; Wiederholung bei `COMException` (5× 50 ms)
+- [x] `PixelBufferExtensions.ToBitmapSource()` / `FromBitmapSource()` in Rendering (`BitmapSource.Create` + `Freeze()`)
 
 ## Technische Details
 

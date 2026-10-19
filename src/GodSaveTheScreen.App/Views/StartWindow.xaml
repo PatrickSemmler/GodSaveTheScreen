@@ -1,0 +1,47 @@
+<ui:FluentWindow x:Class="GodSaveTheScreen.App.Views.StartWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:l="clr-namespace:GodSaveTheScreen.App.Localization"
+                 Title="{l:Loc Start_Title}"
+                 Width="520"
+                 SizeToContent="Height"
+                 ResizeMode="CanMinimize"
+                 WindowStartupLocation="CenterScreen"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowBackdropType="Mica">
+  <StackPanel>
+    <ui:TitleBar Title="{l:Loc Start_Title}" />
+    <Grid Margin="16,8,16,16">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+      <ui:Button Grid.Column="0"
+                 Appearance="Primary"
+                 Icon="{ui:SymbolIcon Add24}"
+                 Content="{l:Loc Start_New}"
+                 Command="{Binding NewCaptureCommand}"
+                 VerticalAlignment="Center" />
+      <ComboBox Grid.Column="1"
+                Margin="8,0,0,0"
+                VerticalAlignment="Center"
+                ItemsSource="{Binding Modes}"
+                SelectedItem="{Binding SelectedMode}"
+                DisplayMemberPath="Label"
+                AutomationProperties.Name="{l:Loc Start_Mode}" />
+      <ui:Button Grid.Column="2"
+                 Margin="8,0,0,0"
+                 Icon="{ui:SymbolIcon FolderOpen24}"
+                 Content="{l:Loc Start_Open}"
+                 IsEnabled="False" />
+      <ui:Button Grid.Column="3"
+                 Margin="8,0,0,0"
+                 Icon="{ui:SymbolIcon Settings24}"
+                 Content="{l:Loc Start_Settings}"
+                 IsEnabled="False" />
+    </Grid>
+  </StackPanel>
+</ui:FluentWindow>
