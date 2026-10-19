@@ -278,6 +278,14 @@ public sealed class ToolOptionsViewModel : ObservableObject, IDisposable
         if (defaults)
         {
             set(template, v);
+            if (template is BlurAnnotation)
+            {
+                _context.SaveBlurTemplate();
+            }
+            else
+            {
+                _context.SaveMagnifierTemplate();
+            }
         }
         else
         {

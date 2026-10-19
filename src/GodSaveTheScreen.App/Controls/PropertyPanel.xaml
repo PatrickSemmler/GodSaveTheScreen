@@ -130,22 +130,6 @@
 
             <TextBlock Text="{l:Loc Text_Background}" Style="{StaticResource FieldLabel}" />
             <controls:ColorButton Style="{StaticResource PanelColorButton}" SelectedColor="{Binding BackgroundColor, Mode=TwoWay}" />
-
-            <TextBlock Text="{l:Loc Text_Presets}" Style="{StaticResource FieldLabel}" />
-            <ItemsControl ItemsSource="{Binding Presets}">
-              <ItemsControl.ItemsPanel>
-                <ItemsPanelTemplate>
-                  <WrapPanel />
-                </ItemsPanelTemplate>
-              </ItemsControl.ItemsPanel>
-              <ItemsControl.ItemTemplate>
-                <DataTemplate>
-                  <ui:Button Content="{Binding Name}" Margin="0,0,6,6"
-                             Command="{Binding DataContext.ApplyPresetCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
-                             CommandParameter="{Binding}" />
-                </DataTemplate>
-              </ItemsControl.ItemTemplate>
-            </ItemsControl>
           </StackPanel>
 
           <!-- Marker -->
@@ -372,6 +356,9 @@
                             AutomationProperties.Name="{l:Loc Props_Opacity}" />
             </Grid>
           </StackPanel>
+
+          <!-- Vorlagen des aktiven Werkzeugs -->
+          <controls:PresetList DataContext="{Binding Presets}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}" />
         </StackPanel>
       </ScrollViewer>
     </TabItem>

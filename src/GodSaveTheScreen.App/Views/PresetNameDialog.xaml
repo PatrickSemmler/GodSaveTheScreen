@@ -1,0 +1,34 @@
+<ui:FluentWindow x:Class="GodSaveTheScreen.App.Views.PresetNameDialog"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:l="clr-namespace:GodSaveTheScreen.App.Localization"
+                 SizeToContent="Height"
+                 Width="420"
+                 MinHeight="0"
+                 Height="Auto"
+                 ResizeMode="NoResize"
+                 ShowInTaskbar="False"
+                 WindowStartupLocation="CenterOwner"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowBackdropType="Mica"
+                 FocusManager.FocusedElement="{Binding ElementName=NameBox}">
+  <StackPanel>
+    <ui:TitleBar x:Name="Bar" ShowMinimize="False" ShowMaximize="False" />
+    <StackPanel Margin="24,8,24,12">
+      <TextBlock x:Name="PromptText" TextWrapping="Wrap" Margin="0,0,0,8" />
+      <ComboBox x:Name="NameBox"
+                IsEditable="True"
+                IsTextSearchEnabled="True"
+                IsTextSearchCaseSensitive="False"
+                StaysOpenOnEdit="True"
+                MaxDropDownHeight="240"
+                HorizontalAlignment="Stretch"
+                AutomationProperties.Name="{l:Loc Preset_NameField}" />
+    </StackPanel>
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="24,0,24,16">
+      <ui:Button x:Name="OkButton" Content="{l:Loc Dialog_Ok}" MinWidth="88" Margin="8,0,0,0" Appearance="Primary" IsDefault="True" Click="OnOk" />
+      <ui:Button Content="{l:Loc Dialog_Cancel}" MinWidth="88" Margin="8,0,0,0" IsCancel="True" Click="OnCancel" />
+    </StackPanel>
+  </StackPanel>
+</ui:FluentWindow>

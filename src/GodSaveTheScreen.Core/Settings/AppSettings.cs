@@ -155,6 +155,21 @@ public sealed record AppSettings
 
     public MarkerStyle MarkerDefaults { get; init; } = new();
 
+    /// <summary>Letzte Konfiguration des Unschärfe-Werkzeugs.</summary>
+    public BlurStyle BlurDefaults { get; init; } = new();
+
+    /// <summary>Letzte Konfiguration des Lupen-Werkzeugs.</summary>
+    public MagnifierStyle MagnifierDefaults { get; init; } = new();
+
+    /// <summary>Letzte Konfiguration von Stift und Textmarker (Glättung, Druck).</summary>
+    public FreehandStyle FreehandDefaults { get; init; } = new();
+
+    /// <summary>Benutzer-Vorlagen je Werkzeug (Schlüssel = Werkzeug-ID).</summary>
+    public ToolPresetMap ToolPresets { get; init; } = [];
+
+    /// <summary>Die mitgelieferten Vorlagen wurden einmalig angelegt.</summary>
+    public bool PresetsSeeded { get; init; }
+
     /// <summary>Nummer des ersten Markers in einem Bild.</summary>
     public int MarkerStartNumber { get; init; } = 1;
 
@@ -191,8 +206,21 @@ public sealed record AppSettings
 
         var text = TextDefaults ?? new TextStyle();
         var marker = MarkerDefaults ?? new MarkerStyle();
+        var blur = BlurDefaults ?? new BlurStyle();
+        var magnifier = MagnifierDefaults ?? new MagnifierStyle();
+        var freehand = FreehandDefaults ?? new FreehandStyle();
+        var presets = new ToolPresetMap();
+        foreach (var (key, list) in ToolPresets ?? [])
+        {
+            presets[key] = new ToolPresetList((list ?? []).Where(p => p is not null && PresetNames.IsValid(p.Name)));
+        }
+
         return this with
         {
+            ToolPresets = presets,
+            BlurDefaults = blur,
+            FreehandDefaults = freehand,
+            MagnifierDefaults = magnifier with { Border = magnifier.Border ?? new MagnifierStyle().Border },
             ShapeDefaults = shapes,
             RecentColors = RecentColors ?? [],
             RecentFonts = RecentFonts ?? [],

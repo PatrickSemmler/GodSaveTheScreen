@@ -14,6 +14,7 @@ Screenshot- und Annotationstool für Windows (.NET 10, WPF). Es läuft im Infobe
 
 **Editor**
 - Formen (Rechteck, Ellipse, Linie, Pfeil, Dreieck, Polygon), Text, nummerierte Marker, Stift, Textmarker, Radierer, virtuelles Lineal
+- Eigene Vorlagen für jedes Zeichenwerkzeug (speichern, anwenden, umbenennen, löschen); jedes Werkzeug merkt sich seine zuletzt gewählte Konfiguration
 - Unschärfe (Weichzeichnen, Verpixeln, Schwärzen) und Lupe
 - Alle Objekte bleiben bearbeitbar: Auswahl, Griffe, Ebenenliste, Z-Reihenfolge, Sperren, Undo/Redo
 - Zuschneiden wie im Snipping Tool (nicht-destruktiv, später wieder erweiterbar), Seitenverhältnisse, Pixel-Eingabe, Einrasten, „Auf Objekte zuschneiden“, „Leeren Rand entfernen“

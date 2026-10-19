@@ -36,6 +36,12 @@ public interface IDialogService
     /// <summary>Wiederherstellen (<c>true</c>) oder Verwerfen (<c>false</c>) nicht gespeicherter Dokumente nach einem Absturz.</summary>
     bool AskRecovery(string title, string message);
 
+    /// <summary>
+    /// Fragt einen Vorlagennamen ab; <paramref name="existingNames"/> dienen der Autovervollständigung.
+    /// Gibt den bereinigten Namen oder <c>null</c> bei Abbruch zurück.
+    /// </summary>
+    string? AskPresetName(string title, string prompt, IReadOnlyList<string> existingNames, string initialName);
+
     /// <summary>Fragt nach einem Ordner. Gibt <c>null</c> bei Abbruch zurück.</summary>
     string? PickFolder(string? initialDirectory);
 

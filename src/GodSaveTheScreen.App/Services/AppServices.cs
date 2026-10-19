@@ -119,6 +119,23 @@ public sealed class DialogService : IDialogService
         return dialog.Result;
     }
 
+    public string? AskPresetName(string title, string prompt, IReadOnlyList<string> existingNames, string initialName)
+    {
+        var dialog = new PresetNameDialog(title, prompt, existingNames, initialName);
+        var owner = Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive && w.IsVisible && w != dialog);
+        if (owner is not null)
+        {
+            dialog.Owner = owner;
+        }
+        else
+        {
+            dialog.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+        }
+
+        dialog.ShowDialog();
+        return dialog.Result;
+    }
+
     public string? PickFolder(string? initialDirectory)
     {
         var dialog = new OpenFolderDialog { InitialDirectory = initialDirectory ?? string.Empty };

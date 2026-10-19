@@ -221,6 +221,20 @@
   <data name="Preset_Warning" xml:space="preserve"><value>Warnung</value></data>
   <data name="Preset_Note" xml:space="preserve"><value>Notiz</value></data>
   <data name="Preset_Hint" xml:space="preserve"><value>Hinweis</value></data>
+  <data name="Preset_SaveTitle" xml:space="preserve"><value>Als Vorlage speichern</value></data>
+  <data name="Preset_RenameTitle" xml:space="preserve"><value>Vorlage umbenennen</value></data>
+  <data name="Preset_NamePrompt" xml:space="preserve"><value>Name der Vorlage:</value></data>
+  <data name="Preset_NameField" xml:space="preserve"><value>Vorlagenname</value></data>
+  <data name="Preset_OverwriteTitle" xml:space="preserve"><value>Vorlage überschreiben</value></data>
+  <data name="Preset_OverwriteQuestion" xml:space="preserve"><value>Eine Vorlage mit dem Namen „{0}“ existiert bereits. Soll sie überschrieben werden?</value></data>
+  <data name="Preset_DeleteTitle" xml:space="preserve"><value>Vorlage löschen</value></data>
+  <data name="Preset_DeleteQuestion" xml:space="preserve"><value>Vorlage „{0}“ löschen?</value></data>
+  <data name="Preset_Save" xml:space="preserve"><value>Aktuelle Einstellungen als Vorlage speichern</value></data>
+  <data name="Preset_Rename" xml:space="preserve"><value>Markierte Vorlage umbenennen</value></data>
+  <data name="Preset_Delete" xml:space="preserve"><value>Markierte Vorlage löschen</value></data>
+  <data name="Preset_Restore" xml:space="preserve"><value>Standardvorlagen wiederherstellen</value></data>
+  <data name="Preset_Empty" xml:space="preserve"><value>Noch keine Vorlagen. Speichere die aktuellen Einstellungen als Vorlage.</value></data>
+  <data name="Preset_Sample" xml:space="preserve"><value>Abc</value></data>
   <data name="Props_Typeface" xml:space="preserve"><value>Schriftschnitt</value></data>
   <data name="Shape_Text" xml:space="preserve"><value>Text</value></data>
   <data name="Shape_Marker" xml:space="preserve"><value>Marker</value></data>

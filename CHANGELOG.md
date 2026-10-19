@@ -2,6 +2,15 @@
 
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), die Versionen folgen [SemVer](https://semver.org/lang/de/).
 
+## [Unveröffentlicht]
+
+### Neu
+- **Werkzeugvorlagen (M12):** Alle Zeichenwerkzeuge (Formen, Linie/Pfeil, Stift, Textmarker, Text, Marker, Unschärfe, Lupe) haben eine Vorlagenliste im Eigenschaftenpanel statt Schaltflächen. Aktuelle Einstellungen lassen sich unter eigenem Namen speichern (Dialog mit Autovervollständigung, Rückfrage beim Überschreiben ohne Beachtung der Groß-/Kleinschreibung); Vorlagen können umbenannt und gelöscht werden, die mitgelieferten Textvorlagen ebenfalls („Standardvorlagen wiederherstellen“).
+- **Letzte Konfiguration:** Unschärfe, Lupe sowie Glättung und Druck des Stifts werden wie die übrigen Werkzeuge dauerhaft gemerkt.
+
+### Geändert
+- Textvorlagen übernehmen jetzt den ganzen Stil inklusive Schriftart und Ausrichtung.
+
 ## [1.0.0] – 2026-10-19
 
 Erste Version mit vollem Funktionsumfang (Meilensteine M0–M11).

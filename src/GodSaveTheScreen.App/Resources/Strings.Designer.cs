@@ -437,6 +437,34 @@ public static class Strings
 
     public static string Preset_Hint => ResourceManager.GetString("Preset_Hint", Culture) ?? "Preset_Hint";
 
+    public static string Preset_SaveTitle => ResourceManager.GetString("Preset_SaveTitle", Culture) ?? "Preset_SaveTitle";
+
+    public static string Preset_RenameTitle => ResourceManager.GetString("Preset_RenameTitle", Culture) ?? "Preset_RenameTitle";
+
+    public static string Preset_NamePrompt => ResourceManager.GetString("Preset_NamePrompt", Culture) ?? "Preset_NamePrompt";
+
+    public static string Preset_NameField => ResourceManager.GetString("Preset_NameField", Culture) ?? "Preset_NameField";
+
+    public static string Preset_OverwriteTitle => ResourceManager.GetString("Preset_OverwriteTitle", Culture) ?? "Preset_OverwriteTitle";
+
+    public static string Preset_OverwriteQuestion => ResourceManager.GetString("Preset_OverwriteQuestion", Culture) ?? "Preset_OverwriteQuestion";
+
+    public static string Preset_DeleteTitle => ResourceManager.GetString("Preset_DeleteTitle", Culture) ?? "Preset_DeleteTitle";
+
+    public static string Preset_DeleteQuestion => ResourceManager.GetString("Preset_DeleteQuestion", Culture) ?? "Preset_DeleteQuestion";
+
+    public static string Preset_Save => ResourceManager.GetString("Preset_Save", Culture) ?? "Preset_Save";
+
+    public static string Preset_Rename => ResourceManager.GetString("Preset_Rename", Culture) ?? "Preset_Rename";
+
+    public static string Preset_Delete => ResourceManager.GetString("Preset_Delete", Culture) ?? "Preset_Delete";
+
+    public static string Preset_Restore => ResourceManager.GetString("Preset_Restore", Culture) ?? "Preset_Restore";
+
+    public static string Preset_Empty => ResourceManager.GetString("Preset_Empty", Culture) ?? "Preset_Empty";
+
+    public static string Preset_Sample => ResourceManager.GetString("Preset_Sample", Culture) ?? "Preset_Sample";
+
     public static string Props_Typeface => ResourceManager.GetString("Props_Typeface", Culture) ?? "Props_Typeface";
 
     public static string Shape_Text => ResourceManager.GetString("Shape_Text", Culture) ?? "Shape_Text";

@@ -48,7 +48,7 @@ Textobjekte mit freier Wahl von Schriftart, Schnitt, Größe sowie Linien- (Kont
 - [x] Größe: editierbare ComboBox (8 … 144) + freie Eingabe
 - [x] Schnellknöpfe **F**/*K*/U, Ausrichtung links/zentriert/rechts
 - [x] Farben: Füllung (Textfarbe), Kontur (Farbe + Stärke), Hintergrund
-- [x] Vorlagen: 3–4 Textstile („Beschriftung“, „Warnung rot mit weißer Kontur“, „Notiz gelb hinterlegt“) als Schnellauswahl
+- [x] Vorlagen: 3–4 Textstile („Beschriftung“, „Warnung rot mit weißer Kontur“, „Notiz gelb hinterlegt“) als Schnellauswahl – seit [M12](M12-Werkzeugvorlagen.md) eine erweiterbare Vorlagenliste für alle Zeichenwerkzeuge
 
 ## Technische Details
 

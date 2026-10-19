@@ -10,9 +10,6 @@ using GodSaveTheScreen.Core.Undo;
 
 namespace GodSaveTheScreen.App.ViewModels;
 
-/// <summary>Schnellvorlage für Textstile.</summary>
-public sealed record TextPreset(string Name, TextStyle Style);
-
 /// <summary>
 /// Texteigenschaften der Auswahl (gemischte Werte = <c>null</c>); ohne Auswahl die Standardwerte des Textwerkzeugs.
 /// Änderungen laufen über den <see cref="UndoManager"/>.
@@ -33,41 +30,10 @@ public sealed partial class TextPropertiesViewModel : ObservableObject, IDisposa
     {
         _context = context;
         _activeTool = activeTool;
-        Presets =
-        [
-            new TextPreset(Strings.Preset_Label, new TextStyle { FontWeight = 600, FontSize = 28 }),
-            new TextPreset(Strings.Preset_Warning, new TextStyle
-            {
-                FontWeight = 700,
-                FontSize = 32,
-                Fill = ArgbColor.FromRgb(0xE5, 0x39, 0x35),
-                Stroke = new StrokeStyle(ArgbColor.White, 4),
-            }),
-            new TextPreset(Strings.Preset_Note, new TextStyle
-            {
-                FontSize = 24,
-                Fill = ArgbColor.FromRgb(0x20, 0x20, 0x20),
-                Background = ArgbColor.FromRgb(0xFF, 0xF1, 0x76),
-                BackgroundPadding = 8,
-                BackgroundCornerRadius = 6,
-            }),
-            new TextPreset(Strings.Preset_Hint, new TextStyle
-            {
-                FontWeight = 600,
-                FontSize = 24,
-                Fill = ArgbColor.White,
-                Background = ArgbColor.FromRgb(0x19, 0x76, 0xD2),
-                BackgroundPadding = 8,
-                BackgroundCornerRadius = 6,
-            }),
-        ];
-
         _context.Selection.Changed += OnStateChanged;
         _context.Undo.Changed += OnStateChanged;
         _context.Defaults.RecentColorsChanged += OnStateChanged;
     }
-
-    public IReadOnlyList<TextPreset> Presets { get; }
 
     public IReadOnlyList<double> FontSizes => _sizes;
 
@@ -272,41 +238,6 @@ public sealed partial class TextPropertiesViewModel : ObservableObject, IDisposa
     {
         get => TryGet(t => t.Background, s => s.Background, out var v) ? v : null;
         set => SetNullable(nameof(BackgroundColor), value, t => t.Background, (t, v) => t.Background = v, (s, v) => s with { Background = v });
-    }
-
-    [RelayCommand]
-    private void ApplyPreset(TextPreset? preset)
-    {
-        if (preset is null)
-        {
-            return;
-        }
-
-        if (DefaultsTool is not null)
-        {
-            // Die Vorlage übernimmt Schnitt, Farben und Hintergrund; Schriftart bleibt, Größe kommt aus der Vorlage.
-            var current = _context.Defaults.GetText();
-            _context.Defaults.SetText(preset.Style with { FontFamilyName = current.FontFamilyName, TextAlignment = current.TextAlignment });
-        }
-        else
-        {
-            var changes = Texts
-                .Where(t => !t.IsLocked)
-                .Select(t =>
-                {
-                    var before = (TextAnnotation)t.Clone();
-                    StyleApplier.Apply(t, preset.Style with { TextAlignment = t.TextAlignment });
-                    t.FontFamilyName = before.FontFamilyName;
-                    return (Target: (Annotation)t, Before: (Annotation)before, After: t.Clone());
-                })
-                .ToList();
-            if (changes.Count > 0)
-            {
-                _context.Undo.Execute(new ReplaceGeometryAction(changes, preset.Name));
-            }
-        }
-
-        Refresh();
     }
 
     public void Refresh() => OnPropertyChanged(string.Empty);

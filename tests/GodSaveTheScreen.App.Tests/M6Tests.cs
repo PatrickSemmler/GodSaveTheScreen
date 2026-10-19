@@ -724,20 +724,21 @@ public sealed class TextPropertiesTests
     }
 
     [StaFact]
-    public void Vorlage_UebernimmtStilBehaeltSchriftart()
+    public void Vorlage_UebernimmtGanzenStilAlsEineUndoAktion()
     {
         var (h, text) = WithText();
         text.FontFamilyName = "Consolas";
-        var props = h.ViewModel.TextProperties;
-        var warning = props.Presets.First(p => p.Style.Stroke.Thickness > 0);
+        var presets = h.ViewModel.Presets;
+        var warning = presets.Items.First(p => p.Preset.Text!.Stroke.Thickness > 0);
 
-        props.ApplyPresetCommand.Execute(warning);
+        presets.ApplyCommand.Execute(warning);
 
-        text.FontFamilyName.ShouldBe("Consolas");
-        text.Stroke.Thickness.ShouldBe(warning.Style.Stroke.Thickness);
-        text.FontWeight.ShouldBe(warning.Style.FontWeight);
+        text.FontFamilyName.ShouldBe(warning.Preset.Text!.FontFamilyName);
+        text.Stroke.Thickness.ShouldBe(warning.Preset.Text!.Stroke.Thickness);
+        text.FontWeight.ShouldBe(warning.Preset.Text!.FontWeight);
         h.Document.Undo.Undo();
         text.Stroke.Thickness.ShouldBe(0);
+        text.FontFamilyName.ShouldBe("Consolas");
     }
 
     [StaFact]

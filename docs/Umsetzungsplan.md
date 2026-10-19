@@ -184,6 +184,7 @@ Jeder Meilenstein liefert eine lauffähige, getestete Anwendung mit abgeschlosse
 | M9 | Zuschneiden | Snipping-Tool-artiges, nicht-destruktives Zuschneiden | [M09](meilensteine/M09-Zuschneiden.md) |
 | M10 | Projektformat `.gsts` | Speichern/Laden mit bearbeitbaren Objekten, zuletzt verwendete Dateien | [M10](meilensteine/M10-Projektformat.md) |
 | M11 | Feinschliff & Portable Release | Vollständige Lokalisierung, Barrierefreiheit, Performance, Single-File-ZIP | [M11](meilensteine/M11-Feinschliff-Release.md) |
+| M12 | Werkzeugvorlagen & letzte Konfiguration | Eigene Vorlagen für alle Zeichenwerkzeuge (Liste, Speichern, Umbenennen, Löschen), letzte Konfiguration je Werkzeug gespeichert | [M12](meilensteine/M12-Werkzeugvorlagen.md) |
 
 ### 4.1 Abhängigkeiten der Meilensteine
 
@@ -198,6 +199,7 @@ M0 ─► M1 ─► M2
                       ├─► M9
                       └─► M10 (sinnvoll nach M6–M9, technisch ab M5 möglich)
 M11 nach allen anderen
+M12 nach M11 (Erweiterung; baut auf M5–M8 und M10 auf)
 ```
 
 - M2 und M3 sind unabhängig von M4+ und können parallel zum Editor entwickelt werden.
@@ -220,7 +222,8 @@ M11 nach allen anderen
 | M9 | 2 |
 | M10 | 2 |
 | M11 | 4 |
-| **Summe** | **≈ 41** |
+| M12 | 4 |
+| **Summe** | **≈ 45** |
 
 ## 5. Bedienkonzept (Übersicht)
 

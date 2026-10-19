@@ -83,6 +83,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         TextProperties = new TextPropertiesViewModel(context, () => ActiveTool);
         MarkerProperties = new MarkerPropertiesViewModel(context, () => ActiveTool);
         ToolOptions = new ToolOptionsViewModel(context, () => ActiveTool);
+        Presets = new PresetListViewModel(context, tools, () => ActiveTool, dialogs, RefreshProperties);
         Crop = new CropViewModel(context, () => tools.Get<CropTool>());
         context.Ruler.PropertyChanged += OnRulerChanged;
         context.Crop.Changed += OnCropChanged;
@@ -116,6 +117,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     public MarkerPropertiesViewModel MarkerProperties { get; }
 
     public ToolOptionsViewModel ToolOptions { get; }
+
+    public PresetListViewModel Presets { get; }
 
     public CropViewModel Crop { get; }
 
@@ -163,7 +166,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     /// <summary>Im Eigenschaftenbereich gibt es etwas zu bearbeiten.</summary>
     public bool HasPanelContent =>
-        Properties.IsApplicable || TextProperties.IsApplicable || MarkerProperties.IsApplicable || ToolOptions.IsApplicable || Properties.ShowOpacity;
+        Properties.IsApplicable || TextProperties.IsApplicable || MarkerProperties.IsApplicable || ToolOptions.IsApplicable || Properties.ShowOpacity || Presets.IsApplicable;
 
     public IReadOnlyList<ZoomChoice> ZoomChoices { get; }
 
@@ -327,6 +330,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         TextProperties.Refresh();
         MarkerProperties.Refresh();
         ToolOptions.Refresh();
+        Presets.Refresh();
         OnPropertyChanged(nameof(PanelHeader));
         OnPropertyChanged(nameof(HasPanelContent));
     }
@@ -875,6 +879,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         TextProperties.Dispose();
         MarkerProperties.Dispose();
         ToolOptions.Dispose();
+        Presets.Dispose();
         Crop.Dispose();
         Context.Ruler.PropertyChanged -= OnRulerChanged;
         Context.Crop.Changed -= OnCropChanged;

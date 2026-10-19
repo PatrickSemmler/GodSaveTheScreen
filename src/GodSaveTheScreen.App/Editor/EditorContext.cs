@@ -121,10 +121,16 @@ public sealed class EditorContext : IDisposable
         Defaults = defaults;
         Settings = settings;
         Exporter = exporter;
+        Presets = new ToolPresetService(settings);
         Document.HighlightersBehind = settings.Current.HighlighterBehind;
         Document.Annotations.CollectionChanged += OnAnnotationsChanged;
         Crop = new CropState(document);
+        BlurTemplate.Apply(defaults.GetBlur());
+        MagnifierTemplate.Apply(defaults.GetMagnifier());
     }
+
+    /// <summary>Benutzer-Vorlagen der Werkzeuge.</summary>
+    public ToolPresetService Presets { get; }
 
     /// <summary>Zustand des Zuschnittmodus.</summary>
     public CropState Crop { get; }
@@ -140,14 +146,24 @@ public sealed class EditorContext : IDisposable
     /// <summary>Virtuelles Lineal (UI-Zustand, nicht Teil des Dokuments).</summary>
     public RulerViewModel Ruler { get; } = new();
 
-    /// <summary>Glättung und Druck neuer Freihandstriche (gilt für die Dauer des Fensters).</summary>
-    public FreehandOptions Freehand { get; set; } = new();
+    /// <summary>Glättung und Druck neuer Freihandstriche (in den Einstellungen gespeichert).</summary>
+    public FreehandOptions Freehand
+    {
+        get => Defaults.GetFreehand();
+        set => Defaults.SetFreehand(value);
+    }
 
-    /// <summary>Vorlage für neue Unschärfe-Bereiche (Eigenschaftenpanel ohne Auswahl).</summary>
+    /// <summary>Vorlage für neue Unschärfe-Bereiche (Eigenschaftenpanel ohne Auswahl); Änderungen mit <see cref="SaveBlurTemplate"/> speichern.</summary>
     public BlurAnnotation BlurTemplate { get; } = new();
 
-    /// <summary>Vorlage für neue Lupen.</summary>
+    /// <summary>Vorlage für neue Lupen; Änderungen mit <see cref="SaveMagnifierTemplate"/> speichern.</summary>
     public MagnifierAnnotation MagnifierTemplate { get; } = new();
+
+    /// <summary>Speichert die Unschärfe-Vorlage als letzte Konfiguration.</summary>
+    public void SaveBlurTemplate() => Defaults.SetBlur(BlurTemplate.ToStyle());
+
+    /// <summary>Speichert die Lupen-Vorlage als letzte Konfiguration.</summary>
+    public void SaveMagnifierTemplate() => Defaults.SetMagnifier(MagnifierTemplate.ToStyle());
 
     /// <summary>Radierer entfernt alle Objekte, nicht nur Freihandstriche.</summary>
     public bool EraserAllObjects { get; set; }

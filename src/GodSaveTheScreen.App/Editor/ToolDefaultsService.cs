@@ -20,6 +20,18 @@ public interface IToolDefaultsService
 
     void SetMarker(MarkerStyle style);
 
+    BlurStyle GetBlur();
+
+    void SetBlur(BlurStyle style);
+
+    MagnifierStyle GetMagnifier();
+
+    void SetMagnifier(MagnifierStyle style);
+
+    FreehandOptions GetFreehand();
+
+    void SetFreehand(FreehandOptions options);
+
     int MarkerStartNumber { get; set; }
 
     /// <summary>Zuletzt verwendete Schriften (Familienname), neueste zuerst.</summary>
@@ -72,6 +84,40 @@ public sealed class ToolDefaultsService : IToolDefaultsService
     public void SetMarker(MarkerStyle style)
     {
         _settings.Current = _settings.Current with { MarkerDefaults = style };
+        _ = _settings.SaveAsync();
+    }
+
+    public BlurStyle GetBlur() => _settings.Current.BlurDefaults;
+
+    public void SetBlur(BlurStyle style)
+    {
+        if (style == _settings.Current.BlurDefaults)
+        {
+            return;
+        }
+
+        _settings.Current = _settings.Current with { BlurDefaults = style };
+        _ = _settings.SaveAsync();
+    }
+
+    public MagnifierStyle GetMagnifier() => _settings.Current.MagnifierDefaults;
+
+    public void SetMagnifier(MagnifierStyle style)
+    {
+        if (style == _settings.Current.MagnifierDefaults)
+        {
+            return;
+        }
+
+        _settings.Current = _settings.Current with { MagnifierDefaults = style };
+        _ = _settings.SaveAsync();
+    }
+
+    public FreehandOptions GetFreehand() => new(_settings.Current.FreehandDefaults.Smoothing, _settings.Current.FreehandDefaults.UsePressure);
+
+    public void SetFreehand(FreehandOptions options)
+    {
+        _settings.Current = _settings.Current with { FreehandDefaults = new FreehandStyle { Smoothing = options.Smoothing, UsePressure = options.UsePressure } };
         _ = _settings.SaveAsync();
     }
 
