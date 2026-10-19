@@ -4,7 +4,6 @@ using CommunityToolkit.Mvvm.Messaging;
 using GodSaveTheScreen.App.Hosting;
 using GodSaveTheScreen.App.Localization;
 using GodSaveTheScreen.App.Services;
-using GodSaveTheScreen.App.Views;
 using GodSaveTheScreen.Capture;
 using GodSaveTheScreen.Core;
 using GodSaveTheScreen.Core.Settings;
@@ -73,10 +72,15 @@ public partial class App : Application
         WeakReferenceMessenger.Default.Register(commandLine);
         _singleInstance.StartServer(logger);
 
+        services.GetRequiredService<IAutostartService>().RepairPath();
         await _host.StartAsync();
 
-        var startWindow = services.GetRequiredService<IWindowFactory>().Create<StartWindow>();
-        startWindow.Show();
+        var options = CommandLineParser.Parse(e.Args);
+        var showStartWindow = !options.Tray && !settings.StartInTray && options.Capture is null;
+        if (showStartWindow)
+        {
+            services.GetRequiredService<IAppShell>().ShowStartWindow();
+        }
 
         if (e.Args.Length > 0)
         {

@@ -1,2 +1,7 @@
 SetWindowPos
 HWND_TOPMOST
+
+SetWindowDisplayAffinity
+GetAsyncKeyState
+GetWindowLong
+SetWindowLong

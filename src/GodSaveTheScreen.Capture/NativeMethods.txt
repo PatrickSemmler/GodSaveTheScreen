@@ -17,3 +17,14 @@ MonitorFromPoint
 GetCursorInfo
 DrawIconEx
 CURSORINFO
+EnumWindows
+IsWindowVisible
+IsIconic
+IsZoomed
+GetWindowTextLength
+GetWindowText
+GetWindowThreadProcessId
+GetWindowLong
+GetWindowRect
+DwmGetWindowAttribute
+PrintWindow

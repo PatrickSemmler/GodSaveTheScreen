@@ -4,7 +4,7 @@
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  xmlns:l="clr-namespace:GodSaveTheScreen.App.Localization"
                  Title="{l:Loc Start_Title}"
-                 Width="520"
+                 Width="560"
                  SizeToContent="Height"
                  ResizeMode="CanMinimize"
                  WindowStartupLocation="CenterScreen"
@@ -12,7 +12,7 @@
                  WindowBackdropType="Mica">
   <StackPanel>
     <ui:TitleBar Title="{l:Loc Start_Title}" />
-    <Grid Margin="16,8,16,16">
+    <Grid Margin="16,8,16,8">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="*" />
@@ -41,7 +41,38 @@
                  Margin="8,0,0,0"
                  Icon="{ui:SymbolIcon Settings24}"
                  Content="{l:Loc Start_Settings}"
-                 IsEnabled="False" />
+                 Command="{Binding OpenSettingsCommand}" />
     </Grid>
+    <StackPanel Orientation="Horizontal" Margin="16,0,16,16">
+      <TextBlock Text="{l:Loc Timer_Label}" VerticalAlignment="Center" />
+      <ComboBox Margin="8,0,0,0"
+                MinWidth="170"
+                ItemsSource="{Binding TimerOptions}"
+                SelectedItem="{Binding SelectedTimer}"
+                DisplayMemberPath="Label"
+                AutomationProperties.Name="{l:Loc Timer_Label}" />
+      <ui:NumberBox Margin="8,0,0,0"
+                    Width="130"
+                    Minimum="0"
+                    Maximum="3600"
+                    SmallChange="1"
+                    LargeChange="10"
+                    MaxDecimalPlaces="0"
+                    ClearButtonEnabled="False"
+                    PlaceholderText="{l:Loc Timer_Seconds}"
+                    Value="{Binding CustomSecondsInput, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    AutomationProperties.Name="{l:Loc Timer_Seconds}">
+        <ui:NumberBox.Style>
+          <Style TargetType="ui:NumberBox" BasedOn="{StaticResource {x:Type ui:NumberBox}}">
+            <Setter Property="Visibility" Value="Collapsed" />
+            <Style.Triggers>
+              <DataTrigger Binding="{Binding IsCustomTimer}" Value="True">
+                <Setter Property="Visibility" Value="Visible" />
+              </DataTrigger>
+            </Style.Triggers>
+          </Style>
+        </ui:NumberBox.Style>
+      </ui:NumberBox>
+    </StackPanel>
   </StackPanel>
 </ui:FluentWindow>

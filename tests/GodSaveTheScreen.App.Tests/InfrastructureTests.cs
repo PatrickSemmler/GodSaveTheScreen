@@ -1,6 +1,7 @@
 using System.IO;
 using System.Xml.Linq;
 using GodSaveTheScreen.App.Hosting;
+using GodSaveTheScreen.Core.Capture;
 using GodSaveTheScreen.Core.Imaging;
 using GodSaveTheScreen.Rendering;
 

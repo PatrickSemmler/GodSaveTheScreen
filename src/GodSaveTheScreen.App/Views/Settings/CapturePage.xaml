@@ -1,0 +1,29 @@
+<Page x:Class="GodSaveTheScreen.App.Views.Settings.CapturePage"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:l="clr-namespace:GodSaveTheScreen.App.Localization"
+      Title="CapturePage">
+  <Page.Resources>
+    <Style TargetType="CheckBox"><Setter Property="Margin" Value="0,0,0,8" /></Style>
+    <Style x:Key="Label" TargetType="TextBlock"><Setter Property="Margin" Value="0,8,0,4" /></Style>
+  </Page.Resources>
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="24,8,24,24" MaxWidth="640" HorizontalAlignment="Left">
+      <ui:TextBlock Text="{l:Loc Settings_Capture}" FontTypography="Subtitle" Margin="0,0,0,12" />
+      <TextBlock Style="{StaticResource Label}" Text="{l:Loc Settings_DefaultMode}" />
+      <ComboBox ItemsSource="{Binding Modes}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding DefaultMode}" MinWidth="220" HorizontalAlignment="Left" />
+      <TextBlock Style="{StaticResource Label}" Text="{l:Loc Settings_DefaultTimer}" />
+      <ComboBox ItemsSource="{Binding TimerChoices}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding DefaultTimerSeconds}" MinWidth="220" HorizontalAlignment="Left" />
+      <TextBlock Style="{StaticResource Label}" Text="{l:Loc Settings_WindowSource}" />
+      <ComboBox ItemsSource="{Binding WindowSources}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding WindowSource}" MinWidth="220" HorizontalAlignment="Left" Margin="0,0,0,16" />
+      <CheckBox Content="{l:Loc Settings_CaptureCursor}" IsChecked="{Binding CaptureCursor}" />
+      <CheckBox Content="{l:Loc Settings_RoundedCorners}" IsChecked="{Binding RoundedCornersTransparent}" />
+      <CheckBox Content="{l:Loc Settings_FreeformAA}" IsChecked="{Binding FreeformAntiAlias}" />
+      <CheckBox Content="{l:Loc Settings_ExcludeOwn}" IsChecked="{Binding ExcludeOwnWindows}" />
+      <CheckBox Content="{l:Loc Settings_Magnifier}" IsChecked="{Binding ShowMagnifier}" />
+      <CheckBox Content="{l:Loc Settings_CountdownSound}" IsChecked="{Binding CountdownSound}" />
+    </StackPanel>
+  </ScrollViewer>
+</Page>

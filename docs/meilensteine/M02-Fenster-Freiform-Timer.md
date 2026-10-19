@@ -25,40 +25,40 @@ Alle Aufnahmemodi sind verfügbar: Rechteck, Fenster, Freiform, Vollbild – jew
 ## Aufgaben
 
 ### 1. Fenster-Enumeration (Capture)
-- [ ] `IWindowEnumerator.GetTopLevelWindows()` in Z-Order (`EnumWindows`), gefiltert:
+- [x] `IWindowEnumerator.GetTopLevelWindows()` in Z-Order (`EnumWindows`), gefiltert:
   - sichtbar (`IsWindowVisible`), nicht minimiert (`IsIconic`), nicht „cloaked“ (`DwmGetWindowAttribute(DWMWA_CLOAKED)` – virtuelle Desktops/UWP-Hintergrund)
   - Mindestgröße, kein Tool-Window ohne Titel, eigene Prozess-ID ausgeschlossen
-- [ ] Rahmen über `DWMWA_EXTENDED_FRAME_BOUNDS` (ohne unsichtbare Resize-Ränder), Fallback `GetWindowRect`
-- [ ] `WindowInfo` (Handle, Titel, Prozessname, Bounds, IsMaximized, Z-Index)
-- [ ] Fensterliste wird **zusammen mit dem Snapshot** erstellt (gleicher Zeitpunkt)
-- [ ] Optional: Kind-Elemente via `ChildWindowFromPointEx` / UI-Automation-Rechteck bei gedrückter `Strg`-Taste (Steuerelement statt Fenster)
+- [x] Rahmen über `DWMWA_EXTENDED_FRAME_BOUNDS` (ohne unsichtbare Resize-Ränder), Fallback `GetWindowRect`
+- [x] `WindowInfo` (Handle, Titel, Prozessname, Bounds, IsMaximized, Z-Index)
+- [x] Fensterliste wird **zusammen mit dem Snapshot** erstellt (gleicher Zeitpunkt)
+- [ ] Optional: Kind-Elemente via `ChildWindowFromPointEx` / UI-Automation-Rechteck bei gedrückter `Strg`-Taste (Steuerelement statt Fenster) *(nicht umgesetzt)*
 
 ### 2. Fenster-Modus im Overlay
-- [ ] Hover hebt das oberste Fenster unter dem Cursor hervor (Rahmen + Titel-Badge), Klick übernimmt
-- [ ] Ziehen im Fenster-Modus wechselt automatisch zur Rechteckauswahl (wie bei vielen Tools)
-- [ ] Ergebnisquelle (Einstellung „Fensteraufnahme“):
+- [x] Hover hebt das oberste Fenster unter dem Cursor hervor (Rahmen + Titel-Badge), Klick übernimmt
+- [x] Ziehen im Fenster-Modus wechselt automatisch zur Rechteckauswahl (wie bei vielen Tools)
+- [x] Ergebnisquelle (Einstellung „Fensteraufnahme“):
   - **Snapshot** (Standard): Ausschnitt aus dem eingefrorenen Bild – exakt was sichtbar war
   - **Fensterinhalt**: `PrintWindow(hwnd, PW_RENDERFULLCONTENT)` → erfasst auch verdeckte Teile; Fallback auf Snapshot, wenn Ergebnis leer/schwarz
-- [ ] Option „Abgerundete Ecken transparent“ (Windows 11): Maske mit `DWMWA_WINDOW_CORNER_PREFERENCE`-Radius (8 px × DPI-Faktor)
-- [ ] Maximierte Fenster: auf Monitorarbeitsbereich klemmen
+- [x] Option „Abgerundete Ecken transparent“ (Windows 11): Maske mit `DWMWA_WINDOW_CORNER_PREFERENCE`-Radius (8 px × DPI-Faktor)
+- [x] Maximierte Fenster: auf Monitorarbeitsbereich klemmen
 
 ### 3. Freiform (Lasso)
-- [ ] Punkte beim Ziehen sammeln (Mindestabstand 2 px), Pfad live zeichnen; Loslassen schließt den Pfad
-- [ ] Ergebnis: Bounding-Box ausschneiden, außerhalb des Polygons Alpha = 0 (Scanline-Polygon-Füllung im Core: `PolygonMask.Apply(PixelBuffer, points)`)
-- [ ] Optional Kantenglättung (Supersampling 4× am Rand) – Einstellung
-- [ ] Hinweis: Export als JPEG/BMP füllt Transparenz mit einstellbarer Hintergrundfarbe (Umsetzung in M4)
+- [x] Punkte beim Ziehen sammeln (Mindestabstand 2 px), Pfad live zeichnen; Loslassen schließt den Pfad
+- [x] Ergebnis: Bounding-Box ausschneiden, außerhalb des Polygons Alpha = 0 (Scanline-Polygon-Füllung im Core: `PolygonMask.Apply(PixelBuffer, points)`)
+- [x] Optional Kantenglättung (Supersampling 4× am Rand) – Einstellung
+- [x] Hinweis: Export als JPEG/BMP füllt Transparenz mit einstellbarer Hintergrundfarbe (Umsetzung in M4)
 
 ### 4. Timer
-- [ ] `CaptureRequest(Mode, Delay)`; Timer ist Teil des Startfensters: Dropdown „Kein / 3 s / 5 s / 10 s / Benutzerdefiniert…“ + `NumberBox` (0–3600 s, Schrittweite 1)
-- [ ] Letzter benutzerdefinierter Wert wird gespeichert
-- [ ] `CountdownWindow`: kleines, rundes, halbtransparentes Fenster unten rechts (oder am Cursor), große Ziffer, Klick/`Esc` bricht ab; `SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE)` (Fallback: vor Snapshot ausblenden)
-- [ ] Optionaler Ton bei 3-2-1 (Einstellung)
-- [ ] Timer läuft **vor** dem Einfrieren; danach wird normal ausgewählt (Verhalten wie Snipping Tool)
-- [ ] `CaptureCoordinator` unterstützt `CancellationToken` für Abbruch
+- [x] `CaptureRequest(Mode, Delay)`; Timer ist Teil des Startfensters: Dropdown „Kein / 3 s / 5 s / 10 s / Benutzerdefiniert…“ + `NumberBox` (0–3600 s, Schrittweite 1)
+- [x] Letzter benutzerdefinierter Wert wird gespeichert
+- [x] `CountdownWindow`: kleines, rundes, halbtransparentes Fenster unten rechts (oder am Cursor), große Ziffer, Klick/`Esc` bricht ab; `SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE)` (Fallback: vor Snapshot ausblenden)
+- [x] Optionaler Ton bei 3-2-1 (Einstellung)
+- [x] Timer läuft **vor** dem Einfrieren; danach wird normal ausgewählt (Verhalten wie Snipping Tool)
+- [x] `CaptureCoordinator` unterstützt `CancellationToken` für Abbruch
 
 ### 5. Ausschluss eigener Fenster
-- [ ] Alle eigenen Fenster (Start, Editor, Countdown) mit `WDA_EXCLUDEFROMCAPTURE` versehen (Einstellung „Eigene Fenster nicht aufnehmen“, Standard an) – Startfenster wird zusätzlich ausgeblendet
-- [ ] Prüfung der Windows-Version (≥ 10 2004), sonst Ausblenden + Wartezeit
+- [x] Alle eigenen Fenster (Start, Editor, Countdown) mit `WDA_EXCLUDEFROMCAPTURE` versehen (Einstellung „Eigene Fenster nicht aufnehmen“, Standard an) – Startfenster wird zusätzlich ausgeblendet
+- [x] Prüfung der Windows-Version (≥ 10 2004), sonst Ausblenden + Wartezeit
 
 ## Technische Details
 

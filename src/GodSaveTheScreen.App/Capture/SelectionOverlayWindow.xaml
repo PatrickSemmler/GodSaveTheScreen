@@ -17,9 +17,14 @@
   <Canvas x:Name="Root" ClipToBounds="True" Background="Transparent">
     <Image x:Name="BackgroundImage" Stretch="Fill" RenderOptions.BitmapScalingMode="NearestNeighbor" IsHitTestVisible="False" />
     <Path x:Name="Dim" Fill="#99000000" IsHitTestVisible="False" />
+    <Polygon x:Name="FreeformShape" Stroke="White" StrokeThickness="1.5" StrokeDashArray="4 3" Fill="Transparent"
+             Visibility="Collapsed" IsHitTestVisible="False" />
     <Rectangle x:Name="SelectionBorder" Stroke="White" StrokeThickness="1" Visibility="Collapsed" IsHitTestVisible="False" />
     <Line x:Name="CrossHorizontal" Stroke="#B0FFFFFF" StrokeThickness="1" IsHitTestVisible="False" />
     <Line x:Name="CrossVertical" Stroke="#B0FFFFFF" StrokeThickness="1" IsHitTestVisible="False" />
+    <Border x:Name="WindowBadge" Background="#CC0B5CAD" CornerRadius="3" Padding="6,2" MaxWidth="480" Visibility="Collapsed" IsHitTestVisible="False">
+      <TextBlock x:Name="WindowBadgeText" Foreground="White" FontSize="12" TextTrimming="CharacterEllipsis" />
+    </Border>
     <Border x:Name="SizeLabel" Background="#CC000000" CornerRadius="3" Padding="6,2" Visibility="Collapsed" IsHitTestVisible="False">
       <TextBlock x:Name="SizeText" Foreground="White" FontSize="12" />
     </Border>
@@ -34,7 +39,7 @@
       </StackPanel>
     </Border>
     <Border x:Name="Hint" Background="#CC000000" CornerRadius="4" Padding="10,4" IsHitTestVisible="False">
-      <TextBlock Text="{l:Loc Overlay_Hint}" Foreground="White" FontSize="13" />
+      <TextBlock x:Name="HintText" Text="{l:Loc Overlay_Hint}" Foreground="White" FontSize="13" />
     </Border>
   </Canvas>
 </Window>

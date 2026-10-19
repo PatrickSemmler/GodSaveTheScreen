@@ -1,0 +1,53 @@
+<Page x:Class="GodSaveTheScreen.App.Views.Settings.HotkeysPage"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:l="clr-namespace:GodSaveTheScreen.App.Localization"
+      xmlns:c="clr-namespace:GodSaveTheScreen.App.Controls"
+      Title="HotkeysPage">
+  <Page.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolToVis" />
+  </Page.Resources>
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="24,8,24,24" MaxWidth="720" HorizontalAlignment="Left">
+      <ui:TextBlock Text="{l:Loc Settings_Hotkeys}" FontTypography="Subtitle" Margin="0,0,0,4" />
+      <TextBlock Text="{l:Loc Hotkey_Help}" TextWrapping="Wrap" Opacity="0.7" Margin="0,0,0,12" />
+      <ItemsControl ItemsSource="{Binding Hotkeys}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Margin="0,0,0,12">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="160" />
+                  <ColumnDefinition Width="220" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding Label}" VerticalAlignment="Center" />
+                <c:HotkeyRecorder Grid.Column="1" Gesture="{Binding Gesture, Mode=TwoWay}" AutomationProperties.Name="{Binding Label}" />
+                <TextBlock Grid.Column="2" Margin="12,0,0,0" VerticalAlignment="Center" Text="{Binding StatusText}" TextWrapping="Wrap">
+                  <TextBlock.Style>
+                    <Style TargetType="TextBlock">
+                      <Setter Property="Opacity" Value="0.7" />
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsProblem}" Value="True">
+                          <Setter Property="Foreground" Value="OrangeRed" />
+                          <Setter Property="Opacity" Value="1" />
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </TextBlock.Style>
+                </TextBlock>
+              </Grid>
+              <StackPanel Visibility="{Binding ShowPrintHint, Converter={StaticResource BoolToVis}}" Margin="0,4,0,0">
+                <TextBlock Text="{l:Loc Hotkey_PrintHint}" TextWrapping="Wrap" Foreground="OrangeRed" />
+                <ui:Button Content="{l:Loc Hotkey_OpenWindowsSettings}" Margin="0,4,0,0"
+                           Command="{Binding DataContext.OpenWindowsKeyboardSettingsCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}" />
+              </StackPanel>
+            </StackPanel>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+  </ScrollViewer>
+</Page>

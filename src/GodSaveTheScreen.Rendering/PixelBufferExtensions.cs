@@ -2,6 +2,7 @@ using System.IO;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using GodSaveTheScreen.Core.Imaging;
+using GodSaveTheScreen.Core.Settings;
 
 namespace GodSaveTheScreen.Rendering;
 
@@ -41,5 +42,55 @@ public static class PixelBufferExtensions
         using var stream = new MemoryStream();
         encoder.Save(stream);
         return stream.ToArray();
+    }
+
+    /// <summary>
+    /// Kodiert im gewählten Format. JPEG/BMP kennen keine Transparenz: transparente Bereiche
+    /// werden mit <paramref name="background"/> (BGR, Standard Weiß) gefüllt.
+    /// </summary>
+    public static byte[] Encode(this PixelBuffer buffer, ImageFormatSetting format, double dpiX = 96, double dpiY = 96, int jpegQuality = 92)
+    {
+        ArgumentNullException.ThrowIfNull(buffer);
+        if (format == ImageFormatSetting.Png)
+        {
+            return buffer.EncodePng(dpiX, dpiY);
+        }
+
+        BitmapEncoder encoder = format == ImageFormatSetting.Jpeg
+            ? new JpegBitmapEncoder { QualityLevel = jpegQuality }
+            : new BmpBitmapEncoder();
+        encoder.Frames.Add(BitmapFrame.Create(buffer.FlattenOnBackground(0xFF, 0xFF, 0xFF).ToBitmapSource(dpiX, dpiY)));
+        using var stream = new MemoryStream();
+        encoder.Save(stream);
+        return stream.ToArray();
+    }
+
+    public static string FileExtension(this ImageFormatSetting format) => format switch
+    {
+        ImageFormatSetting.Jpeg => ".jpg",
+        ImageFormatSetting.Bmp => ".bmp",
+        _ => ".png",
+    };
+
+    /// <summary>Kopie, bei der Transparenz über der Hintergrundfarbe zu undurchsichtigen Pixeln verrechnet ist.</summary>
+    public static PixelBuffer FlattenOnBackground(this PixelBuffer buffer, byte red, byte green, byte blue)
+    {
+        var result = buffer.Clone();
+        var data = result.Pixels;
+        for (var i = 0; i < result.Width * result.Height * PixelBuffer.BytesPerPixel; i += PixelBuffer.BytesPerPixel)
+        {
+            var alpha = data[i + 3];
+            if (alpha == 255)
+            {
+                continue;
+            }
+
+            data[i] = (byte)(((data[i] * alpha) + (blue * (255 - alpha))) / 255);
+            data[i + 1] = (byte)(((data[i + 1] * alpha) + (green * (255 - alpha))) / 255);
+            data[i + 2] = (byte)(((data[i + 2] * alpha) + (red * (255 - alpha))) / 255);
+            data[i + 3] = 255;
+        }
+
+        return result;
     }
 }

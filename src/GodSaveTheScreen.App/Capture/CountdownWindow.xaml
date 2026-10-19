@@ -1,0 +1,19 @@
+<Window x:Class="GodSaveTheScreen.App.Capture.CountdownWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ShowActivated="False"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Width="120" Height="120"
+        WindowStartupLocation="Manual"
+        Focusable="False">
+  <Grid>
+    <Ellipse Fill="#CC202020" Stroke="#CCFFFFFF" StrokeThickness="2" />
+    <TextBlock x:Name="Digit" Foreground="White" FontSize="56" FontWeight="SemiBold"
+               HorizontalAlignment="Center" VerticalAlignment="Center" />
+  </Grid>
+</Window>

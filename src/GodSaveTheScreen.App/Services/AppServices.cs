@@ -16,30 +16,20 @@ public interface IWindowFactory
 public sealed class WindowFactory : IWindowFactory
 {
     private readonly IServiceProvider _services;
+    private readonly IWindowExclusionService _exclusion;
 
-    public WindowFactory(IServiceProvider services) => _services = services;
+    public WindowFactory(IServiceProvider services, IWindowExclusionService exclusion)
+    {
+        _services = services;
+        _exclusion = exclusion;
+    }
 
     public TWindow Create<TWindow>(params object[] args)
         where TWindow : Window
     {
         var window = ActivatorUtilities.CreateInstance<TWindow>(_services, args);
-        window.Closed += OnWindowClosed;
+        _exclusion.Register(window);
         return window;
-    }
-
-    // Bis zum Tray-Betrieb (M3) endet die Anwendung mit dem letzten Fenster.
-    private static void OnWindowClosed(object? sender, EventArgs e)
-    {
-        var app = Application.Current;
-        app?.Dispatcher.BeginInvoke(
-            System.Windows.Threading.DispatcherPriority.Background,
-            () =>
-            {
-                if (app.Windows.Count == 0)
-                {
-                    app.Shutdown();
-                }
-            });
     }
 }
 
@@ -47,6 +37,15 @@ public sealed class DialogService : IDialogService
 {
     public void ShowError(string title, string message) =>
         System.Windows.MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Error);
+
+    public bool Confirm(string title, string message) =>
+        System.Windows.MessageBox.Show(message, title, MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes;
+
+    public string? PickFolder(string? initialDirectory)
+    {
+        var dialog = new OpenFolderDialog { InitialDirectory = initialDirectory ?? string.Empty };
+        return dialog.ShowDialog() == true ? dialog.FolderName : null;
+    }
 
     public string? PickSavePath(string suggestedFileName, string filter)
     {

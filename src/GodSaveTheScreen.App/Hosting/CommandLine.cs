@@ -1,25 +1,19 @@
 using System.Globalization;
+using GodSaveTheScreen.Core.Capture;
 
 namespace GodSaveTheScreen.App.Hosting;
-
-public enum CaptureMode
-{
-    Rectangle,
-    Window,
-    FullScreen,
-    Freeform,
-}
 
 public sealed record CommandLineOptions(
     CaptureMode? Capture,
     double? DelaySeconds,
     IReadOnlyList<string> Files,
-    IReadOnlyList<string> Errors)
+    IReadOnlyList<string> Errors,
+    bool Tray = false)
 {
     public static CommandLineOptions Empty { get; } = new(null, null, [], []);
 }
 
-/// <summary>Einfacher Kommandozeilen-Parser: <c>--capture &lt;rect|window|full|freeform&gt;</c>, <c>--delay &lt;s&gt;</c>, Dateipfade.</summary>
+/// <summary>Einfacher Kommandozeilen-Parser: <c>--capture &lt;rect|window|full|freeform&gt;</c>, <c>--delay &lt;s&gt;</c>, <c>--tray</c>, Dateipfade.</summary>
 public static class CommandLineParser
 {
     public static CommandLineOptions Parse(IEnumerable<string> args)
@@ -28,6 +22,7 @@ public static class CommandLineParser
         double? delay = null;
         var files = new List<string>();
         var errors = new List<string>();
+        var tray = false;
 
         using var enumerator = args.GetEnumerator();
         while (enumerator.MoveNext())
@@ -68,6 +63,10 @@ public static class CommandLineParser
 
                     break;
 
+                case "--tray":
+                    tray = true;
+                    break;
+
                 default:
                     if (arg.StartsWith("--", StringComparison.Ordinal))
                     {
@@ -82,7 +81,7 @@ public static class CommandLineParser
             }
         }
 
-        return new CommandLineOptions(capture, delay, files, errors);
+        return new CommandLineOptions(capture, delay, files, errors, tray);
     }
 
     private static CaptureMode? ParseMode(string value) => value.ToLowerInvariant() switch

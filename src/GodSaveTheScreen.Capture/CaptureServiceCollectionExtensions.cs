@@ -7,6 +7,8 @@ public static class CaptureServiceCollectionExtensions
     public static IServiceCollection AddCapture(this IServiceCollection services)
     {
         services.AddSingleton<IMonitorService, MonitorService>();
+        services.AddSingleton<IWindowEnumerator, WindowEnumerator>();
+        services.AddSingleton<IWindowContentCapture, WindowContentCapture>();
         services.AddSingleton<IScreenCaptureService, ScreenCaptureService>();
         return services;
     }

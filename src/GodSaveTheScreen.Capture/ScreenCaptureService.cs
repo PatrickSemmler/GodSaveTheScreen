@@ -10,8 +10,13 @@ namespace GodSaveTheScreen.Capture;
 public sealed class ScreenCaptureService : IScreenCaptureService
 {
     private readonly IMonitorService _monitors;
+    private readonly IWindowEnumerator _windows;
 
-    public ScreenCaptureService(IMonitorService monitors) => _monitors = monitors;
+    public ScreenCaptureService(IMonitorService monitors, IWindowEnumerator windows)
+    {
+        _monitors = monitors;
+        _windows = windows;
+    }
 
     public ScreenSnapshot CaptureVirtualScreen(bool includeCursor = false)
     {
@@ -23,6 +28,9 @@ public sealed class ScreenCaptureService : IScreenCaptureService
         {
             throw new InvalidOperationException("Die Größe des virtuellen Desktops konnte nicht ermittelt werden.");
         }
+
+        // Fensterliste zum selben Zeitpunkt wie das Abbild.
+        var windows = _windows.GetTopLevelWindows();
 
         var buffer = new PixelBuffer(width, height);
         var screenDc = PInvoke.GetDC(HWND.Null);
@@ -77,10 +85,10 @@ public sealed class ScreenCaptureService : IScreenCaptureService
             _ = PInvoke.ReleaseDC(HWND.Null, screenDc);
         }
 
-        return new ScreenSnapshot(buffer, left, top, _monitors.GetMonitors());
+        return new ScreenSnapshot(buffer, left, top, _monitors.GetMonitors(), windows);
     }
 
-    private static unsafe void ReadPixels(HDC dc, HBITMAP bitmap, PixelBuffer buffer)
+    internal static unsafe void ReadPixels(HDC dc, HBITMAP bitmap, PixelBuffer buffer)
     {
         var info = new BITMAPINFO();
         info.bmiHeader.biSize = (uint)sizeof(BITMAPINFOHEADER);

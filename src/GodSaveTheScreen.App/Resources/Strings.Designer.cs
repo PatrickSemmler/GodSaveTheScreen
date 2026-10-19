@@ -65,4 +65,137 @@ public static class Strings
 
     public static string Capture_ModeUnavailable => ResourceManager.GetString("Capture_ModeUnavailable", Culture) ?? "Capture_ModeUnavailable";
 
+    public static string Mode_Window => ResourceManager.GetString("Mode_Window", Culture) ?? "Mode_Window";
+
+    public static string Mode_Freeform => ResourceManager.GetString("Mode_Freeform", Culture) ?? "Mode_Freeform";
+
+    public static string Mode_Fullscreen => ResourceManager.GetString("Mode_Fullscreen", Culture) ?? "Mode_Fullscreen";
+
+    public static string Overlay_HintWindow => ResourceManager.GetString("Overlay_HintWindow", Culture) ?? "Overlay_HintWindow";
+
+    public static string Overlay_HintFreeform => ResourceManager.GetString("Overlay_HintFreeform", Culture) ?? "Overlay_HintFreeform";
+
+    public static string Timer_Label => ResourceManager.GetString("Timer_Label", Culture) ?? "Timer_Label";
+
+    public static string Timer_None => ResourceManager.GetString("Timer_None", Culture) ?? "Timer_None";
+
+    public static string Timer_Custom => ResourceManager.GetString("Timer_Custom", Culture) ?? "Timer_Custom";
+
+    public static string Timer_Seconds => ResourceManager.GetString("Timer_Seconds", Culture) ?? "Timer_Seconds";
+
+    public static string Tray_Seconds => ResourceManager.GetString("Tray_Seconds", Culture) ?? "Tray_Seconds";
+
+    public static string Tray_WithTimer => ResourceManager.GetString("Tray_WithTimer", Culture) ?? "Tray_WithTimer";
+
+    public static string Tray_OpenImage => ResourceManager.GetString("Tray_OpenImage", Culture) ?? "Tray_OpenImage";
+
+    public static string Tray_StartWindow => ResourceManager.GetString("Tray_StartWindow", Culture) ?? "Tray_StartWindow";
+
+    public static string Tray_Exit => ResourceManager.GetString("Tray_Exit", Culture) ?? "Tray_Exit";
+
+    public static string Tray_SavedTitle => ResourceManager.GetString("Tray_SavedTitle", Culture) ?? "Tray_SavedTitle";
+
+    public static string Tray_SavedMessage => ResourceManager.GetString("Tray_SavedMessage", Culture) ?? "Tray_SavedMessage";
+
+    public static string Exit_Title => ResourceManager.GetString("Exit_Title", Culture) ?? "Exit_Title";
+
+    public static string Exit_UnsavedEditors => ResourceManager.GetString("Exit_UnsavedEditors", Culture) ?? "Exit_UnsavedEditors";
+
+    public static string Error_ActionFailed => ResourceManager.GetString("Error_ActionFailed", Culture) ?? "Error_ActionFailed";
+
+    public static string Settings_Title => ResourceManager.GetString("Settings_Title", Culture) ?? "Settings_Title";
+
+    public static string Settings_General => ResourceManager.GetString("Settings_General", Culture) ?? "Settings_General";
+
+    public static string Settings_Capture => ResourceManager.GetString("Settings_Capture", Culture) ?? "Settings_Capture";
+
+    public static string Settings_PostCapture => ResourceManager.GetString("Settings_PostCapture", Culture) ?? "Settings_PostCapture";
+
+    public static string Settings_Hotkeys => ResourceManager.GetString("Settings_Hotkeys", Culture) ?? "Settings_Hotkeys";
+
+    public static string Settings_About => ResourceManager.GetString("Settings_About", Culture) ?? "Settings_About";
+
+    public static string Settings_Language => ResourceManager.GetString("Settings_Language", Culture) ?? "Settings_Language";
+
+    public static string Settings_LanguageSystem => ResourceManager.GetString("Settings_LanguageSystem", Culture) ?? "Settings_LanguageSystem";
+
+    public static string Settings_RestartHint => ResourceManager.GetString("Settings_RestartHint", Culture) ?? "Settings_RestartHint";
+
+    public static string Settings_Theme => ResourceManager.GetString("Settings_Theme", Culture) ?? "Settings_Theme";
+
+    public static string Settings_ThemeSystem => ResourceManager.GetString("Settings_ThemeSystem", Culture) ?? "Settings_ThemeSystem";
+
+    public static string Settings_ThemeLight => ResourceManager.GetString("Settings_ThemeLight", Culture) ?? "Settings_ThemeLight";
+
+    public static string Settings_ThemeDark => ResourceManager.GetString("Settings_ThemeDark", Culture) ?? "Settings_ThemeDark";
+
+    public static string Settings_TrayClick => ResourceManager.GetString("Settings_TrayClick", Culture) ?? "Settings_TrayClick";
+
+    public static string Settings_TrayNone => ResourceManager.GetString("Settings_TrayNone", Culture) ?? "Settings_TrayNone";
+
+    public static string Settings_Autostart => ResourceManager.GetString("Settings_Autostart", Culture) ?? "Settings_Autostart";
+
+    public static string Settings_StartInTray => ResourceManager.GetString("Settings_StartInTray", Culture) ?? "Settings_StartInTray";
+
+    public static string Settings_DefaultMode => ResourceManager.GetString("Settings_DefaultMode", Culture) ?? "Settings_DefaultMode";
+
+    public static string Settings_DefaultTimer => ResourceManager.GetString("Settings_DefaultTimer", Culture) ?? "Settings_DefaultTimer";
+
+    public static string Settings_WindowSource => ResourceManager.GetString("Settings_WindowSource", Culture) ?? "Settings_WindowSource";
+
+    public static string Settings_SourceSnapshot => ResourceManager.GetString("Settings_SourceSnapshot", Culture) ?? "Settings_SourceSnapshot";
+
+    public static string Settings_SourceContent => ResourceManager.GetString("Settings_SourceContent", Culture) ?? "Settings_SourceContent";
+
+    public static string Settings_CaptureCursor => ResourceManager.GetString("Settings_CaptureCursor", Culture) ?? "Settings_CaptureCursor";
+
+    public static string Settings_RoundedCorners => ResourceManager.GetString("Settings_RoundedCorners", Culture) ?? "Settings_RoundedCorners";
+
+    public static string Settings_FreeformAA => ResourceManager.GetString("Settings_FreeformAA", Culture) ?? "Settings_FreeformAA";
+
+    public static string Settings_ExcludeOwn => ResourceManager.GetString("Settings_ExcludeOwn", Culture) ?? "Settings_ExcludeOwn";
+
+    public static string Settings_Magnifier => ResourceManager.GetString("Settings_Magnifier", Culture) ?? "Settings_Magnifier";
+
+    public static string Settings_CountdownSound => ResourceManager.GetString("Settings_CountdownSound", Culture) ?? "Settings_CountdownSound";
+
+    public static string Settings_OpenEditor => ResourceManager.GetString("Settings_OpenEditor", Culture) ?? "Settings_OpenEditor";
+
+    public static string Settings_CopyClipboard => ResourceManager.GetString("Settings_CopyClipboard", Culture) ?? "Settings_CopyClipboard";
+
+    public static string Settings_AutoSave => ResourceManager.GetString("Settings_AutoSave", Culture) ?? "Settings_AutoSave";
+
+    public static string Settings_Directory => ResourceManager.GetString("Settings_Directory", Culture) ?? "Settings_Directory";
+
+    public static string Settings_Browse => ResourceManager.GetString("Settings_Browse", Culture) ?? "Settings_Browse";
+
+    public static string Settings_Pattern => ResourceManager.GetString("Settings_Pattern", Culture) ?? "Settings_Pattern";
+
+    public static string Settings_PatternHelp => ResourceManager.GetString("Settings_PatternHelp", Culture) ?? "Settings_PatternHelp";
+
+    public static string Settings_Reset => ResourceManager.GetString("Settings_Reset", Culture) ?? "Settings_Reset";
+
+    public static string Settings_Format => ResourceManager.GetString("Settings_Format", Culture) ?? "Settings_Format";
+
+    public static string Settings_DataFolder => ResourceManager.GetString("Settings_DataFolder", Culture) ?? "Settings_DataFolder";
+
+    public static string Settings_LogFolder => ResourceManager.GetString("Settings_LogFolder", Culture) ?? "Settings_LogFolder";
+
+    public static string Settings_Open => ResourceManager.GetString("Settings_Open", Culture) ?? "Settings_Open";
+
+    public static string Settings_Licenses => ResourceManager.GetString("Settings_Licenses", Culture) ?? "Settings_Licenses";
+
+    public static string Hotkey_Help => ResourceManager.GetString("Hotkey_Help", Culture) ?? "Hotkey_Help";
+
+    public static string Hotkey_Active => ResourceManager.GetString("Hotkey_Active", Culture) ?? "Hotkey_Active";
+
+    public static string Hotkey_Conflict => ResourceManager.GetString("Hotkey_Conflict", Culture) ?? "Hotkey_Conflict";
+
+    public static string Hotkey_Invalid => ResourceManager.GetString("Hotkey_Invalid", Culture) ?? "Hotkey_Invalid";
+
+    public static string Hotkey_UsedByApp => ResourceManager.GetString("Hotkey_UsedByApp", Culture) ?? "Hotkey_UsedByApp";
+
+    public static string Hotkey_PrintHint => ResourceManager.GetString("Hotkey_PrintHint", Culture) ?? "Hotkey_PrintHint";
+
+    public static string Hotkey_OpenWindowsSettings => ResourceManager.GetString("Hotkey_OpenWindowsSettings", Culture) ?? "Hotkey_OpenWindowsSettings";
 }

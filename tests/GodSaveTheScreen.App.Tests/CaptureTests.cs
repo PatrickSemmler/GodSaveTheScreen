@@ -155,10 +155,10 @@ public sealed class SelectionStateTests
 
 public sealed class SelectionOverlayViewModelTests
 {
-    private static (SelectionOverlayViewModel Vm, List<PixelRect?> Results) Create()
+    private static (SelectionOverlayViewModel Vm, List<SelectionResult?> Results) Create()
     {
         var vm = new SelectionOverlayViewModel(new SelectionState(new PixelRect(0, 0, 1000, 800)));
-        var results = new List<PixelRect?>();
+        var results = new List<SelectionResult?>();
         vm.Finished += results.Add;
         return (vm, results);
     }
@@ -172,7 +172,7 @@ public sealed class SelectionOverlayViewModelTests
         vm.PointerUp();
         vm.Cancel();
 
-        results.ShouldBe([new PixelRect(10, 10, 100, 50)]);
+        results.ShouldBe([new SelectionResult(new PixelRect(10, 10, 100, 50))]);
         vm.SizeText.ShouldBe("100 × 50");
     }
 

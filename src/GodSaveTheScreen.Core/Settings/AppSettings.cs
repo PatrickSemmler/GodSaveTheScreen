@@ -1,3 +1,5 @@
+using GodSaveTheScreen.Core.Capture;
+
 namespace GodSaveTheScreen.Core.Settings;
 
 public enum ThemeSetting
@@ -16,9 +18,41 @@ public enum LogLevelSetting
     Error,
 }
 
+/// <summary>Quelle des Ergebnisbilds bei der Fensteraufnahme.</summary>
+public enum WindowSourceSetting
+{
+    /// <summary>Ausschnitt aus dem eingefrorenen Bild – exakt das, was sichtbar war.</summary>
+    Snapshot,
+
+    /// <summary><c>PrintWindow</c>: erfasst auch verdeckte Teile (Fallback auf den Snapshot).</summary>
+    WindowContent,
+}
+
+/// <summary>Aktion bei Klick auf das Tray-Symbol.</summary>
+public enum TrayClickActionSetting
+{
+    CaptureRectangle,
+    CaptureWindow,
+    CaptureFreeform,
+    CaptureFullScreen,
+    ShowStartWindow,
+    None,
+}
+
+public enum ImageFormatSetting
+{
+    Png,
+    Jpeg,
+    Bmp,
+}
+
 /// <summary>Persistierte Anwendungseinstellungen. Fehlende Felder in der Datei behalten ihre Standardwerte.</summary>
 public sealed record AppSettings
 {
+    public const string DefaultFileNamePattern = "Screenshot {date:yyyy-MM-dd} {time:HH-mm-ss}";
+
+    // Allgemein
+
     /// <summary><c>System</c>, <c>de</c> oder <c>en</c>.</summary>
     public string Language { get; init; } = "System";
 
@@ -26,6 +60,77 @@ public sealed record AppSettings
 
     public LogLevelSetting LogLevel { get; init; } = LogLevelSetting.Information;
 
+    public bool Autostart { get; init; }
+
+    /// <summary>Beim Start nur im Infobereich laufen (kein Startfenster).</summary>
+    public bool StartInTray { get; init; }
+
+    public TrayClickActionSetting TrayClickAction { get; init; } = TrayClickActionSetting.CaptureRectangle;
+
+    // Aufnahme
+
     /// <summary>Mauszeiger in die Aufnahme einzeichnen.</summary>
     public bool CaptureCursor { get; init; }
+
+    public CaptureMode DefaultMode { get; init; } = CaptureMode.Rectangle;
+
+    /// <summary>Standard-Timer in Sekunden (0 = kein Timer).</summary>
+    public int DefaultTimerSeconds { get; init; }
+
+    /// <summary>Zuletzt eingegebener benutzerdefinierter Timer in Sekunden.</summary>
+    public int CustomTimerSeconds { get; init; } = 7;
+
+    public WindowSourceSetting WindowSource { get; init; } = WindowSourceSetting.Snapshot;
+
+    /// <summary>Abgerundete Fensterecken (Windows 11) transparent machen.</summary>
+    public bool RoundedCornersTransparent { get; init; } = true;
+
+    /// <summary>Eigene Fenster (Start, Editor, Countdown …) von Aufnahmen ausschließen.</summary>
+    public bool ExcludeOwnWindows { get; init; } = true;
+
+    public bool ShowMagnifier { get; init; } = true;
+
+    public bool CountdownSound { get; init; }
+
+    /// <summary>Kantenglättung der Freiform-Auswahl.</summary>
+    public bool FreeformAntiAlias { get; init; } = true;
+
+    // Nach der Aufnahme
+
+    public bool CopyToClipboard { get; init; }
+
+    public bool AutoSave { get; init; }
+
+    /// <summary>Zielordner für Auto-Speichern; leer = Standardordner.</summary>
+    public string AutoSaveDirectory { get; init; } = string.Empty;
+
+    public string FileNamePattern { get; init; } = DefaultFileNamePattern;
+
+    public ImageFormatSetting AutoSaveFormat { get; init; } = ImageFormatSetting.Png;
+
+    // Globale Hotkeys (Format siehe HotkeyGesture; leer = nicht belegt)
+
+    public string HotkeyRectangle { get; init; } = "Ctrl+Shift+1";
+
+    public string HotkeyWindow { get; init; } = "Ctrl+Shift+2";
+
+    public string HotkeyFreeform { get; init; } = "Ctrl+Shift+3";
+
+    public string HotkeyFullScreen { get; init; } = "Ctrl+Shift+4";
+
+    public string GetHotkey(CaptureMode mode) => mode switch
+    {
+        CaptureMode.Rectangle => HotkeyRectangle,
+        CaptureMode.Window => HotkeyWindow,
+        CaptureMode.Freeform => HotkeyFreeform,
+        _ => HotkeyFullScreen,
+    };
+
+    public AppSettings WithHotkey(CaptureMode mode, string gesture) => mode switch
+    {
+        CaptureMode.Rectangle => this with { HotkeyRectangle = gesture },
+        CaptureMode.Window => this with { HotkeyWindow = gesture },
+        CaptureMode.Freeform => this with { HotkeyFreeform = gesture },
+        _ => this with { HotkeyFullScreen = gesture },
+    };
 }

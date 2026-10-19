@@ -1,7 +1,8 @@
 using System.Windows;
 using CommunityToolkit.Mvvm.Messaging;
 using GodSaveTheScreen.App.Capture;
-using GodSaveTheScreen.App.Views;
+using GodSaveTheScreen.Core.Capture;
+using GodSaveTheScreen.App.Services;
 using Microsoft.Extensions.Logging;
 
 namespace GodSaveTheScreen.App.Hosting;
@@ -10,11 +11,13 @@ namespace GodSaveTheScreen.App.Hosting;
 public sealed class CommandLineHandler : IRecipient<CommandLineReceivedMessage>
 {
     private readonly CaptureCoordinator _coordinator;
+    private readonly IAppShell _shell;
     private readonly ILogger<CommandLineHandler> _logger;
 
-    public CommandLineHandler(CaptureCoordinator coordinator, ILogger<CommandLineHandler> logger)
+    public CommandLineHandler(CaptureCoordinator coordinator, IAppShell shell, ILogger<CommandLineHandler> logger)
     {
         _coordinator = coordinator;
+        _shell = shell;
         _logger = logger;
     }
 
@@ -41,39 +44,26 @@ public sealed class CommandLineHandler : IRecipient<CommandLineReceivedMessage>
 
         if (options.Capture is { } mode)
         {
-            _ = StartCaptureAsync(mode);
+            _ = StartCaptureAsync(new CaptureRequest(mode, TimeSpan.FromSeconds(options.DelaySeconds ?? 0)));
             return;
         }
 
-        ActivateStartWindow();
+        // Ein reiner Start mit --tray soll nur im Infobereich laufen.
+        if (!options.Tray)
+        {
+            _shell.ShowStartWindow();
+        }
     }
 
-    private async Task StartCaptureAsync(CaptureMode mode)
+    private async Task StartCaptureAsync(CaptureRequest request)
     {
         try
         {
-            await _coordinator.StartAsync(mode);
+            await _coordinator.StartAsync(request);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Aufnahme über Kommandozeile fehlgeschlagen");
         }
-    }
-
-    private static void ActivateStartWindow()
-    {
-        var window = Application.Current.Windows.OfType<StartWindow>().FirstOrDefault();
-        if (window is null)
-        {
-            return;
-        }
-
-        if (window.WindowState == WindowState.Minimized)
-        {
-            window.WindowState = WindowState.Normal;
-        }
-
-        window.Show();
-        window.Activate();
     }
 }

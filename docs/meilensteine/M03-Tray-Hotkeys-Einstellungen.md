@@ -26,36 +26,36 @@ Die Anwendung läuft im Hintergrund im Infobereich, Aufnahmen werden per globale
 ## Aufgaben
 
 ### 1. Tray
-- [ ] `TrayService : IHostedService` mit `H.NotifyIcon.Wpf` (`TaskbarIcon`), Icon passend zum Taskleisten-Theme
-- [ ] Kontextmenü: Rechteck / Fenster / Freiform / Vollbild / Mit Timer ▸ (3, 5, 10 s, letzter Wert) / Bild öffnen… / Startfenster / Einstellungen / Beenden
-- [ ] Linksklick/Doppelklick: konfigurierbar (Standard: Rechteckaufnahme)
-- [ ] Benachrichtigung „Gespeichert unter …“ bei Auto-Speichern (klickbar → Ordner öffnen)
-- [ ] Schließen des Startfensters beendet die App nicht, solange Tray aktiv ist; „Beenden“ fragt bei ungespeicherten Editoren nach
+- [x] `TrayService : IHostedService` mit `H.NotifyIcon.Wpf` (`TaskbarIcon`), Icon passend zum Taskleisten-Theme
+- [x] Kontextmenü: Rechteck / Fenster / Freiform / Vollbild / Mit Timer ▸ (3, 5, 10 s, letzter Wert) / Bild öffnen… / Startfenster / Einstellungen / Beenden *(Eintrag vorhanden, bis M4 deaktiviert)*
+- [x] Linksklick/Doppelklick: konfigurierbar (Standard: Rechteckaufnahme)
+- [x] Benachrichtigung „Gespeichert unter …“ bei Auto-Speichern (klickbar → Ordner öffnen)
+- [x] Schließen des Startfensters beendet die App nicht, solange Tray aktiv ist; „Beenden“ fragt bei ungespeicherten Editoren nach
 
 ### 2. Globale Hotkeys
-- [ ] `IHotkeyService` (Register/Unregister/Re-Register nach Einstellungsänderung) auf Basis `NHotkey.Wpf` (`HotkeyManager.Current.AddOrReplace`)
-- [ ] `HotkeyGesture`-Modell im Core (Modifiers + Key, serialisierbar, Anzeige-String lokalisiert)
-- [ ] `HotkeyAlreadyRegisteredException` abfangen → Status „belegt“ in den Einstellungen, Snackbar-Hinweis
-- [ ] Sonderfall `Druck`-Taste: bei Belegung durch Windows Hinweis + Button „Windows-Einstellung öffnen“ (`ms-settings:easeofaccess-keyboard`)
-- [ ] `HotkeyRecorder`-Control: fokussieren, Tastenkombination drücken, Anzeige; `Entf` = löschen; Konflikterkennung innerhalb der App
+- [x] `IHotkeyService` (Register/Unregister/Re-Register nach Einstellungsänderung) auf Basis `NHotkey.Wpf` (`HotkeyManager.Current.AddOrReplace`)
+- [x] `HotkeyGesture`-Modell im Core (Modifiers + Key, serialisierbar, Anzeige-String lokalisiert)
+- [x] `HotkeyAlreadyRegisteredException` abfangen → Status „belegt“ in den Einstellungen, Snackbar-Hinweis *(Hinweis als Status in der Hotkey-Zeile statt Snackbar)*
+- [x] Sonderfall `Druck`-Taste: bei Belegung durch Windows Hinweis + Button „Windows-Einstellung öffnen“ (`ms-settings:easeofaccess-keyboard`)
+- [x] `HotkeyRecorder`-Control: fokussieren, Tastenkombination drücken, Anzeige; `Entf` = löschen; Konflikterkennung innerhalb der App
 
 ### 3. Einstellungsfenster
-- [ ] `SettingsWindow` mit `NavigationView`-Seiten:
+- [x] `SettingsWindow` mit `NavigationView`-Seiten:
   - **Allgemein:** Sprache, Theme, Autostart, Start im Tray, Tray-Klickaktion
   - **Aufnahme:** Standardmodus, Standard-Timer, Mauszeiger aufnehmen, Fensteraufnahme-Quelle, abgerundete Ecken, eigene Fenster ausschließen, Lupe im Overlay an/aus, Countdown-Ton
   - **Nach der Aufnahme:** In Zwischenablage kopieren (an/aus), Automatisch speichern (an/aus), Zielordner, Dateinamensmuster, Format (PNG/JPEG …), Editor öffnen (immer an, ausgegraut – Anforderung)
   - **Tastenkürzel:** Liste der globalen Hotkeys mit Recorder
   - **Info:** Version, Pfade (Einstellungen/Logs mit „Öffnen“-Button), Lizenzen der NuGet-Pakete
-- [ ] Änderungen wirken sofort (außer Sprache → Hinweis „Neustart erforderlich“)
+- [x] Änderungen wirken sofort (außer Sprache → Hinweis „Neustart erforderlich“)
 
 ### 4. Nachaufnahme-Pipeline
-- [ ] `IPostCaptureAction`-Kette im `CaptureCoordinator`: `CopyToClipboardAction`, `AutoSaveAction`, `OpenEditorAction` (Reihenfolge fest, Fehler einer Aktion stoppt die anderen nicht)
-- [ ] `FileNamePattern` (Core): Platzhalter `{date:yyyy-MM-dd}`, `{time:HH-mm-ss}`, `{mode}`, `{window}` (Fenstertitel, bereinigt), `{counter:000}`; ungültige Dateinamenzeichen ersetzen, Kollisionen mit Suffix ` (2)` auflösen
-- [ ] Standard-Zielordner: `%USERPROFILE%\Pictures\Screenshots\GodSaveTheScreen`
+- [x] `IPostCaptureAction`-Kette im `CaptureCoordinator`: `CopyToClipboardAction`, `AutoSaveAction`, `OpenEditorAction` (Reihenfolge fest, Fehler einer Aktion stoppt die anderen nicht)
+- [x] `FileNamePattern` (Core): Platzhalter `{date:yyyy-MM-dd}`, `{time:HH-mm-ss}`, `{mode}`, `{window}` (Fenstertitel, bereinigt), `{counter:000}`; ungültige Dateinamenzeichen ersetzen, Kollisionen mit Suffix ` (2)` auflösen
+- [x] Standard-Zielordner: `%USERPROFILE%\Pictures\Screenshots\GodSaveTheScreen`
 
 ### 5. Autostart & Kommandozeile
-- [ ] `AutostartService`: `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` mit Pfad der EXE + `--tray`; Pfadänderung (portable verschoben) beim Start erkennen und korrigieren
-- [ ] Auswertung von `--capture`, `--delay`, `--tray` aus M0-Parser (eigene Instanz und weitergeleitet)
+- [x] `AutostartService`: `HKCU\Software\Microsoft\Windows\CurrentVersion\Run` mit Pfad der EXE + `--tray`; Pfadänderung (portable verschoben) beim Start erkennen und korrigieren
+- [x] Auswertung von `--capture`, `--delay`, `--tray` aus M0-Parser (eigene Instanz und weitergeleitet)
 
 ## Technische Details
 

@@ -1,0 +1,46 @@
+<Page x:Class="GodSaveTheScreen.App.Views.Settings.AboutPage"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:l="clr-namespace:GodSaveTheScreen.App.Localization"
+      Title="AboutPage">
+  <Page.Resources>
+    <Style x:Key="Label" TargetType="TextBlock"><Setter Property="Margin" Value="0,8,0,4" /></Style>
+  </Page.Resources>
+  <ScrollViewer VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="24,8,24,24" MaxWidth="640" HorizontalAlignment="Left">
+      <ui:TextBlock Text="{l:Loc Settings_About}" FontTypography="Subtitle" Margin="0,0,0,12" />
+      <TextBlock>
+        <Run Text="{l:Loc App_Name}" FontWeight="SemiBold" />
+        <Run Text="{Binding Version, Mode=OneWay}" />
+      </TextBlock>
+      <TextBlock Style="{StaticResource Label}" Text="{l:Loc Settings_DataFolder}" />
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="{Binding DataDirectory}" TextWrapping="Wrap" VerticalAlignment="Center" />
+        <ui:Button Grid.Column="1" Margin="8,0,0,0" Content="{l:Loc Settings_Open}" Command="{Binding OpenDataDirectoryCommand}" />
+      </Grid>
+      <TextBlock Style="{StaticResource Label}" Text="{l:Loc Settings_LogFolder}" />
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="{Binding LogDirectory}" TextWrapping="Wrap" VerticalAlignment="Center" />
+        <ui:Button Grid.Column="1" Margin="8,0,0,0" Content="{l:Loc Settings_Open}" Command="{Binding OpenLogDirectoryCommand}" />
+      </Grid>
+      <TextBlock Style="{StaticResource Label}" Text="{l:Loc Settings_Licenses}" Margin="0,16,0,4" />
+      <ItemsControl ItemsSource="{Binding Licenses}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding}" Margin="0,0,0,2" TextWrapping="Wrap" />
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </StackPanel>
+  </ScrollViewer>
+</Page>
