@@ -33,6 +33,7 @@ GodSaveTheScreen ist ein Screenshot- und Bildannotationswerkzeug für Windows. E
 | Sprache | Deutsch + Englisch (.resx) | Klärung | M0 (Infrastruktur), M11 (Vollständigkeit) |
 | Qualität | Unit-Tests (xUnit) | Klärung | ab M0 |
 | Auslieferung | Portable Single-File-EXE als ZIP | Klärung | M11 |
+| Objekte | Farbige, frei skalierbare Emojis mit Suche (Windows-Emoji-Umfang ohne Länderflaggen), drehbar/spiegelbar | Vorgabe | M13 |
 
 ### 1.2 Bewusst nicht im Umfang (v1)
 
@@ -40,7 +41,7 @@ GodSaveTheScreen ist ein Screenshot- und Bildannotationswerkzeug für Windows. E
 - Moderne Speicherformate außerhalb von WPF (WebP, AVIF, HEIC) – **Laden** funktioniert trotzdem, sofern der passende WIC-Codec in Windows installiert ist (z. B. „WebP-Bilderweiterungen“).
 - Installer, Auto-Update, Store-Paket
 - Cloud-Upload, OCR, Teilen-Dialoge
-- Rotation einzelner Objekte (Datenmodell ist vorbereitet, siehe M5 „Ausblick“)
+- Rotation einzelner Objekte (Datenmodell ist vorbereitet, siehe M5 „Ausblick“); ab M13 nur für Emoji-Objekte
 
 ## 2. Technologie-Stack
 
@@ -185,6 +186,7 @@ Jeder Meilenstein liefert eine lauffähige, getestete Anwendung mit abgeschlosse
 | M10 | Projektformat `.gsts` | Speichern/Laden mit bearbeitbaren Objekten, zuletzt verwendete Dateien | [M10](meilensteine/M10-Projektformat.md) |
 | M11 | Feinschliff & Portable Release | Vollständige Lokalisierung, Barrierefreiheit, Performance, Single-File-ZIP | [M11](meilensteine/M11-Feinschliff-Release.md) |
 | M12 | Werkzeugvorlagen & letzte Konfiguration | Eigene Vorlagen für alle Zeichenwerkzeuge (Liste, Speichern, Umbenennen, Löschen), letzte Konfiguration je Werkzeug gespeichert | [M12](meilensteine/M12-Werkzeugvorlagen.md) |
+| M13 | Farbige Emojis | Emoji-Werkzeug mit Suche (DE/EN), Kategorien, Zuletzt/Favoriten, Hauttönen; farbiges Rendering über DirectWrite; Drehen, Spiegeln, proportionales Skalieren | [M13](meilensteine/M13-Emojis.md) |
 
 ### 4.1 Abhängigkeiten der Meilensteine
 
@@ -200,6 +202,7 @@ M0 ─► M1 ─► M2
                       └─► M10 (sinnvoll nach M6–M9, technisch ab M5 möglich)
 M11 nach allen anderen
 M12 nach M11 (Erweiterung; baut auf M5–M8 und M10 auf)
+M13 nach M12 (Erweiterung; baut auf M5, M10 und M12 auf)
 ```
 
 - M2 und M3 sind unabhängig von M4+ und können parallel zum Editor entwickelt werden.
@@ -223,7 +226,8 @@ M12 nach M11 (Erweiterung; baut auf M5–M8 und M10 auf)
 | M10 | 2 |
 | M11 | 4 |
 | M12 | 4 |
-| **Summe** | **≈ 45** |
+| M13 | 6 |
+| **Summe** | **≈ 51** |
 
 ## 5. Bedienkonzept (Übersicht)
 
