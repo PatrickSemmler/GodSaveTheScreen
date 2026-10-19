@@ -1,4 +1,5 @@
 using GodSaveTheScreen.App.Capture;
+using GodSaveTheScreen.App.Editor;
 using GodSaveTheScreen.App.Services;
 using GodSaveTheScreen.App.ViewModels;
 using GodSaveTheScreen.App.Views;
@@ -30,6 +31,9 @@ public static class AppServiceCollectionExtensions
         services.AddSingleton<IPostCaptureAction, AutoSaveAction>();
         services.AddSingleton<IPostCaptureAction, OpenEditorAction>();
         services.AddSingleton<CaptureCoordinator>();
+        services.AddSingleton<ICaptureLauncher>(sp => sp.GetRequiredService<CaptureCoordinator>());
+        services.AddSingleton<IEditorService, EditorService>();
+        services.AddSingleton<IToolDefaultsService, ToolDefaultsService>();
 
         services.AddSingleton<TrayService>();
         services.AddSingleton<INotificationService>(sp => sp.GetRequiredService<TrayService>());

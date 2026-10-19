@@ -1,3 +1,4 @@
+using GodSaveTheScreen.Core.Annotations;
 using GodSaveTheScreen.Core.Capture;
 
 namespace GodSaveTheScreen.Core.Settings;
@@ -44,6 +45,17 @@ public enum ImageFormatSetting
     Png,
     Jpeg,
     Bmp,
+    Gif,
+    Tiff,
+    JpegXr,
+}
+
+public enum TiffCompressionSetting
+{
+    None,
+    Lzw,
+    Zip,
+    Rle,
 }
 
 /// <summary>Persistierte Anwendungseinstellungen. Fehlende Felder in der Datei behalten ihre Standardwerte.</summary>
@@ -108,6 +120,47 @@ public sealed record AppSettings
 
     public ImageFormatSetting AutoSaveFormat { get; init; } = ImageFormatSetting.Png;
 
+    // Speichern (Editor)
+
+    public int JpegQuality { get; init; } = 90;
+
+    public bool PngInterlace { get; init; }
+
+    public TiffCompressionSetting TiffCompression { get; init; } = TiffCompressionSetting.Lzw;
+
+    public int JxrQuality { get; init; } = 90;
+
+    public bool JxrLossless { get; init; }
+
+    /// <summary>Hintergrundfarbe, auf die Transparenz bei Formaten ohne Alpha (JPEG, BMP) verrechnet wird.</summary>
+    public ArgbColor FlattenBackground { get; init; } = ArgbColor.White;
+
+    public ImageFormatSetting LastSaveFormat { get; init; } = ImageFormatSetting.Png;
+
+    /// <summary>Zuletzt im Editor verwendeter Speicherordner; leer = Standardordner.</summary>
+    public string LastSaveDirectory { get; init; } = string.Empty;
+
+    // Werkzeuge
+
+    /// <summary>Nach dem Zeichnen eines Objekts zum Auswahlwerkzeug wechseln.</summary>
+    public bool SwitchToSelectAfterDraw { get; init; }
+
+    /// <summary>Standardwerte der Formwerkzeuge (Schlüssel = Werkzeug-ID).</summary>
+    public ShapeDefaultsMap ShapeDefaults { get; init; } = [];
+
+    public TextStyle TextDefaults { get; init; } = new();
+
+    public MarkerStyle MarkerDefaults { get; init; } = new();
+
+    /// <summary>Nummer des ersten Markers in einem Bild.</summary>
+    public int MarkerStartNumber { get; init; } = 1;
+
+    /// <summary>Zuletzt verwendete Schriften (Familienname), neueste zuerst.</summary>
+    public StringList RecentFonts { get; init; } = [];
+
+    /// <summary>Zuletzt verwendete Farben (<c>#AARRGGBB</c>), neueste zuerst.</summary>
+    public StringList RecentColors { get; init; } = [];
+
     // Globale Hotkeys (Format siehe HotkeyGesture; leer = nicht belegt)
 
     public string HotkeyRectangle { get; init; } = "Ctrl+Shift+1";
@@ -117,6 +170,33 @@ public sealed record AppSettings
     public string HotkeyFreeform { get; init; } = "Ctrl+Shift+3";
 
     public string HotkeyFullScreen { get; init; } = "Ctrl+Shift+4";
+
+    /// <summary>
+    /// Ersetzt Werte, die beim Lesen einer älteren Datei als <c>null</c> ankommen (der JSON-Deserialisierer
+    /// übernimmt die Standardwerte fehlender Felder nicht in jedem Fall), durch Standardwerte.
+    /// </summary>
+    public AppSettings Normalized()
+    {
+        var shapes = new ShapeDefaultsMap();
+        foreach (var (key, style) in ShapeDefaults ?? [])
+        {
+            shapes[key] = style is null ? new ShapeStyle() : style with { Stroke = style.Stroke ?? StrokeStyle.Default };
+        }
+
+        var text = TextDefaults ?? new TextStyle();
+        var marker = MarkerDefaults ?? new MarkerStyle();
+        return this with
+        {
+            ShapeDefaults = shapes,
+            RecentColors = RecentColors ?? [],
+            RecentFonts = RecentFonts ?? [],
+            TextDefaults = text with { Stroke = text.Stroke ?? new StrokeStyle(ArgbColor.White, 0), FontFamilyName = text.FontFamilyName ?? "Segoe UI" },
+            MarkerDefaults = marker with { Stroke = marker.Stroke ?? new StrokeStyle(ArgbColor.White, 2), FontFamilyName = marker.FontFamilyName ?? "Segoe UI" },
+            FileNamePattern = FileNamePattern ?? DefaultFileNamePattern,
+            AutoSaveDirectory = AutoSaveDirectory ?? string.Empty,
+            LastSaveDirectory = LastSaveDirectory ?? string.Empty,
+        };
+    }
 
     public string GetHotkey(CaptureMode mode) => mode switch
     {

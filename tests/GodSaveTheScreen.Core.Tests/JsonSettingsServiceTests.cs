@@ -34,6 +34,69 @@ public sealed class JsonSettingsServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task Save_Roundtrip_BehaeltEditorEinstellungen()
+    {
+        var service = Create();
+        service.Current = new AppSettings
+        {
+            JpegQuality = 77,
+            TiffCompression = TiffCompressionSetting.Zip,
+            FlattenBackground = new GodSaveTheScreen.Core.Annotations.ArgbColor(255, 10, 20, 30),
+            LastSaveFormat = ImageFormatSetting.JpegXr,
+            ShapeDefaults = new ShapeDefaultsMap
+            {
+                ["rectangle"] = new ShapeStyle
+                {
+                    Stroke = new GodSaveTheScreen.Core.Annotations.StrokeStyle(GodSaveTheScreen.Core.Annotations.ArgbColor.FromRgb(1, 2, 3), 9, GodSaveTheScreen.Core.Annotations.DashKind.Dot),
+                    CornerRadius = 4,
+                },
+            },
+            RecentColors = new StringList(["#FF112233", "#80FFFFFF"]),
+            RecentFonts = new StringList(["Consolas"]),
+            TextDefaults = new TextStyle { FontFamilyName = "Arial", FontSize = 40, Decorations = GodSaveTheScreen.Core.Annotations.TextDecorationKind.Underline },
+            MarkerDefaults = new MarkerStyle { Size = 50, Shape = GodSaveTheScreen.Core.Annotations.MarkerShape.Square },
+            MarkerStartNumber = 3,
+        };
+        await service.SaveAsync(TestContext.Current.CancellationToken);
+
+        var reloaded = Create().Current;
+
+        reloaded.JpegQuality.ShouldBe(77);
+        reloaded.TiffCompression.ShouldBe(TiffCompressionSetting.Zip);
+        reloaded.FlattenBackground.ShouldBe(new GodSaveTheScreen.Core.Annotations.ArgbColor(255, 10, 20, 30));
+        reloaded.LastSaveFormat.ShouldBe(ImageFormatSetting.JpegXr);
+        reloaded.ShapeDefaults["rectangle"].Stroke.Thickness.ShouldBe(9);
+        reloaded.ShapeDefaults["rectangle"].Stroke.Dash.ShouldBe(GodSaveTheScreen.Core.Annotations.DashKind.Dot);
+        reloaded.ShapeDefaults["rectangle"].CornerRadius.ShouldBe(4);
+        reloaded.RecentColors.ShouldBe(["#FF112233", "#80FFFFFF"]);
+        reloaded.RecentFonts.ShouldBe(["Consolas"]);
+        reloaded.TextDefaults.FontFamilyName.ShouldBe("Arial");
+        reloaded.TextDefaults.Decorations.ShouldBe(GodSaveTheScreen.Core.Annotations.TextDecorationKind.Underline);
+        reloaded.MarkerDefaults.Shape.ShouldBe(GodSaveTheScreen.Core.Annotations.MarkerShape.Square);
+        reloaded.MarkerStartNumber.ShouldBe(3);
+    }
+
+    [Fact]
+    public void Load_AelterDateiOhneEditorFelder_LiefertBenutzbareStandardwerte()
+    {
+        var dir = Path.Combine(_root, "roaming", "GodSaveTheScreen");
+        Directory.CreateDirectory(dir);
+        File.WriteAllText(Path.Combine(dir, "settings.json"), "{ \"Language\": \"de\", \"AutoSave\": true }");
+
+        var settings = Create().Current;
+
+        settings.Language.ShouldBe("de");
+        settings.AutoSave.ShouldBeTrue();
+        settings.ShapeDefaults.ShouldNotBeNull();
+        settings.RecentColors.ShouldNotBeNull();
+        settings.RecentFonts.ShouldNotBeNull();
+        settings.TextDefaults.Stroke.ShouldNotBeNull();
+        settings.TextDefaults.FontFamilyName.ShouldNotBeNullOrEmpty();
+        settings.MarkerDefaults.Stroke.ShouldNotBeNull();
+        settings.FileNamePattern.ShouldNotBeNullOrEmpty();
+    }
+
+    [Fact]
     public async Task Save_ZweimalHintereinander_ErsetztDateiAtomisch()
     {
         var service = Create();

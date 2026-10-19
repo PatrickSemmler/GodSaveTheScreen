@@ -1,0 +1,58 @@
+<UserControl x:Class="GodSaveTheScreen.App.Controls.EditorCanvas"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:l="clr-namespace:GodSaveTheScreen.App.Localization"
+             xmlns:controls="clr-namespace:GodSaveTheScreen.App.Controls"
+             Focusable="False">
+  <ScrollViewer x:Name="Scroller"
+                HorizontalScrollBarVisibility="Auto"
+                VerticalScrollBarVisibility="Auto"
+                Focusable="False"
+                Background="{DynamicResource ApplicationBackgroundBrush}"
+                PreviewMouseWheel="OnPreviewMouseWheel"
+                SizeChanged="OnScrollerSizeChanged">
+    <Grid x:Name="Surface"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center"
+          Margin="24"
+          Focusable="True"
+          FocusVisualStyle="{x:Null}"
+          Background="Transparent"
+          SnapsToDevicePixels="False"
+          MouseLeftButtonDown="OnMouseLeftButtonDown"
+          MouseLeftButtonUp="OnMouseLeftButtonUp"
+          MouseRightButtonDown="OnMouseRightButtonDown"
+          MouseMove="OnMouseMove"
+          MouseLeave="OnMouseLeave"
+          MouseDown="OnMouseDown"
+          MouseUp="OnMouseUp"
+          LostMouseCapture="OnLostMouseCapture">
+      <Grid.LayoutTransform>
+        <ScaleTransform x:Name="ZoomTransform" ScaleX="1" ScaleY="1" />
+      </Grid.LayoutTransform>
+      <Grid.ContextMenu>
+        <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+          <MenuItem Header="{l:Loc Menu_Cut}" Command="{Binding CutCommand}" IsEnabled="{Binding HasSelection}" InputGestureText="Ctrl+X" />
+          <MenuItem Header="{l:Loc Menu_Copy}" Command="{Binding CopyCommand}" InputGestureText="Ctrl+C" />
+          <MenuItem Header="{l:Loc Menu_Paste}" Command="{Binding PasteCommand}" InputGestureText="Ctrl+V" />
+          <MenuItem Header="{l:Loc Menu_Duplicate}" Command="{Binding DuplicateCommand}" IsEnabled="{Binding HasSelection}" InputGestureText="Ctrl+D" />
+          <MenuItem Header="{l:Loc Menu_Delete}" Command="{Binding DeleteSelectionCommand}" IsEnabled="{Binding HasSelection}" InputGestureText="Del" />
+          <Separator />
+          <MenuItem Header="{l:Loc Menu_Order}" IsEnabled="{Binding HasSelection}">
+            <MenuItem Header="{l:Loc Menu_BringToFront}" Command="{Binding BringToFrontCommand}" InputGestureText="Ctrl+Shift+]" />
+            <MenuItem Header="{l:Loc Menu_BringForward}" Command="{Binding BringForwardCommand}" InputGestureText="Ctrl+]" />
+            <MenuItem Header="{l:Loc Menu_SendBackward}" Command="{Binding SendBackwardCommand}" InputGestureText="Ctrl+[" />
+            <MenuItem Header="{l:Loc Menu_SendToBack}" Command="{Binding SendToBackCommand}" InputGestureText="Ctrl+Shift+[" />
+          </MenuItem>
+          <MenuItem Header="{l:Loc Menu_Lock}" Command="{Binding ToggleLockSelectionCommand}" IsEnabled="{Binding HasSelection}" />
+        </ContextMenu>
+      </Grid.ContextMenu>
+      <Rectangle x:Name="Checker" IsHitTestVisible="False" />
+      <Image x:Name="BaseImage" Stretch="Fill" IsHitTestVisible="False" RenderOptions.BitmapScalingMode="HighQuality" />
+      <controls:AnnotationLayer x:Name="Annotations" />
+      <controls:InteractionLayer x:Name="Interaction" />
+      <Canvas x:Name="Overlay" />
+    </Grid>
+  </ScrollViewer>
+</UserControl>

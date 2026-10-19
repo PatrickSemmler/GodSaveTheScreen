@@ -1,76 +1,289 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Media;
+using System.Windows.Controls.Primitives;
+using System.Windows.Input;
+using System.Windows.Interop;
+using GodSaveTheScreen.App.Editor.Tools;
 using GodSaveTheScreen.App.Services;
 using GodSaveTheScreen.App.ViewModels;
-using GodSaveTheScreen.Core.Imaging;
-using GodSaveTheScreen.Core.Services;
+using GodSaveTheScreen.Capture;
 using GodSaveTheScreen.Rendering;
-using Microsoft.Extensions.Logging;
+using Windows.Win32;
+using Windows.Win32.Foundation;
+using Windows.Win32.UI.WindowsAndMessaging;
 using Wpf.Ui.Controls;
 
 namespace GodSaveTheScreen.App.Views;
 
 public partial class EditorWindow : FluentWindow
 {
-    private readonly EditorViewModel _viewModel;
+    // Platz neben dem Bild: Werkzeugleiste + Eigenschaftenpanel + Ränder; Kopfbereich: Titel + Befehlsleiste + Statuszeile.
+    private const double SideChrome = 56 + 316 + 48;
+    private const double VerticalChrome = 150;
+    private const double WorkAreaFraction = 0.85;
 
-    public EditorWindow(
-        ImageDocument document,
-        IDialogService dialogs,
-        IClipboardService clipboard,
-        ILoggerFactory loggerFactory,
-        IThemeService themes)
+    private readonly EditorViewModel _viewModel;
+    private readonly IEditorService _editors;
+    private MonitorInfo? _targetMonitor;
+    private bool _closeConfirmed;
+    private Point _dragStart;
+
+    public EditorWindow(EditorViewModel viewModel, IEditorService editors, IThemeService themes)
     {
-        var viewModel = new EditorViewModel(document, dialogs, clipboard, loggerFactory.CreateLogger<EditorViewModel>());
         _viewModel = viewModel;
+        _editors = editors;
         DataContext = viewModel;
         InitializeComponent();
         themes.Attach(this);
-
-        Preview.Source = viewModel.Document.BaseImage.ToBitmapSource();
-        viewModel.PropertyChanged += OnViewModelPropertyChanged;
-        Closed += (_, _) => viewModel.PropertyChanged -= OnViewModelPropertyChanged;
-        Loaded += (_, _) => UpdateZoom();
+        Canvas.Initialize(viewModel);
+        Closed += (_, _) => Canvas.Detach();
     }
 
-    protected override void OnDpiChanged(DpiScale oldDpi, DpiScale newDpi)
+    /// <summary>Wählt Größe (Bild bei 100 % + Ränder, höchstens 85 % des Arbeitsbereichs) und Position auf dem Monitor.</summary>
+    public void PlaceOn(MonitorInfo monitor)
     {
-        base.OnDpiChanged(oldDpi, newDpi);
-        UpdateZoom();
-    }
-
-    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(EditorViewModel.ZoomMode))
-        {
-            UpdateZoom();
-        }
-    }
-
-    private void UpdateZoom()
-    {
+        _targetMonitor = monitor;
+        var scale = monitor.Scale;
         var image = _viewModel.Document.BaseImage;
-        if (_viewModel.ZoomMode == ZoomMode.Fit)
+        var maxWidth = monitor.WorkArea.Width / scale * WorkAreaFraction;
+        var maxHeight = monitor.WorkArea.Height / scale * WorkAreaFraction;
+        Width = Math.Clamp((image.Width / scale) + SideChrome, MinWidth, Math.Max(MinWidth, maxWidth));
+        Height = Math.Clamp((image.Height / scale) + VerticalChrome, MinHeight, Math.Max(MinHeight, maxHeight));
+        WindowStartupLocation = WindowStartupLocation.Manual;
+    }
+
+    protected override void OnSourceInitialized(EventArgs e)
+    {
+        base.OnSourceInitialized(e);
+        if (_targetMonitor is not { } monitor)
         {
-            Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled;
-            Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Disabled;
-            Preview.Width = double.NaN;
-            Preview.Height = double.NaN;
-            Preview.Stretch = Stretch.Uniform;
-            Preview.StretchDirection = StretchDirection.DownOnly;
+            return;
         }
-        else
+
+        var scale = monitor.Scale;
+        var width = (int)Math.Round(Width * scale);
+        var height = (int)Math.Round(Height * scale);
+        var x = monitor.WorkArea.X + ((monitor.WorkArea.Width - width) / 2);
+        var y = monitor.WorkArea.Y + ((monitor.WorkArea.Height - height) / 2);
+        PInvoke.SetWindowPos(
+            new HWND(new WindowInteropHelper(this).Handle),
+            HWND.Null,
+            x,
+            y,
+            width,
+            height,
+            SET_WINDOW_POS_FLAGS.SWP_NOZORDER | SET_WINDOW_POS_FLAGS.SWP_NOACTIVATE);
+    }
+
+    protected override void OnClosing(CancelEventArgs e)
+    {
+        base.OnClosing(e);
+        if (e.Cancel || _closeConfirmed || !_viewModel.Document.IsDirty || Application.Current?.Dispatcher.HasShutdownStarted == true)
         {
-            // 100 %: ein Bildpixel pro physischem Bildschirmpixel.
-            var dpi = VisualTreeHelper.GetDpi(this);
-            Scroller.HorizontalScrollBarVisibility = ScrollBarVisibility.Auto;
-            Scroller.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
-            Preview.Stretch = Stretch.Fill;
-            Preview.StretchDirection = StretchDirection.Both;
-            Preview.Width = image.Width / dpi.DpiScaleX;
-            Preview.Height = image.Height / dpi.DpiScaleY;
+            return;
         }
+
+        // Die Rückfrage ist asynchron (Speichern): Schließen vorerst verhindern und danach erneut auslösen.
+        e.Cancel = true;
+        _ = ConfirmAndCloseAsync();
+    }
+
+    private async Task ConfirmAndCloseAsync()
+    {
+        if (await _viewModel.ConfirmCloseAsync())
+        {
+            _closeConfirmed = true;
+            Close();
+        }
+    }
+
+    // ---- Werkzeuge, Zoom ----
+
+    private void OnToolSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (ToolList.SelectedItem is ToolBase tool)
+        {
+            _viewModel.Activate(tool);
+        }
+    }
+
+    private void OnZoomSelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        if (ZoomBox.SelectedItem is ZoomChoice choice)
+        {
+            _viewModel.SelectZoomChoiceCommand.Execute(choice);
+            ZoomBox.SelectedItem = null;
+        }
+    }
+
+    private void OnNewClick(object sender, RoutedEventArgs e)
+    {
+        if (NewButton.ContextMenu is { } menu)
+        {
+            menu.PlacementTarget = NewButton;
+            menu.Placement = PlacementMode.Bottom;
+            menu.IsOpen = true;
+        }
+    }
+
+    // ---- Tastatur ----
+
+    private static bool IsTyping => Keyboard.FocusedElement is TextBoxBase or System.Windows.Controls.PasswordBox or ComboBox { IsEditable: true };
+
+    private void OnPreviewKeyUp(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Space)
+        {
+            Canvas.RefreshCursor();
+        }
+    }
+
+    private void OnPreviewKeyDown(object sender, KeyEventArgs e)
+    {
+        var key = e.Key == Key.System ? e.SystemKey : e.Key;
+        var modifiers = Keyboard.Modifiers;
+        var ctrl = (modifiers & ModifierKeys.Control) != 0;
+        var shift = (modifiers & ModifierKeys.Shift) != 0;
+        var typing = IsTyping;
+        if (key == Key.Space && !typing)
+        {
+            Canvas.RefreshCursor();
+        }
+
+        if (ctrl && TryGlobalShortcut(key, shift, typing))
+        {
+            e.Handled = true;
+            return;
+        }
+
+        if (typing)
+        {
+            return;
+        }
+
+        if ((modifiers & ~ModifierKeys.Shift) == 0 && !shift && _viewModel.Tools.FindByKey(key) is { } tool && _viewModel.ActiveTool is not PolygonTool)
+        {
+            _viewModel.Activate(tool);
+            e.Handled = true;
+            return;
+        }
+
+        if (_viewModel.ActiveTool.OnKeyDown(key, modifiers))
+        {
+            e.Handled = true;
+        }
+    }
+
+    private bool TryGlobalShortcut(Key key, bool shift, bool typing)
+    {
+        var vm = _viewModel;
+        switch (key)
+        {
+            case Key.S:
+                (shift ? vm.SaveAsCommand : vm.SaveCommand).Execute(null);
+                return true;
+            case Key.O:
+                vm.OpenCommand.Execute(null);
+                return true;
+        }
+
+        if (typing)
+        {
+            return false;
+        }
+
+        switch (key)
+        {
+            case Key.Z:
+                (shift ? vm.RedoCommand : vm.UndoCommand).Execute(null);
+                return true;
+            case Key.Y:
+                vm.RedoCommand.Execute(null);
+                return true;
+            case Key.C:
+                (shift ? vm.CopyImageCommand : vm.CopyCommand).Execute(null);
+                return true;
+            case Key.V:
+                vm.PasteCommand.Execute(null);
+                return true;
+            case Key.X:
+                vm.CutCommand.Execute(null);
+                return true;
+            case Key.D:
+                vm.DuplicateCommand.Execute(null);
+                return true;
+            case Key.D0 or Key.NumPad0:
+                vm.FitCommand.Execute(null);
+                return true;
+            case Key.D1 or Key.NumPad1:
+                vm.ActualSizeCommand.Execute(null);
+                return true;
+            case Key.OemPlus or Key.Add:
+                vm.ZoomInCommand.Execute(null);
+                return true;
+            case Key.OemMinus or Key.Subtract:
+                vm.ZoomOutCommand.Execute(null);
+                return true;
+            case Key.OemCloseBrackets:
+                (shift ? vm.BringToFrontCommand : vm.BringForwardCommand).Execute(null);
+                return true;
+            case Key.OemOpenBrackets:
+                (shift ? vm.SendToBackCommand : vm.SendBackwardCommand).Execute(null);
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    // ---- Drag & Drop ----
+
+    private static bool HasDroppableData(IDataObject data) =>
+        data.GetDataPresent(DataFormats.FileDrop) || data.GetDataPresent(DataFormats.Bitmap);
+
+    private void OnDragOver(object sender, DragEventArgs e)
+    {
+        e.Effects = HasDroppableData(e.Data) ? DragDropEffects.Copy : DragDropEffects.None;
+        e.Handled = true;
+    }
+
+    private async void OnDrop(object sender, DragEventArgs e)
+    {
+        e.Handled = true;
+        if (e.Data.GetData(DataFormats.FileDrop) is string[] files && files.Length > 0)
+        {
+            await _editors.OpenFilesAsync(files);
+        }
+        else if (e.Data.GetDataPresent(DataFormats.Bitmap) && e.Data.GetData(DataFormats.Bitmap) is System.Windows.Media.Imaging.BitmapSource bitmap)
+        {
+            _editors.Open(new Core.Imaging.ImageDocument(PixelBufferExtensions.FromBitmapSource(bitmap)) { IsDirty = true });
+        }
+    }
+
+    private void OnDragHandleDown(object sender, MouseButtonEventArgs e) => _dragStart = e.GetPosition(this);
+
+    private void OnDragHandleMove(object sender, MouseEventArgs e)
+    {
+        if (e.LeftButton != MouseButtonState.Pressed)
+        {
+            return;
+        }
+
+        var position = e.GetPosition(this);
+        if (Math.Abs(position.X - _dragStart.X) < SystemParameters.MinimumHorizontalDragDistance
+            && Math.Abs(position.Y - _dragStart.Y) < SystemParameters.MinimumVerticalDragDistance)
+        {
+            return;
+        }
+
+        if (_viewModel.CreateDragPayload() is not { } payload)
+        {
+            return;
+        }
+
+        var data = new DataObject();
+        data.SetData(DataFormats.FileDrop, new[] { payload.TempFile });
+        data.SetData(DataFormats.Bitmap, payload.Image.ToBitmapSource());
+        DragDrop.DoDragDrop(DragHandle, data, DragDropEffects.Copy);
     }
 }

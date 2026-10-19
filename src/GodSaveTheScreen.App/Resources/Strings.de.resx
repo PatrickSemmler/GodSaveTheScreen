@@ -100,4 +100,152 @@
   <data name="Hotkey_UsedByApp" xml:space="preserve"><value>Bereits für „{0}“ belegt</value></data>
   <data name="Hotkey_PrintHint" xml:space="preserve"><value>Die Druck-Taste ist vermutlich vom Snipping Tool belegt. Deaktiviere in den Windows-Einstellungen „Druck-Taste zum Öffnen des Bildschirmausschnitts verwenden“.</value></data>
   <data name="Hotkey_OpenWindowsSettings" xml:space="preserve"><value>Windows-Einstellung öffnen</value></data>
+  <data name="Cap_None" xml:space="preserve"><value>Keine</value></data>
+  <data name="Cap_Arrow" xml:space="preserve"><value>Pfeil</value></data>
+  <data name="Cap_OpenArrow" xml:space="preserve"><value>Offener Pfeil</value></data>
+  <data name="Cap_Circle" xml:space="preserve"><value>Kreis</value></data>
+  <data name="Cap_Square" xml:space="preserve"><value>Quadrat</value></data>
+  <data name="Dash_Solid" xml:space="preserve"><value>Durchgezogen</value></data>
+  <data name="Dash_Dash" xml:space="preserve"><value>Gestrichelt</value></data>
+  <data name="Dash_Dot" xml:space="preserve"><value>Gepunktet</value></data>
+  <data name="Dash_DashDot" xml:space="preserve"><value>Strichpunkt</value></data>
+  <data name="Color_Hex" xml:space="preserve"><value>Hex-Farbwert</value></data>
+  <data name="Color_None" xml:space="preserve"><value>Keine</value></data>
+  <data name="Color_Palette" xml:space="preserve"><value>Palette</value></data>
+  <data name="Color_Pipette" xml:space="preserve"><value>Farbe aus dem Bild aufnehmen</value></data>
+  <data name="Color_Recent" xml:space="preserve"><value>Zuletzt verwendet</value></data>
+  <data name="Clipboard_NoImage" xml:space="preserve"><value>Die Zwischenablage enthält kein Bild.</value></data>
+  <data name="Editor_New" xml:space="preserve"><value>Neu</value></data>
+  <data name="Editor_NewFromClipboard" xml:space="preserve"><value>Aus Zwischenablage</value></data>
+  <data name="Editor_Open" xml:space="preserve"><value>Öffnen</value></data>
+  <data name="Editor_Save" xml:space="preserve"><value>Speichern</value></data>
+  <data name="Editor_SaveOptions" xml:space="preserve"><value>Speicheroptionen</value></data>
+  <data name="Editor_CopyImageTip" xml:space="preserve"><value>Bild kopieren (Strg+Umschalt+C)</value></data>
+  <data name="Editor_Paste" xml:space="preserve"><value>Einfügen</value></data>
+  <data name="Editor_PasteTip" xml:space="preserve"><value>Einfügen (Strg+V)</value></data>
+  <data name="Editor_Undo" xml:space="preserve"><value>Rückgängig</value></data>
+  <data name="Editor_UndoTip" xml:space="preserve"><value>Rückgängig (Strg+Z)</value></data>
+  <data name="Editor_Redo" xml:space="preserve"><value>Wiederholen</value></data>
+  <data name="Editor_RedoTip" xml:space="preserve"><value>Wiederholen (Strg+Y)</value></data>
+  <data name="Editor_DragOut" xml:space="preserve"><value>Bild in ein anderes Programm ziehen</value></data>
+  <data name="Editor_TogglePanel" xml:space="preserve"><value>Eigenschaftenbereich ein-/ausblenden</value></data>
+  <data name="Editor_DismissInfo" xml:space="preserve"><value>Ausblenden</value></data>
+  <data name="Editor_Tools" xml:space="preserve"><value>Werkzeuge</value></data>
+  <data name="Editor_Zoom" xml:space="preserve"><value>Zoom</value></data>
+  <data name="Editor_ZoomIn" xml:space="preserve"><value>Vergrößern</value></data>
+  <data name="Editor_ZoomOut" xml:space="preserve"><value>Verkleinern</value></data>
+  <data name="Editor_ZoomPercent" xml:space="preserve"><value>{0} %</value></data>
+  <data name="Editor_ImageSize" xml:space="preserve"><value>{0} × {1} px</value></data>
+  <data name="Editor_PointerPosition" xml:space="preserve"><value>{0}, {1} px</value></data>
+  <data name="Editor_Untitled" xml:space="preserve"><value>Unbenannt</value></data>
+  <data name="Editor_FileNameMode" xml:space="preserve"><value>Editor</value></data>
+  <data name="Editor_UnsavedTitle" xml:space="preserve"><value>Ungespeicherte Änderungen</value></data>
+  <data name="Editor_UnsavedMessage" xml:space="preserve"><value>Möchten Sie die Änderungen an „{0}“ speichern?</value></data>
+  <data name="Editor_MultiFrameInfo" xml:space="preserve"><value>„{0}“ enthält {1} Einzelbilder. Es wurde nur das erste Bild geöffnet.</value></data>
+  <data name="Editor_PasteObjects" xml:space="preserve"><value>Objekte einfügen</value></data>
+  <data name="Editor_Duplicate" xml:space="preserve"><value>Duplizieren</value></data>
+  <data name="Editor_Lock" xml:space="preserve"><value>Sperren</value></data>
+  <data name="Error_OpenFailed" xml:space="preserve"><value>„{0}“ konnte nicht geöffnet werden:
+{1}</value></data>
+  <data name="Error_ClipboardRead" xml:space="preserve"><value>Die Zwischenablage konnte nicht gelesen werden:
+{0}</value></data>
+  <data name="Open_AllImages" xml:space="preserve"><value>Alle Bilder</value></data>
+  <data name="Open_AllFiles" xml:space="preserve"><value>Alle Dateien</value></data>
+  <data name="Start_FromClipboard" xml:space="preserve"><value>Aus Zwischenablage</value></data>
+  <data name="Tiff_None" xml:space="preserve"><value>Keine</value></data>
+  <data name="Options_Format" xml:space="preserve"><value>Format</value></data>
+  <data name="Options_Quality" xml:space="preserve"><value>Qualität</value></data>
+  <data name="Options_Interlace" xml:space="preserve"><value>Interlaced</value></data>
+  <data name="Options_TiffCompression" xml:space="preserve"><value>Kompression</value></data>
+  <data name="Options_Lossless" xml:space="preserve"><value>Verlustfrei</value></data>
+  <data name="Options_Background" xml:space="preserve"><value>Hintergrund für transparente Bereiche</value></data>
+  <data name="Menu_Cut" xml:space="preserve"><value>Ausschneiden</value></data>
+  <data name="Menu_Copy" xml:space="preserve"><value>Kopieren</value></data>
+  <data name="Menu_Paste" xml:space="preserve"><value>Einfügen</value></data>
+  <data name="Menu_Duplicate" xml:space="preserve"><value>Duplizieren</value></data>
+  <data name="Menu_Delete" xml:space="preserve"><value>Löschen</value></data>
+  <data name="Menu_Order" xml:space="preserve"><value>Reihenfolge</value></data>
+  <data name="Menu_BringToFront" xml:space="preserve"><value>Ganz nach vorne</value></data>
+  <data name="Menu_BringForward" xml:space="preserve"><value>Eine Ebene nach vorne</value></data>
+  <data name="Menu_SendBackward" xml:space="preserve"><value>Eine Ebene zurück</value></data>
+  <data name="Menu_SendToBack" xml:space="preserve"><value>Ganz nach hinten</value></data>
+  <data name="Menu_Lock" xml:space="preserve"><value>Sperren / entsperren</value></data>
+  <data name="Panel_Properties" xml:space="preserve"><value>Eigenschaften</value></data>
+  <data name="Panel_Layers" xml:space="preserve"><value>Ebenen</value></data>
+  <data name="Layers_Empty" xml:space="preserve"><value>Noch keine Objekte. Zeichnen Sie eine Form, damit sie hier erscheint.</value></data>
+  <data name="Layers_ToggleVisibility" xml:space="preserve"><value>Ein-/ausblenden</value></data>
+  <data name="Layers_ToggleLock" xml:space="preserve"><value>Sperren/entsperren</value></data>
+  <data name="Props_NothingSelected" xml:space="preserve"><value>Wählen Sie ein Objekt oder ein Zeichenwerkzeug, um Eigenschaften zu bearbeiten.</value></data>
+  <data name="Props_DefaultsFor" xml:space="preserve"><value>Standardwerte: {0}</value></data>
+  <data name="Props_Objects" xml:space="preserve"><value>{0} Objekte</value></data>
+  <data name="Props_StrokeColor" xml:space="preserve"><value>Linienfarbe</value></data>
+  <data name="Props_FillColor" xml:space="preserve"><value>Füllfarbe</value></data>
+  <data name="Props_Thickness" xml:space="preserve"><value>Linienstärke</value></data>
+  <data name="Props_Dash" xml:space="preserve"><value>Strichart</value></data>
+  <data name="Props_CornerRadius" xml:space="preserve"><value>Eckenradius</value></data>
+  <data name="Props_StartCap" xml:space="preserve"><value>Anfang</value></data>
+  <data name="Props_EndCap" xml:space="preserve"><value>Ende</value></data>
+  <data name="Props_Opacity" xml:space="preserve"><value>Deckkraft (%)</value></data>
+  <data name="Shape_Rectangle" xml:space="preserve"><value>Rechteck</value></data>
+  <data name="Shape_Ellipse" xml:space="preserve"><value>Ellipse</value></data>
+  <data name="Shape_Triangle" xml:space="preserve"><value>Dreieck</value></data>
+  <data name="Shape_Polygon" xml:space="preserve"><value>Polygon</value></data>
+  <data name="Shape_Line" xml:space="preserve"><value>Linie</value></data>
+  <data name="Shape_Arrow" xml:space="preserve"><value>Pfeil</value></data>
+  <data name="Tool_Select" xml:space="preserve"><value>Auswahl (V)</value></data>
+  <data name="Tool_Rectangle" xml:space="preserve"><value>Rechteck (R)</value></data>
+  <data name="Tool_Ellipse" xml:space="preserve"><value>Ellipse (E)</value></data>
+  <data name="Tool_Line" xml:space="preserve"><value>Linie (L)</value></data>
+  <data name="Tool_Arrow" xml:space="preserve"><value>Pfeil (A)</value></data>
+  <data name="Tool_Triangle" xml:space="preserve"><value>Dreieck (G)</value></data>
+  <data name="Tool_Polygon" xml:space="preserve"><value>Polygon (P)</value></data>
+  <data name="Tool_Pipette" xml:space="preserve"><value>Pipette</value></data>
+  <data name="Font_Regular" xml:space="preserve"><value>Standard</value></data>
+  <data name="Font_Bold" xml:space="preserve"><value>Fett</value></data>
+  <data name="Font_Italic" xml:space="preserve"><value>Kursiv</value></data>
+  <data name="Font_BoldItalic" xml:space="preserve"><value>Fett Kursiv</value></data>
+  <data name="Marker_Circle" xml:space="preserve"><value>Kreis</value></data>
+  <data name="Marker_Square" xml:space="preserve"><value>Quadrat</value></data>
+  <data name="Marker_Rounded" xml:space="preserve"><value>Abgerundet</value></data>
+  <data name="Marker_Number" xml:space="preserve"><value>Nummer</value></data>
+  <data name="Marker_Shape" xml:space="preserve"><value>Form</value></data>
+  <data name="Marker_Size" xml:space="preserve"><value>Größe</value></data>
+  <data name="Marker_Fill" xml:space="preserve"><value>Füllfarbe</value></data>
+  <data name="Marker_TextColor" xml:space="preserve"><value>Zahlenfarbe</value></data>
+  <data name="Marker_Outline" xml:space="preserve"><value>Randfarbe</value></data>
+  <data name="Marker_StartNumber" xml:space="preserve"><value>Startnummer</value></data>
+  <data name="Marker_Renumber" xml:space="preserve"><value>Marker neu nummerieren</value></data>
+  <data name="Marker_RenumberZ" xml:space="preserve"><value>Nach Ebenenreihenfolge neu nummerieren</value></data>
+  <data name="Marker_RenumberCreation" xml:space="preserve"><value>Nach Erstellreihenfolge neu nummerieren</value></data>
+  <data name="Preset_Label" xml:space="preserve"><value>Beschriftung</value></data>
+  <data name="Preset_Warning" xml:space="preserve"><value>Warnung</value></data>
+  <data name="Preset_Note" xml:space="preserve"><value>Notiz</value></data>
+  <data name="Preset_Hint" xml:space="preserve"><value>Hinweis</value></data>
+  <data name="Props_Typeface" xml:space="preserve"><value>Schriftschnitt</value></data>
+  <data name="Shape_Text" xml:space="preserve"><value>Text</value></data>
+  <data name="Shape_Marker" xml:space="preserve"><value>Marker</value></data>
+  <data name="Text_Font" xml:space="preserve"><value>Schriftart</value></data>
+  <data name="Text_FontMissing" xml:space="preserve"><value>Diese Schrift ist nicht installiert. Es wird eine Ersatzschrift verwendet.</value></data>
+  <data name="Text_Typeface" xml:space="preserve"><value>Schnitt</value></data>
+  <data name="Text_Size" xml:space="preserve"><value>Größe</value></data>
+  <data name="Text_Bold" xml:space="preserve"><value>Fett</value></data>
+  <data name="Text_Italic" xml:space="preserve"><value>Kursiv</value></data>
+  <data name="Text_Underline" xml:space="preserve"><value>Unterstrichen</value></data>
+  <data name="Text_Strikethrough" xml:space="preserve"><value>Durchgestrichen</value></data>
+  <data name="Text_AlignLeft" xml:space="preserve"><value>Linksbündig</value></data>
+  <data name="Text_AlignCenter" xml:space="preserve"><value>Zentriert</value></data>
+  <data name="Text_AlignRight" xml:space="preserve"><value>Rechtsbündig</value></data>
+  <data name="Text_Color" xml:space="preserve"><value>Textfarbe</value></data>
+  <data name="Text_Outline" xml:space="preserve"><value>Kontur</value></data>
+  <data name="Text_OutlineWidth" xml:space="preserve"><value>Konturstärke</value></data>
+  <data name="Text_Background" xml:space="preserve"><value>Hintergrund</value></data>
+  <data name="Text_Presets" xml:space="preserve"><value>Vorlagen</value></data>
+  <data name="Tool_Text" xml:space="preserve"><value>Text (T)</value></data>
+  <data name="Tool_Marker" xml:space="preserve"><value>Nummerierter Marker (M)</value></data>
+  <data name="Dialog_Ok" xml:space="preserve"><value>OK</value></data>
+  <data name="Dialog_Yes" xml:space="preserve"><value>Ja</value></data>
+  <data name="Dialog_No" xml:space="preserve"><value>Nein</value></data>
+  <data name="Dialog_Save" xml:space="preserve"><value>Speichern</value></data>
+  <data name="Dialog_DontSave" xml:space="preserve"><value>Nicht speichern</value></data>
+  <data name="Dialog_Cancel" xml:space="preserve"><value>Abbrechen</value></data>
 </root>

@@ -3,30 +3,234 @@
                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  xmlns:l="clr-namespace:GodSaveTheScreen.App.Localization"
-                 Title="{l:Loc Editor_Title}"
-                 Width="1000"
-                 Height="700"
+                 xmlns:controls="clr-namespace:GodSaveTheScreen.App.Controls"
+                 xmlns:cap="clr-namespace:GodSaveTheScreen.Core.Capture;assembly=GodSaveTheScreen.Core"
+                 Title="{Binding WindowTitle}"
+                 Width="1180"
+                 Height="780"
+                 MinWidth="720"
+                 MinHeight="480"
                  WindowStartupLocation="CenterScreen"
                  ExtendsContentIntoTitleBar="True"
-                 WindowBackdropType="Mica">
+                 WindowBackdropType="Mica"
+                 AllowDrop="True"
+                 PreviewKeyDown="OnPreviewKeyDown"
+                 PreviewKeyUp="OnPreviewKeyUp"
+                 DragOver="OnDragOver"
+                 Drop="OnDrop">
+  <ui:FluentWindow.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+    <Style x:Key="BarButton" TargetType="ui:Button" BasedOn="{StaticResource {x:Type ui:Button}}">
+      <Setter Property="Appearance" Value="Transparent" />
+      <Setter Property="Margin" Value="0,0,2,0" />
+      <Setter Property="Padding" Value="8,6" />
+    </Style>
+    <Style x:Key="BarSeparator" TargetType="Rectangle">
+      <Setter Property="Width" Value="1" />
+      <Setter Property="Margin" Value="6,6" />
+      <Setter Property="Fill" Value="{DynamicResource ControlStrokeColorDefaultBrush}" />
+    </Style>
+  </ui:FluentWindow.Resources>
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
-    <ui:TitleBar Grid.Row="0" Title="{l:Loc Editor_Title}" />
-    <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="12,4,12,8">
-      <ui:Button Icon="{ui:SymbolIcon Save24}" Content="{l:Loc Editor_SaveAs}" Command="{Binding SaveAsCommand}" />
-      <ui:Button Margin="8,0,0,0" Icon="{ui:SymbolIcon Copy24}" Content="{l:Loc Editor_Copy}" Command="{Binding CopyCommand}" />
-      <ui:Button Margin="24,0,0,0" Icon="{ui:SymbolIcon FullScreenMaximize24}" Content="{l:Loc Editor_Fit}" Command="{Binding FitCommand}" />
-      <ui:Button Margin="8,0,0,0" Content="{l:Loc Editor_ActualSize}" Command="{Binding ActualSizeCommand}" />
-    </StackPanel>
-    <ScrollViewer x:Name="Scroller" Grid.Row="2" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-      <Image x:Name="Preview"
-             HorizontalAlignment="Center"
-             VerticalAlignment="Center"
-             RenderOptions.BitmapScalingMode="HighQuality" />
-    </ScrollViewer>
+
+    <ui:TitleBar Grid.Row="0" Title="{Binding WindowTitle}" />
+
+    <!-- Befehlsleiste -->
+    <DockPanel Grid.Row="1" Margin="8,2,8,6" LastChildFill="False">
+      <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+        <ui:Button x:Name="NewButton" Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon Add24}" Content="{l:Loc Editor_New}" Click="OnNewClick">
+          <ui:Button.ContextMenu>
+            <ContextMenu>
+              <MenuItem Header="{l:Loc Mode_Rectangle}" Command="{Binding NewCaptureCommand}" CommandParameter="{x:Static cap:CaptureMode.Rectangle}" />
+              <MenuItem Header="{l:Loc Mode_Window}" Command="{Binding NewCaptureCommand}" CommandParameter="{x:Static cap:CaptureMode.Window}" />
+              <MenuItem Header="{l:Loc Mode_Freeform}" Command="{Binding NewCaptureCommand}" CommandParameter="{x:Static cap:CaptureMode.Freeform}" />
+              <MenuItem Header="{l:Loc Mode_Fullscreen}" Command="{Binding NewCaptureCommand}" CommandParameter="{x:Static cap:CaptureMode.FullScreen}" />
+              <Separator />
+              <MenuItem Header="{l:Loc Editor_NewFromClipboard}" Command="{Binding NewFromClipboardCommand}" />
+            </ContextMenu>
+          </ui:Button.ContextMenu>
+        </ui:Button>
+        <ui:Button Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon FolderOpen24}" Content="{l:Loc Editor_Open}" Command="{Binding OpenCommand}" ToolTip="Ctrl+O" />
+        <ui:Button Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon Save24}" Content="{l:Loc Editor_Save}" Command="{Binding SaveCommand}" ToolTip="Ctrl+S" />
+        <ui:Button Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon SaveEdit24}" Command="{Binding SaveAsCommand}" ToolTip="{l:Loc Editor_SaveAs}" AutomationProperties.Name="{l:Loc Editor_SaveAs}" />
+        <ToggleButton x:Name="OptionsToggle" Margin="0,0,2,0" Padding="8,6" ToolTip="{l:Loc Editor_SaveOptions}" AutomationProperties.Name="{l:Loc Editor_SaveOptions}" Background="Transparent" BorderThickness="0">
+          <ui:SymbolIcon Symbol="Options24" />
+        </ToggleButton>
+        <Popup IsOpen="{Binding IsChecked, ElementName=OptionsToggle, Mode=TwoWay}"
+               PlacementTarget="{Binding ElementName=OptionsToggle}"
+               Placement="Bottom"
+               StaysOpen="False"
+               AllowsTransparency="True">
+          <Border Margin="8" Padding="14" CornerRadius="8" BorderThickness="1"
+                  Background="{DynamicResource ApplicationBackgroundBrush}"
+                  BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}">
+            <Border.Effect>
+              <DropShadowEffect BlurRadius="12" ShadowDepth="2" Opacity="0.35" />
+            </Border.Effect>
+            <StackPanel Width="280" DataContext="{Binding SaveOptions}">
+              <TextBlock Text="{l:Loc Options_Format}" Opacity="0.75" />
+              <ComboBox Margin="0,4,0,0" ItemsSource="{Binding Formats}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding Format, Mode=TwoWay}" HorizontalAlignment="Stretch" />
+              <StackPanel Visibility="{Binding HasJpegQuality, Converter={StaticResource BoolToVisibility}}" Margin="0,10,0,0">
+                <TextBlock Text="{l:Loc Options_Quality}" Opacity="0.75" />
+                <Grid Margin="0,4,0,0">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="40" />
+                  </Grid.ColumnDefinitions>
+                  <Slider Minimum="1" Maximum="100" Value="{Binding JpegQuality, Mode=TwoWay}" />
+                  <TextBlock Grid.Column="1" Text="{Binding JpegQuality, StringFormat={}{0:0}}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                </Grid>
+              </StackPanel>
+              <CheckBox Content="{l:Loc Options_Interlace}" IsChecked="{Binding PngInterlace, Mode=TwoWay}" Margin="0,10,0,0"
+                        Visibility="{Binding HasPng, Converter={StaticResource BoolToVisibility}}" />
+              <StackPanel Visibility="{Binding HasTiff, Converter={StaticResource BoolToVisibility}}" Margin="0,10,0,0">
+                <TextBlock Text="{l:Loc Options_TiffCompression}" Opacity="0.75" />
+                <ComboBox Margin="0,4,0,0" ItemsSource="{Binding TiffCompressions}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding TiffCompression, Mode=TwoWay}" HorizontalAlignment="Stretch" />
+              </StackPanel>
+              <StackPanel Visibility="{Binding HasJxr, Converter={StaticResource BoolToVisibility}}" Margin="0,10,0,0">
+                <CheckBox Content="{l:Loc Options_Lossless}" IsChecked="{Binding JxrLossless, Mode=TwoWay}" />
+                <TextBlock Text="{l:Loc Options_Quality}" Opacity="0.75" Margin="0,8,0,0" />
+                <Grid Margin="0,4,0,0">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="40" />
+                  </Grid.ColumnDefinitions>
+                  <Slider Minimum="1" Maximum="100" Value="{Binding JxrQuality, Mode=TwoWay}" />
+                  <TextBlock Grid.Column="1" Text="{Binding JxrQuality, StringFormat={}{0:0}}" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                </Grid>
+              </StackPanel>
+              <StackPanel Visibility="{Binding HasBackground, Converter={StaticResource BoolToVisibility}}" Margin="0,10,0,0">
+                <TextBlock Text="{l:Loc Options_Background}" Opacity="0.75" />
+                <controls:ColorButton Margin="0,4,0,0" SelectedColor="{Binding Background, Mode=TwoWay}" />
+              </StackPanel>
+            </StackPanel>
+          </Border>
+        </Popup>
+
+        <Rectangle Style="{StaticResource BarSeparator}" />
+        <ui:Button Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon Copy24}" Command="{Binding CopyImageCommand}" ToolTip="{l:Loc Editor_CopyImageTip}" AutomationProperties.Name="{l:Loc Editor_Copy}" />
+        <ui:Button Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon ClipboardPaste24}" Command="{Binding PasteCommand}" ToolTip="{l:Loc Editor_PasteTip}" AutomationProperties.Name="{l:Loc Editor_Paste}" />
+        <Rectangle Style="{StaticResource BarSeparator}" />
+        <ui:Button Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon ArrowUndo24}" Command="{Binding UndoCommand}" ToolTip="{l:Loc Editor_UndoTip}" AutomationProperties.Name="{l:Loc Editor_Undo}" />
+        <ui:Button Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon ArrowRedo24}" Command="{Binding RedoCommand}" ToolTip="{l:Loc Editor_RedoTip}" AutomationProperties.Name="{l:Loc Editor_Redo}" />
+      </StackPanel>
+
+      <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+        <ui:Button x:Name="DragHandle" Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon Drag24}"
+                   ToolTip="{l:Loc Editor_DragOut}" AutomationProperties.Name="{l:Loc Editor_DragOut}"
+                   PreviewMouseLeftButtonDown="OnDragHandleDown" PreviewMouseMove="OnDragHandleMove" />
+        <ToggleButton Margin="0,0,2,0" Padding="8,6" Background="Transparent" BorderThickness="0"
+                      IsChecked="{Binding IsPanelOpen, Mode=TwoWay}" ToolTip="{l:Loc Editor_TogglePanel}" AutomationProperties.Name="{l:Loc Editor_TogglePanel}">
+          <ui:SymbolIcon Symbol="PanelRight24" />
+        </ToggleButton>
+      </StackPanel>
+    </DockPanel>
+
+    <!-- Hinweiszeile -->
+    <Border Grid.Row="2" Margin="8,0,8,6" Padding="12,6" CornerRadius="4" Background="{DynamicResource ControlFillColorSecondaryBrush}">
+      <Border.Style>
+        <Style TargetType="Border">
+          <Setter Property="Visibility" Value="Visible" />
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding InfoMessage}" Value="{x:Null}">
+              <Setter Property="Visibility" Value="Collapsed" />
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </Border.Style>
+      <DockPanel>
+        <ui:Button DockPanel.Dock="Right" Appearance="Transparent" Icon="{ui:SymbolIcon Dismiss24}" Command="{Binding DismissInfoCommand}" AutomationProperties.Name="{l:Loc Editor_DismissInfo}" />
+        <TextBlock Text="{Binding InfoMessage}" TextWrapping="Wrap" VerticalAlignment="Center" />
+      </DockPanel>
+    </Border>
+
+    <!-- Arbeitsbereich -->
+    <Grid Grid.Row="3">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+
+      <ListBox x:Name="ToolList"
+               Grid.Column="0"
+               Margin="8,0,4,8"
+               Padding="2"
+               ItemsSource="{Binding Tools.PaletteTools}"
+               SelectedItem="{Binding ActiveTool, Mode=OneWay}"
+               SelectionChanged="OnToolSelectionChanged"
+               AutomationProperties.Name="{l:Loc Editor_Tools}">
+        <ListBox.ItemTemplate>
+          <DataTemplate>
+            <Grid Margin="6" ToolTip="{Binding DisplayName}" AutomationProperties.Name="{Binding DisplayName}">
+              <ui:SymbolIcon Symbol="{Binding Symbol}" FontSize="20">
+                <ui:SymbolIcon.Style>
+                  <Style TargetType="ui:SymbolIcon">
+                    <Style.Triggers>
+                      <DataTrigger Binding="{Binding IconPath}" Value="{x:Null}">
+                        <Setter Property="Visibility" Value="Visible" />
+                      </DataTrigger>
+                    </Style.Triggers>
+                    <Setter Property="Visibility" Value="Collapsed" />
+                  </Style>
+                </ui:SymbolIcon.Style>
+              </ui:SymbolIcon>
+              <Viewbox Width="20" Height="20">
+                <Path Data="{Binding IconPath}" Width="24" Height="24" Stretch="None"
+                      Stroke="{DynamicResource TextFillColorPrimaryBrush}" StrokeThickness="1.6" StrokeLineJoin="Round">
+                  <Path.Style>
+                    <Style TargetType="Path">
+                      <Setter Property="Visibility" Value="Visible" />
+                      <Style.Triggers>
+                        <DataTrigger Binding="{Binding IconPath}" Value="{x:Null}">
+                          <Setter Property="Visibility" Value="Collapsed" />
+                        </DataTrigger>
+                      </Style.Triggers>
+                    </Style>
+                  </Path.Style>
+                </Path>
+              </Viewbox>
+            </Grid>
+          </DataTemplate>
+        </ListBox.ItemTemplate>
+      </ListBox>
+
+      <controls:EditorCanvas x:Name="Canvas" Grid.Column="1" Margin="0,0,0,8" />
+
+      <Border Grid.Column="2"
+              Width="300"
+              Margin="4,0,8,8"
+              Visibility="{Binding IsPanelOpen, Converter={StaticResource BoolToVisibility}}">
+        <controls:PropertyPanel />
+      </Border>
+    </Grid>
+
+    <!-- Statusleiste -->
+    <Border Grid.Row="4" Padding="12,4" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}">
+      <DockPanel>
+        <ComboBox DockPanel.Dock="Right"
+                  x:Name="ZoomBox"
+                  Width="110"
+                  IsEditable="True"
+                  ItemsSource="{Binding ZoomChoices}"
+                  DisplayMemberPath="Label"
+                  Text="{Binding ZoomText, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                  SelectionChanged="OnZoomSelectionChanged"
+                  AutomationProperties.Name="{l:Loc Editor_Zoom}" />
+        <ui:Button DockPanel.Dock="Right" Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon ZoomIn24}" Command="{Binding ZoomInCommand}" ToolTip="Ctrl++" AutomationProperties.Name="{l:Loc Editor_ZoomIn}" />
+        <ui:Button DockPanel.Dock="Right" Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon ZoomOut24}" Command="{Binding ZoomOutCommand}" ToolTip="Ctrl+-" AutomationProperties.Name="{l:Loc Editor_ZoomOut}" />
+        <ui:Button DockPanel.Dock="Right" Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon ArrowMaximize24}" Command="{Binding FitCommand}" ToolTip="{l:Loc Editor_Fit}" AutomationProperties.Name="{l:Loc Editor_Fit}" />
+        <ui:Button DockPanel.Dock="Right" Style="{StaticResource BarButton}" Content="{l:Loc Editor_ActualSize}" Command="{Binding ActualSizeCommand}" ToolTip="Ctrl+1" />
+        <TextBlock Text="{Binding ImageSizeText}" VerticalAlignment="Center" Margin="0,0,24,0" />
+        <TextBlock Text="{Binding PointerText}" VerticalAlignment="Center" Opacity="0.8" />
+      </DockPanel>
+    </Border>
   </Grid>
 </ui:FluentWindow>

@@ -241,7 +241,7 @@ public sealed class StartViewModelTimerTests
         }
 
         var coordinator = TestCoordinator.Create(settings).Coordinator;
-        return (new StartViewModel(coordinator, settings, Substitute.For<IAppShell>()), settings);
+        return (new StartViewModel(coordinator, settings, Substitute.For<IAppShell>(), Substitute.For<IEditorService>(), Substitute.For<IDialogService>()), settings);
     }
 
     [Fact]

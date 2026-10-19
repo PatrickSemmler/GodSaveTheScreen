@@ -1,8 +1,11 @@
+using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
+using GodSaveTheScreen.Core.Annotations;
+using GodSaveTheScreen.Core.Undo;
 
 namespace GodSaveTheScreen.Core.Imaging;
 
-/// <summary>Grundform des Dokuments: Basisbild plus Metadaten. Annotationen folgen in späteren Meilensteinen.</summary>
+/// <summary>Dokument: Basisbild, Annotationen (Z-Reihenfolge = Listenreihenfolge, zuletzt = oben) und Undo-Verlauf.</summary>
 public sealed partial class ImageDocument : ObservableObject
 {
     public ImageDocument(PixelBuffer baseImage, double dpiX = 96, double dpiY = 96)
@@ -11,6 +14,19 @@ public sealed partial class ImageDocument : ObservableObject
         DpiX = dpiX;
         DpiY = dpiY;
         CreatedAt = DateTimeOffset.Now;
+        Undo = new UndoManager();
+        Undo.Changed += (_, _) => IsDirty = !Undo.IsAtSavePoint;
+    }
+
+    public ObservableCollection<Annotation> Annotations { get; } = [];
+
+    public UndoManager Undo { get; }
+
+    /// <summary>Markiert den aktuellen Stand als gespeichert.</summary>
+    public void MarkSaved()
+    {
+        Undo.MarkSaved();
+        IsDirty = false;
     }
 
     public PixelBuffer BaseImage { get; }

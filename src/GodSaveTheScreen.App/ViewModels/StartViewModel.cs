@@ -5,6 +5,7 @@ using GodSaveTheScreen.App.Capture;
 using GodSaveTheScreen.App.Resources;
 using GodSaveTheScreen.App.Services;
 using GodSaveTheScreen.Core.Capture;
+using GodSaveTheScreen.Core.Services;
 using GodSaveTheScreen.Core.Settings;
 
 namespace GodSaveTheScreen.App.ViewModels;
@@ -21,12 +22,16 @@ public sealed partial class StartViewModel : ObservableObject
     private readonly CaptureCoordinator _coordinator;
     private readonly ISettingsService _settings;
     private readonly IAppShell _shell;
+    private readonly IEditorService _editors;
+    private readonly IDialogService _dialogs;
 
-    public StartViewModel(CaptureCoordinator coordinator, ISettingsService settings, IAppShell shell)
+    public StartViewModel(CaptureCoordinator coordinator, ISettingsService settings, IAppShell shell, IEditorService editors, IDialogService dialogs)
     {
         _coordinator = coordinator;
         _settings = settings;
         _shell = shell;
+        _editors = editors;
+        _dialogs = dialogs;
 
         Modes =
         [
@@ -100,6 +105,28 @@ public sealed partial class StartViewModel : ObservableObject
     [RelayCommand]
     private Task NewCaptureAsync() =>
         _coordinator.StartAsync(new CaptureRequest(SelectedMode.Mode, TimeSpan.FromSeconds(DelaySeconds), SelectedMode.Scope));
+
+    [RelayCommand]
+    private async Task OpenAsync()
+    {
+        var files = _dialogs.PickImageFiles();
+        if (files.Count > 0)
+        {
+            await _editors.OpenFilesAsync(files);
+        }
+    }
+
+    [RelayCommand]
+    private void OpenFromClipboard()
+    {
+        if (!_editors.OpenFromClipboard())
+        {
+            _dialogs.ShowError(Strings.Error_Title, Strings.Clipboard_NoImage);
+        }
+    }
+
+    /// <summary>Dateien, die auf das Fenster gezogen wurden.</summary>
+    public Task OpenFilesAsync(IEnumerable<string> paths) => _editors.OpenFilesAsync(paths);
 
     [RelayCommand]
     private void OpenSettings() => _shell.ShowSettings();

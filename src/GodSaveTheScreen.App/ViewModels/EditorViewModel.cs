@@ -2,85 +2,688 @@ using System.Globalization;
 using System.IO;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using GodSaveTheScreen.App.Capture;
+using GodSaveTheScreen.App.Editor;
+using GodSaveTheScreen.App.Editor.Tools;
 using GodSaveTheScreen.App.Resources;
+using GodSaveTheScreen.App.Services;
+using GodSaveTheScreen.Core.Annotations;
+using GodSaveTheScreen.Core.Geometry;
 using GodSaveTheScreen.Core.Imaging;
+using GodSaveTheScreen.Core.Naming;
 using GodSaveTheScreen.Core.Services;
-using GodSaveTheScreen.Rendering;
+using GodSaveTheScreen.Core.Settings;
+using GodSaveTheScreen.Core.Undo;
 using Microsoft.Extensions.Logging;
+using CaptureMode = GodSaveTheScreen.Core.Capture.CaptureMode;
 
 namespace GodSaveTheScreen.App.ViewModels;
 
-public enum ZoomMode
-{
-    Fit,
-    ActualSize,
-}
+/// <summary>Eintrag der Zoom-Auswahl; <see cref="Factor"/> = <c>null</c> steht für „Einpassen“.</summary>
+public sealed record ZoomChoice(string Label, double? Factor);
 
-/// <summary>Vorläufiges Ergebnisfenster (wird in M4 zum Editor ausgebaut).</summary>
-public sealed partial class EditorViewModel : ObservableObject
+/// <summary>ViewModel eines Editorfensters: Dokument, Werkzeuge, Zoom, Datei- und Zwischenablage-Befehle.</summary>
+public sealed partial class EditorViewModel : ObservableObject, IDisposable
 {
+    public const double MinZoom = 0.1;
+    public const double MaxZoom = 32;
+    private const double PasteOffset = 10;
+
+    private static readonly double[] ZoomSteps = [0.1, 0.25, 0.33, 0.5, 0.66, 0.75, 1, 1.25, 1.5, 2, 3, 4, 6, 8, 12, 16, 24, 32];
+
     private readonly IDialogService _dialogs;
     private readonly IClipboardService _clipboard;
+    private readonly IImageCodecService _codec;
+    private readonly IDocumentExporter _exporter;
+    private readonly IEditorService _editors;
+    private readonly ISettingsService _settings;
+    private readonly ICaptureLauncher _capture;
     private readonly ILogger<EditorViewModel> _logger;
+    private ToolBase? _toolBeforePipette;
+    private int _pasteCount;
+    private string? _lastPasted;
 
     public EditorViewModel(
-        ImageDocument document,
+        EditorContext context,
+        ToolRegistry tools,
         IDialogService dialogs,
         IClipboardService clipboard,
+        IImageCodecService codec,
+        IDocumentExporter exporter,
+        IEditorService editors,
+        ISettingsService settings,
+        ICaptureLauncher capture,
         ILogger<EditorViewModel> logger)
     {
-        Document = document;
+        Context = context;
+        Tools = tools;
         _dialogs = dialogs;
         _clipboard = clipboard;
+        _codec = codec;
+        _exporter = exporter;
+        _editors = editors;
+        _settings = settings;
+        _capture = capture;
         _logger = logger;
+
+        _activeTool = tools.Get<SelectTool>();
+        Properties = new SelectionPropertiesViewModel(context, () => ActiveTool, StartPipette);
+        Layers = new LayersViewModel(context);
+        SaveOptions = new SaveOptionsViewModel(settings);
+        TextProperties = new TextPropertiesViewModel(context, () => ActiveTool);
+        MarkerProperties = new MarkerPropertiesViewModel(context, () => ActiveTool);
+        ZoomChoices =
+        [
+            new ZoomChoice(Strings.Editor_Fit, null),
+            .. new[] { 0.1, 0.25, 0.5, 0.75, 1, 1.5, 2, 3, 4, 8, 16, 32 }.Select(z => new ZoomChoice(FormatZoom(z), z)),
+        ];
+
+        context.ActivateToolHandler = ActivateToolById;
+        Document.PropertyChanged += OnDocumentChanged;
+        Context.Undo.Changed += OnUndoChanged;
+        Context.Selection.Changed += OnSelectionChanged;
+        _activeTool.Activate();
     }
 
-    public ImageDocument Document { get; }
+    public EditorContext Context { get; }
+
+    public ImageDocument Document => Context.Document;
+
+    public ToolRegistry Tools { get; }
+
+    public SelectionPropertiesViewModel Properties { get; }
+
+    public LayersViewModel Layers { get; }
+
+    public SaveOptionsViewModel SaveOptions { get; }
+
+    public TextPropertiesViewModel TextProperties { get; }
+
+    public MarkerPropertiesViewModel MarkerProperties { get; }
+
+    /// <summary>Überschrift des Eigenschaftenbereichs: Objektname, „N Objekte“ oder „Standardwerte: Werkzeug“.</summary>
+    public string PanelHeader
+    {
+        get
+        {
+            var items = Context.Selection.Items;
+            if (items.Count == 1)
+            {
+                return AnnotationNames.DisplayName(items[0]);
+            }
+
+            if (items.Count > 1)
+            {
+                return string.Format(CultureInfo.CurrentUICulture, Strings.Props_Objects, items.Count);
+            }
+
+            return ActiveTool.HasStyleDefaults
+                ? string.Format(CultureInfo.CurrentUICulture, Strings.Props_DefaultsFor, ActiveTool.DisplayName)
+                : string.Empty;
+        }
+    }
+
+    /// <summary>Im Eigenschaftenbereich gibt es etwas zu bearbeiten.</summary>
+    public bool HasPanelContent =>
+        Properties.IsApplicable || TextProperties.IsApplicable || MarkerProperties.IsApplicable || Properties.ShowOpacity;
+
+    public IReadOnlyList<ZoomChoice> ZoomChoices { get; }
+
+    /// <summary>Hinweis über der Zeichenfläche (z. B. mehrseitige Bilddatei).</summary>
+    [ObservableProperty]
+    private string? _infoMessage;
 
     [ObservableProperty]
-    private ZoomMode _zoomMode = ZoomMode.Fit;
+    [NotifyPropertyChangedFor(nameof(ActiveToolId))]
+    private ToolBase _activeTool;
 
-    [RelayCommand]
-    private void Fit() => ZoomMode = ZoomMode.Fit;
+    public string ActiveToolId => ActiveTool.Id;
 
-    [RelayCommand]
-    private void ActualSize() => ZoomMode = ZoomMode.ActualSize;
+    /// <summary>Zoomfaktor: Bildschirmpixel je Bildpixel.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ZoomText))]
+    private double _zoom = 1;
 
-    [RelayCommand]
-    private void SaveAs()
+    /// <summary>Zoom passt sich der Fenstergröße an.</summary>
+    [ObservableProperty]
+    private bool _isFit = true;
+
+    [ObservableProperty]
+    private string _pointerText = string.Empty;
+
+    [ObservableProperty]
+    private bool _isPanelOpen = true;
+
+    public string ZoomText
     {
-        var suggestion = string.Format(CultureInfo.CurrentUICulture, Strings.Editor_SaveDefaultName, DateTime.Now);
-        var path = _dialogs.PickSavePath(suggestion, Strings.Editor_SaveFilter);
-        if (path is null)
+        get => FormatZoom(Zoom);
+        set
+        {
+            var digits = new string([.. value.Where(c => char.IsDigit(c) || c is ',' or '.')]);
+            if (double.TryParse(digits.Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out var percent) && percent > 0)
+            {
+                SetZoom(percent / 100);
+            }
+            else if (string.Equals(value, Strings.Editor_Fit, StringComparison.OrdinalIgnoreCase))
+            {
+                Fit();
+            }
+        }
+    }
+
+    public string ImageSizeText => string.Format(CultureInfo.CurrentUICulture, Strings.Editor_ImageSize, Document.BaseImage.Width, Document.BaseImage.Height);
+
+    public string WindowTitle
+    {
+        get
+        {
+            var name = string.IsNullOrEmpty(Document.SourcePath) ? Strings.Editor_Untitled : Path.GetFileName(Document.SourcePath);
+            return $"{name}{(Document.IsDirty ? " *" : string.Empty)} – {Strings.App_Name}";
+        }
+    }
+
+    public bool CanUndo => Context.Undo.CanUndo;
+
+    public bool CanRedo => Context.Undo.CanRedo;
+
+    public bool HasSelection => !Context.Selection.IsEmpty;
+
+    public bool IsJpegLike => _settings.Current.LastSaveFormat is ImageFormatSetting.Jpeg or ImageFormatSetting.JpegXr;
+
+    // ---- Werkzeuge ----
+
+    [RelayCommand]
+    private void ActivateTool(ToolBase? tool)
+    {
+        if (tool is not null)
+        {
+            Activate(tool);
+        }
+    }
+
+    public void Activate(ToolBase tool)
+    {
+        if (ReferenceEquals(tool, ActiveTool))
         {
             return;
         }
 
-        try
+        ActiveTool.Deactivate();
+        if (tool.HasStyleDefaults)
         {
-            File.WriteAllBytes(path, Document.BaseImage.EncodePng(Document.DpiX, Document.DpiY));
-            Document.SourcePath = path;
-            Document.IsDirty = false;
-            _logger.LogInformation("Bild gespeichert: {Path}", path);
+            // Das Panel soll die Standardwerte des Werkzeugs zeigen.
+            Context.Selection.Clear();
         }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+
+        ActiveTool = tool;
+        tool.Activate();
+        RefreshProperties();
+        Context.InvalidateInteraction();
+    }
+
+    private void RefreshProperties()
+    {
+        Properties.Refresh();
+        TextProperties.Refresh();
+        MarkerProperties.Refresh();
+        OnPropertyChanged(nameof(PanelHeader));
+        OnPropertyChanged(nameof(HasPanelContent));
+    }
+
+    private void ActivateToolById(string id)
+    {
+        if (Tools.Find(id) is { } tool)
         {
-            _logger.LogError(ex, "Speichern nach {Path} fehlgeschlagen", path);
-            _dialogs.ShowError(Strings.Error_Title, string.Format(CultureInfo.CurrentUICulture, Strings.Error_SaveFailed, ex.Message));
+            Activate(tool);
+        }
+    }
+
+    private void StartPipette(Action<ArgbColor> picked)
+    {
+        var pipette = Tools.Get<PipetteTool>();
+        _toolBeforePipette = ActiveTool == pipette ? _toolBeforePipette : ActiveTool;
+
+        void Restore()
+        {
+            var previous = _toolBeforePipette ?? Tools.Get<SelectTool>();
+            _toolBeforePipette = null;
+            pipette.Picked = null;
+            pipette.Cancelled = null;
+            Activate(previous);
+        }
+
+        pipette.Picked = color =>
+        {
+            picked(color);
+            Restore();
+        };
+        pipette.Cancelled = Restore;
+        Activate(pipette);
+    }
+
+    // ---- Zoom ----
+
+    public void SetZoom(double zoom, bool keepFit = false)
+    {
+        IsFit = keepFit;
+        Zoom = Math.Clamp(zoom, MinZoom, MaxZoom);
+    }
+
+    [RelayCommand]
+    private void Fit() => IsFit = true;
+
+    [RelayCommand]
+    private void ActualSize() => SetZoom(1);
+
+    [RelayCommand]
+    private void ZoomIn() => SetZoom(ZoomSteps.FirstOrDefault(s => s > Zoom * 1.001, MaxZoom));
+
+    [RelayCommand]
+    private void ZoomOut() => SetZoom(ZoomSteps.LastOrDefault(s => s < Zoom * 0.999, MinZoom));
+
+    [RelayCommand]
+    private void SelectZoomChoice(ZoomChoice? choice)
+    {
+        if (choice is null)
+        {
+            return;
+        }
+
+        if (choice.Factor is { } factor)
+        {
+            SetZoom(factor);
+        }
+        else
+        {
+            Fit();
+        }
+    }
+
+    public void SetPointer(PointD? position) =>
+        PointerText = position is { } p ? string.Format(CultureInfo.CurrentUICulture, Strings.Editor_PointerPosition, (int)Math.Floor(p.X), (int)Math.Floor(p.Y)) : string.Empty;
+
+    private static string FormatZoom(double zoom) => string.Format(CultureInfo.CurrentUICulture, Strings.Editor_ZoomPercent, Math.Round(zoom * 100));
+
+    // ---- Datei ----
+
+    [RelayCommand]
+    private async Task OpenAsync()
+    {
+        var files = _dialogs.PickImageFiles();
+        if (files.Count > 0)
+        {
+            await _editors.OpenFilesAsync(files);
         }
     }
 
     [RelayCommand]
+    private async Task SaveAsync() => await TrySaveAsync(forceDialog: false);
+
+    [RelayCommand]
+    private async Task SaveAsAsync() => await TrySaveAsync(forceDialog: true);
+
+    /// <summary>Speichert; <c>false</c> bei Abbruch oder Fehler.</summary>
+    public async Task<bool> TrySaveAsync(bool forceDialog)
+    {
+        var settings = _settings.Current;
+        var path = Document.SourcePath;
+        var format = ImageFormats.FromExtension(Path.GetExtension(path));
+        if (forceDialog || string.IsNullOrEmpty(path) || format is null)
+        {
+            var directory = string.IsNullOrWhiteSpace(settings.LastSaveDirectory) ? AutoSaveAction.DefaultDirectory : settings.LastSaveDirectory;
+            var suggestion = SuggestName(settings, format ?? settings.LastSaveFormat);
+            if (_dialogs.PickImageSavePath(suggestion, directory, format ?? settings.LastSaveFormat) is not { } picked)
+            {
+                return false;
+            }
+
+            path = picked.Path;
+            format = picked.Format;
+        }
+
+        try
+        {
+            var image = _exporter.Render(Document);
+            var options = ImageSaveOptions.FromSettings(_settings.Current, format.Value);
+            await _codec.SaveAsync(image, Document.DpiX, Document.DpiY, path, options);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or NotSupportedException or System.Runtime.InteropServices.COMException or InvalidOperationException)
+        {
+            _logger.LogError(ex, "Speichern nach {Path} fehlgeschlagen", path);
+            _dialogs.ShowError(Strings.Error_Title, string.Format(CultureInfo.CurrentUICulture, Strings.Error_SaveFailed, ex.Message));
+            return false;
+        }
+
+        Document.SourcePath = path;
+        Document.MarkSaved();
+        _settings.Current = _settings.Current with { LastSaveDirectory = Path.GetDirectoryName(path) ?? string.Empty, LastSaveFormat = format.Value };
+        _ = _settings.SaveAsync();
+        OnPropertyChanged(nameof(WindowTitle));
+        _logger.LogInformation("Bild gespeichert: {Path}", path);
+        return true;
+    }
+
+    private static string SuggestName(AppSettings settings, ImageFormatSetting format)
+    {
+        var context = new FileNameContext(DateTimeOffset.Now, Strings.Editor_FileNameMode);
+        var name = FileNamePattern.Render(settings.FileNamePattern, context);
+        return name + ImageFormats.Extensions(format)[0];
+    }
+
+    /// <summary>Wird beim Schließen des Fensters gefragt; <c>true</c> = Fenster darf schließen.</summary>
+    public async Task<bool> ConfirmCloseAsync()
+    {
+        if (!Document.IsDirty)
+        {
+            return true;
+        }
+
+        var name = string.IsNullOrEmpty(Document.SourcePath) ? Strings.Editor_Untitled : Path.GetFileName(Document.SourcePath);
+        return _dialogs.AskSaveChanges(Strings.Editor_UnsavedTitle, string.Format(CultureInfo.CurrentUICulture, Strings.Editor_UnsavedMessage, name)) switch
+        {
+            SaveChangesAnswer.Save => await TrySaveAsync(forceDialog: false),
+            SaveChangesAnswer.Discard => true,
+            _ => false,
+        };
+    }
+
+    [RelayCommand]
+    private Task NewCaptureAsync(CaptureMode mode) => _capture.StartAsync(new CaptureRequest(mode, TimeSpan.Zero));
+
+    [RelayCommand]
+    private void NewFromClipboard() => _editors.OpenFromClipboard();
+
+    [RelayCommand]
+    private void DismissInfo() => InfoMessage = null;
+
+    // ---- Zwischenablage ----
+
+    /// <summary><c>Strg+C</c>: mit Auswahl die Objekte, sonst das Bild.</summary>
+    [RelayCommand]
     private void Copy()
+    {
+        if (HasSelection)
+        {
+            CopyObjects();
+        }
+        else
+        {
+            CopyImage();
+        }
+    }
+
+    [RelayCommand]
+    private void CopyImage() => RunClipboard(() => _clipboard.SetImage(_exporter.Render(Document)));
+
+    private void CopyObjects()
+    {
+        var items = Context.Selection.Items.ToList();
+        RunClipboard(() => _clipboard.SetAnnotations(items, _exporter.RenderObjects(items)));
+        _pasteCount = 0;
+        _lastPasted = null;
+    }
+
+    [RelayCommand]
+    private void Cut()
+    {
+        if (!HasSelection)
+        {
+            return;
+        }
+
+        CopyObjects();
+        DeleteSelection();
+    }
+
+    [RelayCommand]
+    private void Paste()
+    {
+        var annotations = _clipboard.GetAnnotations();
+        if (annotations.Count > 0)
+        {
+            PasteObjects(annotations);
+            return;
+        }
+
+        _editors.OpenFromClipboard();
+    }
+
+    private void PasteObjects(IReadOnlyList<Annotation> annotations)
+    {
+        var key = AnnotationSerializer.Serialize(annotations);
+        _pasteCount = key == _lastPasted ? _pasteCount + 1 : 1;
+        _lastPasted = key;
+        var offset = new VectorD(PasteOffset * _pasteCount, PasteOffset * _pasteCount);
+        InsertCopies(annotations, offset, Strings.Editor_PasteObjects);
+    }
+
+    private void InsertCopies(IEnumerable<Annotation> originals, VectorD offset, string description)
+    {
+        var copies = originals.Select(a => a.Clone()).ToList();
+        if (copies.Count == 0)
+        {
+            return;
+        }
+
+        using (Context.Undo.BeginTransaction(description))
+        {
+            foreach (var copy in copies)
+            {
+                copy.Translate(offset);
+                Context.Undo.Execute(new AddAnnotationAction(Document.Annotations, copy));
+            }
+        }
+
+        Context.Selection.Set(copies);
+        if (!ReferenceEquals(ActiveTool, Tools.Get<SelectTool>()))
+        {
+            ActivateToolById(SelectTool.ToolId);
+            Context.Selection.Set(copies);
+        }
+    }
+
+    private void RunClipboard(Action action)
     {
         try
         {
-            _clipboard.SetImage(Document.BaseImage);
+            action();
         }
         catch (System.Runtime.InteropServices.COMException ex)
         {
             _logger.LogError(ex, "Kopieren in die Zwischenablage fehlgeschlagen");
             _dialogs.ShowError(Strings.Error_Title, string.Format(CultureInfo.CurrentUICulture, Strings.Error_CopyFailed, ex.Message));
+        }
+    }
+
+    /// <summary>Daten für „Bild aus dem Editor ziehen“: temporäre PNG-Datei plus Bild.</summary>
+    public (string TempFile, PixelBuffer Image)? CreateDragPayload()
+    {
+        try
+        {
+            var image = _exporter.Render(Document);
+            var directory = Path.Combine(Path.GetTempPath(), "GodSaveTheScreen");
+            Directory.CreateDirectory(directory);
+            var name = string.IsNullOrEmpty(Document.SourcePath)
+                ? $"Screenshot {DateTime.Now:yyyy-MM-dd HH-mm-ss}.png"
+                : Path.ChangeExtension(Path.GetFileName(Document.SourcePath), ".png");
+            var file = Path.Combine(directory, name);
+            File.WriteAllBytes(file, _codec.Encode(image, Document.DpiX, Document.DpiY, new ImageSaveOptions(ImageFormatSetting.Png)));
+            return (file, image);
+        }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+        {
+            _logger.LogError(ex, "Temporäre Datei für Drag & Drop konnte nicht erstellt werden");
+            return null;
+        }
+    }
+
+    // ---- Bearbeiten ----
+
+    [RelayCommand(CanExecute = nameof(CanUndo))]
+    private void Undo() => Context.Undo.Undo();
+
+    [RelayCommand(CanExecute = nameof(CanRedo))]
+    private void Redo() => Context.Undo.Redo();
+
+    [RelayCommand]
+    private void DeleteSelection() => Tools.Get<SelectTool>().DeleteSelection();
+
+    [RelayCommand]
+    private void SelectAll() => Context.Selection.Set(Document.Annotations.Where(a => a.IsVisible));
+
+    [RelayCommand]
+    private void Duplicate()
+    {
+        if (HasSelection)
+        {
+            InsertCopies(Context.Selection.Items.OrderBy(a => Document.Annotations.IndexOf(a)).ToList(), new VectorD(PasteOffset, PasteOffset), Strings.Editor_Duplicate);
+        }
+    }
+
+    [RelayCommand]
+    private void ToggleLockSelection()
+    {
+        var items = Context.Selection.Items.ToList();
+        if (items.Count == 0)
+        {
+            return;
+        }
+
+        var lockAll = items.Any(a => !a.IsLocked);
+        using (Context.Undo.BeginTransaction(Strings.Editor_Lock))
+        {
+            foreach (var item in items.Where(a => a.IsLocked != lockAll))
+            {
+                var annotation = item;
+                Context.Undo.Execute(new PropertyChangeAction<bool>(annotation, nameof(Annotation.IsLocked), annotation.IsLocked, lockAll, v => annotation.IsLocked = v, Strings.Editor_Lock));
+            }
+        }
+    }
+
+    [RelayCommand]
+    private void BringToFront() => Reorder(OrderOperation.ToFront);
+
+    [RelayCommand]
+    private void BringForward() => Reorder(OrderOperation.Forward);
+
+    [RelayCommand]
+    private void SendBackward() => Reorder(OrderOperation.Backward);
+
+    [RelayCommand]
+    private void SendToBack() => Reorder(OrderOperation.ToBack);
+
+    private void Reorder(OrderOperation operation)
+    {
+        if (!HasSelection)
+        {
+            return;
+        }
+
+        var action = new ReorderAction(Document.Annotations, ZOrder.Apply([.. Document.Annotations], Context.Selection.Items, operation));
+        if (!action.IsNoOp)
+        {
+            Context.Undo.Execute(action);
+        }
+    }
+
+    // ---- Zustand ----
+
+    /// <summary>Wählt das oberste Objekt unter dem Punkt (für das Kontextmenü); leer → Auswahl aufheben.</summary>
+    public void SelectAt(PointD point)
+    {
+        var hit = Context.HitTest(point);
+        if (hit is null)
+        {
+            Context.Selection.Clear();
+        }
+        else if (!Context.Selection.Contains(hit))
+        {
+            Context.Selection.Set(hit);
+        }
+    }
+
+    private void OnDocumentChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(ImageDocument.IsDirty) or nameof(ImageDocument.SourcePath))
+        {
+            OnPropertyChanged(nameof(WindowTitle));
+        }
+    }
+
+    private void OnUndoChanged(object? sender, EventArgs e)
+    {
+        OnPropertyChanged(nameof(PanelHeader));
+        OnPropertyChanged(nameof(HasPanelContent));
+        OnPropertyChanged(nameof(CanUndo));
+        OnPropertyChanged(nameof(CanRedo));
+        UndoCommand.NotifyCanExecuteChanged();
+        RedoCommand.NotifyCanExecuteChanged();
+        Context.InvalidateInteraction();
+    }
+
+    private void OnSelectionChanged(object? sender, EventArgs e)
+    {
+        OnPropertyChanged(nameof(PanelHeader));
+        OnPropertyChanged(nameof(HasPanelContent));
+        OnPropertyChanged(nameof(HasSelection));
+        Context.InvalidateInteraction();
+    }
+
+    public void Dispose()
+    {
+        ActiveTool.Deactivate();
+        Document.PropertyChanged -= OnDocumentChanged;
+        Context.Undo.Changed -= OnUndoChanged;
+        Context.Selection.Changed -= OnSelectionChanged;
+        Properties.Dispose();
+        TextProperties.Dispose();
+        MarkerProperties.Dispose();
+        Layers.Dispose();
+        Context.Dispose();
+    }
+}
+
+public enum OrderOperation
+{
+    ToFront,
+    Forward,
+    Backward,
+    ToBack,
+}
+
+/// <summary>Z-Reihenfolge: Listenende = vorne.</summary>
+public static class ZOrder
+{
+    public static List<Annotation> Apply(List<Annotation> order, IEnumerable<Annotation> selection, OrderOperation operation)
+    {
+        var selected = selection.ToHashSet();
+        var result = new List<Annotation>(order);
+        switch (operation)
+        {
+            case OrderOperation.ToFront:
+                return [.. result.Where(a => !selected.Contains(a)), .. result.Where(selected.Contains)];
+            case OrderOperation.ToBack:
+                return [.. result.Where(selected.Contains), .. result.Where(a => !selected.Contains(a))];
+            case OrderOperation.Forward:
+                for (var i = result.Count - 2; i >= 0; i--)
+                {
+                    if (selected.Contains(result[i]) && !selected.Contains(result[i + 1]))
+                    {
+                        (result[i], result[i + 1]) = (result[i + 1], result[i]);
+                    }
+                }
+
+                return result;
+            default:
+                for (var i = 1; i < result.Count; i++)
+                {
+                    if (selected.Contains(result[i]) && !selected.Contains(result[i - 1]))
+                    {
+                        (result[i], result[i - 1]) = (result[i - 1], result[i]);
+                    }
+                }
+
+                return result;
         }
     }
 }

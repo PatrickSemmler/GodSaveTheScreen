@@ -4,18 +4,23 @@
                  xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
                  xmlns:l="clr-namespace:GodSaveTheScreen.App.Localization"
                  Title="{l:Loc Start_Title}"
-                 Width="560"
+                 Width="760"
                  SizeToContent="Height"
                  ResizeMode="CanMinimize"
                  WindowStartupLocation="CenterScreen"
                  ExtendsContentIntoTitleBar="True"
-                 WindowBackdropType="Mica">
+                 WindowBackdropType="Mica"
+                 AllowDrop="True"
+                 DragOver="OnDragOver"
+                 Drop="OnDrop"
+                 PreviewKeyDown="OnPreviewKeyDown">
   <StackPanel>
     <ui:TitleBar Title="{l:Loc Start_Title}" />
     <Grid Margin="16,8,16,8">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
@@ -36,8 +41,13 @@
                  Margin="8,0,0,0"
                  Icon="{ui:SymbolIcon FolderOpen24}"
                  Content="{l:Loc Start_Open}"
-                 IsEnabled="False" />
+                 Command="{Binding OpenCommand}" />
       <ui:Button Grid.Column="3"
+                 Margin="8,0,0,0"
+                 Icon="{ui:SymbolIcon ClipboardPaste24}"
+                 Content="{l:Loc Start_FromClipboard}"
+                 Command="{Binding OpenFromClipboardCommand}" />
+      <ui:Button Grid.Column="4"
                  Margin="8,0,0,0"
                  Icon="{ui:SymbolIcon Settings24}"
                  Content="{l:Loc Start_Settings}"

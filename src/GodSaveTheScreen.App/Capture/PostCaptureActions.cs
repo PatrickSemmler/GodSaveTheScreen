@@ -1,6 +1,5 @@
 using System.IO;
 using GodSaveTheScreen.App.Services;
-using GodSaveTheScreen.App.Views;
 using GodSaveTheScreen.Core.Naming;
 using GodSaveTheScreen.Core.Services;
 using GodSaveTheScreen.Core.Settings;
@@ -77,15 +76,13 @@ public sealed class AutoSaveAction : IPostCaptureAction
 /// <summary>Öffnet den Editor (immer, letzte Aktion der Kette).</summary>
 public sealed class OpenEditorAction : IPostCaptureAction
 {
-    private readonly IWindowFactory _windows;
+    private readonly IEditorService _editors;
 
-    public OpenEditorAction(IWindowFactory windows) => _windows = windows;
+    public OpenEditorAction(IEditorService editors) => _editors = editors;
 
     public Task ExecuteAsync(CaptureResultContext context)
     {
-        var editor = _windows.Create<EditorWindow>(context.Document);
-        editor.Show();
-        editor.Activate();
+        _editors.Open(context.Document);
         return Task.CompletedTask;
     }
 }

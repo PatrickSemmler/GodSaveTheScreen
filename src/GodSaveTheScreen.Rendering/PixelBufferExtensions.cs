@@ -45,32 +45,12 @@ public static class PixelBufferExtensions
     }
 
     /// <summary>
-    /// Kodiert im gewählten Format. JPEG/BMP kennen keine Transparenz: transparente Bereiche
-    /// werden mit <paramref name="background"/> (BGR, Standard Weiß) gefüllt.
+    /// Kodiert im gewählten Format. Formate ohne Alpha (JPEG, BMP, GIF) verrechnen Transparenz auf Weiß.
     /// </summary>
-    public static byte[] Encode(this PixelBuffer buffer, ImageFormatSetting format, double dpiX = 96, double dpiY = 96, int jpegQuality = 92)
-    {
-        ArgumentNullException.ThrowIfNull(buffer);
-        if (format == ImageFormatSetting.Png)
-        {
-            return buffer.EncodePng(dpiX, dpiY);
-        }
+    public static byte[] Encode(this PixelBuffer buffer, ImageFormatSetting format, double dpiX = 96, double dpiY = 96, int jpegQuality = 92) =>
+        new ImageCodecService().Encode(buffer, dpiX, dpiY, new ImageSaveOptions(format, jpegQuality));
 
-        BitmapEncoder encoder = format == ImageFormatSetting.Jpeg
-            ? new JpegBitmapEncoder { QualityLevel = jpegQuality }
-            : new BmpBitmapEncoder();
-        encoder.Frames.Add(BitmapFrame.Create(buffer.FlattenOnBackground(0xFF, 0xFF, 0xFF).ToBitmapSource(dpiX, dpiY)));
-        using var stream = new MemoryStream();
-        encoder.Save(stream);
-        return stream.ToArray();
-    }
-
-    public static string FileExtension(this ImageFormatSetting format) => format switch
-    {
-        ImageFormatSetting.Jpeg => ".jpg",
-        ImageFormatSetting.Bmp => ".bmp",
-        _ => ".png",
-    };
+    public static string FileExtension(this ImageFormatSetting format) => ImageFormats.Extensions(format)[0];
 
     /// <summary>Kopie, bei der Transparenz über der Hintergrundfarbe zu undurchsichtigen Pixeln verrechnet ist.</summary>
     public static PixelBuffer FlattenOnBackground(this PixelBuffer buffer, byte red, byte green, byte blue)

@@ -30,48 +30,48 @@ Das Herzstück des Editors: ein nicht-destruktives Objektmodell, in dem Formen (
 ## Aufgaben
 
 ### 1. Datenmodell (Core)
-- [ ] `ArgbColor` (readonly record struct, `A,R,G,B`, Hex-Parsing/-Formatierung `#AARRGGBB`)
-- [ ] `StrokeStyle` (Color, Thickness, DashStyle: Solid/Dash/Dot/DashDot, LineJoin, LineCap)
-- [ ] `Annotation` (abstrakt, `ObservableObject`): `Id`, `Opacity`, `IsVisible`, `IsLocked`, `Name`, abstrakt `RectD Bounds`, `Annotation Clone()`, `void Translate(VectorD)`, `HitTest(PointD, tolerance)`
-- [ ] `ShapeAnnotation`: `Stroke`, `Fill` (`ArgbColor`, Alpha 0 = keine Füllung)
-- [ ] `BoxAnnotation : ShapeAnnotation` (`Rect`) → `RectangleAnnotation` (`CornerRadius`), `EllipseAnnotation`, `TriangleAnnotation` (`TriangleKind`: Isosceles, Right, + `IsFlipped`)
-- [ ] `LineAnnotation : ShapeAnnotation` (`Start`, `End`, `StartCap`/`EndCap`: None, Arrow, OpenArrow, Circle, Square; `CapSize`-Faktor)
-- [ ] `PolygonAnnotation : ShapeAnnotation` (`Points`, `IsClosed`)
-- [ ] Geometrie-Hilfen: Hit-Test für Linien (Abstand zum Segment), Ellipse (normierte Gleichung), Polygon (Even-Odd), Füllung vs. nur Rand
+- [x] `ArgbColor` (readonly record struct, `A,R,G,B`, Hex-Parsing/-Formatierung `#AARRGGBB`)
+- [x] `StrokeStyle` (Color, Thickness, DashStyle: Solid/Dash/Dot/DashDot, LineJoin, LineCap)
+- [x] `Annotation` (abstrakt, `ObservableObject`): `Id`, `Opacity`, `IsVisible`, `IsLocked`, `Name`, abstrakt `RectD Bounds`, `Annotation Clone()`, `void Translate(VectorD)`, `HitTest(PointD, tolerance)`
+- [x] `ShapeAnnotation`: `Stroke`, `Fill` (`ArgbColor`, Alpha 0 = keine Füllung)
+- [x] `BoxAnnotation : ShapeAnnotation` (`Rect`) → `RectangleAnnotation` (`CornerRadius`), `EllipseAnnotation`, `TriangleAnnotation` (`TriangleKind`: Isosceles, Right, + `IsFlipped`)
+- [x] `LineAnnotation : ShapeAnnotation` (`Start`, `End`, `StartCap`/`EndCap`: None, Arrow, OpenArrow, Circle, Square; `CapSize`-Faktor)
+- [x] `PolygonAnnotation : ShapeAnnotation` (`Points`, `IsClosed`)
+- [x] Geometrie-Hilfen: Hit-Test für Linien (Abstand zum Segment), Ellipse (normierte Gleichung), Polygon (Even-Odd), Füllung vs. nur Rand
 
 ### 2. Undo/Redo (Core)
-- [ ] `IUndoableAction { string Description; void Do(); void Undo(); bool TryMerge(IUndoableAction next); }`
-- [ ] Standardaktionen: `AddAnnotationAction`, `RemoveAnnotationsAction`, `PropertyChangeAction<T>` (Ziel, Getter/Setter, alt/neu), `MoveAnnotationsAction`, `ReorderAction`, `ReplaceGeometryAction`
-- [ ] `UndoManager`: `Execute(action)`, `Undo()`, `Redo()`, `CanUndo/CanRedo`, `BeginTransaction(description)` → `IDisposable` (fasst Ziehvorgänge zusammen), Limit (Standard 200), Ereignis `Changed`, Kopplung an `IsDirty` (Save-Point-Marker)
-- [ ] **Invariante:** Annotationen werden nach dem Hinzufügen ausschließlich über den `UndoManager` geändert
+- [x] `IUndoableAction { string Description; void Do(); void Undo(); bool TryMerge(IUndoableAction next); }`
+- [x] Standardaktionen: `AddAnnotationAction`, `RemoveAnnotationsAction`, `PropertyChangeAction<T>` (Ziel, Getter/Setter, alt/neu), `MoveAnnotationsAction`, `ReorderAction`, `ReplaceGeometryAction`
+- [x] `UndoManager`: `Execute(action)`, `Undo()`, `Redo()`, `CanUndo/CanRedo`, `BeginTransaction(description)` → `IDisposable` (fasst Ziehvorgänge zusammen), Limit (Standard 200), Ereignis `Changed`, Kopplung an `IsDirty` (Save-Point-Marker)
+- [x] **Invariante:** Annotationen werden nach dem Hinzufügen ausschließlich über den `UndoManager` geändert
 
 ### 3. Rendering
-- [ ] `AnnotationRenderer.Render(DrawingContext dc, Annotation a, RenderContext ctx)` mit `switch` über Typ; `ctx` enthält Basisbild-Zugriff (für M8) und Zoom (nur für UI-Hilfslinien)
-- [ ] `BrushCache`/`PenCache`: eingefrorene `SolidColorBrush`/`Pen` je Stil
-- [ ] Pfeilspitzen als gefüllte Geometrie; Linie endet an der Spitzenbasis (kein Überstand bei dicken Linien)
-- [ ] `AnnotationElement : FrameworkElement` – `OnRender` ruft Renderer; `InvalidateVisual` bei `PropertyChanged`; Position über `Canvas.Left/Top` = `Bounds` (inkl. Stroke-Überstand)
-- [ ] `AnnotationLayer` bindet `Document.Annotations`
-- [ ] `DocumentExporter.Render` zeichnet Basisbild + alle sichtbaren Annotationen in Reihenfolge in ein `DrawingVisual` → `RenderTargetBitmap(w, h, 96, 96, Pbgra32)` → DPI-Metadaten setzen
+- [x] `AnnotationRenderer.Render(DrawingContext dc, Annotation a, RenderContext ctx)` mit `switch` über Typ; `ctx` enthält Basisbild-Zugriff (für M8) und Zoom (nur für UI-Hilfslinien)
+- [x] `BrushCache`/`PenCache`: eingefrorene `SolidColorBrush`/`Pen` je Stil
+- [x] Pfeilspitzen als gefüllte Geometrie; Linie endet an der Spitzenbasis (kein Überstand bei dicken Linien)
+- [x] `AnnotationElement : FrameworkElement` – `OnRender` ruft Renderer; `InvalidateVisual` bei `PropertyChanged`; Position über `Canvas.Left/Top` = `Bounds` (inkl. Stroke-Überstand)
+- [x] `AnnotationLayer` bindet `Document.Annotations`
+- [x] `DocumentExporter.Render` zeichnet Basisbild + alle sichtbaren Annotationen in Reihenfolge in ein `DrawingVisual` → `RenderTargetBitmap(w, h, 96, 96, Pbgra32)` → DPI-Metadaten setzen
 
 ### 4. Werkzeuge (App)
-- [ ] `SelectTool`: Hit-Test von oben nach unten; Rahmenauswahl (ganz enthalten); Verschieben mit Transaktion; Pfeiltasten-Nudge; `Entf`; Doppelklick → Bearbeitungsmodus (Polygonpunkte, ab M6 Text)
-- [ ] `SelectionAdorner` im `InteractionLayer`: 8 Griffe für Box-Formen, 2 Endpunkt-Griffe für Linien, Punkt-Griffe für Polygone; Griffgröße zoom-unabhängig; Gruppen-Bounding-Box bei Mehrfachauswahl (proportionales Skalieren)
-- [ ] `ShapeToolBase<T>` mit Vorschau während des Ziehens; `RectangleTool`, `EllipseTool`, `LineTool`, `ArrowTool` (Linie mit `EndCap=Arrow`), `TriangleTool`, `PolygonTool` (Klick je Punkt, Doppelklick/`Enter` schließt, `Esc` bricht ab)
-- [ ] Nach dem Zeichnen: Werkzeug bleibt aktiv (Einstellung: „Nach dem Zeichnen zur Auswahl wechseln“)
-- [ ] Neues Objekt wird ausgewählt; Klick auf vorhandenes Objekt mit Formwerkzeug + `Strg` wählt aus
+- [x] `SelectTool`: Hit-Test von oben nach unten; Rahmenauswahl (ganz enthalten); Verschieben mit Transaktion; Pfeiltasten-Nudge; `Entf`; Doppelklick → Bearbeitungsmodus (Polygonpunkte, ab M6 Text)
+- [x] `SelectionAdorner` im `InteractionLayer`: 8 Griffe für Box-Formen, 2 Endpunkt-Griffe für Linien, Punkt-Griffe für Polygone; Griffgröße zoom-unabhängig; Gruppen-Bounding-Box bei Mehrfachauswahl (proportionales Skalieren)
+- [x] `ShapeToolBase<T>` mit Vorschau während des Ziehens; `RectangleTool`, `EllipseTool`, `LineTool`, `ArrowTool` (Linie mit `EndCap=Arrow`), `TriangleTool`, `PolygonTool` (Klick je Punkt, Doppelklick/`Enter` schließt, `Esc` bricht ab)
+- [x] Nach dem Zeichnen: Werkzeug bleibt aktiv (Einstellung: „Nach dem Zeichnen zur Auswahl wechseln“)
+- [x] Neues Objekt wird ausgewählt; Klick auf vorhandenes Objekt mit Formwerkzeug + `Strg` wählt aus
 
 ### 5. Eigenschaften & Farben
-- [ ] `SelectionPropertiesViewModel`: zeigt gemeinsame Eigenschaften der Auswahl (gemischte Werte = leer), Änderungen → `PropertyChangeAction` je Objekt in einer Transaktion
-- [ ] Ohne Auswahl bearbeitet das Panel die **Werkzeug-Standardwerte** (`ToolDefaults` in den Einstellungen)
-- [ ] `ColorButton`-Control: Popup mit `PixiEditor.ColorPicker` (`StandardColorPicker` inkl. Alpha), Palette mit 16 Standardfarben, 10 zuletzt verwendete Farben, Hex-Eingabe, „Keine“ (Alpha 0)
-- [ ] Pipette: aktiviert temporäres Werkzeug, Klick ins Bild übernimmt Pixel des **gerenderten** Bilds
-- [ ] Schieberegler + `NumberBox` für Linienstärke (0,5–100 px) und Deckkraft (0–100 %)
+- [x] `SelectionPropertiesViewModel`: zeigt gemeinsame Eigenschaften der Auswahl (gemischte Werte = leer), Änderungen → `PropertyChangeAction` je Objekt in einer Transaktion
+- [x] Ohne Auswahl bearbeitet das Panel die **Werkzeug-Standardwerte** (`ToolDefaults` in den Einstellungen)
+- [x] `ColorButton`-Control: Popup mit `PixiEditor.ColorPicker` (`StandardColorPicker` inkl. Alpha), Palette mit 16 Standardfarben, 10 zuletzt verwendete Farben, Hex-Eingabe, „Keine“ (Alpha 0)
+- [x] Pipette: aktiviert temporäres Werkzeug, Klick ins Bild übernimmt Pixel des **gerenderten** Bilds
+- [x] Schieberegler + `NumberBox` für Linienstärke (0,5–100 px) und Deckkraft (0–100 %)
 
 ### 6. Ebenen & Zwischenablage
-- [ ] Befehle „Nach vorne/hinten“ (Kontextmenü, `Strg+Umschalt+]`/`[`, `Strg+]`/`[`)
-- [ ] `LayersPanel` (Tab im Eigenschaftenbereich): Liste in umgekehrter Reihenfolge, Drag & Drop zum Umsortieren, Augen-/Schloss-Symbol, Umbenennen
-- [ ] Objekt-Zwischenablage: eigenes Format `GodSaveTheScreen.Annotations` (JSON aus M10-Serializer – bis M10 vorläufig derselbe `System.Text.Json`-Kontext) + gerendertes PNG der Auswahl als Fallback; Einfügen versetzt um +10 px
-- [ ] Kontextmenü auf Objekten: Ausschneiden, Kopieren, Einfügen, Duplizieren, Löschen, Reihenfolge, Sperren
+- [x] Befehle „Nach vorne/hinten“ (Kontextmenü, `Strg+Umschalt+]`/`[`, `Strg+]`/`[`)
+- [x] `LayersPanel` (Tab im Eigenschaftenbereich): Liste in umgekehrter Reihenfolge, Drag & Drop zum Umsortieren, Augen-/Schloss-Symbol, Umbenennen
+- [x] Objekt-Zwischenablage: eigenes Format `GodSaveTheScreen.Annotations` (JSON aus M10-Serializer – bis M10 vorläufig derselbe `System.Text.Json`-Kontext) + gerendertes PNG der Auswahl als Fallback; Einfügen versetzt um +10 px
+- [x] Kontextmenü auf Objekten: Ausschneiden, Kopieren, Einfügen, Duplizieren, Löschen, Reihenfolge, Sperren
 
 ## Technische Details
 
@@ -87,9 +87,18 @@ Das Herzstück des Editors: ein nicht-destruktives Objektmodell, in dem Formen (
 
 ## Abnahmekriterien
 
-- [ ] Alle Formtypen lassen sich zeichnen, auswählen, verschieben, skalieren und nachträglich in Farbe/Stärke/Transparenz ändern
-- [ ] Halbtransparente Füllung zeigt das Bild darunter
-- [ ] 30 gemischte Änderungen lassen sich vollständig rückgängig machen und wiederherstellen
-- [ ] Z-Reihenfolge sichtbar korrekt, Ebenenliste synchron
+- [x] Alle Formtypen lassen sich zeichnen, auswählen, verschieben, skalieren und nachträglich in Farbe/Stärke/Transparenz ändern
+- [x] Halbtransparente Füllung zeigt das Bild darunter
+- [x] 30 gemischte Änderungen lassen sich vollständig rückgängig machen und wiederherstellen
+- [x] Z-Reihenfolge sichtbar korrekt, Ebenenliste synchron
 - [ ] Gespeicherte Datei / Zwischenablage zeigen exakt die Bildschirmdarstellung bei 100 %
 - [ ] Objekte lassen sich zwischen zwei Editorfenstern kopieren
+
+## Umsetzungsstand und Abweichungen
+
+- Die abgehakten Abnahmepunkte sind durch automatisierte Tests abgedeckt. **Manuell zu prüfen:** Vergleich Bildschirm ↔ Datei bei 100 % und das Kopieren von Objekten zwischen zwei Fenstern über die echte Zwischenablage.
+- Anzeige und Export nutzen denselben `AnnotationRenderer`. Jedes Objekt wird in der Anzeige als bildgroßes `AnnotationElement` gezeichnet (kein `Canvas.Left/Top` je Objekt); Überstand außerhalb des Bilds wird wie im Export abgeschnitten.
+- Änderungen an Objekten laufen als `ReplaceGeometryAction` (vorher-/nachher-Kopien über `Annotation.CopyFrom`), Eigenschaften als `PropertyChangeAction` mit zeitlich begrenztem Zusammenfassen; mehrere Ziele werden eine Transaktion.
+- Doppelklick auf ein Polygon fügt einen Eckpunkt auf der nächsten Kante ein; Eckpunkt-Griffe sind bei einzeln gewähltem Polygon immer sichtbar (kein eigener Bearbeitungsmodus).
+- Standardwerte der Formwerkzeuge (`ShapeDefaults`) und zuletzt verwendete Farben liegen in den Einstellungen; Linienverbindung/-enden (`LineJoin`, `Cap`) sind im Modell, aber noch nicht im Panel einstellbar.
+- Dreieck- und Polygon-Symbol sind eigene Pfade (`ToolBase.IconPath`), weil die entsprechenden Zeichen der Symbolschrift in WPF-UI nicht korrekt dargestellt werden.

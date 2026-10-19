@@ -1,7 +1,7 @@
 # GodSaveTheScreen – Agent Architecture
-Verified against working tree after M0–M3 (M2/M3 uncommitted) on 2026-10-19
-- STATUS: M0–M3 umgesetzt (Rest ist Soll-Architektur aus `docs/Umsetzungsplan.md`). Nach Commit Kopfzeile auf Commit-Hash setzen.
-- Ist-Stand M0–M3: `Core` (Settings inkl. Hotkeys/Nachaufnahme, `CaptureMode`, Geometrie, `PixelBuffer`, `PolygonMask`/`CornerMask`, `HotkeyGesture`, `FileNamePattern`, `ImageDocument`, `IDialogService`/`IClipboardService`), `Capture` (`MonitorService`, `WindowEnumerator`, `WindowContentCapture`, `WindowHitTest`, `ScreenCaptureService`, `ScreenSnapshot` mit Fensterliste), `Rendering` (`PixelBufferExtensions` inkl. JPEG/BMP), `App` (`Hosting/`, `Services/` = Tray, Hotkeys, Autostart, Shell, Fensterausschluss, `Capture/` = Koordinator, Overlay, Countdown, Nachaufnahme-Aktionen, `Controls/HotkeyRecorder`, `Views/` + `Views/Settings/`, `ViewModels/`, `Localization/`, `Resources/`)
+Verified against working tree on top of commit d45b2ec (M4–M6 uncommitted) on 2026-10-19
+- STATUS: M0–M6 umgesetzt (Rest ist Soll-Architektur aus `docs/Umsetzungsplan.md`). Nach Commit Kopfzeile auf Commit-Hash setzen.
+- Ist-Stand: `Core` (Settings inkl. `ShapeDefaultsMap`/`TextStyle`/`MarkerStyle`, Geometrie, `PixelBuffer`, `ImageDocument` mit `Annotations` + `Undo`, `Annotations/` = Modell + `AnnotationSerializer`, `Undo/`, `IImageCodecService`/`IDocumentExporter`/`IDialogService`/`IClipboardService`), `Capture`, `Rendering` (`AnnotationRenderer`, `TextLayout`, `LineLayout`, `DocumentExporter`, `ImageCodecService`), `App` (`Hosting/`, `Services/`, `Capture/`, `Editor/` = Kontext/Werkzeuge/Schriften, `Controls/`, `Views/`, `ViewModels/`, `Localization/`, `Resources/`)
 
 ## Overview
 - Zweck: Screenshot-Tool (Tray + Hotkeys) mit nicht-destruktivem Annotations-Editor
@@ -13,70 +13,71 @@ Verified against working tree after M0–M3 (M2/M3 uncommitted) on 2026-10-19
 |---|---|---|
 | `src/GodSaveTheScreen.Core` | Dokumentmodell, Annotationen, Undo, Serialisierung, Settings, Service-Interfaces; `net10.0`, kein WPF/Win32 | – |
 | `src/GodSaveTheScreen.Capture` | Monitore, Fenster, Bildschirmabbild (CsWin32) | `Core` |
-| `src/GodSaveTheScreen.Rendering` | `AnnotationRenderer`, Effekte, Export, Codecs (WPF) | `Core` |
+| `src/GodSaveTheScreen.Rendering` | `AnnotationRenderer`, Textlayout, Export, Codecs (WPF) | `Core` |
 | `src/GodSaveTheScreen.App` | Views, ViewModels, Werkzeuge, Overlay, Tray, Hotkeys, DI-Root | `Core`, `Capture`, `Rendering` |
 | `tests/GodSaveTheScreen.Core.Tests` | Modell-/Undo-/Serializer-Tests | `Core` |
 | `tests/GodSaveTheScreen.App.Tests` | ViewModels, Werkzeuge, Rendering (`[StaFact]`) | alle `src` |
 - Verboten: `Core` -> WPF-Typen (`System.Windows.*`), `Capture` <-> `Rendering`, ViewModels -> Win32/P/Invoke direkt
 
 ## Entry Points
-- `src/GodSaveTheScreen.App/App.xaml.cs:OnStartup` – Single-Instance (Mutex+Pipe), Serilog, Host-Aufbau, Theme, StartWindow (Tray ab M3); `ShutdownMode=OnExplicitShutdown`
-- Datenfluss Aufnahme: Hotkey/Tray/Startfenster/Pipe -> `CaptureRequest(Mode, Delay)` -> `CaptureCoordinator` (Fenster ausblenden -> `ICountdownService` -> `IScreenCaptureService.CaptureVirtualScreen` inkl. Fensterliste -> `ISelectionService` (`SelectionOverlayWindow` je Monitor, `SelectionResult` = Rechteck/Fenster/Polygon) -> `PixelBuffer` (Crop / `PrintWindow` / `PolygonMask`) -> `ImageDocument`) -> `IPostCaptureAction`-Kette `CopyToClipboardAction` -> `AutoSaveAction` -> `OpenEditorAction` (Fehler einer Aktion stoppen die anderen nicht)
-- Datenfluss Bearbeiten: `ToolBase.OnPointer*` -> `IUndoableAction` -> `UndoManager.Execute` -> `Annotation` (ObservableObject) -> `AnnotationElement.OnRender` -> `AnnotationRenderer`
-- Datenfluss Export: `DocumentExporter.Render` -> `AnnotationRenderer` (gleicher Pfad wie Anzeige) -> `RenderTargetBitmap` -> `ImageCodecService` / `IClipboardService`
-- Hintergrundbetrieb: `TrayService` (`IHostedService`, H.NotifyIcon, zugleich `INotificationService`) + `HotkeyService` (`IHostedService`, NHotkey); `IAppShell` öffnet Start-/Einstellungsfenster und beendet die App; Einstellungen: `SettingsViewModel` (Sofortwirkung, speichert bei jeder Änderung) auf `NavigationView`-Seiten in `Views/Settings/`
-- Projektdatei: `ProjectSerializer` (ZIP: `manifest.json`, `document.json`, `base.png`, `preview.png`)
+- `src/GodSaveTheScreen.App/App.xaml.cs:OnStartup` – Single-Instance (Mutex+Pipe), Serilog, Host-Aufbau, Theme, StartWindow/Tray; `ShutdownMode=OnExplicitShutdown`
+- Datenfluss Aufnahme: Hotkey/Tray/Startfenster/Pipe -> `CaptureRequest` -> `CaptureCoordinator` (Fenster ausblenden -> Countdown -> `CaptureVirtualScreen` -> `ISelectionService` -> `PixelBuffer` -> `ImageDocument`) -> `IPostCaptureAction`-Kette `CopyToClipboardAction` -> `AutoSaveAction` -> `OpenEditorAction` (-> `IEditorService.Open`)
+- Editor öffnen: `IEditorService` (`EditorService`) erzeugt je Fenster `EditorContext` + `ToolRegistry.Create` + `EditorViewModel` + `EditorWindow` per `ActivatorUtilities`; Quellen: Aufnahme, Datei (`OpenFilesAsync`, auch Kommandozeile/Drop/Dialog), Zwischenablage
+- Datenfluss Bearbeiten: Maus -> `EditorCanvas` (Bildpixel) -> `ToolBase.OnPointer*` -> `IUndoableAction` -> `UndoManager.Execute` -> `Annotation` (ObservableObject) -> `AnnotationElement.OnRender` -> `AnnotationRenderer`
+- Textbearbeitung: Werkzeug/Doppelklick -> `EditorContext.BeginTextEdit` -> `TextBox` im `Overlay` von `EditorCanvas` -> `CommitTextEdit` (eine Undo-Aktion)
+- Datenfluss Export: `DocumentExporter.Render` -> `AnnotationRenderer` (gleicher Pfad wie Anzeige) -> `PixelBuffer` -> `IImageCodecService.SaveAsync` / `IClipboardService`; ohne sichtbare Objekte wird `BaseImage` selbst geliefert
+- Eigenschaften: `SelectionPropertiesViewModel` (Formen + Deckkraft), `TextPropertiesViewModel`, `MarkerPropertiesViewModel`; ohne Auswahl bearbeiten sie die Standardwerte des aktiven Werkzeugs (`IToolDefaultsService`)
+- Hintergrundbetrieb: `TrayService` + `HotkeyService` (`IHostedService`); `IAppShell` öffnet Start-/Einstellungsfenster und beendet die App
+- Projektdatei (ab M10): `ProjectSerializer` (ZIP: `manifest.json`, `document.json`, `base.png`, `preview.png`)
 
 ## Conventions
-- Koordinaten: Annotationen + `CropRect` immer in Bildpixeln des Basisbilds; Umrechnung nur in `CoordinateMapper` (Overlay) bzw. `EditorCanvas.ToImagePoint` (Editor)
-- Capture-Koordinaten: virtueller Desktop in physischen Pixeln (negativ möglich)
-- Annotation ändern nur via `UndoManager` (auch Eigenschaftenpanel); Ziehen = `BeginTransaction`
-- Ein Renderpfad: neue Annotation = Modellklasse (Core) + Zweig in `AnnotationRenderer` + `[JsonDerivedType]` mit kurzem stabilem Diskriminator + Roundtrip-Test
-- Core-Farben/Geometrie: eigene Structs (`ArgbColor`, `PointD`, `RectD`, `PixelRect`), nie WPF-Typen
+- Koordinaten: Annotationen immer in Bildpixeln des Basisbilds; Capture: virtueller Desktop in physischen Pixeln; Umrechnung im Editor nur über `EditorCanvas.ToImagePoint` (Surface-Grid hat Bildpixelgröße, Zoom per `LayoutTransform`)
+- `EditorContext.Scale` = DIPs je Bildpixel; Griffe/Toleranzen über `ToImageUnits`/`HitTolerance` zoom-unabhängig
+- Annotation ändern nur via `UndoManager` (Panel, Werkzeuge, Ebenenliste); Ziehen = vorher-/nachher-Klone + `ReplaceGeometryAction`; Eigenschaften = `PropertyChangeAction` (merged im 1,5-s-Fenster) in Transaktion
+- Neue Annotation = Modellklasse (Core, `Clone` läuft über `CopyFrom` per Reflection: nur öffentliche Properties mit Setter, `Id` ausgenommen) + Zweig in `AnnotationRenderer.Render` + `[JsonDerivedType]` mit kurzem stabilem Diskriminator in `Annotation` + Roundtrip-Test
+- Berechnete Core-Properties (`Bounds`, `HasFill` …) mit `[JsonIgnore]`; Listen im Modell als `ImmutableArray`, nie mutieren
+- Core-Farben/Geometrie: eigene Structs (`ArgbColor`, `PointD`, `RectD`, `PixelRect`), nie WPF-Typen; Schriftwerte als string/int
+- Text-Core braucht Messung: `TextAnnotation.MeasureProvider` setzt `TextLayout.Install()` (in `AddRendering`, `DocumentExporter`, `AnnotationRenderer`)
 - Pixel: `PixelBuffer` BGRA32, nicht vormultipliziert
-- MVVM: `[ObservableProperty]`/`[RelayCommand]`; Fenster via DI (`IWindowFactory`); je Editorfenster eigener `IServiceScope`
+- Neues Werkzeug = `ToolBase`-Ableitung (`Id`, `NameKey`, `Symbol`/`IconPath`, `ShortcutKey`) + Eintrag in `ToolRegistry.Create` + Strings `Tool_*`; `UsesShapeStyle` nur bei Formwerkzeugen (`ShapeStyle`), Text/Marker haben `TextStyle`/`MarkerStyle`
+- Tastenkürzel zentral in `EditorWindow.OnPreviewKeyDown` (ignoriert Eingabefelder); Werkzeuge bekommen Tasten über `ToolBase.OnKeyDown`
+- MVVM: `[ObservableProperty]`/`[RelayCommand]`; Fenster via DI (`IWindowFactory`, Editor via `IEditorService`)
 - UI-Texte nur über `Strings.resx` + `Strings.de.resx`, XAML `{l:Loc Key}`; beide Dateien im selben Commit
-- Paketversionen nur in `Directory.Packages.props`
-- `Strings.Designer.cs` wird von Hand/Skript synchron zu `Strings.resx` gehalten (kein VS-Generator im CLI-Build); Schlüssel-Test in `App.Tests` prüft DE/EN-Gleichheit
-- Analyzer streng (`TreatWarningsAsErrors`, `latest-recommended`); bewusst aus: CA1304/1305/1863/1873/1707/1848 (siehe `.editorconfig`)
-- Enum-Namen in Core mit Suffix `Setting` (`ThemeSetting`, `LogLevelSetting`) wegen WPF-Namenskollisionen
-- App läuft im Tray weiter, wenn alle Fenster geschlossen sind (`ShutdownMode=OnExplicitShutdown`); Beenden nur über `IAppShell.ExitApplication` (fragt bei ungespeicherten Editoren)
-- Alle Fenster über `IWindowFactory` erzeugen: registriert sie beim `IWindowExclusionService` (`WDA_EXCLUDEFROMCAPTURE`, Einstellung `ExcludeOwnWindows`)
-- Neue Nachaufnahme-Schritte = `IPostCaptureAction` in `AppServiceCollectionExtensions` in fester Reihenfolge registrieren; Aufnahme-UI nur hinter Interfaces (`ISelectionService`, `ICountdownService`, `IWindowVisibilityService`), damit `CaptureCoordinator` ohne WPF testbar bleibt
-- Neue Einstellung = Feld in `AppSettings` (Default!) + Eigenschaft in `SettingsViewModel` (`Update(...)`) + Seite in `Views/Settings/` + Strings DE/EN
-- Hotkeys als String (`Ctrl+Shift+S`, Key = WPF-`Key`-Name) in den Einstellungen; Parsen/Anzeigen nur über `HotkeyGesture`
-- `System.Windows.Input.CaptureMode` kollidiert mit `Core.Capture.CaptureMode`: in Dateien mit `using System.Windows.Input` Alias `using CaptureMode = GodSaveTheScreen.Core.Capture.CaptureMode;`
-- Tests: `<Klasse>Tests.cs`, Methoden `Methode_Fall_Erwartung`; WPF-Objekte nur in `[StaFact]`
+- `Strings.Designer.cs` von Hand/Skript synchron zu `Strings.resx`; Schlüssel-Test in `App.Tests` prüft DE/EN-Gleichheit
+- Neue Einstellung = Feld in `AppSettings` (Default!) + Eigenschaft im ViewModel + Strings DE/EN; Dictionary/Listen in `AppSettings` nur als `ShapeDefaultsMap`/`StringList` (Wertgleichheit für Record-Vergleich)
+- Paketversionen nur in `Directory.Packages.props`; Analyzer streng (`TreatWarningsAsErrors`); bewusst aus: CA1304/1305/1716/1863/1873/1707/1848 (siehe `.editorconfig`)
+- Enum-Namen in Core mit Suffix `Setting`/`Kind` bei WPF-Kollision (`ThemeSetting`, `FontStyleKind`); in Dateien mit `using System.Windows.Input` Alias für `CaptureMode`
+- Alle Fenster über `IWindowFactory` bzw. `EditorService` erzeugen (Registrierung beim `IWindowExclusionService`)
+- Neue Nachaufnahme-Schritte = `IPostCaptureAction` in `AppServiceCollectionExtensions` in fester Reihenfolge
+- Tests: `<Klasse>Tests.cs`, `Methode_Fall_Erwartung`; WPF-Objekte nur in `[StaFact]`; Editor-Tests über `EditorHarness` (`M4Tests.cs`)
 - Logging: `ILogger<T>`; keine `Debug.WriteLine`/`Console`
 
 ## Decisions
-- Freeze-Frame (Snapshot vor Overlay) – Menüs/Tooltips aufnehmbar, Overlay ohne Transparenz; nicht `Windows.Graphics.Capture` (WinRT-TFM)
-- Ein Overlay-Fenster je Monitor – WPF-Fenster über Monitore mit Misch-DPI skaliert falsch
-- Eigenes Strichmodell statt `InkCanvas` – einheitliches Objektmodell/Undo/Serialisierung/Lineal-Snapping
-- Unschärfe selbst auf `PixelBuffer` statt WPF `BlurEffect` – exportstabil, Verpixeln möglich; Quelle immer Basisbild
-- Modell-Objekte direkt `ObservableObject` – keine Wrapper-VM-Hierarchie
-- Speichern nur WPF-Encoder; Laden über WIC (installierte Codecs inkl. WebP/HEIC)
-- Projektformat ZIP+JSON mit `formatVersion` und Migrationen auf `JsonNode`
-- Shouldly statt FluentAssertions (Lizenz)
-- Lineal = UI-Zustand (`RulerViewModel`), nie im Dokument/Export
+- Freeze-Frame (Snapshot vor Overlay); ein Overlay-Fenster je Monitor (Misch-DPI)
+- Eigenes Strichmodell statt `InkCanvas`; Modell-Objekte direkt `ObservableObject` (keine Wrapper-VMs)
+- Anzeige: je Objekt ein bildgroßes `AnnotationElement` (Clip auf Bild = wie Export), `AnnotationLayer` baut bei Listenänderung neu auf
+- Interaktionsebene (`InteractionLayer`): Vorschau, Auswahl, Griffe, Aufziehrahmen; nie exportiert; Lineal (M7) wird `RulerViewModel`-Zustand
+- Unschärfe selbst auf `PixelBuffer` statt `BlurEffect` (M8); Speichern nur WPF-Encoder, Laden über WIC
+- Objekt-Zwischenablage: Format `GodSaveTheScreen.Annotations` (JSON) + PNG-Fallback
+- Shouldly statt FluentAssertions (Lizenz); Farbwahl `PixiEditor.ColorPicker` (`StandardColorPicker` im `ColorButton`-Popup)
+- Projektformat ZIP+JSON mit `formatVersion` (M10)
 
 ## Pitfalls
-- `Druck`-Hotkey kann von Windows 11 (Snipping Tool) belegt sein -> `RegisterHotKey` schlägt fehl; Fehler anzeigen, nicht crashen
-- CsWin32 gibt es in `Capture` und `App` (je eigene `NativeMethods.txt`, internal); `Capture` nutzt Delegate-/Pointer-Overloads ohne Marshaling
-- Overlay: bei `DpiChanged` Bounds erneut per `SetWindowPos` setzen (WPF skaliert sonst auf Vorschlagsgröße)
-- Overlay erst nach `SourceInitialized` per `SetWindowPos` (physische Pixel) positionieren
-- Eigene Fenster: `SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE)` (ab Build 19041, sonst nur Ausblenden); sonst landen sie im Snapshot
-- `CountdownWindow` darf nie den Fokus nehmen (`WS_EX_NOACTIVATE`, `ShowActivated=False`), sonst schließt sich ein offenes Fremd-Menü; Esc daher per `GetAsyncKeyState`
-- Tray-Symbol: H.NotifyIcon braucht `System.Drawing.Icon` (`TaskbarIcon.Icon`); ein PNG als `IconSource` wirft `ArgumentException`
-- Hotkeys müssen beim Aufnehmen im `HotkeyRecorder` pausieren (`IHotkeyService.SuspendHotkeys`), sonst löst die Kombination eine Aufnahme aus
-- `PrintWindow(PW_RENDERFULLCONTENT=2)`: Konstante fehlt in CsWin32-Enum (Cast); komplett schwarzes Ergebnis -> Fallback auf Snapshot
-- WPF-`Application` ist threadgebunden: Smoke-Tests mit echten Fenstern (`WindowSmokeTests`) laufen in einem einzigen `[StaFact]`
-- Zwischenablage: `COMException` bei Sperre -> Retry; immer `CF_DIB` + `"PNG"` setzen (Alpha)
-- GDI-Handles (`HDC`, `HBITMAP`) in `finally` freigeben
-- `RenderTargetBitmap` liefert `Pbgra32` (vormultipliziert) -> beim Konvertieren in `PixelBuffer` beachten
-- Text im Export: `PixelsPerDip=1`, `TextRenderingMode=Grayscale` (kein ClearType-Saum)
+- `Druck`-Hotkey kann von Windows 11 belegt sein -> Fehler anzeigen, nicht crashen
+- CsWin32 in `Capture` und `App` (je eigene `NativeMethods.txt`); GDI-Handles in `finally` freigeben
+- Overlay: nach `SourceInitialized` per `SetWindowPos` positionieren; bei `DpiChanged` Bounds neu setzen
+- Eigene Fenster: `WDA_EXCLUDEFROMCAPTURE` (Build 19041+), sonst im Snapshot; `CountdownWindow` nie aktivieren
+- Tray-Symbol braucht `System.Drawing.Icon`; Hotkeys beim `HotkeyRecorder` pausieren
+- WPF-`Application` ist threadgebunden: alle Smoke-Tests mit echten Fenstern in EINEM `[StaFact]` (`WindowSmokeTests`)
+- Tests/Builds nicht aus sehr langen Pfaden: Prozess stürzt beim Anzeigen eines `FluentWindow` ab (0xC0000409); kurzen `-p:ArtifactsPath=C:/Temp/...` nutzen; Resx-Tests brauchen Ausgabe unter dem Repo
+- Läuft die App, sperrt sie `bin\`-DLLs: Build/Test mit abweichendem `ArtifactsPath`
+- `RenderTargetBitmap` liefert `Pbgra32`; Text im Export `PixelsPerDip=1`, `TextRenderingMode=Grayscale`
+- Symbole `Triangle24`/`Hexagon24` der WPF-UI-Symbolschrift rendern kaputt -> `ToolBase.IconPath`
+- WPF-UI `TextBox` im Editor-`Overlay` deshalb mit `Style = null` (sonst Padding/Hintergrund des Themes)
+- Mausereignisse aus dem `Overlay` (Textfeld) in `EditorCanvas` ignorieren (`IsFromOverlay`)
+- Zwischenablage: `COMException` bei Sperre -> Retry; Bild immer `CF_DIB` + `"PNG"`
 - WPF nicht trimmbar -> kein `PublishTrimmed`
-- JSON-Diskriminatoren nie ändern (bricht `.gsts`-Dateien); Golden-File-Test in `Core.Tests`
+- JSON-Diskriminatoren nie ändern (bricht `.gsts`-Dateien)
 
 ## Commands
 - Build: `dotnet build GodSaveTheScreen.slnx`

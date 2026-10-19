@@ -25,11 +25,17 @@ public sealed record CaptureRequest(CaptureMode Mode, TimeSpan Delay = default, 
         new(mode, TimeSpan.FromSeconds(Math.Max(0, settings.DefaultTimerSeconds)));
 }
 
+/// <summary>Startet Aufnahmen (vom Editor aus nutzbar, ohne den Koordinator zu kennen).</summary>
+public interface ICaptureLauncher
+{
+    Task StartAsync(CaptureRequest request, CancellationToken cancellationToken = default);
+}
+
 /// <summary>
 /// Steuert den Ablauf Timer → Snapshot → Overlays → Ergebnis → Nachaufnahme-Aktionen.
 /// Es läuft immer nur eine Aufnahme; weitere Aufträge (z. B. Hotkey) werden währenddessen ignoriert.
 /// </summary>
-public sealed class CaptureCoordinator
+public sealed class CaptureCoordinator : ICaptureLauncher
 {
     private const int RoundedCornerRadius = 8;
     private const int Windows11Build = 22000;

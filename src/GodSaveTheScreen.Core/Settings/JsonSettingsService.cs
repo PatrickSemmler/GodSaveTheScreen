@@ -72,7 +72,7 @@ public sealed class JsonSettingsService : ISettingsService, IDisposable
         try
         {
             using var stream = File.OpenRead(path);
-            return JsonSerializer.Deserialize(stream, SettingsJsonContext.Default.AppSettings) ?? new AppSettings();
+            return (JsonSerializer.Deserialize(stream, SettingsJsonContext.Default.AppSettings) ?? new AppSettings()).Normalized();
         }
         catch (Exception ex) when (ex is JsonException or IOException or UnauthorizedAccessException)
         {

@@ -1,6 +1,20 @@
 namespace GodSaveTheScreen.Core.Geometry;
 
-public readonly record struct PointD(double X, double Y);
+public readonly record struct VectorD(double X, double Y)
+{
+    public double Length => Math.Sqrt((X * X) + (Y * Y));
+}
+
+public readonly record struct PointD(double X, double Y)
+{
+    public static PointD operator +(PointD p, VectorD v) => new(p.X + v.X, p.Y + v.Y);
+
+    public static PointD operator -(PointD p, VectorD v) => new(p.X - v.X, p.Y - v.Y);
+
+    public static VectorD operator -(PointD a, PointD b) => new(a.X - b.X, a.Y - b.Y);
+
+    public double DistanceTo(PointD other) => (this - other).Length;
+}
 
 public readonly record struct SizeD(double Width, double Height)
 {
@@ -48,6 +62,52 @@ public readonly record struct RectD(double X, double Y, double Width, double Hei
     }
 
     public RectD Inflate(double dx, double dy) => new(X - dx, Y - dy, Width + (2 * dx), Height + (2 * dy));
+
+    public PointD Center => new(X + (Width / 2), Y + (Height / 2));
+
+    public PointD TopLeft => new(X, Y);
+
+    public PointD BottomRight => new(Right, Bottom);
+
+    public RectD Union(RectD other)
+    {
+        var a = Normalize();
+        var b = other.Normalize();
+        var left = Math.Min(a.X, b.X);
+        var top = Math.Min(a.Y, b.Y);
+        return new RectD(left, top, Math.Max(a.Right, b.Right) - left, Math.Max(a.Bottom, b.Bottom) - top);
+    }
+
+    /// <summary>Das andere Rechteck liegt vollständig in diesem (Ränder inklusive).</summary>
+    public bool ContainsRect(RectD other)
+    {
+        var a = Normalize();
+        var b = other.Normalize();
+        return b.X >= a.X && b.Y >= a.Y && b.Right <= a.Right && b.Bottom <= a.Bottom;
+    }
+
+    public bool IntersectsWith(RectD other)
+    {
+        var a = Normalize();
+        var b = other.Normalize();
+        return a.X <= b.Right && b.X <= a.Right && a.Y <= b.Bottom && b.Y <= a.Bottom;
+    }
+
+    public static RectD BoundingBox(IEnumerable<PointD> points)
+    {
+        double minX = double.MaxValue, minY = double.MaxValue, maxX = double.MinValue, maxY = double.MinValue;
+        var any = false;
+        foreach (var p in points)
+        {
+            any = true;
+            minX = Math.Min(minX, p.X);
+            minY = Math.Min(minY, p.Y);
+            maxX = Math.Max(maxX, p.X);
+            maxY = Math.Max(maxY, p.Y);
+        }
+
+        return any ? new RectD(minX, minY, maxX - minX, maxY - minY) : Empty;
+    }
 }
 
 public readonly record struct PixelRect(int X, int Y, int Width, int Height)

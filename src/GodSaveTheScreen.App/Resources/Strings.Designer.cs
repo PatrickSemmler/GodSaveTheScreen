@@ -198,4 +198,296 @@ public static class Strings
     public static string Hotkey_PrintHint => ResourceManager.GetString("Hotkey_PrintHint", Culture) ?? "Hotkey_PrintHint";
 
     public static string Hotkey_OpenWindowsSettings => ResourceManager.GetString("Hotkey_OpenWindowsSettings", Culture) ?? "Hotkey_OpenWindowsSettings";
+
+    public static string Cap_None => ResourceManager.GetString("Cap_None", Culture) ?? "Cap_None";
+
+    public static string Cap_Arrow => ResourceManager.GetString("Cap_Arrow", Culture) ?? "Cap_Arrow";
+
+    public static string Cap_OpenArrow => ResourceManager.GetString("Cap_OpenArrow", Culture) ?? "Cap_OpenArrow";
+
+    public static string Cap_Circle => ResourceManager.GetString("Cap_Circle", Culture) ?? "Cap_Circle";
+
+    public static string Cap_Square => ResourceManager.GetString("Cap_Square", Culture) ?? "Cap_Square";
+
+    public static string Dash_Solid => ResourceManager.GetString("Dash_Solid", Culture) ?? "Dash_Solid";
+
+    public static string Dash_Dash => ResourceManager.GetString("Dash_Dash", Culture) ?? "Dash_Dash";
+
+    public static string Dash_Dot => ResourceManager.GetString("Dash_Dot", Culture) ?? "Dash_Dot";
+
+    public static string Dash_DashDot => ResourceManager.GetString("Dash_DashDot", Culture) ?? "Dash_DashDot";
+
+    public static string Color_Hex => ResourceManager.GetString("Color_Hex", Culture) ?? "Color_Hex";
+
+    public static string Color_None => ResourceManager.GetString("Color_None", Culture) ?? "Color_None";
+
+    public static string Color_Palette => ResourceManager.GetString("Color_Palette", Culture) ?? "Color_Palette";
+
+    public static string Color_Pipette => ResourceManager.GetString("Color_Pipette", Culture) ?? "Color_Pipette";
+
+    public static string Color_Recent => ResourceManager.GetString("Color_Recent", Culture) ?? "Color_Recent";
+
+    public static string Clipboard_NoImage => ResourceManager.GetString("Clipboard_NoImage", Culture) ?? "Clipboard_NoImage";
+
+    public static string Editor_New => ResourceManager.GetString("Editor_New", Culture) ?? "Editor_New";
+
+    public static string Editor_NewFromClipboard => ResourceManager.GetString("Editor_NewFromClipboard", Culture) ?? "Editor_NewFromClipboard";
+
+    public static string Editor_Open => ResourceManager.GetString("Editor_Open", Culture) ?? "Editor_Open";
+
+    public static string Editor_Save => ResourceManager.GetString("Editor_Save", Culture) ?? "Editor_Save";
+
+    public static string Editor_SaveOptions => ResourceManager.GetString("Editor_SaveOptions", Culture) ?? "Editor_SaveOptions";
+
+    public static string Editor_CopyImageTip => ResourceManager.GetString("Editor_CopyImageTip", Culture) ?? "Editor_CopyImageTip";
+
+    public static string Editor_Paste => ResourceManager.GetString("Editor_Paste", Culture) ?? "Editor_Paste";
+
+    public static string Editor_PasteTip => ResourceManager.GetString("Editor_PasteTip", Culture) ?? "Editor_PasteTip";
+
+    public static string Editor_Undo => ResourceManager.GetString("Editor_Undo", Culture) ?? "Editor_Undo";
+
+    public static string Editor_UndoTip => ResourceManager.GetString("Editor_UndoTip", Culture) ?? "Editor_UndoTip";
+
+    public static string Editor_Redo => ResourceManager.GetString("Editor_Redo", Culture) ?? "Editor_Redo";
+
+    public static string Editor_RedoTip => ResourceManager.GetString("Editor_RedoTip", Culture) ?? "Editor_RedoTip";
+
+    public static string Editor_DragOut => ResourceManager.GetString("Editor_DragOut", Culture) ?? "Editor_DragOut";
+
+    public static string Editor_TogglePanel => ResourceManager.GetString("Editor_TogglePanel", Culture) ?? "Editor_TogglePanel";
+
+    public static string Editor_DismissInfo => ResourceManager.GetString("Editor_DismissInfo", Culture) ?? "Editor_DismissInfo";
+
+    public static string Editor_Tools => ResourceManager.GetString("Editor_Tools", Culture) ?? "Editor_Tools";
+
+    public static string Editor_Zoom => ResourceManager.GetString("Editor_Zoom", Culture) ?? "Editor_Zoom";
+
+    public static string Editor_ZoomIn => ResourceManager.GetString("Editor_ZoomIn", Culture) ?? "Editor_ZoomIn";
+
+    public static string Editor_ZoomOut => ResourceManager.GetString("Editor_ZoomOut", Culture) ?? "Editor_ZoomOut";
+
+    public static string Editor_ZoomPercent => ResourceManager.GetString("Editor_ZoomPercent", Culture) ?? "Editor_ZoomPercent";
+
+    public static string Editor_ImageSize => ResourceManager.GetString("Editor_ImageSize", Culture) ?? "Editor_ImageSize";
+
+    public static string Editor_PointerPosition => ResourceManager.GetString("Editor_PointerPosition", Culture) ?? "Editor_PointerPosition";
+
+    public static string Editor_Untitled => ResourceManager.GetString("Editor_Untitled", Culture) ?? "Editor_Untitled";
+
+    public static string Editor_FileNameMode => ResourceManager.GetString("Editor_FileNameMode", Culture) ?? "Editor_FileNameMode";
+
+    public static string Editor_UnsavedTitle => ResourceManager.GetString("Editor_UnsavedTitle", Culture) ?? "Editor_UnsavedTitle";
+
+    public static string Editor_UnsavedMessage => ResourceManager.GetString("Editor_UnsavedMessage", Culture) ?? "Editor_UnsavedMessage";
+
+    public static string Editor_MultiFrameInfo => ResourceManager.GetString("Editor_MultiFrameInfo", Culture) ?? "Editor_MultiFrameInfo";
+
+    public static string Editor_PasteObjects => ResourceManager.GetString("Editor_PasteObjects", Culture) ?? "Editor_PasteObjects";
+
+    public static string Editor_Duplicate => ResourceManager.GetString("Editor_Duplicate", Culture) ?? "Editor_Duplicate";
+
+    public static string Editor_Lock => ResourceManager.GetString("Editor_Lock", Culture) ?? "Editor_Lock";
+
+    public static string Error_OpenFailed => ResourceManager.GetString("Error_OpenFailed", Culture) ?? "Error_OpenFailed";
+
+    public static string Error_ClipboardRead => ResourceManager.GetString("Error_ClipboardRead", Culture) ?? "Error_ClipboardRead";
+
+    public static string Open_AllImages => ResourceManager.GetString("Open_AllImages", Culture) ?? "Open_AllImages";
+
+    public static string Open_AllFiles => ResourceManager.GetString("Open_AllFiles", Culture) ?? "Open_AllFiles";
+
+    public static string Start_FromClipboard => ResourceManager.GetString("Start_FromClipboard", Culture) ?? "Start_FromClipboard";
+
+    public static string Tiff_None => ResourceManager.GetString("Tiff_None", Culture) ?? "Tiff_None";
+
+    public static string Options_Format => ResourceManager.GetString("Options_Format", Culture) ?? "Options_Format";
+
+    public static string Options_Quality => ResourceManager.GetString("Options_Quality", Culture) ?? "Options_Quality";
+
+    public static string Options_Interlace => ResourceManager.GetString("Options_Interlace", Culture) ?? "Options_Interlace";
+
+    public static string Options_TiffCompression => ResourceManager.GetString("Options_TiffCompression", Culture) ?? "Options_TiffCompression";
+
+    public static string Options_Lossless => ResourceManager.GetString("Options_Lossless", Culture) ?? "Options_Lossless";
+
+    public static string Options_Background => ResourceManager.GetString("Options_Background", Culture) ?? "Options_Background";
+
+    public static string Menu_Cut => ResourceManager.GetString("Menu_Cut", Culture) ?? "Menu_Cut";
+
+    public static string Menu_Copy => ResourceManager.GetString("Menu_Copy", Culture) ?? "Menu_Copy";
+
+    public static string Menu_Paste => ResourceManager.GetString("Menu_Paste", Culture) ?? "Menu_Paste";
+
+    public static string Menu_Duplicate => ResourceManager.GetString("Menu_Duplicate", Culture) ?? "Menu_Duplicate";
+
+    public static string Menu_Delete => ResourceManager.GetString("Menu_Delete", Culture) ?? "Menu_Delete";
+
+    public static string Menu_Order => ResourceManager.GetString("Menu_Order", Culture) ?? "Menu_Order";
+
+    public static string Menu_BringToFront => ResourceManager.GetString("Menu_BringToFront", Culture) ?? "Menu_BringToFront";
+
+    public static string Menu_BringForward => ResourceManager.GetString("Menu_BringForward", Culture) ?? "Menu_BringForward";
+
+    public static string Menu_SendBackward => ResourceManager.GetString("Menu_SendBackward", Culture) ?? "Menu_SendBackward";
+
+    public static string Menu_SendToBack => ResourceManager.GetString("Menu_SendToBack", Culture) ?? "Menu_SendToBack";
+
+    public static string Menu_Lock => ResourceManager.GetString("Menu_Lock", Culture) ?? "Menu_Lock";
+
+    public static string Panel_Properties => ResourceManager.GetString("Panel_Properties", Culture) ?? "Panel_Properties";
+
+    public static string Panel_Layers => ResourceManager.GetString("Panel_Layers", Culture) ?? "Panel_Layers";
+
+    public static string Layers_Empty => ResourceManager.GetString("Layers_Empty", Culture) ?? "Layers_Empty";
+
+    public static string Layers_ToggleVisibility => ResourceManager.GetString("Layers_ToggleVisibility", Culture) ?? "Layers_ToggleVisibility";
+
+    public static string Layers_ToggleLock => ResourceManager.GetString("Layers_ToggleLock", Culture) ?? "Layers_ToggleLock";
+
+    public static string Props_NothingSelected => ResourceManager.GetString("Props_NothingSelected", Culture) ?? "Props_NothingSelected";
+
+    public static string Props_DefaultsFor => ResourceManager.GetString("Props_DefaultsFor", Culture) ?? "Props_DefaultsFor";
+
+    public static string Props_Objects => ResourceManager.GetString("Props_Objects", Culture) ?? "Props_Objects";
+
+    public static string Props_StrokeColor => ResourceManager.GetString("Props_StrokeColor", Culture) ?? "Props_StrokeColor";
+
+    public static string Props_FillColor => ResourceManager.GetString("Props_FillColor", Culture) ?? "Props_FillColor";
+
+    public static string Props_Thickness => ResourceManager.GetString("Props_Thickness", Culture) ?? "Props_Thickness";
+
+    public static string Props_Dash => ResourceManager.GetString("Props_Dash", Culture) ?? "Props_Dash";
+
+    public static string Props_CornerRadius => ResourceManager.GetString("Props_CornerRadius", Culture) ?? "Props_CornerRadius";
+
+    public static string Props_StartCap => ResourceManager.GetString("Props_StartCap", Culture) ?? "Props_StartCap";
+
+    public static string Props_EndCap => ResourceManager.GetString("Props_EndCap", Culture) ?? "Props_EndCap";
+
+    public static string Props_Opacity => ResourceManager.GetString("Props_Opacity", Culture) ?? "Props_Opacity";
+
+    public static string Shape_Rectangle => ResourceManager.GetString("Shape_Rectangle", Culture) ?? "Shape_Rectangle";
+
+    public static string Shape_Ellipse => ResourceManager.GetString("Shape_Ellipse", Culture) ?? "Shape_Ellipse";
+
+    public static string Shape_Triangle => ResourceManager.GetString("Shape_Triangle", Culture) ?? "Shape_Triangle";
+
+    public static string Shape_Polygon => ResourceManager.GetString("Shape_Polygon", Culture) ?? "Shape_Polygon";
+
+    public static string Shape_Line => ResourceManager.GetString("Shape_Line", Culture) ?? "Shape_Line";
+
+    public static string Shape_Arrow => ResourceManager.GetString("Shape_Arrow", Culture) ?? "Shape_Arrow";
+
+    public static string Tool_Select => ResourceManager.GetString("Tool_Select", Culture) ?? "Tool_Select";
+
+    public static string Tool_Rectangle => ResourceManager.GetString("Tool_Rectangle", Culture) ?? "Tool_Rectangle";
+
+    public static string Tool_Ellipse => ResourceManager.GetString("Tool_Ellipse", Culture) ?? "Tool_Ellipse";
+
+    public static string Tool_Line => ResourceManager.GetString("Tool_Line", Culture) ?? "Tool_Line";
+
+    public static string Tool_Arrow => ResourceManager.GetString("Tool_Arrow", Culture) ?? "Tool_Arrow";
+
+    public static string Tool_Triangle => ResourceManager.GetString("Tool_Triangle", Culture) ?? "Tool_Triangle";
+
+    public static string Tool_Polygon => ResourceManager.GetString("Tool_Polygon", Culture) ?? "Tool_Polygon";
+
+    public static string Tool_Pipette => ResourceManager.GetString("Tool_Pipette", Culture) ?? "Tool_Pipette";
+
+    public static string Font_Regular => ResourceManager.GetString("Font_Regular", Culture) ?? "Font_Regular";
+
+    public static string Font_Bold => ResourceManager.GetString("Font_Bold", Culture) ?? "Font_Bold";
+
+    public static string Font_Italic => ResourceManager.GetString("Font_Italic", Culture) ?? "Font_Italic";
+
+    public static string Font_BoldItalic => ResourceManager.GetString("Font_BoldItalic", Culture) ?? "Font_BoldItalic";
+
+    public static string Marker_Circle => ResourceManager.GetString("Marker_Circle", Culture) ?? "Marker_Circle";
+
+    public static string Marker_Square => ResourceManager.GetString("Marker_Square", Culture) ?? "Marker_Square";
+
+    public static string Marker_Rounded => ResourceManager.GetString("Marker_Rounded", Culture) ?? "Marker_Rounded";
+
+    public static string Marker_Number => ResourceManager.GetString("Marker_Number", Culture) ?? "Marker_Number";
+
+    public static string Marker_Shape => ResourceManager.GetString("Marker_Shape", Culture) ?? "Marker_Shape";
+
+    public static string Marker_Size => ResourceManager.GetString("Marker_Size", Culture) ?? "Marker_Size";
+
+    public static string Marker_Fill => ResourceManager.GetString("Marker_Fill", Culture) ?? "Marker_Fill";
+
+    public static string Marker_TextColor => ResourceManager.GetString("Marker_TextColor", Culture) ?? "Marker_TextColor";
+
+    public static string Marker_Outline => ResourceManager.GetString("Marker_Outline", Culture) ?? "Marker_Outline";
+
+    public static string Marker_StartNumber => ResourceManager.GetString("Marker_StartNumber", Culture) ?? "Marker_StartNumber";
+
+    public static string Marker_Renumber => ResourceManager.GetString("Marker_Renumber", Culture) ?? "Marker_Renumber";
+
+    public static string Marker_RenumberZ => ResourceManager.GetString("Marker_RenumberZ", Culture) ?? "Marker_RenumberZ";
+
+    public static string Marker_RenumberCreation => ResourceManager.GetString("Marker_RenumberCreation", Culture) ?? "Marker_RenumberCreation";
+
+    public static string Preset_Label => ResourceManager.GetString("Preset_Label", Culture) ?? "Preset_Label";
+
+    public static string Preset_Warning => ResourceManager.GetString("Preset_Warning", Culture) ?? "Preset_Warning";
+
+    public static string Preset_Note => ResourceManager.GetString("Preset_Note", Culture) ?? "Preset_Note";
+
+    public static string Preset_Hint => ResourceManager.GetString("Preset_Hint", Culture) ?? "Preset_Hint";
+
+    public static string Props_Typeface => ResourceManager.GetString("Props_Typeface", Culture) ?? "Props_Typeface";
+
+    public static string Shape_Text => ResourceManager.GetString("Shape_Text", Culture) ?? "Shape_Text";
+
+    public static string Shape_Marker => ResourceManager.GetString("Shape_Marker", Culture) ?? "Shape_Marker";
+
+    public static string Text_Font => ResourceManager.GetString("Text_Font", Culture) ?? "Text_Font";
+
+    public static string Text_FontMissing => ResourceManager.GetString("Text_FontMissing", Culture) ?? "Text_FontMissing";
+
+    public static string Text_Typeface => ResourceManager.GetString("Text_Typeface", Culture) ?? "Text_Typeface";
+
+    public static string Text_Size => ResourceManager.GetString("Text_Size", Culture) ?? "Text_Size";
+
+    public static string Text_Bold => ResourceManager.GetString("Text_Bold", Culture) ?? "Text_Bold";
+
+    public static string Text_Italic => ResourceManager.GetString("Text_Italic", Culture) ?? "Text_Italic";
+
+    public static string Text_Underline => ResourceManager.GetString("Text_Underline", Culture) ?? "Text_Underline";
+
+    public static string Text_Strikethrough => ResourceManager.GetString("Text_Strikethrough", Culture) ?? "Text_Strikethrough";
+
+    public static string Text_AlignLeft => ResourceManager.GetString("Text_AlignLeft", Culture) ?? "Text_AlignLeft";
+
+    public static string Text_AlignCenter => ResourceManager.GetString("Text_AlignCenter", Culture) ?? "Text_AlignCenter";
+
+    public static string Text_AlignRight => ResourceManager.GetString("Text_AlignRight", Culture) ?? "Text_AlignRight";
+
+    public static string Text_Color => ResourceManager.GetString("Text_Color", Culture) ?? "Text_Color";
+
+    public static string Text_Outline => ResourceManager.GetString("Text_Outline", Culture) ?? "Text_Outline";
+
+    public static string Text_OutlineWidth => ResourceManager.GetString("Text_OutlineWidth", Culture) ?? "Text_OutlineWidth";
+
+    public static string Text_Background => ResourceManager.GetString("Text_Background", Culture) ?? "Text_Background";
+
+    public static string Text_Presets => ResourceManager.GetString("Text_Presets", Culture) ?? "Text_Presets";
+
+    public static string Tool_Text => ResourceManager.GetString("Tool_Text", Culture) ?? "Tool_Text";
+
+    public static string Tool_Marker => ResourceManager.GetString("Tool_Marker", Culture) ?? "Tool_Marker";
+
+    public static string Dialog_Ok => ResourceManager.GetString("Dialog_Ok", Culture) ?? "Dialog_Ok";
+
+    public static string Dialog_Yes => ResourceManager.GetString("Dialog_Yes", Culture) ?? "Dialog_Yes";
+
+    public static string Dialog_No => ResourceManager.GetString("Dialog_No", Culture) ?? "Dialog_No";
+
+    public static string Dialog_Save => ResourceManager.GetString("Dialog_Save", Culture) ?? "Dialog_Save";
+
+    public static string Dialog_DontSave => ResourceManager.GetString("Dialog_DontSave", Culture) ?? "Dialog_DontSave";
+
+    public static string Dialog_Cancel => ResourceManager.GetString("Dialog_Cancel", Culture) ?? "Dialog_Cancel";
 }

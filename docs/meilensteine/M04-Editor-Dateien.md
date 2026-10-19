@@ -28,35 +28,35 @@ Das vorläufige Ergebnisfenster wird zum Editor-Rahmen: Werkzeugleiste, Eigensch
 ## Aufgaben
 
 ### 1. Editor-Layout
-- [ ] `EditorWindow` (`ui:FluentWindow`): oben Befehlsleiste (Neu ▾, Öffnen, Speichern, Speichern unter, Kopieren, Undo/Redo [deaktiviert bis M5], Zoom), links vertikale Werkzeugleiste (`ToolPalette`, nur „Auswahl“ in M4), rechts einklappbares Eigenschaftenpanel (`PropertyPanel`, kontextabhängig über `DataTemplate` je Werkzeug/Auswahl), unten Statusleiste
-- [ ] `EditorViewModel` (pro Fenster eigener DI-Scope): `Document`, `ActiveTool`, `Zoom`, Befehle
-- [ ] Werkzeug-Infrastruktur:
+- [x] `EditorWindow` (`ui:FluentWindow`): oben Befehlsleiste (Neu ▾, Öffnen, Speichern, Speichern unter, Kopieren, Undo/Redo [deaktiviert bis M5], Zoom), links vertikale Werkzeugleiste (`ToolPalette`, nur „Auswahl“ in M4), rechts einklappbares Eigenschaftenpanel (`PropertyPanel`, kontextabhängig über `DataTemplate` je Werkzeug/Auswahl), unten Statusleiste
+- [x] `EditorViewModel` (pro Fenster eigener DI-Scope): `Document`, `ActiveTool`, `Zoom`, Befehle
+- [x] Werkzeug-Infrastruktur:
   - `ToolBase` (abstrakt): `OnPointerDown/Move/Up(EditorPointerArgs)`, `OnKeyDown`, `Cursor`, `PropertiesViewModel`, `Activate/Deactivate`
   - `EditorPointerArgs`: Position in **Bildpixeln**, Modifier-Tasten, Druck (Stift), Klickanzahl
   - `ToolRegistry`: Werkzeuge per DI registriert, Tastenkürzel + Icon + lokalisierter Name
-- [ ] Fenstergröße beim Öffnen: Bildgröße bei 100 % + Ränder, begrenzt auf 85 % des Arbeitsbereichs, Monitor = Monitor der Aufnahme
+- [x] Fenstergröße beim Öffnen: Bildgröße bei 100 % + Ränder, begrenzt auf 85 % des Arbeitsbereichs, Monitor = Monitor der Aufnahme
 
 ### 2. Zeichenfläche
-- [ ] `EditorCanvas` (UserControl): `ScrollViewer` → `ZoomPanel` (eigenes Panel mit `LayoutTransform`-Skalierung) → `Grid` mit Ebenen:
+- [x] `EditorCanvas` (UserControl): `ScrollViewer` → `ZoomPanel` (eigenes Panel mit `LayoutTransform`-Skalierung) → `Grid` mit Ebenen:
   1. `Image` (Basisbild, `RenderOptions.BitmapScalingMode` = `NearestNeighbor` ab 200 %, sonst `HighQuality`)
   2. `AnnotationLayer` (`ItemsControl` mit `Canvas`-Panel, ab M5 befüllt)
   3. `InteractionLayer` (Werkzeug-Vorschau, Auswahl-Adorner, Lineal – nicht exportiert)
-- [ ] Zoom: `Strg+Mausrad` um Mauspunkt, Stufen 10 %–3200 %, `Strg+0` einpassen, `Strg+1` 100 %; Zoom-Dropdown in Statusleiste
-- [ ] Pan: Leertaste gedrückt + Ziehen, mittlere Maustaste, Scrollbalken
-- [ ] Transparenz-Schachbrett hinter dem Bild (für Freiform-Aufnahmen)
-- [ ] Umrechnung Bildschirm ↔ Bildpixel zentral in `EditorCanvas.ToImagePoint()` inkl. Monitor-DPI-Kompensation
+- [x] Zoom: `Strg+Mausrad` um Mauspunkt, Stufen 10 %–3200 %, `Strg+0` einpassen, `Strg+1` 100 %; Zoom-Dropdown in Statusleiste
+- [x] Pan: Leertaste gedrückt + Ziehen, mittlere Maustaste, Scrollbalken
+- [x] Transparenz-Schachbrett hinter dem Bild (für Freiform-Aufnahmen)
+- [x] Umrechnung Bildschirm ↔ Bildpixel zentral in `EditorCanvas.ToImagePoint()` inkl. Monitor-DPI-Kompensation
 
 ### 3. Dateien öffnen
-- [ ] `IImageCodecService.LoadAsync(path)`: `BitmapDecoder.Create(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad)`, erster Frame, Konvertierung nach `Bgra32` → `PixelBuffer`, DPI übernehmen
-- [ ] EXIF-Orientierung bei JPEG berücksichtigen (`BitmapMetadata` `System.Photo.Orientation` → `TransformedBitmap`)
-- [ ] Mehrseitige TIFF/animierte GIF: erster Frame + Hinweis
-- [ ] Öffnen-Dialog (`Microsoft.Win32.OpenFileDialog`) mit Filter „Alle Bilder“ inkl. dynamisch ermittelter WIC-Decoder-Endungen (Registry `HKLM\SOFTWARE\Microsoft\Windows Imaging Component\...` bzw. bekannte Liste + „Alle Dateien“)
-- [ ] Kommandozeile/Weiterleitung: Dateipfade öffnen je einen Editor; „Öffnen mit…“ funktioniert dadurch automatisch
-- [ ] Startfenster-Button „Öffnen“ aktivieren; „Aus Zwischenablage“ als zusätzlicher Eintrag
+- [x] `IImageCodecService.LoadAsync(path)`: `BitmapDecoder.Create(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.OnLoad)`, erster Frame, Konvertierung nach `Bgra32` → `PixelBuffer`, DPI übernehmen
+- [x] EXIF-Orientierung bei JPEG berücksichtigen (`BitmapMetadata` `System.Photo.Orientation` → `TransformedBitmap`)
+- [x] Mehrseitige TIFF/animierte GIF: erster Frame + Hinweis
+- [x] Öffnen-Dialog (`Microsoft.Win32.OpenFileDialog`) mit Filter „Alle Bilder“ inkl. dynamisch ermittelter WIC-Decoder-Endungen (Registry `HKLM\SOFTWARE\Microsoft\Windows Imaging Component\...` bzw. bekannte Liste + „Alle Dateien“)
+- [x] Kommandozeile/Weiterleitung: Dateipfade öffnen je einen Editor; „Öffnen mit…“ funktioniert dadurch automatisch
+- [x] Startfenster-Button „Öffnen“ aktivieren; „Aus Zwischenablage“ als zusätzlicher Eintrag
 
 ### 4. Speichern
-- [ ] `IImageCodecService.SaveAsync(BitmapSource, path, ImageFormat, EncoderOptions)`
-- [ ] Formate und Encoder:
+- [x] `IImageCodecService.SaveAsync(BitmapSource, path, ImageFormat, EncoderOptions)`
+- [x] Formate und Encoder:
 
 | Format | Endungen | Encoder | Optionen |
 |---|---|---|---|
@@ -67,21 +67,21 @@ Das vorläufige Ergebnisfenster wird zum Editor-Rahmen: Werkzeugleiste, Eigensch
 | TIFF | `.tif`, `.tiff` | `TiffBitmapEncoder` | Kompression (Keine, LZW, ZIP, …) |
 | JPEG XR | `.jxr`, `.wdp` | `WmpBitmapEncoder` | Qualität, verlustfrei |
 
-- [ ] Formate ohne Alpha (JPEG, BMP): Transparenz auf einstellbare Hintergrundfarbe (Standard Weiß) flach rechnen
-- [ ] DPI-Metadaten schreiben (Original-DPI)
-- [ ] „Speichern“: bekanntes Ziel → direkt; sonst „Speichern unter“. Vorgeschlagener Name aus `FileNamePattern`, Ordner = zuletzt verwendet
-- [ ] Optionsdialog (kompaktes Flyout) für JPEG/TIFF/JPEG XR, Werte werden gemerkt
-- [ ] Atomisches Schreiben (temp-Datei, dann ersetzen)
-- [ ] `DocumentExporter.Render(document)` als Einstiegspunkt (in M4: nur Basisbild; ab M5 inkl. Annotationen, ab M9 Zuschnitt)
+- [x] Formate ohne Alpha (JPEG, BMP): Transparenz auf einstellbare Hintergrundfarbe (Standard Weiß) flach rechnen
+- [x] DPI-Metadaten schreiben (Original-DPI)
+- [x] „Speichern“: bekanntes Ziel → direkt; sonst „Speichern unter“. Vorgeschlagener Name aus `FileNamePattern`, Ordner = zuletzt verwendet
+- [x] Optionsdialog (kompaktes Flyout) für JPEG/TIFF/JPEG XR, Werte werden gemerkt
+- [x] Atomisches Schreiben (temp-Datei, dann ersetzen)
+- [x] `DocumentExporter.Render(document)` als Einstiegspunkt (in M4: nur Basisbild; ab M5 inkl. Annotationen, ab M9 Zuschnitt)
 
 ### 5. Zwischenablage & Drag & Drop
-- [ ] Kopieren (`Strg+Umschalt+C`, in M4 auch `Strg+C`): gerendertes Bild
-- [ ] Einfügen (`Strg+V`) im Start-/Editorfenster: Bild aus `CF_DIB`/`PNG`/Dateiliste → neues Editorfenster (ab M5 im Editor: Objekte, s. dort)
-- [ ] Drop von Bilddateien: Startfenster → neuer Editor; Editor → neuer Editor (ab M5 optional als Bildobjekt – Ausblick)
-- [ ] Drag aus dem Editor (Ziehgriff in der Befehlsleiste): temporäre PNG + `DataObject` mit `FileDrop` und Bild
+- [x] Kopieren (`Strg+Umschalt+C`, in M4 auch `Strg+C`): gerendertes Bild
+- [x] Einfügen (`Strg+V`) im Start-/Editorfenster: Bild aus `CF_DIB`/`PNG`/Dateiliste → neues Editorfenster (ab M5 im Editor: Objekte, s. dort)
+- [x] Drop von Bilddateien: Startfenster → neuer Editor; Editor → neuer Editor (ab M5 optional als Bildobjekt – Ausblick)
+- [x] Drag aus dem Editor (Ziehgriff in der Befehlsleiste): temporäre PNG + `DataObject` mit `FileDrop` und Bild
 
 ### 6. Schließen
-- [ ] `IsDirty`-Verfolgung; Schließen fragt „Speichern / Nicht speichern / Abbrechen“ (`ui:MessageBox`)
+- [x] `IsDirty`-Verfolgung; Schließen fragt „Speichern / Nicht speichern / Abbrechen“ (`ui:MessageBox`)
 - [ ] Hinweis-Infozeile, dass Objekte nach dem Schließen nur im Projektformat bearbeitbar bleiben (Link auf M10-Funktion, ab M10)
 
 ## Tests
@@ -95,3 +95,12 @@ Das vorläufige Ergebnisfenster wird zum Editor-Rahmen: Werkzeugleiste, Eigensch
 - [ ] Zoom um Mausposition flüssig, Pan per Leertaste
 - [ ] Kopieren/Einfügen zwischen GodSaveTheScreen, Paint und Browser funktioniert
 - [ ] Drei Editorfenster gleichzeitig unabhängig nutzbar
+
+## Umsetzungsstand und Abweichungen
+
+- Automatisierte Tests (Codec-Roundtrip je Format, Alpha-Flatten, EXIF, mehrseitiges TIFF, `EditorViewModel` inkl. Schließen-Rückfrage) sind grün; die oben offenen Abnahmepunkte brauchen noch eine **manuelle Prüfung** (WebP/HEIC-Codec, Paint/Browser, Zoom-Gefühl, mehrere Fenster).
+- Zeichenfläche: Zoom/Pan sind direkt in `EditorCanvas` umgesetzt (`ScrollViewer` → `Grid` mit `LayoutTransform`), kein eigenes `ZoomPanel`-Panel. Das Surface-Grid hat die Bildgröße in Bildpixeln, daher ist `ToImagePoint` = `e.GetPosition(Surface)` (DPI- und Zoom-sicher).
+- `ToolRegistry` wird je Fenster per `ToolRegistry.Create(context)` aufgebaut (nicht über DI-Registrierung); `EditorService` erzeugt je Fenster `EditorContext`, `ToolRegistry`, `EditorViewModel` und `EditorWindow` über `ActivatorUtilities`.
+- Die Rückfrage beim Schließen nutzt `System.Windows.MessageBox` (Ja/Nein/Abbrechen) statt `ui:MessageBox`, weil das WPF-UI-Dialogfenster nur asynchron verfügbar ist.
+- Die „Hinweis-Infozeile“ zum Projektformat entfällt bis M10; die Infozeile selbst (z. B. für mehrseitige Dateien) ist vorhanden.
+- Formatoptionen: Flyout in der Befehlsleiste (Format, Qualität, Interlace, TIFF-Kompression, JPEG-XR verlustfrei, Hintergrundfarbe); Werte stehen in den Einstellungen.

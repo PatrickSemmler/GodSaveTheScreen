@@ -12,12 +12,14 @@ public sealed class CommandLineHandler : IRecipient<CommandLineReceivedMessage>
 {
     private readonly CaptureCoordinator _coordinator;
     private readonly IAppShell _shell;
+    private readonly IEditorService _editors;
     private readonly ILogger<CommandLineHandler> _logger;
 
-    public CommandLineHandler(CaptureCoordinator coordinator, IAppShell shell, ILogger<CommandLineHandler> logger)
+    public CommandLineHandler(CaptureCoordinator coordinator, IAppShell shell, IEditorService editors, ILogger<CommandLineHandler> logger)
     {
         _coordinator = coordinator;
         _shell = shell;
+        _editors = editors;
         _logger = logger;
     }
 
@@ -39,7 +41,7 @@ public sealed class CommandLineHandler : IRecipient<CommandLineReceivedMessage>
 
         if (options.Files.Count > 0)
         {
-            _logger.LogInformation("Dateiargumente werden ab M4 geöffnet: {Files}", string.Join(", ", options.Files));
+            _ = OpenFilesAsync(options.Files);
         }
 
         if (options.Capture is { } mode)
@@ -48,10 +50,22 @@ public sealed class CommandLineHandler : IRecipient<CommandLineReceivedMessage>
             return;
         }
 
-        // Ein reiner Start mit --tray soll nur im Infobereich laufen.
-        if (!options.Tray)
+        // Ein reiner Start mit --tray soll nur im Infobereich laufen; Dateien öffnen direkt den Editor.
+        if (!options.Tray && options.Files.Count == 0)
         {
             _shell.ShowStartWindow();
+        }
+    }
+
+    private async Task OpenFilesAsync(IReadOnlyList<string> files)
+    {
+        try
+        {
+            await _editors.OpenFilesAsync(files);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Dateien über Kommandozeile konnten nicht geöffnet werden");
         }
     }
 
