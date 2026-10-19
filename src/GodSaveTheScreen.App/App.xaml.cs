@@ -65,6 +65,8 @@ public partial class App : Application
             "GodSaveTheScreen {Version} gestartet (portabel: {Portable}, Daten: {Data})",
             typeof(App).Assembly.GetName().Version, paths.IsPortable, paths.DataDirectory);
 
+        _ = Task.Run(() => DragTempFiles.Cleanup(DragTempFiles.Directory, DragTempFiles.MaxAge, DateTime.Now, logger));
+
         services.GetRequiredService<GlobalExceptionHandler>().Register(this);
         services.GetRequiredService<IThemeService>().Apply();
 

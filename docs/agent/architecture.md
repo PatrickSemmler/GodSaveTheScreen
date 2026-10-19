@@ -108,6 +108,7 @@ Verified against working tree on top of commit ebd5f29 (M13 uncommitted) on 2026
 - Emoji-Tests mit Schrift: `EmojiTestSupport.RequireFont()` (überspringt ohne „Segoe UI Emoji“); Golden-Datei `golden-v1-emoji.gsts` neu erzeugen mit `GSTS_GOLDEN_EMOJI_OUT`
 - `IsTyping` in `EditorWindow` ist auch im `EmojiPicker` wahr (Pfeile/Enter/Tippen gehören dem Raster, keine Werkzeug-Kürzel)
 - `build/generate-notices.ps1` mit `pwsh` ausführen (Windows PowerShell 5 zerstört Umlaute)
+- Drag-Temp-Dateien (Bild aus dem Editor ziehen): `DragTempFiles.Directory` (`%TEMP%\GodSaveTheScreen`); `App.OnStartup` löscht PNGs älter als 1 Tag (`DragTempFiles.Cleanup`)
 
 ## Commands
 - Build: `dotnet build GodSaveTheScreen.slnx`

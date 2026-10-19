@@ -36,3 +36,11 @@ Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `doc
 - **Was wurde gemacht**: `EffectCache.CountFor(baseId)` ergänzt; der Test prüft nur noch Einträge des eigenen Bildes und ruft `RemoveImage` nicht mehr selbst auf (das hatte die Prüfung von `Dispose` verdeckt)
 - **Warum**: Vergleich des globalen Zählers von `EffectCache.Shared` war durch parallele Tests unzuverlässig
 - **Seiteneffekte / Hinweise**: App.Tests 448/448 grün in 3 Läufen
+
+### Drag-Temp-Dateien werden aufgeräumt – 19.10.2026
+- **Kategorie**: Stabilität
+- **Verbesserungsliste-ID**: #2
+- **Geänderte Dateien**: `src/GodSaveTheScreen.App/Services/DragTempFiles.cs` (neu), `App.xaml.cs`, `ViewModels/EditorViewModel.cs`, `tests/GodSaveTheScreen.App.Tests/DragTempFilesTests.cs` (neu), `docs/agent/architecture.md`
+- **Was wurde gemacht**: Beim Start löscht ein Hintergrund-Task PNGs älter als 1 Tag im Drag-Temp-Ordner
+- **Warum**: Die Dateien aus „Bild ziehen“ wurden nie gelöscht
+- **Seiteneffekte / Hinweise**: App.Tests 451/451 grün. `EditorViewModel.cs` enthielt fremde, uncommittete Änderungen des Nutzers; nur die eigene Zeile wurde gestaged

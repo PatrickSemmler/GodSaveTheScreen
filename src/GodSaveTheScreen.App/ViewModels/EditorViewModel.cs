@@ -745,7 +745,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         try
         {
             var image = _exporter.Render(Document);
-            var directory = Path.Combine(Path.GetTempPath(), "GodSaveTheScreen");
+            var directory = DragTempFiles.Directory;
             Directory.CreateDirectory(directory);
             var name = string.IsNullOrEmpty(Document.SourcePath)
                 ? $"Screenshot {DateTime.Now:yyyy-MM-dd HH-mm-ss}.png"
