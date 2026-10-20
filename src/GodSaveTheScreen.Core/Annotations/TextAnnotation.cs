@@ -32,7 +32,7 @@ public enum TextDecorationKind
 /// <see cref="FontStretch"/> 1–9 (5 = normal), <see cref="FontSize"/> in Bildpixeln.
 /// Die Layoutgröße liefert der Renderer über <see cref="MeasureProvider"/> (FormattedText).
 /// </summary>
-public sealed partial class TextAnnotation : Annotation, IShadowAnnotation
+public sealed partial class TextAnnotation : Annotation, IShadowAnnotation, IEditableTextAnnotation
 {
     public const int DefaultFontWeight = 400;
     public const int NormalStretch = 5;

@@ -15,7 +15,11 @@ public static class TextLayout
     private const double PixelsPerDip = 1.0;
 
     /// <summary>Verbindet die Messung mit dem Core-Modell (mehrfach aufrufbar).</summary>
-    public static void Install() => TextAnnotation.MeasureProvider = Measure;
+    public static void Install()
+    {
+        TextAnnotation.MeasureProvider = Measure;
+        StampAnnotation.MeasureProvider = StampRenderer.Measure;
+    }
 
     public static Typeface CreateTypeface(string familyName, int weight, FontStyleKind style, int stretch) => new(
         new FontFamily(string.IsNullOrWhiteSpace(familyName) ? "Segoe UI" : familyName),

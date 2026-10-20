@@ -113,8 +113,11 @@ public sealed class InteractionState
 /// <summary>Vorschau der Bereichsauswahl: Rechteck/Ellipse über <see cref="Rect"/>, Lasso über <see cref="Points"/>.</summary>
 public sealed record AreaPreview(AreaSelectShape Shape, RectD Rect, IReadOnlyList<PointD> Points);
 
-/// <summary>Laufende Textbearbeitung: das Objekt (bei <see cref="IsNew"/> noch nicht im Dokument).</summary>
-public sealed record TextEditSession(TextAnnotation Annotation, bool IsNew);
+/// <summary>Laufende Textbearbeitung eines Text- oder Stempelobjekts (bei <see cref="IsNew"/> noch nicht im Dokument).</summary>
+public sealed record TextEditSession(Annotation Annotation, bool IsNew)
+{
+    public IEditableTextAnnotation Editable => (IEditableTextAnnotation)Annotation;
+}
 
 /// <summary>Gemeinsamer Zustand eines Editorfensters: Dokument, Auswahl, Interaktion, Standardwerte.</summary>
 public sealed class EditorContext : IDisposable
@@ -129,6 +132,7 @@ public sealed class EditorContext : IDisposable
         Exporter = exporter;
         Presets = new ToolPresetService(settings);
         Emoji = new EmojiToolState(settings);
+        Stamp = new StampToolState(settings);
         Document.HighlightersBehind = settings.Current.HighlighterBehind;
         Document.Annotations.CollectionChanged += OnAnnotationsChanged;
         Crop = new CropState(document);
@@ -142,6 +146,9 @@ public sealed class EditorContext : IDisposable
 
     /// <summary>Gewähltes Emoji, Hautton, Zuletzt verwendet und Favoriten des Emoji-Werkzeugs.</summary>
     public EmojiToolState Emoji { get; }
+
+    /// <summary>Standardwerte des Stempelwerkzeugs (letzte Konfiguration, in den Einstellungen gespeichert).</summary>
+    public StampToolState Stamp { get; }
 
     /// <summary>Zustand des Zuschnittmodus.</summary>
     public CropState Crop { get; }
@@ -230,9 +237,14 @@ public sealed class EditorContext : IDisposable
     /// Startet die Bearbeitung direkt auf der Zeichenfläche. Das Objekt wird währenddessen ausgeblendet;
     /// die gesamte Sitzung wird zu genau einer Undo-Aktion (<see cref="CommitTextEdit"/>).
     /// </summary>
-    public void BeginTextEdit(TextAnnotation annotation, bool isNew)
+    public void BeginTextEdit(Annotation annotation, bool isNew)
     {
         ArgumentNullException.ThrowIfNull(annotation);
+        if (annotation is not IEditableTextAnnotation)
+        {
+            throw new ArgumentException("Objekt hat keinen bearbeitbaren Text.", nameof(annotation));
+        }
+
         if (ActiveTextEdit is not null)
         {
             CancelTextEdit();
@@ -264,6 +276,8 @@ public sealed class EditorContext : IDisposable
         ActiveTextEdit = null;
         Interaction.Hidden = null;
         var annotation = session.Annotation;
+        var editable = session.Editable;
+        var isStamp = annotation is StampAnnotation;
         var normalized = (text ?? string.Empty).Replace("\r\n", "\n", StringComparison.Ordinal);
         var isEmpty = string.IsNullOrWhiteSpace(normalized);
 
@@ -271,20 +285,25 @@ public sealed class EditorContext : IDisposable
         {
             if (!isEmpty)
             {
-                annotation.Text = normalized;
+                editable.Text = normalized;
                 annotation.Name = AnnotationNames.NextName(Document.Annotations, annotation);
-                Undo.Execute(new AddAnnotationAction(Document.Annotations, annotation, description: "Text einfügen"));
+                Undo.Execute(new AddAnnotationAction(Document.Annotations, annotation, description: isStamp ? "Stempel setzen" : "Text einfügen"));
                 Selection.Set(annotation);
+                if (isStamp)
+                {
+                    // Der zuletzt gestempelte Text wird Vorgabe des nächsten Stempels.
+                    Stamp.Text = normalized;
+                }
             }
         }
         else if (isEmpty)
         {
-            Undo.Execute(new RemoveAnnotationsAction(Document.Annotations, [annotation], "Text löschen"));
+            Undo.Execute(new RemoveAnnotationsAction(Document.Annotations, [annotation], isStamp ? "Stempel löschen" : "Text löschen"));
         }
-        else if (normalized != annotation.Text)
+        else if (normalized != editable.Text)
         {
             var before = annotation.Clone();
-            annotation.Text = normalized;
+            editable.Text = normalized;
             Undo.Execute(new ReplaceGeometryAction([(annotation, before, annotation.Clone())], "Text bearbeiten"));
         }
 

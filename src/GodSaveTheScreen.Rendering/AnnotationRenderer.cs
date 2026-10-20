@@ -216,6 +216,9 @@ public static partial class AnnotationRenderer
             case EmojiAnnotation emoji:
                 DrawEmoji(dc, emoji, context);
                 break;
+            case StampAnnotation stamp:
+                StampRenderer.Draw(dc, stamp, context);
+                break;
         }
     }
 

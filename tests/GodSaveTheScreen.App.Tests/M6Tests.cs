@@ -404,10 +404,11 @@ public sealed class TextToolTests
 
         var session = h.Context.ActiveTextEdit.ShouldNotBeNull();
         session.IsNew.ShouldBeTrue();
-        session.Annotation.Position.ShouldBe(new PointD(40, 50));
-        session.Annotation.FontFamilyName.ShouldBe("Arial");
-        session.Annotation.FontSize.ShouldBe(33);
-        session.Annotation.WrapWidth.ShouldBeNull();
+        var annotation = session.Annotation.ShouldBeOfType<TextAnnotation>();
+        annotation.Position.ShouldBe(new PointD(40, 50));
+        annotation.FontFamilyName.ShouldBe("Arial");
+        annotation.FontSize.ShouldBe(33);
+        annotation.WrapWidth.ShouldBeNull();
 
         h.Context.CommitTextEdit("Beschriftung");
         h.Document.Annotations.Count.ShouldBe(1);
@@ -424,7 +425,7 @@ public sealed class TextToolTests
         h.Context.Interaction.RubberBand.ShouldNotBeNull();
         tool.OnPointerUp(EditorHarness.Pointer(120, 60));
 
-        var text = h.Context.ActiveTextEdit!.Annotation;
+        var text = h.Context.ActiveTextEdit!.Annotation.ShouldBeOfType<TextAnnotation>();
         text.WrapWidth.ShouldBe(100);
         text.Position.ShouldBe(new PointD(20, 20));
         h.Context.Interaction.RubberBand.ShouldBeNull();

@@ -925,4 +925,50 @@ public static class Strings
     public static string Shortcut_BrushRestore => ResourceManager.GetString("Shortcut_BrushRestore", Culture) ?? "Shortcut_BrushRestore";
 
     public static string Shortcut_BrushSize => ResourceManager.GetString("Shortcut_BrushSize", Culture) ?? "Shortcut_BrushSize";
+
+    public static string Tool_Stamp => ResourceManager.GetString("Tool_Stamp", Culture) ?? "Tool_Stamp";
+
+    public static string Shape_Stamp => ResourceManager.GetString("Shape_Stamp", Culture) ?? "Shape_Stamp";
+
+    public static string Stamp_Hint => ResourceManager.GetString("Stamp_Hint", Culture) ?? "Stamp_Hint";
+
+    public static string Stamp_QuickText => ResourceManager.GetString("Stamp_QuickText", Culture) ?? "Stamp_QuickText";
+
+    public static string Stamp_Text => ResourceManager.GetString("Stamp_Text", Culture) ?? "Stamp_Text";
+
+    public static string Stamp_Text_Approved => ResourceManager.GetString("Stamp_Text_Approved", Culture) ?? "Stamp_Text_Approved";
+
+    public static string Stamp_Text_Done => ResourceManager.GetString("Stamp_Text_Done", Culture) ?? "Stamp_Text_Done";
+
+    public static string Stamp_Text_Confidential => ResourceManager.GetString("Stamp_Text_Confidential", Culture) ?? "Stamp_Text_Confidential";
+
+    public static string Stamp_Text_Draft => ResourceManager.GetString("Stamp_Text_Draft", Culture) ?? "Stamp_Text_Draft";
+
+    public static string Stamp_Text_Rejected => ResourceManager.GetString("Stamp_Text_Rejected", Culture) ?? "Stamp_Text_Rejected";
+
+    public static string Stamp_Text_Important => ResourceManager.GetString("Stamp_Text_Important", Culture) ?? "Stamp_Text_Important";
+
+    public static string Stamp_Color => ResourceManager.GetString("Stamp_Color", Culture) ?? "Stamp_Color";
+
+    public static string Stamp_Frame => ResourceManager.GetString("Stamp_Frame", Culture) ?? "Stamp_Frame";
+
+    public static string Stamp_Frame_Rectangle => ResourceManager.GetString("Stamp_Frame_Rectangle", Culture) ?? "Stamp_Frame_Rectangle";
+
+    public static string Stamp_Frame_Rounded => ResourceManager.GetString("Stamp_Frame_Rounded", Culture) ?? "Stamp_Frame_Rounded";
+
+    public static string Stamp_Frame_Double => ResourceManager.GetString("Stamp_Frame_Double", Culture) ?? "Stamp_Frame_Double";
+
+    public static string Stamp_Frame_Oval => ResourceManager.GetString("Stamp_Frame_Oval", Culture) ?? "Stamp_Frame_Oval";
+
+    public static string Stamp_FrameThickness => ResourceManager.GetString("Stamp_FrameThickness", Culture) ?? "Stamp_FrameThickness";
+
+    public static string Stamp_Wear => ResourceManager.GetString("Stamp_Wear", Culture) ?? "Stamp_Wear";
+
+    public static string Stamp_Reroll => ResourceManager.GetString("Stamp_Reroll", Culture) ?? "Stamp_Reroll";
+
+    public static string Stamp_Rotation => ResourceManager.GetString("Stamp_Rotation", Culture) ?? "Stamp_Rotation";
+
+    public static string Stamp_InkBlend => ResourceManager.GetString("Stamp_InkBlend", Culture) ?? "Stamp_InkBlend";
+
+    public static string Stamp_Property => ResourceManager.GetString("Stamp_Property", Culture) ?? "Stamp_Property";
 }

@@ -55,7 +55,12 @@ public static class SelectionHandles
 
         if (movable is [IRotatableAnnotation rotatable])
         {
-            return RotatedBoxHandles(rotatable.Rect.Normalize(), rotatable.Rotation, rotateOffset);
+            var rotated = RotatedBoxHandles(rotatable.Rect.Normalize(), rotatable.Rotation, rotateOffset);
+
+            // Stempel: nur proportionales Skalieren über die Ecken (Rahmen und Schrift wachsen gemeinsam).
+            return rotatable is StampAnnotation
+                ? [.. rotated.Where(h => h.Kind is HandleKind.TopLeft or HandleKind.TopRight or HandleKind.BottomRight or HandleKind.BottomLeft or HandleKind.Rotate)]
+                : rotated;
         }
 
         if (movable is [MagnifierAnnotation magnifier])
@@ -477,12 +482,12 @@ public sealed class SelectTool : ToolBase
         Context.InvalidateInteraction();
     }
 
-    private bool HasRotatable() => Context.Selection.Items.Any(a => a is EmojiAnnotation { IsLocked: false });
+    private bool HasRotatable() => Context.Selection.Items.Any(a => a is IRotatableAnnotation && !a.IsLocked);
 
     /// <summary><c>[</c> / <c>]</c>: dreht alle drehbaren Objekte der Auswahl um <paramref name="degrees"/> (ein Undo-Schritt).</summary>
     public void RotateByKey(double degrees)
     {
-        var items = Context.Selection.Items.OfType<EmojiAnnotation>().Where(e => !e.IsLocked).ToList();
+        var items = Context.Selection.Items.Where(a => a is IRotatableAnnotation && !a.IsLocked).ToList();
         if (items.Count == 0)
         {
             return;
@@ -492,8 +497,8 @@ public sealed class SelectTool : ToolBase
         {
             foreach (var item in items)
             {
-                var target = item;
-                Context.Undo.Execute(new PropertyChangeAction<double>(target, nameof(EmojiAnnotation.Rotation), target.Rotation, RotationMath.Normalize(target.Rotation + degrees), v => target.Rotation = v, "Drehen"));
+                var target = (IRotatableAnnotation)item;
+                Context.Undo.Execute(new PropertyChangeAction<double>(item, nameof(IRotatableAnnotation.Rotation), target.Rotation, RotationMath.Normalize(target.Rotation + degrees), v => target.Rotation = v, "Drehen"));
             }
         }
 
@@ -576,6 +581,9 @@ public sealed class SelectTool : ToolBase
         {
             case TextAnnotation text when !text.IsLocked:
                 Context.BeginTextEdit(text, isNew: false);
+                break;
+            case StampAnnotation stamp when !stamp.IsLocked:
+                Context.BeginTextEdit(stamp, isNew: false);
                 break;
             case PolygonAnnotation polygon when !polygon.IsLocked:
                 InsertPolygonPoint(polygon, position);
@@ -695,6 +703,13 @@ public sealed class SelectTool : ToolBase
             return;
         }
 
+        if (_snapshots is [(StampAnnotation stampTarget, StampAnnotation stampBefore)])
+        {
+            ResizeStamp(stampTarget, stampBefore, args.Position);
+            Context.InvalidateInteraction();
+            return;
+        }
+
         var (map, factor) = SelectionHandles.ResizeMap(_groupRect, _handle.Kind, args.Position, args.Shift || _snapshots.Any(s => s.Before is not (ShapeAnnotation or BlurAnnotation)));
         foreach (var (target, before) in _snapshots)
         {
@@ -730,11 +745,33 @@ public sealed class SelectTool : ToolBase
         target.Rect = new RectD(resized.X + shift.X, resized.Y + shift.Y, resized.Width, resized.Height);
     }
 
+    /// <summary>
+    /// Skaliert einen Stempel proportional über einen Eckgriff im eigenen (gedrehten) Koordinatensystem:
+    /// Schriftgröße und Rahmenstärke wachsen mit, die gegenüberliegende Ecke bleibt stehen.
+    /// </summary>
+    private void ResizeStamp(StampAnnotation target, StampAnnotation before, PointD pointer)
+    {
+        var rect = before.Rect;
+        var center = before.Center;
+        var local = RotationMath.Unrotate(pointer, center, before.Rotation);
+        var (map, _) = SelectionHandles.ResizeMap(rect, _handle.Kind, local, proportional: true);
+        var resized = RectD.FromPoints(map(rect.TopLeft), map(rect.BottomRight));
+        var factor = rect.Width > 0 ? resized.Width / rect.Width : 1;
+        if (before.FontSize * factor < StampAnnotation.MinFontSize || before.FontSize * factor > StampAnnotation.MaxFontSize)
+        {
+            return;
+        }
+
+        target.CopyFrom(before);
+        target.ScaleSizes(factor);
+        target.Center = RotationMath.Rotate(resized.Center, center, before.Rotation);
+    }
+
     /// <summary>Drehgriff: dreht um die Mitte; <c>Umschalt</c> rastet in 15°-Schritten ein.</summary>
     private void DragRotate(EditorPointerArgs args)
     {
         _moved = true;
-        if (_snapshots is not [(EmojiAnnotation target, EmojiAnnotation before)])
+        if (_snapshots is not [(IRotatableAnnotation target, IRotatableAnnotation before)])
         {
             return;
         }

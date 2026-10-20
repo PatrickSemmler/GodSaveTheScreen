@@ -106,6 +106,7 @@ public sealed class ToolRegistry
         new AreaSelectTool(context),
         new BackgroundEraserTool(context),
         new EmojiTool(context),
+        new StampTool(context),
         new CropTool(context),
         new PipetteTool(context),
     ]);

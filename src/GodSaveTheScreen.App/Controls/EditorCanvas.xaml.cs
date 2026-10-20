@@ -418,7 +418,13 @@ public partial class EditorCanvas : UserControl
     private void OnTextEditStarted(object? sender, TextEditSession session)
     {
         RemoveTextEditor();
-        var annotation = session.Annotation;
+        if (session.Annotation is StampAnnotation stamp)
+        {
+            ShowTextEditor(CreateStampEditor(stamp), selectAll: session.IsNew);
+            return;
+        }
+
+        var annotation = (TextAnnotation)session.Annotation;
         var pad = annotation.EffectivePadding;
         var scale = Math.Max(_viewModel?.Context.Scale ?? 1, 0.01);
         var fill = BrushCache.GetBrush(annotation.Fill) ?? Brushes.Black;
@@ -464,6 +470,65 @@ public partial class EditorCanvas : UserControl
 
         System.Windows.Controls.Canvas.SetLeft(editor, annotation.Position.X - pad - (1 / scale));
         System.Windows.Controls.Canvas.SetTop(editor, annotation.Position.Y - pad - (1 / scale));
+        ShowTextEditor(editor, selectAll: false);
+    }
+
+    /// <summary>
+    /// Eingabefeld für einen Stempel: Schrift und Farbe des Stempels, zentriert und mit dessen Neigung gedreht;
+    /// wächst beim Tippen von der Mitte aus.
+    /// </summary>
+    private TextBox CreateStampEditor(StampAnnotation stamp)
+    {
+        var scale = Math.Max(_viewModel?.Context.Scale ?? 1, 0.01);
+        var color = BrushCache.GetBrush(stamp.Color with { A = 255 }) ?? Brushes.Black;
+        var editor = new TextBox
+        {
+            Style = null,
+            Text = stamp.Text,
+            AcceptsReturn = true,
+            FontFamily = new FontFamily(stamp.FontFamilyName),
+            FontSize = stamp.FontSize,
+            FontWeight = FontWeight.FromOpenTypeWeight(Math.Clamp(stamp.FontWeight, 1, 999)),
+            FontStyle = stamp.FontStyle switch
+            {
+                FontStyleKind.Italic => FontStyles.Italic,
+                FontStyleKind.Oblique => FontStyles.Oblique,
+                _ => FontStyles.Normal,
+            },
+            FontStretch = FontStretch.FromOpenTypeStretch(Math.Clamp(stamp.FontStretch, 1, 9)),
+            Foreground = color,
+            CaretBrush = color,
+            SelectionBrush = Brushes.DodgerBlue,
+            Background = Brushes.Transparent,
+            BorderBrush = color,
+            BorderThickness = new Thickness(Math.Max(1 / scale, stamp.FrameThickness)),
+            Padding = new Thickness(stamp.FontSize * 0.45, stamp.FontSize * 0.2, stamp.FontSize * 0.45, stamp.FontSize * 0.2),
+            MinWidth = Math.Max(stamp.FontSize * 2, 24),
+            TextWrapping = TextWrapping.NoWrap,
+            TextAlignment = TextAlignment.Center,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            FocusVisualStyle = null,
+            SnapsToDevicePixels = false,
+            RenderTransformOrigin = new Point(0.5, 0.5),
+            RenderTransform = new RotateTransform(stamp.Rotation),
+        };
+
+        // Mittig auf dem Stempel halten, auch wenn das Feld beim Tippen wächst.
+        void Center()
+        {
+            System.Windows.Controls.Canvas.SetLeft(editor, stamp.Center.X - (editor.ActualWidth / 2));
+            System.Windows.Controls.Canvas.SetTop(editor, stamp.Center.Y - (editor.ActualHeight / 2));
+        }
+
+        editor.SizeChanged += (_, _) => Center();
+        System.Windows.Controls.Canvas.SetLeft(editor, stamp.Center.X);
+        System.Windows.Controls.Canvas.SetTop(editor, stamp.Center.Y);
+        return editor;
+    }
+
+    private void ShowTextEditor(TextBox editor, bool selectAll)
+    {
         editor.LostKeyboardFocus += (_, _) => CommitTextEditor();
         editor.KeyDown += OnTextEditorKeyDown;
         _textEditor = editor;
@@ -474,7 +539,14 @@ public partial class EditorCanvas : UserControl
             {
                 editor.Focus();
                 Keyboard.Focus(editor);
-                editor.CaretIndex = editor.Text.Length;
+                if (selectAll)
+                {
+                    editor.SelectAll();
+                }
+                else
+                {
+                    editor.CaretIndex = editor.Text.Length;
+                }
             });
     }
 

@@ -8,7 +8,7 @@ namespace GodSaveTheScreen.Core.Annotations;
 public interface IRotatableAnnotation
 {
     /// <summary>Drehung im Uhrzeigersinn in Grad, normalisiert auf [0, 360).</summary>
-    double Rotation { get; }
+    double Rotation { get; set; }
 
     /// <summary>Drehpunkt (Mitte des unverdrehten Rahmens).</summary>
     PointD Center { get; }

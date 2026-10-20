@@ -439,6 +439,140 @@
             </StackPanel>
           </StackPanel>
 
+          <!-- Stempel -->
+          <StackPanel DataContext="{Binding StampProperties}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
+            <TextBlock Text="{l:Loc Stamp_Hint}" TextWrapping="Wrap" Opacity="0.75" Margin="0,10,0,0"
+                       Visibility="{Binding ShowDefaults, Converter={StaticResource BoolToVisibility}}" />
+
+            <TextBlock Text="{l:Loc Stamp_QuickText}" Style="{StaticResource FieldLabel}" />
+            <ItemsControl ItemsSource="{Binding QuickTexts}" Focusable="False">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <UniformGrid Columns="2" />
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Button Content="{Binding}" Margin="0,0,3,3" Padding="4,4" HorizontalAlignment="Stretch" FontSize="11"
+                          Command="{Binding DataContext.ApplyTextCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                          CommandParameter="{Binding}"
+                          AutomationProperties.Name="{Binding}" />
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Text="{l:Loc Stamp_Color}" Style="{StaticResource FieldLabel}" />
+            <controls:ColorButton Style="{StaticResource PanelColorButton}" SelectedColor="{Binding Color, Mode=TwoWay}" />
+
+            <TextBlock Text="{l:Loc Stamp_Wear}" Style="{StaticResource FieldLabel}" />
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Slider Minimum="0" Maximum="100" SmallChange="1" LargeChange="10" VerticalAlignment="Center"
+                      Value="{Binding WearValue, Mode=TwoWay}"
+                      AutomationProperties.Name="{l:Loc Stamp_Wear}" />
+              <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                            Minimum="0" Maximum="100" SmallChange="1" LargeChange="10" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                            Value="{Binding Wear, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            AutomationProperties.Name="{l:Loc Stamp_Wear}" />
+            </Grid>
+            <ui:Button Content="{l:Loc Stamp_Reroll}" Margin="0,6,0,0" HorizontalAlignment="Stretch" Command="{Binding RerollCommand}"
+                       Visibility="{Binding HasStamps, Converter={StaticResource BoolToVisibility}}" />
+
+            <TextBlock Text="{l:Loc Stamp_Frame}" Style="{StaticResource FieldLabel}" />
+            <ComboBox ItemsSource="{Binding FrameChoices}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                      SelectedValue="{Binding FrameShape, Mode=TwoWay}" HorizontalAlignment="Stretch"
+                      AutomationProperties.Name="{l:Loc Stamp_Frame}" />
+
+            <TextBlock Text="{l:Loc Stamp_FrameThickness}" Style="{StaticResource FieldLabel}" />
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Slider Minimum="0" Maximum="30" SmallChange="0.5" LargeChange="2" VerticalAlignment="Center"
+                      Value="{Binding FrameThicknessValue, Mode=TwoWay}"
+                      AutomationProperties.Name="{l:Loc Stamp_FrameThickness}" />
+              <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                            Minimum="0" Maximum="200" SmallChange="0.5" LargeChange="2" MaxDecimalPlaces="1" ClearButtonEnabled="False"
+                            Value="{Binding FrameThickness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            AutomationProperties.Name="{l:Loc Stamp_FrameThickness}" />
+            </Grid>
+
+            <TextBlock Text="{l:Loc Text_Font}" Style="{StaticResource FieldLabel}" />
+            <ComboBox ItemsSource="{Binding Fonts}"
+                      SelectedValuePath="Key"
+                      SelectedValue="{Binding FontFamilyName, Mode=TwoWay}"
+                      IsTextSearchEnabled="True"
+                      TextSearch.TextPath="DisplayName"
+                      MaxDropDownHeight="360"
+                      HorizontalAlignment="Stretch"
+                      VirtualizingPanel.IsVirtualizing="True"
+                      VirtualizingPanel.VirtualizationMode="Recycling"
+                      AutomationProperties.Name="{l:Loc Text_Font}">
+              <ComboBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <VirtualizingStackPanel />
+                </ItemsPanelTemplate>
+              </ComboBox.ItemsPanel>
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding DisplayName}" FontFamily="{Binding Family}" FontSize="15" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Text="{l:Loc Text_FontMissing}" Foreground="#F5A623" TextWrapping="Wrap" Margin="0,4,0,0"
+                       Visibility="{Binding IsFontMissing, Converter={StaticResource BoolToVisibility}}" />
+
+            <TextBlock Text="{l:Loc Text_Typeface}" Style="{StaticResource FieldLabel}" />
+            <ComboBox ItemsSource="{Binding Typefaces}"
+                      DisplayMemberPath="Name"
+                      SelectedItem="{Binding SelectedTypeface, Mode=TwoWay}"
+                      HorizontalAlignment="Stretch"
+                      AutomationProperties.Name="{l:Loc Text_Typeface}" />
+
+            <TextBlock Text="{l:Loc Text_Size}" Style="{StaticResource FieldLabel}" />
+            <ui:NumberBox Minimum="4" Maximum="999" SmallChange="1" LargeChange="10" MaxDecimalPlaces="1" ClearButtonEnabled="False"
+                          Value="{Binding FontSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          AutomationProperties.Name="{l:Loc Text_Size}" />
+
+            <TextBlock Text="{l:Loc Stamp_Rotation}" Style="{StaticResource FieldLabel}" />
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Slider Minimum="-45" Maximum="45" SmallChange="1" LargeChange="5" VerticalAlignment="Center"
+                      Value="{Binding RotationValue, Mode=TwoWay}"
+                      AutomationProperties.Name="{l:Loc Stamp_Rotation}" />
+              <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                            Minimum="-180" Maximum="180" SmallChange="1" LargeChange="5" MaxDecimalPlaces="1" ClearButtonEnabled="False"
+                            Value="{Binding Rotation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            AutomationProperties.Name="{l:Loc Stamp_Rotation}" />
+            </Grid>
+
+            <CheckBox Content="{l:Loc Stamp_InkBlend}" Margin="0,10,0,0" IsChecked="{Binding InkBlend, Mode=TwoWay}" />
+
+            <StackPanel Visibility="{Binding ShowDefaults, Converter={StaticResource BoolToVisibility}}">
+              <TextBlock Text="{l:Loc Props_Opacity}" Style="{StaticResource FieldLabel}" />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Slider Minimum="0" Maximum="100" SmallChange="1" LargeChange="10" VerticalAlignment="Center"
+                        Value="{Binding DefaultOpacityValue, Mode=TwoWay}"
+                        AutomationProperties.Name="{l:Loc Props_Opacity}" />
+                <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                              Minimum="0" Maximum="100" SmallChange="1" LargeChange="10" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                              Value="{Binding DefaultOpacityPercent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              AutomationProperties.Name="{l:Loc Props_Opacity}" />
+              </Grid>
+            </StackPanel>
+          </StackPanel>
+
           <!-- Formen -->
           <StackPanel DataContext="{Binding Properties}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
             <TextBlock Text="{l:Loc Props_StrokeColor}" Style="{StaticResource FieldLabel}" />

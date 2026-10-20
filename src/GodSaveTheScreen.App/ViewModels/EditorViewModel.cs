@@ -84,6 +84,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         MarkerProperties = new MarkerPropertiesViewModel(context, () => ActiveTool);
         ToolOptions = new ToolOptionsViewModel(context, () => ActiveTool);
         EmojiProperties = new EmojiPropertiesViewModel(context, () => ActiveTool);
+        StampProperties = new StampPropertiesViewModel(context, () => ActiveTool);
         ShadowProperties = new ShadowPropertiesViewModel(context, () => ActiveTool);
         MaskTools = new MaskToolsViewModel(context, () => ActiveTool, tools.Tools.OfType<BackgroundEraserTool>().FirstOrDefault());
         EmojiPicker = new EmojiPickerViewModel(context);
@@ -125,6 +126,9 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     /// <summary>Größe, Drehung und Spiegelung der Emojis bzw. Vorgaben des Emoji-Werkzeugs.</summary>
     public EmojiPropertiesViewModel EmojiProperties { get; }
+
+    /// <summary>Stempeltext, Schrift, Rahmen, Abnutzung und Neigung bzw. Vorgaben des Stempelwerkzeugs.</summary>
+    public StampPropertiesViewModel StampProperties { get; }
 
     /// <summary>Schatten der Auswahl bzw. Vorgaben des aktiven Werkzeugs.</summary>
     public ShadowPropertiesViewModel ShadowProperties { get; }
@@ -183,7 +187,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     /// <summary>Im Eigenschaftenbereich gibt es etwas zu bearbeiten.</summary>
     public bool HasPanelContent =>
-        Properties.IsApplicable || TextProperties.IsApplicable || MarkerProperties.IsApplicable || ToolOptions.IsApplicable || EmojiProperties.IsApplicable || ShadowProperties.IsApplicable || MaskTools.IsApplicable || Properties.ShowOpacity || Presets.IsApplicable;
+        Properties.IsApplicable || TextProperties.IsApplicable || MarkerProperties.IsApplicable || ToolOptions.IsApplicable || EmojiProperties.IsApplicable || StampProperties.IsApplicable || ShadowProperties.IsApplicable || MaskTools.IsApplicable || Properties.ShowOpacity || Presets.IsApplicable;
 
     public IReadOnlyList<ZoomChoice> ZoomChoices { get; }
 
@@ -357,6 +361,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         MarkerProperties.Refresh();
         ToolOptions.Refresh();
         EmojiProperties.Refresh();
+        StampProperties.Refresh();
         ShadowProperties.Refresh();
         MaskTools.Refresh();
         if (EmojiProperties.IsApplicable)
@@ -916,6 +921,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         MarkerProperties.Dispose();
         ToolOptions.Dispose();
         EmojiProperties.Dispose();
+        StampProperties.Dispose();
         ShadowProperties.Dispose();
         MaskTools.Dispose();
         EmojiPicker.Dispose();

@@ -473,4 +473,27 @@ Tip: You can assign the Print Screen key to a capture mode in the settings. On W
   <data name="Shortcut_AreaSubtract" xml:space="preserve"><value>Subtract from area selection</value></data>
   <data name="Shortcut_BrushRestore" xml:space="preserve"><value>Background eraser: restore</value></data>
   <data name="Shortcut_BrushSize" xml:space="preserve"><value>Background eraser: smaller / larger</value></data>
+  <data name="Tool_Stamp" xml:space="preserve"><value>Stamp (S)</value></data>
+  <data name="Shape_Stamp" xml:space="preserve"><value>Stamp</value></data>
+  <data name="Stamp_Hint" xml:space="preserve"><value>Click the canvas to place a stamp, then type its text right in the object (Ctrl+Enter or Esc finishes).</value></data>
+  <data name="Stamp_QuickText" xml:space="preserve"><value>Quick text</value></data>
+  <data name="Stamp_Text" xml:space="preserve"><value>Stamp text</value></data>
+  <data name="Stamp_Text_Approved" xml:space="preserve"><value>APPROVED</value></data>
+  <data name="Stamp_Text_Done" xml:space="preserve"><value>DONE</value></data>
+  <data name="Stamp_Text_Confidential" xml:space="preserve"><value>CONFIDENTIAL</value></data>
+  <data name="Stamp_Text_Draft" xml:space="preserve"><value>DRAFT</value></data>
+  <data name="Stamp_Text_Rejected" xml:space="preserve"><value>REJECTED</value></data>
+  <data name="Stamp_Text_Important" xml:space="preserve"><value>IMPORTANT</value></data>
+  <data name="Stamp_Color" xml:space="preserve"><value>Color</value></data>
+  <data name="Stamp_Frame" xml:space="preserve"><value>Frame</value></data>
+  <data name="Stamp_Frame_Rectangle" xml:space="preserve"><value>Rectangle</value></data>
+  <data name="Stamp_Frame_Rounded" xml:space="preserve"><value>Rounded rectangle</value></data>
+  <data name="Stamp_Frame_Double" xml:space="preserve"><value>Double frame</value></data>
+  <data name="Stamp_Frame_Oval" xml:space="preserve"><value>Oval</value></data>
+  <data name="Stamp_FrameThickness" xml:space="preserve"><value>Frame thickness</value></data>
+  <data name="Stamp_Wear" xml:space="preserve"><value>Stamp look (scratches, chips)</value></data>
+  <data name="Stamp_Reroll" xml:space="preserve"><value>New pattern</value></data>
+  <data name="Stamp_Rotation" xml:space="preserve"><value>Tilt (°)</value></data>
+  <data name="Stamp_InkBlend" xml:space="preserve"><value>Ink look (multiply with the image)</value></data>
+  <data name="Stamp_Property" xml:space="preserve"><value>Change stamp</value></data>
 </root>

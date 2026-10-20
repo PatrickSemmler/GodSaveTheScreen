@@ -27,6 +27,7 @@ public static class AnnotationNames
         BlurAnnotation => "Shape_Blur",
         MagnifierAnnotation => "Shape_Magnifier",
         EmojiAnnotation => "Shape_Emoji",
+        StampAnnotation => "Shape_Stamp",
         LineAnnotation { EndCap: not LineEndStyle.None } or LineAnnotation { StartCap: not LineEndStyle.None } => "Shape_Arrow",
         LineAnnotation => "Shape_Line",
         _ => annotation.GetType().Name,

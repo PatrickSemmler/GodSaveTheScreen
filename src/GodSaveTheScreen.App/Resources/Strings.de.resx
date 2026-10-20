@@ -473,4 +473,27 @@ Tipp: In den Einstellungen können Sie die Taste Druck einem Aufnahmemodus zuwei
   <data name="Shortcut_AreaSubtract" xml:space="preserve"><value>Von der Bereichsauswahl abziehen</value></data>
   <data name="Shortcut_BrushRestore" xml:space="preserve"><value>Hintergrundradierer: wiederherstellen</value></data>
   <data name="Shortcut_BrushSize" xml:space="preserve"><value>Hintergrundradierer: kleiner / größer</value></data>
+  <data name="Tool_Stamp" xml:space="preserve"><value>Stempel (S)</value></data>
+  <data name="Shape_Stamp" xml:space="preserve"><value>Stempel</value></data>
+  <data name="Stamp_Hint" xml:space="preserve"><value>Klick auf die Zeichenfläche setzt einen Stempel; den Text direkt im Objekt eingeben (Strg+Eingabe oder Esc beendet).</value></data>
+  <data name="Stamp_QuickText" xml:space="preserve"><value>Schnellauswahl</value></data>
+  <data name="Stamp_Text" xml:space="preserve"><value>Stempeltext</value></data>
+  <data name="Stamp_Text_Approved" xml:space="preserve"><value>GENEHMIGT</value></data>
+  <data name="Stamp_Text_Done" xml:space="preserve"><value>ERLEDIGT</value></data>
+  <data name="Stamp_Text_Confidential" xml:space="preserve"><value>VERTRAULICH</value></data>
+  <data name="Stamp_Text_Draft" xml:space="preserve"><value>ENTWURF</value></data>
+  <data name="Stamp_Text_Rejected" xml:space="preserve"><value>ABGELEHNT</value></data>
+  <data name="Stamp_Text_Important" xml:space="preserve"><value>WICHTIG</value></data>
+  <data name="Stamp_Color" xml:space="preserve"><value>Farbe</value></data>
+  <data name="Stamp_Frame" xml:space="preserve"><value>Rahmen</value></data>
+  <data name="Stamp_Frame_Rectangle" xml:space="preserve"><value>Rechteck</value></data>
+  <data name="Stamp_Frame_Rounded" xml:space="preserve"><value>Abgerundetes Rechteck</value></data>
+  <data name="Stamp_Frame_Double" xml:space="preserve"><value>Doppelrahmen</value></data>
+  <data name="Stamp_Frame_Oval" xml:space="preserve"><value>Oval</value></data>
+  <data name="Stamp_FrameThickness" xml:space="preserve"><value>Rahmenstärke</value></data>
+  <data name="Stamp_Wear" xml:space="preserve"><value>Stempel-Look (Kratzer, Ausreißer)</value></data>
+  <data name="Stamp_Reroll" xml:space="preserve"><value>Neu würfeln</value></data>
+  <data name="Stamp_Rotation" xml:space="preserve"><value>Neigung (°)</value></data>
+  <data name="Stamp_InkBlend" xml:space="preserve"><value>Tinten-Look (mit dem Bild multiplizieren)</value></data>
+  <data name="Stamp_Property" xml:space="preserve"><value>Stempel ändern</value></data>
 </root>

@@ -70,6 +70,39 @@ public sealed record MarkerStyle
     public ShadowStyle Shadow { get; init; } = ShadowStyle.None;
 }
 
+/// <summary>Standardwerte des Stempelwerkzeugs (letzte Konfiguration).</summary>
+public sealed record StampStyle
+{
+    /// <summary>Text des nächsten Stempels; leer = lokalisierter Standardtext der Oberfläche.</summary>
+    public string Text { get; init; } = string.Empty;
+
+    public string FontFamilyName { get; init; } = "Arial Black";
+
+    public int FontWeight { get; init; } = 900;
+
+    public FontStyleKind FontStyle { get; init; }
+
+    public int FontStretch { get; init; } = 5;
+
+    public double FontSize { get; init; } = 40;
+
+    public ArgbColor Color { get; init; } = ArgbColor.FromRgb(0xC6, 0x28, 0x28);
+
+    public StampFrameShape FrameShape { get; init; }
+
+    public double FrameThickness { get; init; } = 5;
+
+    /// <summary>Stärke des Stempel-Looks 0–100.</summary>
+    public double Wear { get; init; } = 50;
+
+    /// <summary>Neigung in Grad (−180 bis 180).</summary>
+    public double Rotation { get; init; } = -8;
+
+    public bool InkBlend { get; init; }
+
+    public double Opacity { get; init; } = 1;
+}
+
 /// <summary>Werkzeug-ID → Standardwerte, mit Wertgleichheit (damit <c>AppSettings</c> als Record vergleichbar bleibt).</summary>
 public sealed class ShapeDefaultsMap : Dictionary<string, ShapeStyle>
 {

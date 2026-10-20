@@ -173,6 +173,9 @@ public sealed record AppSettings
     /// <summary>Letzte Konfiguration des Emoji-Werkzeugs (Deckkraft, Standardgröße, Hautton).</summary>
     public EmojiStyle EmojiDefaults { get; init; } = new();
 
+    /// <summary>Letzte Konfiguration des Stempelwerkzeugs.</summary>
+    public StampStyle StampDefaults { get; init; } = new();
+
     /// <summary>Zuletzt verwendete Emojis (Sequenz), neueste zuerst, höchstens <see cref="MaxRecentEmojis"/>.</summary>
     public StringList EmojiRecent { get; init; } = [];
 
@@ -225,6 +228,7 @@ public sealed record AppSettings
         var magnifier = MagnifierDefaults ?? new MagnifierStyle();
         var freehand = FreehandDefaults ?? new FreehandStyle();
         var emoji = EmojiDefaults ?? new EmojiStyle();
+        var stamp = StampDefaults ?? new StampStyle();
         var presets = new ToolPresetMap();
         foreach (var (key, list) in ToolPresets ?? [])
         {
@@ -240,6 +244,12 @@ public sealed record AppSettings
             MagnifierDefaults = magnifier with { Border = magnifier.Border ?? new MagnifierStyle().Border },
             ShapeDefaults = shapes,
             EmojiDefaults = emoji with { DefaultSize = emoji.DefaultSize > 0 ? emoji.DefaultSize : 96, Shadow = emoji.Shadow ?? ShadowStyle.None },
+            StampDefaults = stamp with
+            {
+                Text = stamp.Text ?? string.Empty,
+                FontFamilyName = stamp.FontFamilyName ?? new StampStyle().FontFamilyName,
+                FontSize = stamp.FontSize > 0 ? stamp.FontSize : new StampStyle().FontSize,
+            },
             EmojiRecent = EmojiRecent ?? [],
             EmojiFavorites = EmojiFavorites ?? [],
             RecentColors = RecentColors ?? [],
