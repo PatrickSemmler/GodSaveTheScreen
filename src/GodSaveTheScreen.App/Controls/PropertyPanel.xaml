@@ -130,6 +130,16 @@
 
             <TextBlock Text="{l:Loc Text_Background}" Style="{StaticResource FieldLabel}" />
             <controls:ColorButton Style="{StaticResource PanelColorButton}" SelectedColor="{Binding BackgroundColor, Mode=TwoWay}" />
+
+            <TextBlock Text="{l:Loc Props_CornerRadius}" Style="{StaticResource FieldLabel}" />
+            <ui:NumberBox Minimum="0" Maximum="500" SmallChange="1" LargeChange="10" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                          Value="{Binding BackgroundCornerRadius, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          AutomationProperties.Name="{l:Loc Props_CornerRadius}" />
+
+            <TextBlock Text="{l:Loc Text_BackgroundPadding}" Style="{StaticResource FieldLabel}" />
+            <ui:NumberBox Minimum="0" Maximum="200" SmallChange="1" LargeChange="10" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                          Value="{Binding BackgroundPadding, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          AutomationProperties.Name="{l:Loc Text_BackgroundPadding}" />
           </StackPanel>
 
           <!-- Marker -->

@@ -253,6 +253,7 @@
   <data name="Text_Outline" xml:space="preserve"><value>Outline</value></data>
   <data name="Text_OutlineWidth" xml:space="preserve"><value>Outline width</value></data>
   <data name="Text_Background" xml:space="preserve"><value>Background</value></data>
+  <data name="Text_BackgroundPadding" xml:space="preserve"><value>Background padding</value></data>
   <data name="Text_Presets" xml:space="preserve"><value>Presets</value></data>
   <data name="Tool_Text" xml:space="preserve"><value>Text (T)</value></data>
   <data name="Tool_Marker" xml:space="preserve"><value>Numbered marker (M)</value></data>

@@ -501,6 +501,8 @@ public static class Strings
 
     public static string Text_Background => ResourceManager.GetString("Text_Background", Culture) ?? "Text_Background";
 
+    public static string Text_BackgroundPadding => ResourceManager.GetString("Text_BackgroundPadding", Culture) ?? "Text_BackgroundPadding";
+
     public static string Text_Presets => ResourceManager.GetString("Text_Presets", Culture) ?? "Text_Presets";
 
     public static string Tool_Text => ResourceManager.GetString("Tool_Text", Culture) ?? "Tool_Text";

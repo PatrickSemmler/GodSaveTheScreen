@@ -240,6 +240,18 @@ public sealed partial class TextPropertiesViewModel : ObservableObject, IDisposa
         set => SetNullable(nameof(BackgroundColor), value, t => t.Background, (t, v) => t.Background = v, (s, v) => s with { Background = v });
     }
 
+    public double? BackgroundCornerRadius
+    {
+        get => TryGet(t => t.BackgroundCornerRadius, s => s.BackgroundCornerRadius, out var v) ? v : null;
+        set => SetNullable(nameof(BackgroundCornerRadius), value is { } radius ? Math.Clamp(radius, 0, 500) : null, t => t.BackgroundCornerRadius, (t, v) => t.BackgroundCornerRadius = v, (s, v) => s with { BackgroundCornerRadius = v });
+    }
+
+    public double? BackgroundPadding
+    {
+        get => TryGet(t => t.BackgroundPadding, s => s.BackgroundPadding, out var v) ? v : null;
+        set => SetNullable(nameof(BackgroundPadding), value is { } padding ? Math.Clamp(padding, 0, 200) : null, t => t.BackgroundPadding, (t, v) => t.BackgroundPadding = v, (s, v) => s with { BackgroundPadding = v });
+    }
+
     public void Refresh() => OnPropertyChanged(string.Empty);
 
     public void Dispose()
