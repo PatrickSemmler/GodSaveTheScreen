@@ -869,4 +869,60 @@ public static class Strings
     public static string Shortcut_FlipHorizontal => ResourceManager.GetString("Shortcut_FlipHorizontal", Culture) ?? "Shortcut_FlipHorizontal";
 
     public static string Shortcut_FlipVertical => ResourceManager.GetString("Shortcut_FlipVertical", Culture) ?? "Shortcut_FlipVertical";
+
+    public static string Tool_AreaSelect => ResourceManager.GetString("Tool_AreaSelect", Culture) ?? "Tool_AreaSelect";
+
+    public static string Tool_BackgroundEraser => ResourceManager.GetString("Tool_BackgroundEraser", Culture) ?? "Tool_BackgroundEraser";
+
+    public static string Mask_Shape => ResourceManager.GetString("Mask_Shape", Culture) ?? "Mask_Shape";
+
+    public static string Mask_Rectangle => ResourceManager.GetString("Mask_Rectangle", Culture) ?? "Mask_Rectangle";
+
+    public static string Mask_Ellipse => ResourceManager.GetString("Mask_Ellipse", Culture) ?? "Mask_Ellipse";
+
+    public static string Mask_Lasso => ResourceManager.GetString("Mask_Lasso", Culture) ?? "Mask_Lasso";
+
+    public static string Mask_MagicWand => ResourceManager.GetString("Mask_MagicWand", Culture) ?? "Mask_MagicWand";
+
+    public static string Mask_Tolerance => ResourceManager.GetString("Mask_Tolerance", Culture) ?? "Mask_Tolerance";
+
+    public static string Mask_Feather => ResourceManager.GetString("Mask_Feather", Culture) ?? "Mask_Feather";
+
+    public static string Mask_SelectHint => ResourceManager.GetString("Mask_SelectHint", Culture) ?? "Mask_SelectHint";
+
+    public static string Mask_Remove => ResourceManager.GetString("Mask_Remove", Culture) ?? "Mask_Remove";
+
+    public static string Mask_Invert => ResourceManager.GetString("Mask_Invert", Culture) ?? "Mask_Invert";
+
+    public static string Mask_SelectAll => ResourceManager.GetString("Mask_SelectAll", Culture) ?? "Mask_SelectAll";
+
+    public static string Mask_Deselect => ResourceManager.GetString("Mask_Deselect", Culture) ?? "Mask_Deselect";
+
+    public static string Mask_BrushSize => ResourceManager.GetString("Mask_BrushSize", Culture) ?? "Mask_BrushSize";
+
+    public static string Mask_BrushHardness => ResourceManager.GetString("Mask_BrushHardness", Culture) ?? "Mask_BrushHardness";
+
+    public static string Mask_EraserHint => ResourceManager.GetString("Mask_EraserHint", Culture) ?? "Mask_EraserHint";
+
+    public static string Mask_Erase => ResourceManager.GetString("Mask_Erase", Culture) ?? "Mask_Erase";
+
+    public static string Mask_Restore => ResourceManager.GetString("Mask_Restore", Culture) ?? "Mask_Restore";
+
+    public static string Mask_Reset => ResourceManager.GetString("Mask_Reset", Culture) ?? "Mask_Reset";
+
+    public static string Mask_CropToVisible => ResourceManager.GetString("Mask_CropToVisible", Culture) ?? "Mask_CropToVisible";
+
+    public static string Shortcut_InvertArea => ResourceManager.GetString("Shortcut_InvertArea", Culture) ?? "Shortcut_InvertArea";
+
+    public static string Shortcut_RemoveArea => ResourceManager.GetString("Shortcut_RemoveArea", Culture) ?? "Shortcut_RemoveArea";
+
+    public static string Shortcuts_Area => ResourceManager.GetString("Shortcuts_Area", Culture) ?? "Shortcuts_Area";
+
+    public static string Shortcut_AreaAdd => ResourceManager.GetString("Shortcut_AreaAdd", Culture) ?? "Shortcut_AreaAdd";
+
+    public static string Shortcut_AreaSubtract => ResourceManager.GetString("Shortcut_AreaSubtract", Culture) ?? "Shortcut_AreaSubtract";
+
+    public static string Shortcut_BrushRestore => ResourceManager.GetString("Shortcut_BrushRestore", Culture) ?? "Shortcut_BrushRestore";
+
+    public static string Shortcut_BrushSize => ResourceManager.GetString("Shortcut_BrushSize", Culture) ?? "Shortcut_BrushSize";
 }

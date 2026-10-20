@@ -285,6 +285,88 @@
             </StackPanel>
           </StackPanel>
 
+          <!-- Bereichsauswahl und Hintergrundradierer (transparente Bereiche im Screenshot) -->
+          <StackPanel DataContext="{Binding MaskTools}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
+            <StackPanel Visibility="{Binding ShowSelect, Converter={StaticResource BoolToVisibility}}">
+              <TextBlock Text="{l:Loc Mask_SelectHint}" TextWrapping="Wrap" Opacity="0.75" Margin="0,10,0,0" />
+              <TextBlock Text="{l:Loc Mask_Shape}" Style="{StaticResource FieldLabel}" />
+              <ComboBox ItemsSource="{Binding ShapeChoices}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                        SelectedValue="{Binding Shape, Mode=TwoWay}" HorizontalAlignment="Stretch"
+                        AutomationProperties.Name="{l:Loc Mask_Shape}" />
+              <StackPanel Visibility="{Binding ShowTolerance, Converter={StaticResource BoolToVisibility}}">
+                <TextBlock Text="{l:Loc Mask_Tolerance}" Style="{StaticResource FieldLabel}" />
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+                  <Slider Minimum="0" Maximum="100" SmallChange="1" LargeChange="5" VerticalAlignment="Center"
+                          Value="{Binding Tolerance, Mode=TwoWay}"
+                          AutomationProperties.Name="{l:Loc Mask_Tolerance}" />
+                  <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                                Minimum="0" Maximum="100" SmallChange="1" LargeChange="5" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                                Value="{Binding Tolerance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                AutomationProperties.Name="{l:Loc Mask_Tolerance}" />
+                </Grid>
+              </StackPanel>
+              <TextBlock Text="{l:Loc Mask_Feather}" Style="{StaticResource FieldLabel}" />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Slider Minimum="0" Maximum="100" SmallChange="1" LargeChange="5" VerticalAlignment="Center"
+                        Value="{Binding Feather, Mode=TwoWay}"
+                        AutomationProperties.Name="{l:Loc Mask_Feather}" />
+                <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                              Minimum="0" Maximum="100" SmallChange="1" LargeChange="5" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                              Value="{Binding Feather, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              AutomationProperties.Name="{l:Loc Mask_Feather}" />
+              </Grid>
+              <Button Content="{l:Loc Mask_Remove}" Command="{Binding RemoveAreaCommand}" HorizontalAlignment="Stretch" Margin="0,12,0,0" />
+              <UniformGrid Columns="2" Margin="0,6,0,0">
+                <Button Content="{l:Loc Mask_SelectAll}" Command="{Binding SelectAllCommand}" HorizontalAlignment="Stretch" Margin="0,0,3,0" />
+                <Button Content="{l:Loc Mask_Deselect}" Command="{Binding DeselectCommand}" HorizontalAlignment="Stretch" Margin="3,0,0,0" />
+              </UniformGrid>
+              <Button Content="{l:Loc Mask_Invert}" Command="{Binding InvertSelectionCommand}" HorizontalAlignment="Stretch" Margin="0,6,0,0" />
+            </StackPanel>
+
+            <StackPanel Visibility="{Binding ShowEraser, Converter={StaticResource BoolToVisibility}}">
+              <TextBlock Text="{l:Loc Mask_EraserHint}" TextWrapping="Wrap" Opacity="0.75" Margin="0,10,0,0" />
+              <TextBlock Text="{l:Loc Mask_BrushSize}" Style="{StaticResource FieldLabel}" />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Slider Minimum="1" Maximum="500" SmallChange="1" LargeChange="10" VerticalAlignment="Center"
+                        Value="{Binding BrushSize, Mode=TwoWay}"
+                        AutomationProperties.Name="{l:Loc Mask_BrushSize}" />
+                <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                              Minimum="1" Maximum="500" SmallChange="1" LargeChange="10" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                              Value="{Binding BrushSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              AutomationProperties.Name="{l:Loc Mask_BrushSize}" />
+              </Grid>
+              <TextBlock Text="{l:Loc Mask_BrushHardness}" Style="{StaticResource FieldLabel}" />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Slider Minimum="0" Maximum="100" SmallChange="1" LargeChange="10" VerticalAlignment="Center"
+                        Value="{Binding BrushHardness, Mode=TwoWay}"
+                        AutomationProperties.Name="{l:Loc Mask_BrushHardness}" />
+                <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                              Minimum="0" Maximum="100" SmallChange="1" LargeChange="10" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                              Value="{Binding BrushHardness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              AutomationProperties.Name="{l:Loc Mask_BrushHardness}" />
+              </Grid>
+            </StackPanel>
+
+            <Button Content="{l:Loc Mask_CropToVisible}" Command="{Binding CropToVisibleCommand}" HorizontalAlignment="Stretch" Margin="0,12,0,0" />
+            <Button Content="{l:Loc Mask_Reset}" Command="{Binding ResetMaskCommand}" HorizontalAlignment="Stretch" Margin="0,6,0,0" />
+          </StackPanel>
+
           <!-- Emoji -->
           <StackPanel DataContext="{Binding EmojiProperties}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
             <controls:EmojiPicker Margin="0,8,0,0"

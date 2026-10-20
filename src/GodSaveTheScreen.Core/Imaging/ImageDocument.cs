@@ -16,6 +16,7 @@ public sealed partial class ImageDocument : ObservableObject
         DpiY = dpiY;
         CreatedAt = DateTimeOffset.Now;
         Undo = new UndoManager();
+        Mask = new AlphaMask(baseImage.Width, baseImage.Height);
         _canvasBounds = baseImage.Bounds;
         // Erst nach abgeschlossenen Änderungen (Loslassen, Undo/Redo, Laden) anpassen, nicht während des Ziehens.
         Undo.Changed += (_, _) =>
@@ -41,6 +42,30 @@ public sealed partial class ImageDocument : ObservableObject
     }
 
     public PixelBuffer BaseImage { get; }
+
+    /// <summary>Nicht-destruktiv entfernte Bereiche des Basisbilds; Änderungen über <c>MaskEditAction</c>.</summary>
+    public AlphaMask Mask { get; }
+
+    private PixelBuffer? _maskedImage;
+    private int _maskedVersion = -1;
+
+    /// <summary>
+    /// Basisbild mit angewendeter <see cref="Mask"/> (ohne entfernte Bereiche ist es <see cref="BaseImage"/> selbst).
+    /// Grundlage für Anzeige, Export, Unschärfe und Lupe; je Maskenstand ein neuer, danach unveränderter Puffer.
+    /// </summary>
+    public PixelBuffer MaskedImage
+    {
+        get
+        {
+            if (_maskedImage is null || _maskedVersion != Mask.Version)
+            {
+                _maskedImage = Mask.IsOpaque ? BaseImage : Mask.ApplyTo(BaseImage);
+                _maskedVersion = Mask.Version;
+            }
+
+            return _maskedImage;
+        }
+    }
 
     public double DpiX { get; }
 

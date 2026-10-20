@@ -20,10 +20,11 @@ public sealed class DocumentExporter : IDocumentExporter
         if (visible.Count == 0)
         {
             // Unverändertes Basisbild (ggf. zugeschnitten): exakt, ohne Vormultiplikations-Umweg.
-            return document.CropRect is null ? document.BaseImage : document.BaseImage.Crop(crop);
+            return document.CropRect is null ? document.MaskedImage : document.MaskedImage.Crop(crop);
         }
 
-        var baseImage = document.BaseImage;
+        // Entfernte Bereiche sind auch für Unschärfe und Lupe transparent.
+        var baseImage = document.MaskedImage;
         var baseSource = baseImage.ToBitmapSource();
         var context = new RenderContext
         {

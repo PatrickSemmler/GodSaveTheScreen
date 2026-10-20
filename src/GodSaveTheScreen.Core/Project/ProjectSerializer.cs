@@ -66,12 +66,15 @@ public sealed record ProjectContent
 
     public byte[]? PreviewPng { get; init; }
 
+    /// <summary>Transparenzmaske des Basisbilds (je Pixel ein Byte, zeilenweise); <c>null</c> = nichts entfernt.</summary>
+    public byte[]? Mask { get; init; }
+
     /// <summary>Beim Lesen: übersprungene Objekte, neuere Version u. Ä.</summary>
     public IReadOnlyList<string> Warnings { get; init; } = [];
 }
 
 /// <summary>
-/// Projektformat <c>.gsts</c>: ZIP mit <c>manifest.json</c>, <c>document.json</c>, <c>base.png</c> und <c>preview.png</c>.
+/// Projektformat <c>.gsts</c>: ZIP mit <c>manifest.json</c>, <c>document.json</c>, <c>base.png</c>, <c>preview.png</c> und optional <c>mask.bin</c>.
 /// Es werden nur die festen Eintragsnamen gelesen (Pfade im ZIP werden ignoriert); Größen sind begrenzt (ZIP-Bomben).
 /// </summary>
 public static class ProjectSerializer
@@ -84,6 +87,9 @@ public static class ProjectSerializer
     public const string DocumentEntry = "document.json";
     public const string BaseEntry = "base.png";
     public const string PreviewEntry = "preview.png";
+
+    /// <summary>Optional: Transparenzmaske, ein Byte je Pixel (Breite × Höhe des Basisbilds), ZIP-komprimiert.</summary>
+    public const string MaskEntry = "mask.bin";
 
     public const long MaxManifestBytes = 64 * 1024;
     public const long MaxDocumentBytes = 128L * 1024 * 1024;
@@ -190,6 +196,11 @@ public static class ProjectSerializer
         {
             WriteBytes(zip, PreviewEntry, preview, CompressionLevel.NoCompression);
         }
+
+        if (content.Mask is { Length: > 0 } mask)
+        {
+            WriteBytes(zip, MaskEntry, mask, CompressionLevel.Optimal);
+        }
     }
 
     private static void WriteText(ZipArchive zip, string name, string text) =>
@@ -240,6 +251,12 @@ public static class ProjectSerializer
 
             var baseBytes = ReadEntry(zip, BaseEntry, MaxBaseBytes, required: true)!;
             var previewBytes = ReadEntry(zip, PreviewEntry, MaxPreviewBytes, required: false);
+            var maskBytes = ReadEntry(zip, MaskEntry, (long)width * height, required: false);
+            if (maskBytes is not null && maskBytes.Length != width * height)
+            {
+                warnings.Add("Die Transparenzmaske passt nicht zur Bildgröße und wurde ignoriert.");
+                maskBytes = null;
+            }
 
             var crop = document["cropRect"] is { } cropNode ? cropNode.Deserialize<PixelRect>(Options) : (PixelRect?)null;
             if (crop is { } c)
@@ -269,6 +286,7 @@ public static class ProjectSerializer
                 Annotations = annotations,
                 BasePng = baseBytes,
                 PreviewPng = previewBytes,
+                Mask = maskBytes,
                 Warnings = warnings,
             };
         }

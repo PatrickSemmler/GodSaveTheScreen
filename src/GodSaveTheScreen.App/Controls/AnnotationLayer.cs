@@ -105,6 +105,16 @@ public sealed class AnnotationLayer : Canvas
         || annotation is IShadowAnnotation { Shadow.IsVisible: true }
         || annotation is TextAnnotation { OutlineBlur: > 0 };
 
+    /// <summary>Basisbild, das Unschärfe und Lupe gerade sehen.</summary>
+    public PixelBuffer? BasePixels => _context.BasePixels;
+
+    /// <summary>Neues (maskiertes) Basisbild für Unschärfe und Lupe; zeichnet alle Objekte neu.</summary>
+    public void SetBaseImage(System.Windows.Media.Imaging.BitmapSource image, PixelBuffer pixels)
+    {
+        _context = _context with { BaseImage = image, BasePixels = pixels };
+        InvalidateAll();
+    }
+
     /// <summary>Zeichnet alle Objekte neu (z. B. nach Änderung des ausgeblendeten Objekts).</summary>
     public void InvalidateAll()
     {

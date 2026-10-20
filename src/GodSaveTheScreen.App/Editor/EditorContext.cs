@@ -105,7 +105,13 @@ public sealed class InteractionState
 
     /// <summary>Größenvorschau des Stifts bzw. Radierers: Mittelpunkt und Durchmesser in Bildpixeln.</summary>
     public (PointD Center, double Diameter)? BrushPreview { get; set; }
+
+    /// <summary>Gerade aufgezogener Bereich der Bereichsauswahl.</summary>
+    public AreaPreview? AreaPreview { get; set; }
 }
+
+/// <summary>Vorschau der Bereichsauswahl: Rechteck/Ellipse über <see cref="Rect"/>, Lasso über <see cref="Points"/>.</summary>
+public sealed record AreaPreview(AreaSelectShape Shape, RectD Rect, IReadOnlyList<PointD> Points);
 
 /// <summary>Laufende Textbearbeitung: das Objekt (bei <see cref="IsNew"/> noch nicht im Dokument).</summary>
 public sealed record TextEditSession(TextAnnotation Annotation, bool IsNew);
@@ -126,6 +132,7 @@ public sealed class EditorContext : IDisposable
         Document.HighlightersBehind = settings.Current.HighlighterBehind;
         Document.Annotations.CollectionChanged += OnAnnotationsChanged;
         Crop = new CropState(document);
+        AreaSelection = new AreaSelection(document.BaseImage.Width, document.BaseImage.Height);
         BlurTemplate.Apply(defaults.GetBlur());
         MagnifierTemplate.Apply(defaults.GetMagnifier());
     }
@@ -138,6 +145,25 @@ public sealed class EditorContext : IDisposable
 
     /// <summary>Zustand des Zuschnittmodus.</summary>
     public CropState Crop { get; }
+
+    /// <summary>Pixelauswahl der Bereichsauswahl (zum Entfernen von Bildbereichen; nicht im Undo-Verlauf).</summary>
+    public AreaSelection AreaSelection { get; }
+
+    /// <summary>Einstellungen von Bereichsauswahl und Hintergrundradierer (in den Einstellungen gespeichert).</summary>
+    public MaskToolStyle MaskTool
+    {
+        get => Settings.Current.MaskToolDefaults;
+        set
+        {
+            if (value == Settings.Current.MaskToolDefaults)
+            {
+                return;
+            }
+
+            Settings.Current = Settings.Current with { MaskToolDefaults = value };
+            _ = Settings.SaveAsync();
+        }
+    }
 
     public ImageDocument Document { get; }
 

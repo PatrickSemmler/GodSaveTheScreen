@@ -445,4 +445,32 @@ Tipp: In den Einstellungen können Sie die Taste Druck einem Aufnahmemodus zuwei
   <data name="Shortcut_Rotate" xml:space="preserve"><value>Emoji um 15° drehen (gegen / im Uhrzeigersinn)</value></data>
   <data name="Shortcut_FlipHorizontal" xml:space="preserve"><value>Emoji horizontal spiegeln</value></data>
   <data name="Shortcut_FlipVertical" xml:space="preserve"><value>Emoji vertikal spiegeln</value></data>
+  <data name="Tool_AreaSelect" xml:space="preserve"><value>Bereich auswählen und entfernen (W)</value></data>
+  <data name="Tool_BackgroundEraser" xml:space="preserve"><value>Hintergrundradierer (D)</value></data>
+  <data name="Mask_Shape" xml:space="preserve"><value>Auswahlform</value></data>
+  <data name="Mask_Rectangle" xml:space="preserve"><value>Rechteck</value></data>
+  <data name="Mask_Ellipse" xml:space="preserve"><value>Ellipse</value></data>
+  <data name="Mask_Lasso" xml:space="preserve"><value>Freihand (Lasso)</value></data>
+  <data name="Mask_MagicWand" xml:space="preserve"><value>Zauberstab</value></data>
+  <data name="Mask_Tolerance" xml:space="preserve"><value>Farbtoleranz (%)</value></data>
+  <data name="Mask_Feather" xml:space="preserve"><value>Weiche Kante (px)</value></data>
+  <data name="Mask_SelectHint" xml:space="preserve"><value>Bereich aufziehen. Umschalt fügt hinzu, Alt zieht ab. Entf macht den Bereich transparent.</value></data>
+  <data name="Mask_Remove" xml:space="preserve"><value>Bereich entfernen</value></data>
+  <data name="Mask_Invert" xml:space="preserve"><value>Auswahl umkehren</value></data>
+  <data name="Mask_SelectAll" xml:space="preserve"><value>Alles auswählen</value></data>
+  <data name="Mask_Deselect" xml:space="preserve"><value>Auswahl aufheben</value></data>
+  <data name="Mask_BrushSize" xml:space="preserve"><value>Größe (px)</value></data>
+  <data name="Mask_BrushHardness" xml:space="preserve"><value>Härte (%)</value></data>
+  <data name="Mask_EraserHint" xml:space="preserve"><value>Malen macht Teile des Screenshots transparent. Mit gedrückter Alt-Taste wiederherstellen. [ und ] ändern die Größe.</value></data>
+  <data name="Mask_Erase" xml:space="preserve"><value>Hintergrund radieren</value></data>
+  <data name="Mask_Restore" xml:space="preserve"><value>Hintergrund wiederherstellen</value></data>
+  <data name="Mask_Reset" xml:space="preserve"><value>Ganzen Screenshot wiederherstellen</value></data>
+  <data name="Mask_CropToVisible" xml:space="preserve"><value>Auf sichtbaren Bereich zuschneiden</value></data>
+  <data name="Shortcut_InvertArea" xml:space="preserve"><value>Bereichsauswahl umkehren</value></data>
+  <data name="Shortcut_RemoveArea" xml:space="preserve"><value>Ausgewählten Bereich entfernen</value></data>
+  <data name="Shortcuts_Area" xml:space="preserve"><value>Bereiche entfernen (W / D)</value></data>
+  <data name="Shortcut_AreaAdd" xml:space="preserve"><value>Zur Bereichsauswahl hinzufügen</value></data>
+  <data name="Shortcut_AreaSubtract" xml:space="preserve"><value>Von der Bereichsauswahl abziehen</value></data>
+  <data name="Shortcut_BrushRestore" xml:space="preserve"><value>Hintergrundradierer: wiederherstellen</value></data>
+  <data name="Shortcut_BrushSize" xml:space="preserve"><value>Hintergrundradierer: kleiner / größer</value></data>
 </root>

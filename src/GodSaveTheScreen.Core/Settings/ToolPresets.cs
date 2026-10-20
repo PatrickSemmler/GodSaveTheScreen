@@ -1,4 +1,5 @@
 using GodSaveTheScreen.Core.Annotations;
+using GodSaveTheScreen.Core.Imaging;
 
 namespace GodSaveTheScreen.Core.Settings;
 
@@ -14,6 +15,24 @@ public sealed record BlurStyle
     public double FeatherEdge { get; init; }
 
     public ArgbColor RedactColor { get; init; } = ArgbColor.Black;
+}
+
+/// <summary>Letzte Konfiguration von Bereichsauswahl und Hintergrundradierer (Entfernen von Bildbereichen).</summary>
+public sealed record MaskToolStyle
+{
+    public AreaSelectShape Shape { get; init; } = AreaSelectShape.Rectangle;
+
+    /// <summary>Weiche Kante beim Entfernen in Bildpixeln (0 = hart).</summary>
+    public double Feather { get; init; }
+
+    /// <summary>Farbtoleranz des Zauberstabs in Prozent.</summary>
+    public double Tolerance { get; init; } = 15;
+
+    /// <summary>Durchmesser des Radierers in Bildpixeln.</summary>
+    public double BrushSize { get; init; } = 40;
+
+    /// <summary>Härte des Radierers in Prozent (100 = harte Kante).</summary>
+    public double BrushHardness { get; init; } = 80;
 }
 
 /// <summary>Glättung und Druckempfindlichkeit neuer Freihandstriche.</summary>

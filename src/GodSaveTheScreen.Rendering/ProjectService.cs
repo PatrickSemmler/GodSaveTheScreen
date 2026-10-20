@@ -57,6 +57,7 @@ public sealed class ProjectService : IProjectService
             Metadata = document.Metadata,
             Annotations = [.. document.Annotations.Select(a => a.Snapshot())],
             BasePng = basePng,
+            Mask = document.Mask.IsOpaque ? null : (byte[])document.Mask.Values.Clone(),
         };
     }
 
@@ -133,6 +134,11 @@ public sealed class ProjectService : IProjectService
             Metadata = content.Metadata,
             ProjectPath = path,
         };
+        if (content.Mask is { } mask)
+        {
+            document.Mask.Write(document.Mask.Bounds, mask);
+        }
+
         foreach (var annotation in content.Annotations)
         {
             document.Annotations.Add(annotation);

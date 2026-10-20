@@ -445,4 +445,32 @@ Tip: You can assign the Print Screen key to a capture mode in the settings. On W
   <data name="Shortcut_Rotate" xml:space="preserve"><value>Rotate emoji by 15° (counter-clockwise / clockwise)</value></data>
   <data name="Shortcut_FlipHorizontal" xml:space="preserve"><value>Flip emoji horizontally</value></data>
   <data name="Shortcut_FlipVertical" xml:space="preserve"><value>Flip emoji vertically</value></data>
+  <data name="Tool_AreaSelect" xml:space="preserve"><value>Select and remove area (W)</value></data>
+  <data name="Tool_BackgroundEraser" xml:space="preserve"><value>Background eraser (D)</value></data>
+  <data name="Mask_Shape" xml:space="preserve"><value>Selection shape</value></data>
+  <data name="Mask_Rectangle" xml:space="preserve"><value>Rectangle</value></data>
+  <data name="Mask_Ellipse" xml:space="preserve"><value>Ellipse</value></data>
+  <data name="Mask_Lasso" xml:space="preserve"><value>Freehand (lasso)</value></data>
+  <data name="Mask_MagicWand" xml:space="preserve"><value>Magic wand</value></data>
+  <data name="Mask_Tolerance" xml:space="preserve"><value>Color tolerance (%)</value></data>
+  <data name="Mask_Feather" xml:space="preserve"><value>Soft edge (px)</value></data>
+  <data name="Mask_SelectHint" xml:space="preserve"><value>Drag to select an area. Shift adds to the selection, Alt subtracts. Del makes the area transparent.</value></data>
+  <data name="Mask_Remove" xml:space="preserve"><value>Remove area</value></data>
+  <data name="Mask_Invert" xml:space="preserve"><value>Invert selection</value></data>
+  <data name="Mask_SelectAll" xml:space="preserve"><value>Select all</value></data>
+  <data name="Mask_Deselect" xml:space="preserve"><value>Deselect</value></data>
+  <data name="Mask_BrushSize" xml:space="preserve"><value>Size (px)</value></data>
+  <data name="Mask_BrushHardness" xml:space="preserve"><value>Hardness (%)</value></data>
+  <data name="Mask_EraserHint" xml:space="preserve"><value>Paint to make parts of the screenshot transparent. Hold Alt to restore them. [ and ] change the size.</value></data>
+  <data name="Mask_Erase" xml:space="preserve"><value>Erase background</value></data>
+  <data name="Mask_Restore" xml:space="preserve"><value>Restore background</value></data>
+  <data name="Mask_Reset" xml:space="preserve"><value>Restore whole screenshot</value></data>
+  <data name="Mask_CropToVisible" xml:space="preserve"><value>Crop to visible area</value></data>
+  <data name="Shortcut_InvertArea" xml:space="preserve"><value>Invert area selection</value></data>
+  <data name="Shortcut_RemoveArea" xml:space="preserve"><value>Remove selected area</value></data>
+  <data name="Shortcuts_Area" xml:space="preserve"><value>Remove areas (W / D)</value></data>
+  <data name="Shortcut_AreaAdd" xml:space="preserve"><value>Add to area selection</value></data>
+  <data name="Shortcut_AreaSubtract" xml:space="preserve"><value>Subtract from area selection</value></data>
+  <data name="Shortcut_BrushRestore" xml:space="preserve"><value>Background eraser: restore</value></data>
+  <data name="Shortcut_BrushSize" xml:space="preserve"><value>Background eraser: smaller / larger</value></data>
 </root>

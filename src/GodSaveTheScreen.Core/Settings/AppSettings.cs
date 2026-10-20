@@ -167,6 +167,9 @@ public sealed record AppSettings
     /// <summary>Letzte Konfiguration von Stift und Textmarker (Glättung, Druck).</summary>
     public FreehandStyle FreehandDefaults { get; init; } = new();
 
+    /// <summary>Letzte Konfiguration von Bereichsauswahl und Hintergrundradierer.</summary>
+    public MaskToolStyle MaskToolDefaults { get; init; } = new();
+
     /// <summary>Letzte Konfiguration des Emoji-Werkzeugs (Deckkraft, Standardgröße, Hautton).</summary>
     public EmojiStyle EmojiDefaults { get; init; } = new();
 
@@ -233,6 +236,7 @@ public sealed record AppSettings
             ToolPresets = presets,
             BlurDefaults = blur,
             FreehandDefaults = freehand,
+            MaskToolDefaults = MaskToolDefaults ?? new MaskToolStyle(),
             MagnifierDefaults = magnifier with { Border = magnifier.Border ?? new MagnifierStyle().Border },
             ShapeDefaults = shapes,
             EmojiDefaults = emoji with { DefaultSize = emoji.DefaultSize > 0 ? emoji.DefaultSize : 96, Shadow = emoji.Shadow ?? ShadowStyle.None },

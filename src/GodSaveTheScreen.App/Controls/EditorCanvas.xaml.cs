@@ -3,12 +3,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using GodSaveTheScreen.App.Editor;
 using GodSaveTheScreen.App.Editor.Tools;
 using GodSaveTheScreen.App.Resources;
 using GodSaveTheScreen.App.ViewModels;
 using GodSaveTheScreen.Core.Annotations;
 using GodSaveTheScreen.Core.Geometry;
+using GodSaveTheScreen.Core.Imaging;
 using GodSaveTheScreen.Rendering;
 
 namespace GodSaveTheScreen.App.Controls;
@@ -33,6 +35,9 @@ public partial class EditorCanvas : UserControl
     private bool _committingText;
     private bool _rulerDrag;
     private VectorD _rulerGrab;
+    private ImageDocument? _document;
+    private WriteableBitmap? _display;
+    private int _contextMaskVersion;
 
     public EditorCanvas() => InitializeComponent();
 
@@ -51,22 +56,25 @@ public partial class EditorCanvas : UserControl
             _viewModel.Context.InteractionInvalidated -= OnInteractionInvalidated;
             _viewModel.Context.TextEditStarted -= OnTextEditStarted;
             _viewModel.Context.TextEditEnded -= OnTextEditEnded;
+            DetachDocument();
         }
 
         _viewModel = viewModel;
         viewModel.Context.TextEditStarted += OnTextEditStarted;
         viewModel.Context.TextEditEnded += OnTextEditEnded;
         var document = viewModel.Document;
-        var source = document.BaseImage.ToBitmapSource();
-        BaseImage.Source = source;
+        AttachDocument(document);
         Surface.Width = document.BaseImage.Width;
         Surface.Height = document.BaseImage.Height;
         SurfaceHost.Background = CreateCheckerBrush();
 
+        // Unschärfe und Lupe sehen das Basisbild ohne die entfernten Bereiche.
+        var masked = document.MaskedImage;
+        _contextMaskVersion = document.Mask.Version;
         var renderContext = new RenderContext
         {
-            BaseImage = source,
-            BasePixels = document.BaseImage,
+            BaseImage = masked.ToBitmapSource(),
+            BasePixels = masked,
             Annotations = document.Annotations,
             HighlightersBehind = document.HighlightersBehind,
         };
@@ -79,6 +87,64 @@ public partial class EditorCanvas : UserControl
         ApplyViewRect();
         ApplyZoom();
         UpdateCursor();
+    }
+
+    /// <summary>Anzeige des Basisbilds: beschreibbare Bitmap, die Maskenänderungen (auch während des Radierens) bereichsweise übernimmt.</summary>
+    private void AttachDocument(ImageDocument document)
+    {
+        _document = document;
+        _display = new WriteableBitmap(document.BaseImage.Width, document.BaseImage.Height, 96, 96, PixelFormats.Bgra32, null);
+        UpdateDisplay(document.Mask.Bounds);
+        BaseImage.Source = _display;
+        document.Mask.Changed += OnMaskChanged;
+        document.Undo.Changed += OnUndoChanged;
+    }
+
+    private void DetachDocument()
+    {
+        if (_document is null)
+        {
+            return;
+        }
+
+        _document.Mask.Changed -= OnMaskChanged;
+        _document.Undo.Changed -= OnUndoChanged;
+        _document = null;
+        _display = null;
+    }
+
+    private void OnMaskChanged(object? sender, PixelRect region) => UpdateDisplay(region);
+
+    private void UpdateDisplay(PixelRect region)
+    {
+        if (_document is null || _display is null || region.IsEmpty)
+        {
+            return;
+        }
+
+        var buffer = new byte[region.Width * region.Height * PixelBuffer.BytesPerPixel];
+        _document.Mask.CopyMasked(_document.BaseImage, buffer, region);
+        _display.WritePixels(new Int32Rect(region.X, region.Y, region.Width, region.Height), buffer, region.Width * PixelBuffer.BytesPerPixel, 0);
+    }
+
+    /// <summary>Nach einer übernommenen Maskenänderung bekommen Unschärfe und Lupe das neue maskierte Basisbild.</summary>
+    private void OnUndoChanged(object? sender, EventArgs e)
+    {
+        if (_document is null || _document.Mask.Version == _contextMaskVersion)
+        {
+            return;
+        }
+
+        var previous = Annotations.BasePixels;
+        var masked = _document.MaskedImage;
+        _contextMaskVersion = _document.Mask.Version;
+        var source = masked.ToBitmapSource();
+        Annotations.SetBaseImage(source, masked);
+        Interaction.RenderContext = Interaction.RenderContext with { BaseImage = source, BasePixels = masked };
+        if (previous is not null && !ReferenceEquals(previous, masked) && !ReferenceEquals(previous, _document.BaseImage))
+        {
+            EffectCache.Shared.RemoveImage(BaseImageIdentity.Get(previous));
+        }
     }
 
     /// <summary>
@@ -132,6 +198,8 @@ public partial class EditorCanvas : UserControl
             _viewModel.Context.CancelTextEdit();
             _viewModel = null;
         }
+
+        DetachDocument();
 
         Annotations.Detach();
         Interaction.Detach();

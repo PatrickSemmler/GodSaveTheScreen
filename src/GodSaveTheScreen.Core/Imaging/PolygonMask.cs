@@ -33,14 +33,38 @@ public static class PolygonMask
         ArgumentNullException.ThrowIfNull(source);
         ArgumentNullException.ThrowIfNull(points);
 
-        var box = BoundingBox(points).Intersect(source.Bounds);
-        if (box.IsEmpty || points.Count < 3)
+        var (box, coverage) = Coverage(points, source.Bounds, antiAlias);
+        if (box.IsEmpty)
         {
             return new PixelBuffer(0, 0);
         }
 
         var result = source.Crop(box);
+        for (var i = 0; i < coverage.Length; i++)
+        {
+            var index = (i * PixelBuffer.BytesPerPixel) + 3;
+            result.Pixels[index] = (byte)((result.Pixels[index] * coverage[i]) / 255);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Deckung des Polygons je Pixel (0–255) innerhalb seiner an <paramref name="clip"/> geklemmten Bounding-Box
+    /// (zeilenweise, Breite = Box). Mit <paramref name="antiAlias"/> per 4×4-Supersampling geglättet.
+    /// </summary>
+    public static (PixelRect Box, byte[] Coverage) Coverage(IReadOnlyList<PointD> points, PixelRect clip, bool antiAlias = true)
+    {
+        ArgumentNullException.ThrowIfNull(points);
+        var box = BoundingBox(points).Intersect(clip);
+        if (box.IsEmpty || points.Count < 3)
+        {
+            return (PixelRect.Empty, []);
+        }
+
+        var result = new byte[box.Width * box.Height];
         var samples = antiAlias ? AntiAliasFactor : 1;
+        var maxCoverage = samples * samples;
         var coverage = new int[box.Width];
         var crossings = new List<double>();
 
@@ -57,22 +81,14 @@ public static class PolygonMask
                 }
             }
 
-            var maxCoverage = samples * samples;
-            var offset = row * result.Stride;
+            var offset = row * box.Width;
             for (var x = 0; x < box.Width; x++)
             {
-                var index = offset + (x * PixelBuffer.BytesPerPixel) + 3;
-                var alpha = result.Pixels[index];
-                result.Pixels[index] = coverage[x] switch
-                {
-                    0 => 0,
-                    var c when c >= maxCoverage => alpha,
-                    var c => (byte)((alpha * c) / maxCoverage),
-                };
+                result[offset + x] = coverage[x] >= maxCoverage ? (byte)255 : (byte)((coverage[x] * 255) / maxCoverage);
             }
         }
 
-        return result;
+        return (box, result);
     }
 
     /// <summary>X-Schnittpunkte des Polygons mit der Zeile <paramref name="y"/>, aufsteigend sortiert.</summary>

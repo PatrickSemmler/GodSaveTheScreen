@@ -1,9 +1,11 @@
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using GodSaveTheScreen.App.Editor;
 using GodSaveTheScreen.App.Editor.Tools;
 using GodSaveTheScreen.Core.Annotations;
 using GodSaveTheScreen.Core.Geometry;
+using GodSaveTheScreen.Core.Imaging;
 using GodSaveTheScreen.Rendering;
 
 namespace GodSaveTheScreen.App.Controls;
@@ -42,7 +44,14 @@ public sealed class InteractionLayer : FrameworkElement
 
     private static Brush RulerLine => HighContrast ? SystemColors.WindowTextBrush : RulerInk;
 
+    /// <summary>Mehr Kantenstücke werden nicht als Umriss gezeichnet (nur die Einfärbung), damit die Anzeige flüssig bleibt.</summary>
+    private const int MaxOutlineSegments = 200_000;
+
     private EditorContext? _context;
+    private int _areaVersion = -1;
+    private BitmapSource? _areaTint;
+    private PixelRect _areaTintBounds;
+    private StreamGeometry? _areaOutline;
 
     public InteractionLayer() => IsHitTestVisible = false;
 
@@ -95,6 +104,8 @@ public sealed class InteractionLayer : FrameworkElement
         }
 
         DrawMarked(drawingContext, unit);
+        DrawAreaSelection(drawingContext, unit);
+        DrawAreaPreview(drawingContext, unit);
         DrawSelection(drawingContext, unit);
         DrawRuler(drawingContext, unit);
         DrawBrushPreview(drawingContext, unit);
@@ -235,6 +246,155 @@ public sealed class InteractionLayer : FrameworkElement
         dc.DrawLine(thick, new Point(midX - (bar / 2), bottom), new Point(midX + (bar / 2), bottom));
         dc.DrawLine(thick, new Point(left, midY - (bar / 2)), new Point(left, midY + (bar / 2)));
         dc.DrawLine(thick, new Point(right, midY - (bar / 2)), new Point(right, midY + (bar / 2)));
+    }
+
+    /// <summary>Bereichsauswahl: halbtransparent eingefärbt und mit gestricheltem Umriss (schwarz/weiß).</summary>
+    private void DrawAreaSelection(DrawingContext dc, double unit)
+    {
+        var selection = _context!.AreaSelection;
+        if (selection.IsEmpty)
+        {
+            return;
+        }
+
+        if (_areaVersion != selection.Version)
+        {
+            _areaVersion = selection.Version;
+            _areaTintBounds = selection.Bounds;
+            _areaTint = CreateTint(selection, _areaTintBounds, HighContrast ? SystemColors.HighlightColor : Color.FromRgb(0x00, 0x78, 0xD4));
+            _areaOutline = CreateOutline(selection, _areaTintBounds);
+        }
+
+        var b = _areaTintBounds;
+        dc.DrawImage(_areaTint, new Rect(b.X, b.Y, b.Width, b.Height));
+        if (_areaOutline is { } outline)
+        {
+            dc.DrawGeometry(null, new Pen(HighContrast ? SystemColors.WindowBrush : Brushes.White, unit), outline);
+            dc.DrawGeometry(null, new Pen(HighContrast ? SystemColors.WindowTextBrush : Brushes.Black, unit) { DashStyle = new DashStyle([4, 4], 0) }, outline);
+        }
+    }
+
+    private void DrawAreaPreview(DrawingContext dc, double unit)
+    {
+        if (_context!.Interaction.AreaPreview is not { } preview)
+        {
+            return;
+        }
+
+        var white = new Pen(Brushes.White, unit);
+        var dashed = new Pen(Accent, unit) { DashStyle = new DashStyle([4, 4], 0) };
+        Geometry geometry;
+        switch (preview.Shape)
+        {
+            case AreaSelectShape.Lasso when preview.Points.Count > 1:
+                var figure = new PathFigure { StartPoint = new Point(preview.Points[0].X, preview.Points[0].Y), IsClosed = true };
+                for (var i = 1; i < preview.Points.Count; i++)
+                {
+                    figure.Segments.Add(new LineSegment(new Point(preview.Points[i].X, preview.Points[i].Y), true));
+                }
+
+                geometry = new PathGeometry([figure]);
+                break;
+            case AreaSelectShape.Ellipse:
+                geometry = new EllipseGeometry(Normalize(preview.Rect));
+                break;
+            case AreaSelectShape.Rectangle:
+                geometry = new RectangleGeometry(Normalize(preview.Rect));
+                break;
+            default:
+                return;
+        }
+
+        geometry.Freeze();
+        dc.DrawGeometry(BandBrush, white, geometry);
+        dc.DrawGeometry(null, dashed, geometry);
+    }
+
+    private static BitmapSource CreateTint(AreaSelection selection, PixelRect bounds, Color color)
+    {
+        var pixels = new byte[bounds.Width * bounds.Height * PixelBuffer.BytesPerPixel];
+        for (var y = 0; y < bounds.Height; y++)
+        {
+            var source = ((bounds.Y + y) * selection.Width) + bounds.X;
+            var target = y * bounds.Width * PixelBuffer.BytesPerPixel;
+            for (var x = 0; x < bounds.Width; x++)
+            {
+                var c = selection.Values[source + x];
+                var t = target + (x * PixelBuffer.BytesPerPixel);
+                pixels[t] = color.B;
+                pixels[t + 1] = color.G;
+                pixels[t + 2] = color.R;
+                pixels[t + 3] = (byte)(c * 0x50 / 255);
+            }
+        }
+
+        var bitmap = BitmapSource.Create(bounds.Width, bounds.Height, 96, 96, PixelFormats.Bgra32, null, pixels, bounds.Width * PixelBuffer.BytesPerPixel);
+        bitmap.Freeze();
+        return bitmap;
+    }
+
+    /// <summary>Pixelkanten zwischen ausgewählten (Deckung ≥ 50 %) und nicht ausgewählten Pixeln, zu Strecken zusammengefasst.</summary>
+    private static StreamGeometry? CreateOutline(AreaSelection selection, PixelRect bounds)
+    {
+        var width = selection.Width;
+        var values = selection.Values;
+        bool Inside(int x, int y) => x >= 0 && y >= 0 && x < width && y < selection.Height && values[(y * width) + x] >= 128;
+
+        var geometry = new StreamGeometry();
+        var segments = 0;
+        using (var ctx = geometry.Open())
+        {
+            void Segment(double x0, double y0, double x1, double y1)
+            {
+                ctx.BeginFigure(new Point(x0, y0), false, false);
+                ctx.LineTo(new Point(x1, y1), true, false);
+                segments++;
+            }
+
+            for (var y = bounds.Y; y <= bounds.Bottom && segments <= MaxOutlineSegments; y++)
+            {
+                var start = -1;
+                for (var x = bounds.X; x <= bounds.Right; x++)
+                {
+                    var edge = x < bounds.Right && Inside(x, y - 1) != Inside(x, y);
+                    if (edge && start < 0)
+                    {
+                        start = x;
+                    }
+                    else if (!edge && start >= 0)
+                    {
+                        Segment(start, y, x, y);
+                        start = -1;
+                    }
+                }
+            }
+
+            for (var x = bounds.X; x <= bounds.Right && segments <= MaxOutlineSegments; x++)
+            {
+                var start = -1;
+                for (var y = bounds.Y; y <= bounds.Bottom; y++)
+                {
+                    var edge = y < bounds.Bottom && Inside(x - 1, y) != Inside(x, y);
+                    if (edge && start < 0)
+                    {
+                        start = y;
+                    }
+                    else if (!edge && start >= 0)
+                    {
+                        Segment(x, start, x, y);
+                        start = -1;
+                    }
+                }
+            }
+        }
+
+        if (segments > MaxOutlineSegments)
+        {
+            return null;
+        }
+
+        geometry.Freeze();
+        return geometry;
     }
 
     private void DrawMarked(DrawingContext dc, double unit)

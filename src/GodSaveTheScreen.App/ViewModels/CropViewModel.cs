@@ -132,7 +132,7 @@ public sealed partial class CropViewModel : ObservableObject, IDisposable
     [RelayCommand]
     private void RemoveBorder()
     {
-        var content = CropGeometry.DetectContent(_context.Document.BaseImage);
+        var content = CropGeometry.DetectContent(_context.Document.MaskedImage);
         if (content is not { } rect)
         {
             Hint = Strings.Crop_NoBorder;

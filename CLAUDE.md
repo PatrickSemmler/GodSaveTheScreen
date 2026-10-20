@@ -79,3 +79,12 @@ Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `doc
 - **Was wurde gemacht**: Version auf 1.2.0.0 gesetzt, Regel zur Erhöhung im Abschnitt „Versionierung“ festgehalten; Einstellungsdialog zeigt vier Stellen, Release-Skript akzeptiert nur noch vierstellige Versionen
 - **Warum**: Nutzerwunsch, einheitliches Versionsschema
 - **Seiteneffekte / Hinweise**: ZIP-Name jetzt `GodSaveTheScreen-1.2.0.0-win-x64.zip`; SemVer-Suffixe (`-beta`) werden vom Release-Skript nicht mehr akzeptiert
+
+### Bildbereiche entfernen (Transparenz) – 20.10.2026
+- **Kategorie**: Funktionserweiterung
+- **Verbesserungsliste-ID**: – (Nutzerwunsch)
+- **Version**: 1.3.0.0
+- **Geänderte Dateien**: `src/GodSaveTheScreen.Core/Imaging/AlphaMask.cs`, `AreaSelection.cs`, `MaskBrush.cs` (alle neu), `PolygonMask.cs`, `ImageDocument.cs`, `Undo/MaskEditAction.cs` (neu), `Project/ProjectSerializer.cs`, `Settings/AppSettings.cs`, `Settings/ToolPresets.cs`, `src/GodSaveTheScreen.Rendering/DocumentExporter.cs`, `ProjectService.cs`, `src/GodSaveTheScreen.App/Editor/Tools/MaskTools.cs` (neu), `ToolRegistry.cs`, `Editor/EditorContext.cs`, `Editor/ShortcutCatalog.cs`, `Controls/EditorCanvas.xaml.cs`, `AnnotationLayer.cs`, `InteractionLayer.cs`, `PropertyPanel.xaml`, `ViewModels/MaskToolsViewModel.cs` (neu), `EditorViewModel.cs`, `CropViewModel.cs`, `Resources/Strings*.resx`, `Strings.Designer.cs`, Tests (`AlphaMaskTests.cs`, `MaskToolTests.cs`), `Directory.Build.props`, `docs/agent/architecture.md`
+- **Was wurde gemacht**: Werkzeug „Bereich auswählen und entfernen“ (W: Rechteck, Ellipse, Lasso, Zauberstab; Umschalt/Alt kombinieren; Entf macht transparent; weiche Kante, Auswahl umkehren) und „Hintergrundradierer“ (D: Größe, Härte, Alt = wiederherstellen, `[`/`]`). Dazu „Ganzen Screenshot wiederherstellen“ und „Auf sichtbaren Bereich zuschneiden“. Umsetzung als nicht-destruktive Transparenzmaske des Basisbilds
+- **Warum**: Nutzerwunsch
+- **Seiteneffekte / Hinweise**: Nur der Screenshot wird transparent, Objekte bleiben darüber; Unschärfe und Lupe sehen den entfernten Bereich ebenfalls nicht. Projektdatei bekommt optional `mask.bin` (Format bleibt v1; ältere Programmversionen ignorieren die Maske und zeigen das volle Bild). Die Bereichsauswahl ist nicht im Undo-Verlauf und wird beim Werkzeugwechsel aufgehoben. JPG/BMP/`CF_DIB` füllen transparente Stellen weiß. Test `Version_IstSemVer` vorher separat auf vierstellige Versionen korrigiert. Tests: Core 314, App 481 grün; manuelle Prüfung im laufenden Editor steht noch aus

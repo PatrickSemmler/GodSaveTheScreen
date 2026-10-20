@@ -85,6 +85,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         ToolOptions = new ToolOptionsViewModel(context, () => ActiveTool);
         EmojiProperties = new EmojiPropertiesViewModel(context, () => ActiveTool);
         ShadowProperties = new ShadowPropertiesViewModel(context, () => ActiveTool);
+        MaskTools = new MaskToolsViewModel(context, () => ActiveTool, tools.Tools.OfType<BackgroundEraserTool>().FirstOrDefault());
         EmojiPicker = new EmojiPickerViewModel(context);
         Presets = new PresetListViewModel(context, tools, () => ActiveTool, dialogs, RefreshProperties);
         Crop = new CropViewModel(context, () => tools.Get<CropTool>());
@@ -133,6 +134,9 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     public PresetListViewModel Presets { get; }
 
+    /// <summary>Bereichsauswahl und Hintergrundradierer (entfernte Bereiche des Screenshots).</summary>
+    public MaskToolsViewModel MaskTools { get; }
+
     public CropViewModel Crop { get; }
 
     /// <summary>Der Zuschnittmodus ist aktiv: alle übrigen Werkzeuge sind deaktiviert.</summary>
@@ -173,13 +177,13 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
             return ActiveTool.HasStyleDefaults
                 ? string.Format(CultureInfo.CurrentUICulture, Strings.Props_DefaultsFor, ActiveTool.DisplayName)
-                : string.Empty;
+                : MaskTools.IsApplicable ? ActiveTool.DisplayName : string.Empty;
         }
     }
 
     /// <summary>Im Eigenschaftenbereich gibt es etwas zu bearbeiten.</summary>
     public bool HasPanelContent =>
-        Properties.IsApplicable || TextProperties.IsApplicable || MarkerProperties.IsApplicable || ToolOptions.IsApplicable || EmojiProperties.IsApplicable || ShadowProperties.IsApplicable || Properties.ShowOpacity || Presets.IsApplicable;
+        Properties.IsApplicable || TextProperties.IsApplicable || MarkerProperties.IsApplicable || ToolOptions.IsApplicable || EmojiProperties.IsApplicable || ShadowProperties.IsApplicable || MaskTools.IsApplicable || Properties.ShowOpacity || Presets.IsApplicable;
 
     public IReadOnlyList<ZoomChoice> ZoomChoices { get; }
 
@@ -354,6 +358,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         ToolOptions.Refresh();
         EmojiProperties.Refresh();
         ShadowProperties.Refresh();
+        MaskTools.Refresh();
         if (EmojiProperties.IsApplicable)
         {
             // Darstellbare Emojis werden erst beim ersten Öffnen der Auswahl im Hintergrund ermittelt.
@@ -912,6 +917,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         ToolOptions.Dispose();
         EmojiProperties.Dispose();
         ShadowProperties.Dispose();
+        MaskTools.Dispose();
         EmojiPicker.Dispose();
         Presets.Dispose();
         Crop.Dispose();
@@ -919,6 +925,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         Context.Crop.Changed -= OnCropChanged;
         _recents.Changed -= OnRecentsChanged;
         EffectCache.Shared.RemoveImage(BaseImageIdentity.Get(Document.BaseImage));
+        EffectCache.Shared.RemoveImage(BaseImageIdentity.Get(Document.MaskedImage));
         Layers.Dispose();
         Context.Dispose();
     }
