@@ -309,7 +309,7 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     // Info
 
-    public string Version { get; } = typeof(SettingsViewModel).Assembly.GetName().Version?.ToString(3) ?? "0.1.0";
+    public string Version { get; } = typeof(SettingsViewModel).Assembly.GetName().Version?.ToString(4) ?? "0.0.0.0";
 
     public string DataDirectory => _paths.DataDirectory;
 

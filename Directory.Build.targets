@@ -1,5 +1,5 @@
 <Project>
-  <!-- Git-Hash in die InformationalVersion ("1.0.0+abcdef12"): das SDK hängt SourceRevisionId automatisch an. Ohne git bleibt die Version ohne Hash. -->
+  <!-- Git-Hash in die InformationalVersion ("1.2.0.0+abcdef12"): das SDK hängt SourceRevisionId automatisch an. Ohne git bleibt die Version ohne Hash. -->
   <Target Name="SetSourceRevisionIdFromGit" BeforeTargets="InitializeSourceControlInformation" Condition="'$(SourceRevisionId)' == ''">
     <Exec Command="git rev-parse --short=8 HEAD"
           ConsoleToMSBuild="true"

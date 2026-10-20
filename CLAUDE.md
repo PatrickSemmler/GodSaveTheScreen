@@ -5,6 +5,16 @@ Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `doc
 - Sprache für Doku, Commits und UI-Texte: Deutsch (UI zusätzlich Englisch über `.resx`)
 - Arbeit erfolgt meilensteinweise; vor Beginn das jeweilige Meilenstein-Dokument lesen und Checkboxen beim Abschluss abhaken
 
+## Versionierung
+- Version vierstellig (`Major.Minor.Patch.Fix`) in `Directory.Build.props` (`<Version>`); `build/release.ps1` akzeptiert nur dieses Format
+- Bei jedem Commit mit Code-/Funktionsänderung im selben Commit erhöhen:
+  - Sehr umfangreiche Änderungen: 1. Stelle erhöhen
+  - Neues Feature: 2. Stelle erhöhen
+  - Bestehendes Feature erweitert / geändert: 3. Stelle erhöhen
+  - Bugfix: 4. Stelle erhöhen
+- Alle Stellen hinter der erhöhten Stelle auf 0 setzen (z. B. 1.2.3.4 + neues Feature → 1.3.0.0)
+- Neue Version im Eintrag der Änderungshistorie angeben (Zeile **Version**)
+
 ## Agent-Architekturdoku
 - Pfad: `docs/agent/architecture.md` (Index auf weitere Dateien in `docs/agent/`)
 - Lesen vor: Änderungen an Modulstruktur, Abhängigkeiten, übergreifenden Features; bei Unsicherheit über Konventionen
@@ -60,3 +70,12 @@ Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `doc
 - **Was wurde gemacht**: Schattenfarbe, -größe (Versatz nach rechts unten) und -unschärfe für Formen, Linien/Pfeile, Text, Marker und Emoji; Kontur-Unschärfe für Text (nur die Kontur wird weich). Panel-Abschnitt „Schatten“, Standardwerte je Werkzeug, Vorlagen übernehmen die Werte
 - **Warum**: Nutzerwunsch
 - **Seiteneffekte / Hinweise**: Schatten ist aus, solange die Farbe transparent ist (Standard). Freihand-Stift/Textmarker haben keinen Schatten. Projektformat bleibt v1 (optionale Felder), Golden-Dateien neu erzeugt. Effekte werden gerastert (Auflösung = Zoom bzw. 1 im Export) und je Objekt gecacht. Tests: Core 284, App 467 grün; manuelle Prüfung im laufenden Editor steht noch aus
+
+### Vierstellige Versionsnummer und Erhöhungsregel – 20.10.2026
+- **Kategorie**: Technik
+- **Verbesserungsliste-ID**: – (Nutzerwunsch)
+- **Version**: 1.2.0.0
+- **Geänderte Dateien**: `Directory.Build.props`, `Directory.Build.targets` (Kommentar), `build/release.ps1`, `src/GodSaveTheScreen.App/ViewModels/SettingsViewModel.cs`, `docs/agent/architecture.md`, `CLAUDE.md`
+- **Was wurde gemacht**: Version auf 1.2.0.0 gesetzt, Regel zur Erhöhung im Abschnitt „Versionierung“ festgehalten; Einstellungsdialog zeigt vier Stellen, Release-Skript akzeptiert nur noch vierstellige Versionen
+- **Warum**: Nutzerwunsch, einheitliches Versionsschema
+- **Seiteneffekte / Hinweise**: ZIP-Name jetzt `GodSaveTheScreen-1.2.0.0-win-x64.zip`; SemVer-Suffixe (`-beta`) werden vom Release-Skript nicht mehr akzeptiert

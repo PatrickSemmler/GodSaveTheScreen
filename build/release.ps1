@@ -29,10 +29,10 @@ function Invoke-Step([string]$Title, [scriptblock]$Action) {
     if ($LASTEXITCODE -ne 0) { throw "Schritt fehlgeschlagen: $Title (Exitcode $LASTEXITCODE)" }
 }
 
-# Version aus Directory.Build.props (SemVer)
+# Version aus Directory.Build.props (vierstellig, Regel siehe CLAUDE.md)
 [xml]$props = Get-Content (Join-Path $root 'Directory.Build.props')
 $version = ($props.Project.PropertyGroup | Where-Object { $_.Version } | Select-Object -First 1).Version
-if ($version -notmatch '^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$') { throw "Ungültige Version in Directory.Build.props: '$version'" }
+if ($version -notmatch '^\d+\.\d+\.\d+\.\d+$') { throw "Ungültige Version in Directory.Build.props: '$version' (erwartet: Major.Minor.Patch.Fix)" }
 Write-Host "GodSaveTheScreen $version ($Runtime)" -ForegroundColor Green
 
 if (-not $SkipNotices) {
