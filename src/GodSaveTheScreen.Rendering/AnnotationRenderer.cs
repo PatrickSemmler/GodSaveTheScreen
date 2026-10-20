@@ -138,6 +138,49 @@ public static partial class AnnotationRenderer
             dc.PushOpacity(opacity);
         }
 
+        if (annotation is IShadowAnnotation { Shadow: { IsVisible: true } shadow })
+        {
+            DrawShadow(dc, annotation, shadow, context);
+        }
+
+        DrawCore(dc, annotation, context);
+
+        if (pushed)
+        {
+            dc.Pop();
+        }
+    }
+
+    /// <summary>Rastergröße weicher Ebenen: wie Emojis (Anzeige Zoom × DPI, Export 1), höchstens <see cref="RenderContext.EmojiMaxPixels"/>.</summary>
+    private static double SoftScale(RenderContext context) => Math.Max(context.EmojiPixelScale, 0.01);
+
+    /// <summary>Schatten = Deckung des ganzen Objekts in Schattenfarbe, weichgezeichnet und nach rechts unten versetzt.</summary>
+    private static void DrawShadow(DrawingContext dc, Annotation annotation, ShadowStyle shadow, RenderContext context)
+    {
+        var layer = SoftLayerCache.Get(annotation, "shadow", SoftScale(context), () =>
+        {
+            var drawing = new DrawingGroup();
+            using (var inner = drawing.Open())
+            {
+                DrawCore(inner, annotation, context);
+            }
+
+            drawing.Freeze();
+            return SoftLayer.Create(drawing, shadow.Color, Math.Clamp(shadow.Blur, 0, ShadowStyle.MaxBlur), SoftScale(context), context.EmojiMaxPixels);
+        });
+        if (layer is null)
+        {
+            return;
+        }
+
+        var offset = Math.Clamp(shadow.Size, 0, ShadowStyle.MaxSize);
+        var rect = layer.Rect;
+        rect.Offset(offset, offset);
+        dc.DrawImage(layer.Bitmap, rect);
+    }
+
+    private static void DrawCore(DrawingContext dc, Annotation annotation, RenderContext context)
+    {
         switch (annotation)
         {
             case RectangleAnnotation rectangle:
@@ -156,7 +199,7 @@ public static partial class AnnotationRenderer
                 DrawLine(dc, line);
                 break;
             case TextAnnotation text:
-                DrawText(dc, text);
+                DrawText(dc, text, context);
                 break;
             case MarkerAnnotation marker:
                 DrawMarker(dc, marker);
@@ -173,11 +216,6 @@ public static partial class AnnotationRenderer
             case EmojiAnnotation emoji:
                 DrawEmoji(dc, emoji, context);
                 break;
-        }
-
-        if (pushed)
-        {
-            dc.Pop();
         }
     }
 
@@ -236,7 +274,7 @@ public static partial class AnnotationRenderer
         dc.DrawText(text, new Point(rect.X + ((rect.Width - text.Width) / 2), rect.Y + ((rect.Height - text.Height) / 2)));
     }
 
-    private static void DrawText(DrawingContext dc, TextAnnotation a)
+    private static void DrawText(DrawingContext dc, TextAnnotation a, RenderContext context)
     {
         if (a.Text.Length == 0)
         {
@@ -269,12 +307,42 @@ public static partial class AnnotationRenderer
             };
             outline.Freeze();
             var geometry = TextLayout.Create(a, fill).BuildGeometry(origin);
-            dc.DrawGeometry(null, outline, geometry);
+            if (a.OutlineBlur > 0)
+            {
+                DrawSoftOutline(dc, a, geometry, context);
+            }
+            else
+            {
+                dc.DrawGeometry(null, outline, geometry);
+            }
+
             dc.DrawGeometry(fill, null, geometry);
         }
         else
         {
             dc.DrawText(TextLayout.Create(a, fill), origin);
+        }
+    }
+
+    /// <summary>Weiche Kontur: Deckung der Kontur (deckend gezeichnet), weichgezeichnet und in Konturfarbe; die Füllung bleibt scharf.</summary>
+    private static void DrawSoftOutline(DrawingContext dc, TextAnnotation a, Geometry geometry, RenderContext context)
+    {
+        var layer = SoftLayerCache.Get(a, "outline", SoftScale(context), () =>
+        {
+            var pen = new Pen(Brushes.Black, a.Stroke.Thickness * 2)
+            {
+                LineJoin = PenLineJoin.Round,
+                StartLineCap = PenLineCap.Round,
+                EndLineCap = PenLineCap.Round,
+            };
+            pen.Freeze();
+            var drawing = new GeometryDrawing(null, pen, geometry);
+            drawing.Freeze();
+            return SoftLayer.Create(drawing, a.Stroke.Color, Math.Clamp(a.OutlineBlur, 0, TextAnnotation.MaxOutlineBlur), SoftScale(context), context.EmojiMaxPixels);
+        });
+        if (layer is not null)
+        {
+            dc.DrawImage(layer.Bitmap, layer.Rect);
         }
     }
 

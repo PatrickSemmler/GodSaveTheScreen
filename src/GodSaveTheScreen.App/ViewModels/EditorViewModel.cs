@@ -84,6 +84,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         MarkerProperties = new MarkerPropertiesViewModel(context, () => ActiveTool);
         ToolOptions = new ToolOptionsViewModel(context, () => ActiveTool);
         EmojiProperties = new EmojiPropertiesViewModel(context, () => ActiveTool);
+        ShadowProperties = new ShadowPropertiesViewModel(context, () => ActiveTool);
         EmojiPicker = new EmojiPickerViewModel(context);
         Presets = new PresetListViewModel(context, tools, () => ActiveTool, dialogs, RefreshProperties);
         Crop = new CropViewModel(context, () => tools.Get<CropTool>());
@@ -123,6 +124,9 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     /// <summary>Größe, Drehung und Spiegelung der Emojis bzw. Vorgaben des Emoji-Werkzeugs.</summary>
     public EmojiPropertiesViewModel EmojiProperties { get; }
+
+    /// <summary>Schatten der Auswahl bzw. Vorgaben des aktiven Werkzeugs.</summary>
+    public ShadowPropertiesViewModel ShadowProperties { get; }
 
     /// <summary>Emoji-Auswahl mit Suche, Kategorien und Hautton.</summary>
     public EmojiPickerViewModel EmojiPicker { get; }
@@ -175,7 +179,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     /// <summary>Im Eigenschaftenbereich gibt es etwas zu bearbeiten.</summary>
     public bool HasPanelContent =>
-        Properties.IsApplicable || TextProperties.IsApplicable || MarkerProperties.IsApplicable || ToolOptions.IsApplicable || EmojiProperties.IsApplicable || Properties.ShowOpacity || Presets.IsApplicable;
+        Properties.IsApplicable || TextProperties.IsApplicable || MarkerProperties.IsApplicable || ToolOptions.IsApplicable || EmojiProperties.IsApplicable || ShadowProperties.IsApplicable || Properties.ShowOpacity || Presets.IsApplicable;
 
     public IReadOnlyList<ZoomChoice> ZoomChoices { get; }
 
@@ -349,6 +353,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         MarkerProperties.Refresh();
         ToolOptions.Refresh();
         EmojiProperties.Refresh();
+        ShadowProperties.Refresh();
         if (EmojiProperties.IsApplicable)
         {
             // Darstellbare Emojis werden erst beim ersten Öffnen der Auswahl im Hintergrund ermittelt.
@@ -906,6 +911,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         MarkerProperties.Dispose();
         ToolOptions.Dispose();
         EmojiProperties.Dispose();
+        ShadowProperties.Dispose();
         EmojiPicker.Dispose();
         Presets.Dispose();
         Crop.Dispose();

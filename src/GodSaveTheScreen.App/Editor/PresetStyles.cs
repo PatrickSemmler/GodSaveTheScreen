@@ -243,6 +243,7 @@ public static class PresetStyles
             CornerRadius = Common(rectangles, r => r.CornerRadius, fallback.CornerRadius),
             StartCap = Common(lines, l => l.StartCap, fallback.StartCap),
             EndCap = Common(lines, l => l.EndCap, fallback.EndCap),
+            Shadow = Common(shapes.Where(s => s is not StrokeAnnotation), s => s.Shadow, fallback.Shadow),
         };
     }
 
@@ -257,11 +258,13 @@ public static class PresetStyles
             FontSize = Common(texts, t => t.FontSize, fallback.FontSize),
             Fill = Common(texts, t => t.Fill, fallback.Fill),
             Stroke = CommonStroke(texts, t => t.Stroke, fallback.Stroke),
+            OutlineBlur = Common(texts, t => t.OutlineBlur, fallback.OutlineBlur),
             TextAlignment = Common(texts, t => t.TextAlignment, fallback.TextAlignment),
             Background = Common(texts, t => t.Background, fallback.Background),
             BackgroundPadding = Common(texts, t => t.BackgroundPadding, fallback.BackgroundPadding),
             BackgroundCornerRadius = Common(texts, t => t.BackgroundCornerRadius, fallback.BackgroundCornerRadius),
             Decorations = Common(texts, t => t.Decorations, fallback.Decorations),
+            Shadow = Common(texts, t => t.Shadow, fallback.Shadow),
         };
 
     private static MarkerStyle CaptureMarker(MarkerStyle fallback, List<MarkerAnnotation> markers) => markers.Count == 0
@@ -274,6 +277,7 @@ public static class PresetStyles
             Stroke = CommonStroke(markers, m => m.Stroke, fallback.Stroke),
             TextColor = Common(markers, m => m.TextColor, fallback.TextColor),
             FontFamilyName = Common(markers, m => m.FontFamilyName, fallback.FontFamilyName),
+            Shadow = Common(markers, m => m.Shadow, fallback.Shadow),
         };
 
     private static BlurStyle CaptureBlur(BlurStyle fallback, List<BlurAnnotation> blurs) => blurs.Count == 0

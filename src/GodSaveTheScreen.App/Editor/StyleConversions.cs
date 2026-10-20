@@ -55,11 +55,13 @@ public static class StyleConversions
         FontSize = text.FontSize,
         Fill = text.Fill,
         Stroke = text.Stroke,
+        OutlineBlur = text.OutlineBlur,
         TextAlignment = text.TextAlignment,
         Background = text.Background,
         BackgroundPadding = text.BackgroundPadding,
         BackgroundCornerRadius = text.BackgroundCornerRadius,
         Decorations = text.Decorations,
+        Shadow = text.Shadow,
     };
 
     public static MarkerStyle ToStyle(this MarkerAnnotation marker) => new()
@@ -70,6 +72,7 @@ public static class StyleConversions
         Stroke = marker.Stroke,
         TextColor = marker.TextColor,
         FontFamilyName = marker.FontFamilyName,
+        Shadow = marker.Shadow,
     };
 
     /// <summary>Formstil eines Objekts; nicht zutreffende Felder (z. B. Eckenradius bei Ellipsen) kommen aus <paramref name="fallback"/>.</summary>
@@ -81,12 +84,18 @@ public static class StyleConversions
         CornerRadius = shape is RectangleAnnotation rectangle ? rectangle.CornerRadius : fallback.CornerRadius,
         StartCap = shape is LineAnnotation line ? line.StartCap : fallback.StartCap,
         EndCap = shape is LineAnnotation line2 ? line2.EndCap : fallback.EndCap,
+        Shadow = shape is StrokeAnnotation ? fallback.Shadow : shape.Shadow,
     };
 
     public static void Apply(this ShapeAnnotation shape, ShapeStyle style)
     {
         shape.Stroke = style.Stroke;
         shape.Opacity = style.Opacity;
+        if (shape is not StrokeAnnotation)
+        {
+            shape.Shadow = style.Shadow ?? ShadowStyle.None;
+        }
+
         if (shape is not StrokeAnnotation && shape is not LineAnnotation)
         {
             shape.Fill = style.Fill;

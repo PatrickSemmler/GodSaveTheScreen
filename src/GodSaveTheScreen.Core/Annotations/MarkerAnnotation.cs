@@ -12,7 +12,7 @@ public enum MarkerShape
 }
 
 /// <summary>Nummerierter Schritt-Marker, optional mit Spitze zu einem Zielpunkt (Sprechblase).</summary>
-public sealed partial class MarkerAnnotation : Annotation
+public sealed partial class MarkerAnnotation : Annotation, IShadowAnnotation
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Bounds))]
@@ -34,6 +34,9 @@ public sealed partial class MarkerAnnotation : Annotation
 
     [ObservableProperty]
     private StrokeStyle _stroke = new(ArgbColor.White, 2);
+
+    [ObservableProperty]
+    private ShadowStyle _shadow = ShadowStyle.None;
 
     [ObservableProperty]
     private ArgbColor _textColor = ArgbColor.White;

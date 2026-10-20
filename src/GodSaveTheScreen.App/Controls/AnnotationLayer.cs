@@ -93,11 +93,17 @@ public sealed class AnnotationLayer : Canvas
         }
 
         _context = _context with { EmojiPixelScale = scale, EmojiMaxPixels = MaxDisplayEmojiPixels };
-        foreach (var element in Children.OfType<AnnotationElement>().Where(e => e.Annotation is EmojiAnnotation))
+        foreach (var element in Children.OfType<AnnotationElement>().Where(e => DependsOnPixelScale(e.Annotation)))
         {
             element.InvalidateVisual();
         }
     }
+
+    /// <summary>Gerasterte Inhalte (Emoji, Schatten, weiche Kontur) hängen von der Bildschirmauflösung ab.</summary>
+    private static bool DependsOnPixelScale(Annotation annotation) =>
+        annotation is EmojiAnnotation
+        || annotation is IShadowAnnotation { Shadow.IsVisible: true }
+        || annotation is TextAnnotation { OutlineBlur: > 0 };
 
     /// <summary>Zeichnet alle Objekte neu (z. B. nach Änderung des ausgeblendeten Objekts).</summary>
     public void InvalidateAll()

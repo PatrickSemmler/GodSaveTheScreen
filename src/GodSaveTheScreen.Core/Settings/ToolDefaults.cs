@@ -16,6 +16,8 @@ public sealed record ShapeStyle
     public LineEndStyle EndCap { get; init; }
 
     public double Opacity { get; init; } = 1;
+
+    public ShadowStyle Shadow { get; init; } = ShadowStyle.None;
 }
 
 /// <summary>Standardwerte des Textwerkzeugs.</summary>
@@ -35,6 +37,8 @@ public sealed record TextStyle
 
     public StrokeStyle Stroke { get; init; } = new(ArgbColor.White, 0);
 
+    public double OutlineBlur { get; init; }
+
     public TextAlignmentKind TextAlignment { get; init; }
 
     public ArgbColor Background { get; init; } = ArgbColor.Transparent;
@@ -44,6 +48,8 @@ public sealed record TextStyle
     public double BackgroundCornerRadius { get; init; } = 4;
 
     public TextDecorationKind Decorations { get; init; }
+
+    public ShadowStyle Shadow { get; init; } = ShadowStyle.None;
 }
 
 /// <summary>Standardwerte des Markerwerkzeugs.</summary>
@@ -60,6 +66,8 @@ public sealed record MarkerStyle
     public ArgbColor TextColor { get; init; } = ArgbColor.White;
 
     public string FontFamilyName { get; init; } = "Segoe UI";
+
+    public ShadowStyle Shadow { get; init; } = ShadowStyle.None;
 }
 
 /// <summary>Werkzeug-ID → Standardwerte, mit Wertgleichheit (damit <c>AppSettings</c> als Record vergleichbar bleibt).</summary>

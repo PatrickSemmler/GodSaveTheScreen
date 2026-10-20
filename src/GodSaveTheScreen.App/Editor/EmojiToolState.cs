@@ -64,6 +64,19 @@ public sealed class EmojiToolState
         }
     }
 
+    /// <summary>Schatten neuer Emojis.</summary>
+    public ShadowStyle Shadow
+    {
+        get => Style.Shadow ?? ShadowStyle.None;
+        set
+        {
+            if (value != Style.Shadow)
+            {
+                Save(Style with { Shadow = value });
+            }
+        }
+    }
+
     /// <summary>Kantenlänge in Bildpixeln bei einem Klick ohne Aufziehen.</summary>
     public double DefaultSize
     {
@@ -131,12 +144,13 @@ public sealed class EmojiToolState
         Changed?.Invoke(this, EventArgs.Empty);
     }
 
-    /// <summary>Neues Emoji-Objekt mit den Standardwerten (Deckkraft) im Rahmen <paramref name="rect"/>.</summary>
+    /// <summary>Neues Emoji-Objekt mit den Standardwerten (Deckkraft, Schatten) im Rahmen <paramref name="rect"/>.</summary>
     public EmojiAnnotation Create(RectD rect, string? sequence = null) => new()
     {
         Sequence = sequence ?? EffectiveSequence,
         Rect = rect,
         Opacity = Opacity,
+        Shadow = Shadow,
     };
 
     /// <summary>Quadrat mit der Standardgröße, mittig auf <paramref name="center"/>.</summary>

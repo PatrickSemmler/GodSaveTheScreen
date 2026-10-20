@@ -497,6 +497,14 @@ public static class Strings
 
     public static string Text_Outline => ResourceManager.GetString("Text_Outline", Culture) ?? "Text_Outline";
 
+    public static string Text_OutlineBlur => ResourceManager.GetString("Text_OutlineBlur", Culture) ?? "Text_OutlineBlur";
+
+    public static string Shadow_Color => ResourceManager.GetString("Shadow_Color", Culture) ?? "Shadow_Color";
+
+    public static string Shadow_Size => ResourceManager.GetString("Shadow_Size", Culture) ?? "Shadow_Size";
+
+    public static string Shadow_Blur => ResourceManager.GetString("Shadow_Blur", Culture) ?? "Shadow_Blur";
+
     public static string Text_OutlineWidth => ResourceManager.GetString("Text_OutlineWidth", Culture) ?? "Text_OutlineWidth";
 
     public static string Text_Background => ResourceManager.GetString("Text_Background", Culture) ?? "Text_Background";

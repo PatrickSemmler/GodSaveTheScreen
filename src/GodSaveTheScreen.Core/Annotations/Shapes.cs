@@ -11,7 +11,7 @@ public enum TriangleKind
     Right,
 }
 
-public abstract partial class ShapeAnnotation : Annotation
+public abstract partial class ShapeAnnotation : Annotation, IShadowAnnotation
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasFill))]
@@ -19,6 +19,9 @@ public abstract partial class ShapeAnnotation : Annotation
 
     [ObservableProperty]
     private StrokeStyle _stroke = StrokeStyle.Default;
+
+    [ObservableProperty]
+    private ShadowStyle _shadow = ShadowStyle.None;
 
     /// <summary>Füllung vorhanden (Alpha 0 = keine Füllung).</summary>
     [JsonIgnore]

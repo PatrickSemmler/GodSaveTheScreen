@@ -32,10 +32,13 @@ public enum TextDecorationKind
 /// <see cref="FontStretch"/> 1–9 (5 = normal), <see cref="FontSize"/> in Bildpixeln.
 /// Die Layoutgröße liefert der Renderer über <see cref="MeasureProvider"/> (FormattedText).
 /// </summary>
-public sealed partial class TextAnnotation : Annotation
+public sealed partial class TextAnnotation : Annotation, IShadowAnnotation
 {
     public const int DefaultFontWeight = 400;
     public const int NormalStretch = 5;
+
+    /// <summary>Größte weiche Kontur in Bildpixeln.</summary>
+    public const double MaxOutlineBlur = 50;
 
     private SizeD? _layoutSize;
 
@@ -75,6 +78,13 @@ public sealed partial class TextAnnotation : Annotation
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Bounds))]
     private StrokeStyle _stroke = new(ArgbColor.White, 0);
+
+    /// <summary>Weicher Rand der Kontur in Bildpixeln; 0 = scharfe Kontur. Die Buchstaben bleiben scharf.</summary>
+    [ObservableProperty]
+    private double _outlineBlur;
+
+    [ObservableProperty]
+    private ShadowStyle _shadow = ShadowStyle.None;
 
     [ObservableProperty]
     private TextAlignmentKind _textAlignment;
@@ -126,7 +136,7 @@ public sealed partial class TextAnnotation : Annotation
     }
 
     [JsonIgnore]
-    public override double VisualMargin => (Stroke.IsVisible ? Stroke.Thickness / 2 : 0) + 1;
+    public override double VisualMargin => (Stroke.IsVisible ? (Stroke.Thickness / 2) + Math.Max(0, OutlineBlur) : 0) + 1;
 
     public override void MapPoints(Func<PointD, PointD> map) => Position = map(Position);
 

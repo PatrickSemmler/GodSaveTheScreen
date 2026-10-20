@@ -78,8 +78,8 @@ public static class RegionEffectProcessor
         var parallel = w * h > ParallelThreshold;
         for (var pass = 0; pass < 3; pass++)
         {
-            BoxPass(a, b, w, h, radius, horizontal: true, parallel);
-            BoxPass(b, a, w, h, radius, horizontal: false, parallel);
+            BoxPass(a, b, w, h, channels, radius, horizontal: true, parallel);
+            BoxPass(b, a, w, h, channels, radius, horizontal: false, parallel);
         }
 
         for (var y = 0; y < region.Height; y++)
@@ -93,9 +93,26 @@ public static class RegionEffectProcessor
         }
     }
 
-    private static void BoxPass(float[] input, float[] output, int w, int h, int radius, bool horizontal, bool parallel)
+    /// <summary>Weichzeichnung eines einzelnen Kanals (z. B. Alphamaske) wie <see cref="GaussianBlur"/>; Ergebnis steht wieder in <paramref name="data"/>.</summary>
+    public static void BlurChannel(float[] data, int w, int h, int radius)
     {
-        const int channels = PixelBuffer.BytesPerPixel;
+        ArgumentNullException.ThrowIfNull(data);
+        if (radius <= 0 || w <= 0 || h <= 0)
+        {
+            return;
+        }
+
+        var temp = new float[data.Length];
+        var parallel = w * h > ParallelThreshold;
+        for (var pass = 0; pass < 3; pass++)
+        {
+            BoxPass(data, temp, w, h, 1, radius, horizontal: true, parallel);
+            BoxPass(temp, data, w, h, 1, radius, horizontal: false, parallel);
+        }
+    }
+
+    private static void BoxPass(float[] input, float[] output, int w, int h, int channels, int radius, bool horizontal, bool parallel)
+    {
         var lines = horizontal ? h : w;
         var length = horizontal ? w : h;
         var step = horizontal ? channels : w * channels;

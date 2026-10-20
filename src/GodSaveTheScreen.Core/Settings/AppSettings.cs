@@ -213,7 +213,7 @@ public sealed record AppSettings
         var shapes = new ShapeDefaultsMap();
         foreach (var (key, style) in ShapeDefaults ?? [])
         {
-            shapes[key] = style is null ? new ShapeStyle() : style with { Stroke = style.Stroke ?? StrokeStyle.Default };
+            shapes[key] = style is null ? new ShapeStyle() : style with { Stroke = style.Stroke ?? StrokeStyle.Default, Shadow = style.Shadow ?? ShadowStyle.None };
         }
 
         var text = TextDefaults ?? new TextStyle();
@@ -235,13 +235,13 @@ public sealed record AppSettings
             FreehandDefaults = freehand,
             MagnifierDefaults = magnifier with { Border = magnifier.Border ?? new MagnifierStyle().Border },
             ShapeDefaults = shapes,
-            EmojiDefaults = emoji with { DefaultSize = emoji.DefaultSize > 0 ? emoji.DefaultSize : 96 },
+            EmojiDefaults = emoji with { DefaultSize = emoji.DefaultSize > 0 ? emoji.DefaultSize : 96, Shadow = emoji.Shadow ?? ShadowStyle.None },
             EmojiRecent = EmojiRecent ?? [],
             EmojiFavorites = EmojiFavorites ?? [],
             RecentColors = RecentColors ?? [],
             RecentFonts = RecentFonts ?? [],
-            TextDefaults = text with { Stroke = text.Stroke ?? new StrokeStyle(ArgbColor.White, 0), FontFamilyName = text.FontFamilyName ?? "Segoe UI" },
-            MarkerDefaults = marker with { Stroke = marker.Stroke ?? new StrokeStyle(ArgbColor.White, 2), FontFamilyName = marker.FontFamilyName ?? "Segoe UI" },
+            TextDefaults = text with { Stroke = text.Stroke ?? new StrokeStyle(ArgbColor.White, 0), FontFamilyName = text.FontFamilyName ?? "Segoe UI", Shadow = text.Shadow ?? ShadowStyle.None },
+            MarkerDefaults = marker with { Stroke = marker.Stroke ?? new StrokeStyle(ArgbColor.White, 2), FontFamilyName = marker.FontFamilyName ?? "Segoe UI", Shadow = marker.Shadow ?? ShadowStyle.None },
             FileNamePattern = FileNamePattern ?? DefaultFileNamePattern,
             AutoSaveDirectory = AutoSaveDirectory ?? string.Empty,
             LastSaveDirectory = LastSaveDirectory ?? string.Empty,

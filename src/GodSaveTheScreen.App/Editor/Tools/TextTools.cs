@@ -24,11 +24,13 @@ public static class StyleApplier
         text.FontStretch = style.FontStretch;
         text.Fill = style.Fill;
         text.Stroke = style.Stroke;
+        text.OutlineBlur = style.OutlineBlur;
         text.TextAlignment = style.TextAlignment;
         text.Background = style.Background;
         text.BackgroundPadding = style.BackgroundPadding;
         text.BackgroundCornerRadius = style.BackgroundCornerRadius;
         text.Decorations = style.Decorations;
+        text.Shadow = style.Shadow ?? ShadowStyle.None;
     }
 
     public static void Apply(MarkerAnnotation marker, MarkerStyle style)
@@ -39,6 +41,7 @@ public static class StyleApplier
         marker.Stroke = style.Stroke;
         marker.TextColor = style.TextColor;
         marker.FontFamilyName = style.FontFamilyName;
+        marker.Shadow = style.Shadow ?? ShadowStyle.None;
     }
 }
 

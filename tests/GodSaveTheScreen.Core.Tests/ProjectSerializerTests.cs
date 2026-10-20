@@ -22,7 +22,7 @@ internal static class ProjectSamples
         var stroke = new StrokeStyle(ArgbColor.Parse("#80336699"), 3.5, DashKind.DashDot, LineJoinKind.Bevel, StrokeCapKind.Square);
         return
         [
-            new RectangleAnnotation { Name = "Rechteck", Opacity = 0.75, IsLocked = true, Rect = new RectD(10, 20, 30.5, 40.25), CornerRadius = 6, Fill = ArgbColor.Parse("#40FF8800"), Stroke = stroke },
+            new RectangleAnnotation { Name = "Rechteck", Opacity = 0.75, IsLocked = true, Rect = new RectD(10, 20, 30.5, 40.25), CornerRadius = 6, Fill = ArgbColor.Parse("#40FF8800"), Stroke = stroke, Shadow = new ShadowStyle(ArgbColor.Parse("#80000000"), 5, 7.5) },
             new EllipseAnnotation { Name = "Ellipse", IsVisible = false, Rect = new RectD(1, 2, 3, 4), Fill = ArgbColor.Parse("#FF00FF00"), Stroke = stroke },
             new TriangleAnnotation { Rect = new RectD(5, 6, 70, 80), Kind = TriangleKind.Right, IsFlipped = true, Fill = ArgbColor.White, Stroke = stroke },
             new LineAnnotation { Start = new PointD(1.5, 2.5), End = new PointD(100, 90), StartCap = LineEndStyle.Circle, EndCap = LineEndStyle.OpenArrow, CapSize = 7, Stroke = stroke },
@@ -38,6 +38,8 @@ internal static class ProjectSamples
                 FontSize = 31.5,
                 Fill = ArgbColor.Parse("#FF112233"),
                 Stroke = new StrokeStyle(ArgbColor.White, 2),
+                OutlineBlur = 3.5,
+                Shadow = new ShadowStyle(ArgbColor.Parse("#FF334455"), 2, 0),
                 TextAlignment = TextAlignmentKind.Center,
                 Background = ArgbColor.Parse("#99FFFF00"),
                 BackgroundPadding = 9,
@@ -56,6 +58,7 @@ internal static class ProjectSamples
                 TextColor = ArgbColor.Parse("#FFFFEEDD"),
                 FontFamilyName = "Arial",
                 PointerTarget = new PointD(260, 190),
+                Shadow = new ShadowStyle(ArgbColor.Black, 3, 4),
             },
             new StrokeAnnotation
             {
@@ -95,6 +98,7 @@ internal static class ProjectSamples
                 FlipHorizontal = true,
                 FlipVertical = true,
                 Opacity = 0.6,
+                Shadow = new ShadowStyle(ArgbColor.Parse("#40000000"), 6, 10),
             },
         ];
     }

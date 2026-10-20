@@ -34,6 +34,8 @@ public sealed record EmojiStyle
     public double DefaultSize { get; init; } = 96;
 
     public Emoji.SkinTone SkinTone { get; init; }
+
+    public ShadowStyle Shadow { get; init; } = ShadowStyle.None;
 }
 
 /// <summary>Standardwerte des Lupen-Werkzeugs.</summary>

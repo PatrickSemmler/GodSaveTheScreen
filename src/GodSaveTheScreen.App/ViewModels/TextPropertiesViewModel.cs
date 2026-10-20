@@ -234,6 +234,13 @@ public sealed partial class TextPropertiesViewModel : ObservableObject, IDisposa
         set => SetNullable(nameof(OutlineThickness), value is { } thickness ? Math.Clamp(thickness, 0, 50) : null, t => t.Stroke.Thickness, (t, v) => t.Stroke = t.Stroke with { Thickness = v }, (s, v) => s with { Stroke = s.Stroke with { Thickness = v } });
     }
 
+    /// <summary>Weicher Rand der Kontur in Bildpixeln (0 = scharf).</summary>
+    public double? OutlineBlur
+    {
+        get => TryGet(t => t.OutlineBlur, s => s.OutlineBlur, out var v) ? v : null;
+        set => SetNullable(nameof(OutlineBlur), value is { } blur ? Math.Clamp(blur, 0, TextAnnotation.MaxOutlineBlur) : null, t => t.OutlineBlur, (t, v) => t.OutlineBlur = v, (s, v) => s with { OutlineBlur = v });
+    }
+
     public ArgbColor? BackgroundColor
     {
         get => TryGet(t => t.Background, s => s.Background, out var v) ? v : null;

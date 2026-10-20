@@ -251,6 +251,10 @@
   <data name="Text_AlignRight" xml:space="preserve"><value>Align right</value></data>
   <data name="Text_Color" xml:space="preserve"><value>Text colour</value></data>
   <data name="Text_Outline" xml:space="preserve"><value>Outline</value></data>
+  <data name="Text_OutlineBlur" xml:space="preserve"><value>Outline blur</value></data>
+  <data name="Shadow_Color" xml:space="preserve"><value>Shadow color</value></data>
+  <data name="Shadow_Size" xml:space="preserve"><value>Shadow size</value></data>
+  <data name="Shadow_Blur" xml:space="preserve"><value>Shadow blur</value></data>
   <data name="Text_OutlineWidth" xml:space="preserve"><value>Outline width</value></data>
   <data name="Text_Background" xml:space="preserve"><value>Background</value></data>
   <data name="Text_BackgroundPadding" xml:space="preserve"><value>Background padding</value></data>

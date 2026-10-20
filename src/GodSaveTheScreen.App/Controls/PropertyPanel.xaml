@@ -128,6 +128,11 @@
                             AutomationProperties.Name="{l:Loc Text_OutlineWidth}" />
             </Grid>
 
+            <TextBlock Text="{l:Loc Text_OutlineBlur}" Style="{StaticResource FieldLabel}" />
+            <ui:NumberBox Minimum="0" Maximum="50" SmallChange="1" LargeChange="5" MaxDecimalPlaces="1" ClearButtonEnabled="False"
+                          Value="{Binding OutlineBlur, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          AutomationProperties.Name="{l:Loc Text_OutlineBlur}" />
+
             <TextBlock Text="{l:Loc Text_Background}" Style="{StaticResource FieldLabel}" />
             <controls:ColorButton Style="{StaticResource PanelColorButton}" SelectedColor="{Binding BackgroundColor, Mode=TwoWay}" />
 
@@ -418,6 +423,22 @@
                         HorizontalAlignment="Stretch"
                         AutomationProperties.Name="{l:Loc Props_EndCap}" />
             </StackPanel>
+          </StackPanel>
+
+          <!-- Schatten (Formen, Linien, Text, Marker, Emoji) -->
+          <StackPanel DataContext="{Binding ShadowProperties}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
+            <TextBlock Text="{l:Loc Shadow_Color}" Style="{StaticResource FieldLabel}" />
+            <controls:ColorButton Style="{StaticResource PanelColorButton}" SelectedColor="{Binding ShadowColor, Mode=TwoWay}" />
+
+            <TextBlock Text="{l:Loc Shadow_Size}" Style="{StaticResource FieldLabel}" />
+            <ui:NumberBox Minimum="0" Maximum="200" SmallChange="1" LargeChange="5" MaxDecimalPlaces="1" ClearButtonEnabled="False"
+                          Value="{Binding ShadowSize, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          AutomationProperties.Name="{l:Loc Shadow_Size}" />
+
+            <TextBlock Text="{l:Loc Shadow_Blur}" Style="{StaticResource FieldLabel}" />
+            <ui:NumberBox Minimum="0" Maximum="100" SmallChange="1" LargeChange="5" MaxDecimalPlaces="1" ClearButtonEnabled="False"
+                          Value="{Binding ShadowBlur, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          AutomationProperties.Name="{l:Loc Shadow_Blur}" />
           </StackPanel>
 
           <!-- Deckkraft für alle Objekte -->

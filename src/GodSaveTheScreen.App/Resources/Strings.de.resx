@@ -251,6 +251,10 @@
   <data name="Text_AlignRight" xml:space="preserve"><value>Rechtsbündig</value></data>
   <data name="Text_Color" xml:space="preserve"><value>Textfarbe</value></data>
   <data name="Text_Outline" xml:space="preserve"><value>Kontur</value></data>
+  <data name="Text_OutlineBlur" xml:space="preserve"><value>Kontur-Unschärfe</value></data>
+  <data name="Shadow_Color" xml:space="preserve"><value>Schattenfarbe</value></data>
+  <data name="Shadow_Size" xml:space="preserve"><value>Schattengröße</value></data>
+  <data name="Shadow_Blur" xml:space="preserve"><value>Schattenunschärfe</value></data>
   <data name="Text_OutlineWidth" xml:space="preserve"><value>Konturstärke</value></data>
   <data name="Text_Background" xml:space="preserve"><value>Hintergrund</value></data>
   <data name="Text_BackgroundPadding" xml:space="preserve"><value>Innenabstand</value></data>

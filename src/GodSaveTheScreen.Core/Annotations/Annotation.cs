@@ -48,8 +48,16 @@ public abstract partial class Annotation : ObservableObject
     [JsonIgnore]
     public virtual double VisualMargin => 0;
 
+    /// <summary>Sichtbare Ausdehnung: <see cref="Bounds"/> plus <see cref="VisualMargin"/>, vereinigt mit dem Schatten.</summary>
     [JsonIgnore]
-    public RectD VisualBounds => Bounds.Inflate(VisualMargin, VisualMargin);
+    public RectD VisualBounds
+    {
+        get
+        {
+            var bounds = Bounds.Inflate(VisualMargin, VisualMargin);
+            return this is IShadowAnnotation { Shadow: { IsVisible: true } shadow } ? bounds.Union(shadow.Extend(bounds)) : bounds;
+        }
+    }
 
     /// <summary>Wendet eine Punktabbildung auf die gesamte Geometrie an (Verschieben, Skalieren).</summary>
     public abstract void MapPoints(Func<PointD, PointD> map);

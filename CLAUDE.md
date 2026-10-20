@@ -52,3 +52,11 @@ Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `doc
 - **Was wurde gemacht**: `ImageDocument.CanvasBounds` (Bild ∪ sichtbare Objekte); `EffectiveBounds` nutzt sie ohne Zuschnitt. Editor zeigt den erweiterten Bereich als Schachbrett, Export liefert ihn transparent
 - **Warum**: Objekte über den Bildrand hinaus wurden abgeschnitten
 - **Seiteneffekte / Hinweise**: Anpassung erst nach Loslassen/Undo (Ziehen zeigt das Objekt ungeschnitten als Vorschau). Mit Zuschnitt keine Erweiterung. JPG/BMP/`CF_DIB` füllen den Bereich weiß. Max. 8192 px Überstand je Seite. Tests: Core 275, App 454 grün; manuelle Prüfung im laufenden Editor steht noch aus
+
+### Schatten und weiche Textkontur – 20.10.2026
+- **Kategorie**: Funktionserweiterung
+- **Verbesserungsliste-ID**: – (Nutzerwunsch)
+- **Geänderte Dateien**: `src/GodSaveTheScreen.Core/Annotations/ShadowStyle.cs` (neu), `Annotation.cs`, `Shapes.cs`, `TextAnnotation.cs`, `MarkerAnnotation.cs`, `EmojiAnnotation.cs`, `Settings/ToolDefaults.cs`, `Settings/ToolPresets.cs`, `Settings/AppSettings.cs`, `src/GodSaveTheScreen.Rendering/SoftLayer.cs` (neu), `AnnotationRenderer.cs`, `RegionEffects.cs`, `src/GodSaveTheScreen.App/ViewModels/ShadowPropertiesViewModel.cs` (neu), `TextPropertiesViewModel.cs`, `EditorViewModel.cs`, `Controls/PropertyPanel.xaml`, `Controls/AnnotationLayer.cs`, `Editor/StyleConversions.cs`, `Editor/PresetStyles.cs`, `Editor/EmojiToolState.cs`, `Editor/Tools/TextTools.cs`, `Resources/Strings*.resx`, `Strings.Designer.cs`, Tests (`ShadowTests.cs` in Core und App, Golden-Dateien), `docs/agent/architecture.md`
+- **Was wurde gemacht**: Schattenfarbe, -größe (Versatz nach rechts unten) und -unschärfe für Formen, Linien/Pfeile, Text, Marker und Emoji; Kontur-Unschärfe für Text (nur die Kontur wird weich). Panel-Abschnitt „Schatten“, Standardwerte je Werkzeug, Vorlagen übernehmen die Werte
+- **Warum**: Nutzerwunsch
+- **Seiteneffekte / Hinweise**: Schatten ist aus, solange die Farbe transparent ist (Standard). Freihand-Stift/Textmarker haben keinen Schatten. Projektformat bleibt v1 (optionale Felder), Golden-Dateien neu erzeugt. Effekte werden gerastert (Auflösung = Zoom bzw. 1 im Export) und je Objekt gecacht. Tests: Core 284, App 467 grün; manuelle Prüfung im laufenden Editor steht noch aus
