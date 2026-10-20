@@ -546,12 +546,12 @@ public sealed class ReleaseConfigurationTests
     private static string Read(params string[] parts) => File.ReadAllText(Path.Combine([RepoPaths.Root(), .. parts]));
 
     [Fact]
-    public void Version_IstSemVer()
+    public void Version_IstVierstellig()
     {
         var props = XDocument.Parse(Read("Directory.Build.props"));
         var version = props.Descendants("Version").Single().Value;
 
-        Regex.IsMatch(version, @"^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$").ShouldBeTrue(version);
+        Regex.IsMatch(version, @"^\d+\.\d+\.\d+\.\d+$").ShouldBeTrue(version);
     }
 
     [Fact]
