@@ -97,7 +97,8 @@ public sealed class ClipboardService : IClipboardService
     private static DataObject CreateImageData(PixelBuffer image)
     {
         var data = new DataObject();
-        data.SetData(DataFormats.Bitmap, image.ToBitmapSource());
+        // CF_DIB verliert den Alphakanal (transparente Pixel würden schwarz): erweiterte Zeichenfläche weiß füllen.
+        data.SetData(DataFormats.Bitmap, image.FlattenOnBackground(255, 255, 255).ToBitmapSource());
         data.SetData("PNG", new MemoryStream(image.EncodePng()));
         return data;
     }

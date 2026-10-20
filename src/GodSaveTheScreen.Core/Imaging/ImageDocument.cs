@@ -16,8 +16,18 @@ public sealed partial class ImageDocument : ObservableObject
         DpiY = dpiY;
         CreatedAt = DateTimeOffset.Now;
         Undo = new UndoManager();
-        Undo.Changed += (_, _) => IsDirty = !Undo.IsAtSavePoint;
+        _canvasBounds = baseImage.Bounds;
+        // Erst nach abgeschlossenen Änderungen (Loslassen, Undo/Redo, Laden) anpassen, nicht während des Ziehens.
+        Undo.Changed += (_, _) =>
+        {
+            IsDirty = !Undo.IsAtSavePoint;
+            UpdateCanvasBounds();
+        };
+        Annotations.CollectionChanged += (_, _) => UpdateCanvasBounds();
     }
+
+    /// <summary>Höchstens so viele Pixel darf die Zeichenfläche je Seite über das Basisbild hinauswachsen.</summary>
+    public const int MaxCanvasOverhang = 8192;
 
     public ObservableCollection<Annotation> Annotations { get; } = [];
 
@@ -50,8 +60,57 @@ public sealed partial class ImageDocument : ObservableObject
     [NotifyPropertyChangedFor(nameof(EffectiveBounds))]
     private PixelRect? _cropRect;
 
-    /// <summary>Sichtbarer Bereich: der Zuschnitt oder die volle Bildfläche.</summary>
-    public PixelRect EffectiveBounds => CropRect ?? BaseImage.Bounds;
+    /// <summary>Sichtbarer Bereich: der Zuschnitt oder die (ggf. um überstehende Objekte erweiterte) Zeichenfläche.</summary>
+    public PixelRect EffectiveBounds => CropRect ?? CanvasBounds;
+
+    private PixelRect _canvasBounds;
+
+    /// <summary>
+    /// Basisbild plus alle sichtbaren Objekte, die darüber hinausragen (der erweiterte Bereich ist transparent).
+    /// Kann negative Koordinaten haben; wird nach jedem Undo-Schritt neu berechnet.
+    /// </summary>
+    public PixelRect CanvasBounds
+    {
+        get => _canvasBounds;
+        private set
+        {
+            if (SetProperty(ref _canvasBounds, value) && CropRect is null)
+            {
+                OnPropertyChanged(nameof(EffectiveBounds));
+            }
+        }
+    }
+
+    /// <summary>Berechnet <see cref="CanvasBounds"/> aus Basisbild und sichtbaren Objekten neu.</summary>
+    public void UpdateCanvasBounds()
+    {
+        var image = BaseImage.Bounds;
+        double left = image.X, top = image.Y, right = image.Right, bottom = image.Bottom;
+        foreach (var annotation in Annotations)
+        {
+            if (!annotation.IsVisible || annotation.Opacity <= 0)
+            {
+                continue;
+            }
+
+            var bounds = annotation.VisualBounds.Normalize();
+            if (!double.IsFinite(bounds.X) || !double.IsFinite(bounds.Y) || !double.IsFinite(bounds.Width) || !double.IsFinite(bounds.Height))
+            {
+                continue;
+            }
+
+            left = Math.Min(left, bounds.X);
+            top = Math.Min(top, bounds.Y);
+            right = Math.Max(right, bounds.Right);
+            bottom = Math.Max(bottom, bounds.Bottom);
+        }
+
+        CanvasBounds = PixelRect.FromLtrb(
+            (int)Math.Floor(Math.Max(left, image.X - MaxCanvasOverhang)),
+            (int)Math.Floor(Math.Max(top, image.Y - MaxCanvasOverhang)),
+            (int)Math.Ceiling(Math.Min(right, image.Right + MaxCanvasOverhang)),
+            (int)Math.Ceiling(Math.Min(bottom, image.Bottom + MaxCanvasOverhang)));
+    }
 
     /// <summary>Stabile Kennung (Dateiname der automatischen Sicherung).</summary>
     public Guid DocumentId { get; init; } = Guid.NewGuid();

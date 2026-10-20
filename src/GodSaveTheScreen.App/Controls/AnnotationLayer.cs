@@ -51,7 +51,8 @@ public sealed class AnnotationElement : FrameworkElement
 
 /// <summary>
 /// Ebene mit allen Objekten des Dokuments in Z-Reihenfolge. Jedes Objekt hat die Bildgröße als Fläche und zeichnet
-/// in Bildpixeln; was außerhalb des Bilds liegt, wird – wie im Export – abgeschnitten.
+/// in Bildpixeln; was über das Bild hinausragt, bleibt sichtbar (die Zeichenfläche wächst mit, abgeschnitten wird nur
+/// beim Zuschnitt über den Rahmen in <see cref="EditorCanvas"/>).
 /// </summary>
 public sealed class AnnotationLayer : Canvas
 {
@@ -64,7 +65,6 @@ public sealed class AnnotationLayer : Canvas
     public AnnotationLayer()
     {
         IsHitTestVisible = false;
-        ClipToBounds = true;
         SnapsToDevicePixels = false;
         TextOptions.SetTextRenderingMode(this, TextRenderingMode.Grayscale);
         TextOptions.SetTextFormattingMode(this, TextFormattingMode.Ideal);

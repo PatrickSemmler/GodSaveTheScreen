@@ -18,26 +18,22 @@
           VerticalAlignment="Center"
           Margin="24"
           ClipToBounds="True">
+      <!-- ClipToBounds nur bei Zuschnitt (EditorCanvas.ApplyViewRect): sonst bleiben gezogene Objekte außerhalb sichtbar. -->
       <Grid.LayoutTransform>
         <ScaleTransform x:Name="ZoomTransform" ScaleX="1" ScaleY="1" />
       </Grid.LayoutTransform>
-    <!-- Canvas statt Grid: ein Grid würde die größere Zeichenfläche auf die Rahmengröße zuschneiden (Layout-Clip wandert beim Verschieben mit). -->
-    <Canvas x:Name="SurfaceHost">
-    <Grid x:Name="Surface"
-          Focusable="True"
-          FocusVisualStyle="{x:Null}"
-          Background="Transparent"
-          SnapsToDevicePixels="False"
-          MouseLeftButtonDown="OnMouseLeftButtonDown"
-          MouseLeftButtonUp="OnMouseLeftButtonUp"
-          MouseRightButtonDown="OnMouseRightButtonDown"
-          MouseMove="OnMouseMove"
-          ContextMenuOpening="OnContextMenuOpening"
-          MouseLeave="OnMouseLeave"
-          MouseDown="OnMouseDown"
-          MouseUp="OnMouseUp"
-          LostMouseCapture="OnLostMouseCapture">
-      <Grid.ContextMenu>
+    <!-- Canvas statt Grid: ein Grid würde die größere Zeichenfläche auf die Rahmengröße zuschneiden (Layout-Clip wandert beim Verschieben mit).
+         Der Host füllt den ganzen Rahmen (Schachbrett = transparenter Bereich) und empfängt die Maus auch neben dem Basisbild. -->
+    <Canvas x:Name="SurfaceHost"
+            MouseLeftButtonDown="OnMouseLeftButtonDown"
+            MouseLeftButtonUp="OnMouseLeftButtonUp"
+            MouseRightButtonDown="OnMouseRightButtonDown"
+            MouseMove="OnMouseMove"
+            ContextMenuOpening="OnContextMenuOpening"
+            MouseLeave="OnMouseLeave"
+            MouseDown="OnMouseDown"
+            MouseUp="OnMouseUp">
+      <Canvas.ContextMenu>
         <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
           <MenuItem Header="{l:Loc Menu_Cut}" Command="{Binding CutCommand}" IsEnabled="{Binding HasSelection}" InputGestureText="{l:Shortcut Ctrl+X}" />
           <MenuItem Header="{l:Loc Menu_Copy}" Command="{Binding CopyCommand}" InputGestureText="{l:Shortcut Ctrl+C}" />
@@ -53,8 +49,13 @@
           </MenuItem>
           <MenuItem Header="{l:Loc Menu_Lock}" Command="{Binding ToggleLockSelectionCommand}" IsEnabled="{Binding HasSelection}" />
         </ContextMenu>
-      </Grid.ContextMenu>
-      <Rectangle x:Name="Checker" IsHitTestVisible="False" />
+      </Canvas.ContextMenu>
+    <Grid x:Name="Surface"
+          Focusable="True"
+          FocusVisualStyle="{x:Null}"
+          Background="Transparent"
+          SnapsToDevicePixels="False"
+          LostMouseCapture="OnLostMouseCapture">
       <Image x:Name="BaseImage" Stretch="Fill" IsHitTestVisible="False" RenderOptions.BitmapScalingMode="HighQuality" />
       <controls:AnnotationLayer x:Name="Annotations" />
       <controls:InteractionLayer x:Name="Interaction" />

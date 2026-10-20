@@ -44,3 +44,11 @@ Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `doc
 - **Was wurde gemacht**: Beim Start löscht ein Hintergrund-Task PNGs älter als 1 Tag im Drag-Temp-Ordner
 - **Warum**: Die Dateien aus „Bild ziehen“ wurden nie gelöscht
 - **Seiteneffekte / Hinweise**: App.Tests 451/451 grün. `EditorViewModel.cs` enthielt fremde, uncommittete Änderungen des Nutzers; nur die eigene Zeile wurde gestaged
+
+### Zeichenfläche wächst um überstehende Objekte – 20.10.2026
+- **Kategorie**: Funktionserweiterung
+- **Verbesserungsliste-ID**: – (Nutzerwunsch, Verhalten wie Screenpresso)
+- **Geänderte Dateien**: `src/GodSaveTheScreen.Core/Imaging/ImageDocument.cs`, `src/GodSaveTheScreen.App/Controls/EditorCanvas.xaml(.cs)`, `Controls/AnnotationLayer.cs`, `Editor/CropState.cs`, `Services/ClipboardService.cs`, `ViewModels/EditorViewModel.cs`, `tests/…/CanvasBoundsTests.cs` (neu), `tests/…/CanvasExpansionTests.cs` (neu), `docs/agent/architecture.md`
+- **Was wurde gemacht**: `ImageDocument.CanvasBounds` (Bild ∪ sichtbare Objekte); `EffectiveBounds` nutzt sie ohne Zuschnitt. Editor zeigt den erweiterten Bereich als Schachbrett, Export liefert ihn transparent
+- **Warum**: Objekte über den Bildrand hinaus wurden abgeschnitten
+- **Seiteneffekte / Hinweise**: Anpassung erst nach Loslassen/Undo (Ziehen zeigt das Objekt ungeschnitten als Vorschau). Mit Zuschnitt keine Erweiterung. JPG/BMP/`CF_DIB` füllen den Bereich weiß. Max. 8192 px Überstand je Seite. Tests: Core 275, App 454 grün; manuelle Prüfung im laufenden Editor steht noch aus

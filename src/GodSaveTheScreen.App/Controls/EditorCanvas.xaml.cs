@@ -61,7 +61,7 @@ public partial class EditorCanvas : UserControl
         BaseImage.Source = source;
         Surface.Width = document.BaseImage.Width;
         Surface.Height = document.BaseImage.Height;
-        Checker.Fill = CreateCheckerBrush();
+        SurfaceHost.Background = CreateCheckerBrush();
 
         var renderContext = new RenderContext
         {
@@ -81,7 +81,10 @@ public partial class EditorCanvas : UserControl
         UpdateCursor();
     }
 
-    /// <summary>Zeigt nur den sichtbaren Bereich (Zuschnitt, im Zuschnittmodus das ganze Bild) und verschiebt die Zeichenfläche entsprechend.</summary>
+    /// <summary>
+    /// Zeigt nur den sichtbaren Bereich (Zuschnitt bzw. erweiterte Zeichenfläche, im Zuschnittmodus das ganze Bild)
+    /// und verschiebt die Zeichenfläche entsprechend.
+    /// </summary>
     private void ApplyViewRect()
     {
         if (_viewModel is null)
@@ -92,8 +95,30 @@ public partial class EditorCanvas : UserControl
         var view = _viewModel.ViewRect;
         Frame.Width = view.Width;
         Frame.Height = view.Height;
+        // Ohne Zuschnitt nicht abschneiden: Objekte, die gerade über den Rand gezogen werden, bleiben sichtbar,
+        // bis die Fläche beim Loslassen mitwächst.
+        Frame.ClipToBounds = _viewModel.IsCropping || _viewModel.Document.CropRect is not null;
         System.Windows.Controls.Canvas.SetLeft(Surface, -view.X);
         System.Windows.Controls.Canvas.SetTop(Surface, -view.Y);
+    }
+
+    /// <summary>Wächst/schrumpft die Fläche links oder oben, bleibt das Bild trotzdem an seiner Stelle im Fenster.</summary>
+    private void ApplyViewRectKeepingImage()
+    {
+        if (_viewModel is null || _viewModel.IsFit || !Surface.IsLoaded)
+        {
+            ApplyViewRect();
+            ApplyZoom();
+            return;
+        }
+
+        var before = Surface.TranslatePoint(default, Scroller);
+        ApplyViewRect();
+        ApplyZoom();
+        UpdateLayout();
+        var after = Surface.TranslatePoint(default, Scroller);
+        Scroller.ScrollToHorizontalOffset(Scroller.HorizontalOffset + (after.X - before.X));
+        Scroller.ScrollToVerticalOffset(Scroller.VerticalOffset + (after.Y - before.Y));
     }
 
     public void Detach()
@@ -111,7 +136,7 @@ public partial class EditorCanvas : UserControl
         Annotations.Detach();
         Interaction.Detach();
         BaseImage.Source = null;
-        Checker.Fill = null;
+        SurfaceHost.Background = null;
     }
 
     /// <summary>Die Zeichenfläche hat den Tastaturfokus (nur dann gehören <c>Tab</c>/Pfeiltasten den Objekten).</summary>
@@ -152,8 +177,7 @@ public partial class EditorCanvas : UserControl
                 UpdateCursor();
                 break;
             case nameof(EditorViewModel.ViewRect):
-                ApplyViewRect();
-                ApplyZoom();
+                ApplyViewRectKeepingImage();
                 break;
         }
     }
@@ -201,7 +225,7 @@ public partial class EditorCanvas : UserControl
         Annotations.SetPixelScale(_viewModel.Zoom);
         Interaction.RenderContext = Interaction.RenderContext with { EmojiPixelScale = _viewModel.Zoom, EmojiMaxPixels = 2048 };
         BaseImage.SetValue(RenderOptions.BitmapScalingModeProperty, _viewModel.Zoom >= 2 ? BitmapScalingMode.NearestNeighbor : BitmapScalingMode.HighQuality);
-        if (Checker.Fill is DrawingBrush brush)
+        if (SurfaceHost.Background is DrawingBrush brush)
         {
             // Konstante Kästchengröße auf dem Bildschirm.
             var size = CheckerSize / Math.Max(scale, 0.01);
@@ -288,7 +312,7 @@ public partial class EditorCanvas : UserControl
             return;
         }
 
-        Surface.Cursor = _panning || Keyboard.IsKeyDown(Key.Space) ? Cursors.Hand : _viewModel.ActiveTool.Cursor;
+        SurfaceHost.Cursor = _panning || Keyboard.IsKeyDown(Key.Space) ? Cursors.Hand : _viewModel.ActiveTool.Cursor;
     }
 
     private void BeginPan(MouseEventArgs e)

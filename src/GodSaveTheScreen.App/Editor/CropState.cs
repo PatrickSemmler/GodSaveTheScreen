@@ -75,7 +75,8 @@ public sealed class CropState
     /// <summary>Beginnt den Modus mit dem aktuellen Zuschnitt (bzw. der vollen Fläche).</summary>
     public void Begin()
     {
-        _rect = _document.EffectiveBounds;
+        // Zugeschnitten wird nur das Basisbild, nicht der erweiterte Bereich um überstehende Objekte.
+        _rect = _document.CropRect ?? _document.BaseImage.Bounds;
         _isActive = true;
         _isDragging = false;
         Changed?.Invoke(this, EventArgs.Empty);

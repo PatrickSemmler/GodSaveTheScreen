@@ -136,7 +136,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     public bool AreToolsEnabled => !IsCropping;
 
-    /// <summary>Angezeigter Bildbereich: der Zuschnitt, im Zuschnittmodus das gesamte Originalbild.</summary>
+    /// <summary>Angezeigter Bildbereich: der Zuschnitt bzw. die erweiterte Zeichenfläche, im Zuschnittmodus das gesamte Originalbild.</summary>
     public PixelRect ViewRect => IsCropping ? Document.BaseImage.Bounds : Document.EffectiveBounds;
 
     /// <summary>Seitenleiste sichtbar (im Zuschnittmodus immer, wegen der Zuschnitt-Einstellungen).</summary>
@@ -862,7 +862,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         {
             OnPropertyChanged(nameof(WindowTitle));
         }
-        else if (e.PropertyName is nameof(ImageDocument.CropRect))
+        else if (e.PropertyName is nameof(ImageDocument.EffectiveBounds))
         {
             OnPropertyChanged(nameof(ViewRect));
             OnPropertyChanged(nameof(ImageSizeText));
