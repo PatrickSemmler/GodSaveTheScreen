@@ -155,7 +155,7 @@ public sealed class HelpScreenshotGenerator
         ShowOffscreen(window);
         try
         {
-            ToolIcons(window, h, directory);
+            ToolIcons(h, directory);
 
             // Werkzeug-Panel im Ausgangszustand (Effekte zugeklappt), danach alle Karten offen.
             h.ViewModel.Activate(h.Tools.Get<RectangleTool>());
@@ -254,25 +254,33 @@ public sealed class HelpScreenshotGenerator
     private static DockPanel CommandBar(EditorWindow window) =>
         Ancestor<DockPanel>((FrameworkElement)window.FindName("NewButton"));
 
-    /// <summary>Symbol jedes Werkzeugs aus der Werkzeugleiste (<c>tool-&lt;id&gt;.png</c>), für Tabellen und Überschriften.</summary>
-    private static void ToolIcons(EditorWindow window, EditorHarness h, string directory)
+    /// <summary>
+    /// Symbol jedes Werkzeugs (<c>icon-&lt;id&gt;.png</c>) für Tabellen und Überschriften – eigenständig gerendert wie in der
+    /// Werkzeugleiste (Symbolschrift bzw. <see cref="ToolBase.IconPath"/>). Ein Abbild des Listeneintrags wäre um dessen
+    /// Versatz verschoben und abgeschnitten.
+    /// </summary>
+    private static void ToolIcons(EditorHarness h, string directory)
     {
-        var list = (ListBox)window.FindName("ToolList");
-        Settle(window);
+        const double box = 32;
+        var ink = new SolidColorBrush(Color.FromRgb(0x1B, 0x1B, 0x1B));
         foreach (var tool in h.Tools.PaletteTools)
         {
-            // Die Werkzeugleiste virtualisiert: Einträge außerhalb des sichtbaren Bereichs existieren erst nach dem Scrollen.
-            list.ScrollIntoView(tool);
-            Settle(window);
-            if (list.ItemContainerGenerator.ContainerFromItem(tool) is ListBoxItem item && VisualTreeHelper.GetChildrenCount(item) > 0)
-            {
-                var content = Descendants<ContentPresenter>(item).First();
-                SaveElement(content, directory, "icon-" + tool.Id, transparent: true);
-            }
+            FrameworkElement icon = tool.IconPath is { } data
+                ? new Viewbox
+                {
+                    Width = 20,
+                    Height = 20,
+                    Child = new System.Windows.Shapes.Path { Data = Geometry.Parse(data), Width = 24, Height = 24, Stretch = Stretch.None, Stroke = ink, StrokeThickness = 1.6, StrokeLineJoin = PenLineJoin.Round },
+                }
+                : new Wpf.Ui.Controls.SymbolIcon { Symbol = tool.Symbol, FontSize = 20, Foreground = ink };
+            icon.HorizontalAlignment = HorizontalAlignment.Center;
+            icon.VerticalAlignment = VerticalAlignment.Center;
+            var host = new Grid { Width = box, Height = box, Children = { icon } };
+            host.Measure(new Size(box, box));
+            host.Arrange(new Rect(0, 0, box, box));
+            host.UpdateLayout();
+            Save(host, new Size(box, box), directory, "icon-" + tool.Id);
         }
-
-        list.ScrollIntoView(h.Tools.PaletteTools[0]);
-        Settle(window);
     }
 
     // ---- Rendern ----
