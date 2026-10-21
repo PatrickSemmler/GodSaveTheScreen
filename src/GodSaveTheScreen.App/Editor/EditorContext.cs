@@ -317,7 +317,9 @@ public sealed class EditorContext : IDisposable
         else if (normalized != editable.Text)
         {
             var before = annotation.Clone();
-            editable.Text = normalized;
+
+            // Gedrehter Text wächst entlang der eigenen Achsen; seine linke obere Ecke bleibt im Bild stehen.
+            RotationMath.PreserveFrame(annotation, () => editable.Text = normalized);
             callout?.FitHeightToText();
             Undo.Execute(new ReplaceGeometryAction([(annotation, before, annotation.Clone())], "Text bearbeiten"));
         }

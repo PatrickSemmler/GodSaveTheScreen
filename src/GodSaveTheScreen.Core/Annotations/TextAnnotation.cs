@@ -32,7 +32,11 @@ public enum TextDecorationKind
 /// <see cref="FontStretch"/> 1–9 (5 = normal), <see cref="FontSize"/> in Bildpixeln.
 /// Die Layoutgröße liefert der Renderer über <see cref="MeasureProvider"/> (FormattedText).
 /// </summary>
-public sealed partial class TextAnnotation : Annotation, IShadowAnnotation, IEditableTextAnnotation
+/// <remarks>
+/// Mit <see cref="Rotation"/> dreht sich der Text um die Mitte seines Rahmens (<see cref="Rect"/>);
+/// <see cref="Bounds"/> ist die achsparallele Hülle des gedrehten Rahmens.
+/// </remarks>
+public sealed partial class TextAnnotation : Annotation, IShadowAnnotation, IEditableTextAnnotation, IRotatableAnnotation
 {
     public const int DefaultFontWeight = 400;
     public const int NormalStretch = 5;
@@ -41,6 +45,8 @@ public sealed partial class TextAnnotation : Annotation, IShadowAnnotation, IEdi
     public const double MaxOutlineBlur = 50;
 
     private SizeD? _layoutSize;
+
+    private double _rotation;
 
     /// <summary>Misst Text im aktuellen Zustand; vom Rendering-Projekt gesetzt.</summary>
     public static Func<TextAnnotation, SizeD>? MeasureProvider { get; set; }
@@ -124,9 +130,23 @@ public sealed partial class TextAnnotation : Annotation, IShadowAnnotation, IEdi
     [JsonIgnore]
     public RectD TextRect => new(Position.X, Position.Y, LayoutSize.Width, LayoutSize.Height);
 
-    /// <summary>Textblock plus Innenabstand plus halbe Konturstärke.</summary>
+    /// <inheritdoc />
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public double Rotation
+    {
+        get => _rotation;
+        set
+        {
+            if (SetProperty(ref _rotation, RotationMath.Normalize(value)))
+            {
+                OnPropertyChanged(nameof(Bounds));
+            }
+        }
+    }
+
+    /// <summary>Unverdrehter Rahmen: Textblock plus Innenabstand plus halbe Konturstärke.</summary>
     [JsonIgnore]
-    public override RectD Bounds
+    public RectD Rect
     {
         get
         {
@@ -136,7 +156,14 @@ public sealed partial class TextAnnotation : Annotation, IShadowAnnotation, IEdi
     }
 
     [JsonIgnore]
-    public override double VisualMargin => (Stroke.IsVisible ? (Stroke.Thickness / 2) + Math.Max(0, OutlineBlur) : 0) + 1;
+    public PointD Center => Rect.Center;
+
+    /// <summary>Achsparallele Hülle des gedrehten Rahmens (ohne Drehung = <see cref="Rect"/>).</summary>
+    [JsonIgnore]
+    public override RectD Bounds => Rotation == 0 ? Rect : RotationMath.Hull(Rect, Rotation);
+
+    [JsonIgnore]
+    public override double VisualMargin => ((Stroke.IsVisible ? (Stroke.Thickness / 2) + Math.Max(0, OutlineBlur) : 0) + 1) * RotationMath.HullFactor(Rotation);
 
     public override void MapPoints(Func<PointD, PointD> map) => Position = map(Position);
 
@@ -153,8 +180,7 @@ public sealed partial class TextAnnotation : Annotation, IShadowAnnotation, IEdi
 
     public override bool HitTest(PointD point, double tolerance)
     {
-        var b = Bounds;
-        return b.Inflate(tolerance, tolerance).Contains(point);
+        return Rect.Inflate(tolerance, tolerance).Contains(this.ToLocal(point));
     }
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)

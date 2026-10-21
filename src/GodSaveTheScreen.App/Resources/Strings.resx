@@ -189,6 +189,7 @@
   <data name="Props_StartCap" xml:space="preserve"><value>Start</value></data>
   <data name="Props_EndCap" xml:space="preserve"><value>End</value></data>
   <data name="Props_Opacity" xml:space="preserve"><value>Opacity (%)</value></data>
+  <data name="Props_Rotation" xml:space="preserve"><value>Rotation (°)</value></data>
   <data name="Shape_Rectangle" xml:space="preserve"><value>Rectangle</value></data>
   <data name="Shape_Ellipse" xml:space="preserve"><value>Ellipse</value></data>
   <data name="Shape_Triangle" xml:space="preserve"><value>Triangle</value></data>

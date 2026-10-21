@@ -126,7 +126,7 @@ public static class PresetStyles
         foreach (var target in targets)
         {
             var before = target.Clone();
-            ApplyTo(target, preset);
+            RotationMath.PreserveFrame(target, () => ApplyTo(target, preset));
             var after = target.Clone();
             changes.Add((target, before, after));
         }

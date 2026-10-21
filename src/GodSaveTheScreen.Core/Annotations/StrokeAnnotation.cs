@@ -15,15 +15,20 @@ public readonly record struct StrokePoint(double X, double Y, double Pressure = 
 
 /// <summary>
 /// Freihandstrich (Stift oder Textmarker). Farbe und Dicke liegen wie bei den Formen in <see cref="ShapeAnnotation.Stroke"/>;
-/// die Füllung wird nicht verwendet.
+/// die Füllung wird nicht verwendet. <see cref="Points"/> liegen unverdreht; gedreht wird um die Mitte ihres Rahmens
+/// (<see cref="Rect"/>), <see cref="Bounds"/> umschließt die gedrehten Punkte.
 /// </summary>
-public sealed partial class StrokeAnnotation : ShapeAnnotation
+public sealed partial class StrokeAnnotation : ShapeAnnotation, IRotatableAnnotation
 {
     /// <summary>Toleranz der Punktreduktion beim Abschluss in Bildpixeln.</summary>
     public const double SimplifyTolerance = 0.5;
 
+    private double _rotation;
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Bounds))]
+    [NotifyPropertyChangedFor(nameof(Rect))]
+    [NotifyPropertyChangedFor(nameof(Center))]
     private ImmutableArray<StrokePoint> _points = ImmutableArray<StrokePoint>.Empty;
 
     /// <summary>Textmarker: breiter, transparenter Stift mit flachen Kappen, wird (optional) hinter den übrigen Objekten gezeichnet.</summary>
@@ -41,8 +46,41 @@ public sealed partial class StrokeAnnotation : ShapeAnnotation
     [JsonIgnore]
     public bool HasPressure => UsePressure && Points.Any(p => p.Pressure < 0.999);
 
+    /// <inheritdoc />
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public double Rotation
+    {
+        get => _rotation;
+        set
+        {
+            if (SetProperty(ref _rotation, RotationMath.Normalize(value)))
+            {
+                OnPropertyChanged(nameof(Bounds));
+            }
+        }
+    }
+
+    /// <summary>Rahmen der unverdrehten Punkte.</summary>
     [JsonIgnore]
-    public override RectD Bounds => RectD.BoundingBox(Points.Select(p => p.Point));
+    public RectD Rect => RectD.BoundingBox(Points.Select(p => p.Point));
+
+    [JsonIgnore]
+    public PointD Center => Rect.Center;
+
+    [JsonIgnore]
+    public override RectD Bounds
+    {
+        get
+        {
+            if (Rotation == 0)
+            {
+                return Rect;
+            }
+
+            var center = Center;
+            return RectD.BoundingBox(Points.Select(p => RotationMath.Rotate(p.Point, center, Rotation)));
+        }
+    }
 
     [JsonIgnore]
     public override double VisualMargin => (Stroke.Thickness / 2) + 1;
@@ -63,6 +101,7 @@ public sealed partial class StrokeAnnotation : ShapeAnnotation
             return false;
         }
 
+        point = this.ToLocal(point);
         var reach = (Stroke.Thickness / 2) + tolerance;
         if (Points.Length == 1)
         {

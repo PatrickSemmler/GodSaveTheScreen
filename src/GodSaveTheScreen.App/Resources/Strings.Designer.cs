@@ -997,6 +997,8 @@ public static class Strings
 
     public static string Callout_Rotation => ResourceManager.GetString("Callout_Rotation", Culture) ?? "Callout_Rotation";
 
+    public static string Props_Rotation => ResourceManager.GetString("Props_Rotation", Culture) ?? "Props_Rotation";
+
     public static string Callout_Glow => ResourceManager.GetString("Callout_Glow", Culture) ?? "Callout_Glow";
 
     public static string Callout_GlowWidth => ResourceManager.GetString("Callout_GlowWidth", Culture) ?? "Callout_GlowWidth";

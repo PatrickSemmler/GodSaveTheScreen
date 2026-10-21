@@ -33,22 +33,51 @@ public abstract partial class ShapeAnnotation : Annotation, IShadowAnnotation
     protected double HitDistance(double tolerance) => tolerance + (Stroke.IsVisible ? Stroke.Thickness / 2 : 0);
 }
 
-public abstract partial class BoxAnnotation : ShapeAnnotation
+/// <summary>
+/// Form in einem Rahmen (Rechteck, Ellipse, Dreieck). <see cref="Rect"/> ist der Rahmen vor der Drehung, gedreht wird um
+/// dessen Mitte; <see cref="Bounds"/> ist die achsparallele Hülle des gedrehten Rahmens.
+/// </summary>
+public abstract partial class BoxAnnotation : ShapeAnnotation, IRotatableAnnotation
 {
+    private double _rotation;
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Bounds))]
+    [NotifyPropertyChangedFor(nameof(Center))]
     private RectD _rect;
 
+    /// <inheritdoc />
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public double Rotation
+    {
+        get => _rotation;
+        set
+        {
+            if (SetProperty(ref _rotation, RotationMath.Normalize(value)))
+            {
+                OnPropertyChanged(nameof(Bounds));
+            }
+        }
+    }
+
     [JsonIgnore]
-    public override RectD Bounds => Rect.Normalize();
+    public PointD Center => Rect.Normalize().Center;
+
+    [JsonIgnore]
+    public override RectD Bounds => RotationMath.Hull(Rect, Rotation);
+
+    [JsonIgnore]
+    public override double VisualMargin => base.VisualMargin * RotationMath.HullFactor(Rotation);
 
     public override void MapPoints(Func<PointD, PointD> map) =>
         Rect = RectD.FromPoints(map(Rect.TopLeft), map(Rect.BottomRight));
 
+    /// <param name="point">Punkt im unverdrehten System (<see cref="RotationMath.ToLocal"/>).</param>
     protected bool HitBox(PointD point, double tolerance)
     {
         var distance = HitDistance(tolerance);
-        var outer = Bounds.Inflate(distance, distance);
+        var rect = Rect.Normalize();
+        var outer = rect.Inflate(distance, distance);
         if (!outer.Contains(point))
         {
             return false;
@@ -59,7 +88,7 @@ public abstract partial class BoxAnnotation : ShapeAnnotation
             return true;
         }
 
-        var inner = Bounds.Inflate(-distance, -distance);
+        var inner = rect.Inflate(-distance, -distance);
         return inner.IsEmpty || !inner.Contains(point);
     }
 }
@@ -69,15 +98,16 @@ public sealed partial class RectangleAnnotation : BoxAnnotation
     [ObservableProperty]
     private double _cornerRadius;
 
-    public override bool HitTest(PointD point, double tolerance) => HitBox(point, tolerance);
+    public override bool HitTest(PointD point, double tolerance) => HitBox(this.ToLocal(point), tolerance);
 }
 
 public sealed partial class EllipseAnnotation : BoxAnnotation
 {
     public override bool HitTest(PointD point, double tolerance)
     {
+        point = this.ToLocal(point);
         var distance = HitDistance(tolerance);
-        var r = Bounds;
+        var r = Rect.Normalize();
         var norm = HitTesting.EllipseNorm(point, r);
         if (norm == double.MaxValue)
         {
@@ -103,6 +133,7 @@ public sealed partial class TriangleAnnotation : BoxAnnotation
 
     public override bool HitTest(PointD point, double tolerance)
     {
+        point = this.ToLocal(point);
         var points = Points;
         if (HasFill && HitTesting.PointInPolygon(point, points))
         {
@@ -150,17 +181,50 @@ public sealed partial class LineAnnotation : ShapeAnnotation
         HitTesting.DistanceToSegment(point, Start, End) <= HitDistance(tolerance);
 }
 
-public sealed partial class PolygonAnnotation : ShapeAnnotation
+/// <summary>
+/// Polygon bzw. Polygonzug. <see cref="Points"/> liegen unverdreht; gedreht wird um die Mitte ihres Rahmens
+/// (<see cref="Rect"/>). <see cref="Bounds"/> umschließt die gedrehten Punkte.
+/// </summary>
+public sealed partial class PolygonAnnotation : ShapeAnnotation, IRotatableAnnotation
 {
+    private double _rotation;
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Bounds))]
+    [NotifyPropertyChangedFor(nameof(Rect))]
+    [NotifyPropertyChangedFor(nameof(Center))]
     private ImmutableArray<PointD> _points = ImmutableArray<PointD>.Empty;
 
     [ObservableProperty]
     private bool _isClosed = true;
 
+    /// <inheritdoc />
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public double Rotation
+    {
+        get => _rotation;
+        set
+        {
+            if (SetProperty(ref _rotation, RotationMath.Normalize(value)))
+            {
+                OnPropertyChanged(nameof(Bounds));
+            }
+        }
+    }
+
+    /// <summary>Rahmen der unverdrehten Punkte.</summary>
     [JsonIgnore]
-    public override RectD Bounds => RectD.BoundingBox(Points);
+    public RectD Rect => RectD.BoundingBox(Points);
+
+    [JsonIgnore]
+    public PointD Center => Rect.Center;
+
+    /// <summary>Eckpunkte in Bildkoordinaten (gedreht).</summary>
+    [JsonIgnore]
+    public IEnumerable<PointD> WorldPoints => Rotation == 0 ? Points : Points.Select(this.ToWorld);
+
+    [JsonIgnore]
+    public override RectD Bounds => RectD.BoundingBox(WorldPoints);
 
     public override void MapPoints(Func<PointD, PointD> map) => Points = [.. Points.Select(map)];
 
@@ -170,6 +234,8 @@ public sealed partial class PolygonAnnotation : ShapeAnnotation
         {
             return false;
         }
+
+        point = this.ToLocal(point);
 
         if (IsClosed && HasFill && HitTesting.PointInPolygon(point, Points))
         {

@@ -189,6 +189,24 @@ public static partial class AnnotationRenderer
 
     private static void DrawCore(DrawingContext dc, Annotation annotation, RenderContext context)
     {
+        // Formen, Polygone, Striche und Text liegen unverdreht vor und werden hier um ihre Mitte gedreht
+        // (Emoji, Stempel und Sprechblase drehen selbst). Der Schatten entsteht aus diesem Bild und fällt daher
+        // unabhängig von der Drehung nach rechts unten.
+        if (annotation is BoxAnnotation or PolygonAnnotation or StrokeAnnotation or TextAnnotation
+            && annotation is IRotatableAnnotation { Rotation: not 0 } rotated)
+        {
+            var center = rotated.Center;
+            dc.PushTransform(new RotateTransform(rotated.Rotation, center.X, center.Y));
+            DrawUnrotated(dc, annotation, context);
+            dc.Pop();
+            return;
+        }
+
+        DrawUnrotated(dc, annotation, context);
+    }
+
+    private static void DrawUnrotated(DrawingContext dc, Annotation annotation, RenderContext context)
+    {
         switch (annotation)
         {
             case RectangleAnnotation rectangle:

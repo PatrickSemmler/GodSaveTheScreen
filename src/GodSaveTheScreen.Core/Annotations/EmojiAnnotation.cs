@@ -70,6 +70,76 @@ public static class RotationMath
 
     /// <summary>Achsparallele Hülle des gedrehten Rechtecks.</summary>
     public static RectD Hull(RectD rect, double degrees) => RectD.BoundingBox(Corners(rect, degrees));
+
+    /// <summary>Faktor, um den ein gleichmäßiger Rand in der achsparallelen Hülle wächst (|cos| + |sin|, 1 ohne Drehung).</summary>
+    public static double HullFactor(double degrees)
+    {
+        if (degrees == 0)
+        {
+            return 1;
+        }
+
+        var radians = degrees * Math.PI / 180;
+        return Math.Abs(Math.Cos(radians)) + Math.Abs(Math.Sin(radians));
+    }
+
+    /// <summary>Punkt im unverdrehten Koordinatensystem des Objekts → Bildkoordinaten.</summary>
+    public static PointD ToWorld(this IRotatableAnnotation annotation, PointD local)
+    {
+        ArgumentNullException.ThrowIfNull(annotation);
+        return Rotate(local, annotation.Center, annotation.Rotation);
+    }
+
+    /// <summary>Bildkoordinaten → unverdrehtes Koordinatensystem des Objekts.</summary>
+    public static PointD ToLocal(this IRotatableAnnotation annotation, PointD world)
+    {
+        ArgumentNullException.ThrowIfNull(annotation);
+        return Unrotate(world, annotation.Center, annotation.Rotation);
+    }
+
+    /// <summary>
+    /// Führt eine Änderung der unverdrehten Geometrie aus (Text wächst, Eckpunkt verschoben, Rahmen skaliert) und
+    /// verschiebt das Objekt danach so, dass alles, was sich im eigenen System nicht bewegt hat, auch im Bild stehen bleibt.
+    /// Ohne Drehung wird die Änderung unverändert ausgeführt.
+    /// </summary>
+    public static void PreserveFrame(Annotation annotation, Action change)
+    {
+        ArgumentNullException.ThrowIfNull(annotation);
+        ArgumentNullException.ThrowIfNull(change);
+        if (annotation is not IRotatableAnnotation { Rotation: not 0 } rotatable)
+        {
+            change();
+            return;
+        }
+
+        var center = rotatable.Center;
+        change();
+        Realign(annotation, center);
+    }
+
+    /// <summary>
+    /// Gleicht eine Verschiebung des Drehpunkts aus: Hat sich die Mitte im unverdrehten System von
+    /// <paramref name="previousCenter"/> wegbewegt, wird das Objekt so verschoben, dass seine unverdrehte Geometrie
+    /// weiterhin mit der alten Mitte gedreht im Bild liegt.
+    /// </summary>
+    public static void Realign(Annotation annotation, PointD previousCenter)
+    {
+        ArgumentNullException.ThrowIfNull(annotation);
+        if (annotation is not IRotatableAnnotation { Rotation: not 0 } rotatable)
+        {
+            return;
+        }
+
+        var center = rotatable.Center;
+        var moved = new VectorD(center.X - previousCenter.X, center.Y - previousCenter.Y);
+        if (moved.X == 0 && moved.Y == 0)
+        {
+            return;
+        }
+
+        var turned = Rotate(new PointD(moved.X, moved.Y), new PointD(0, 0), rotatable.Rotation);
+        annotation.Translate(new VectorD(turned.X - moved.X, turned.Y - moved.Y));
+    }
 }
 
 /// <summary>

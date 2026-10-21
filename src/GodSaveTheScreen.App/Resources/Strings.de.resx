@@ -189,6 +189,7 @@
   <data name="Props_StartCap" xml:space="preserve"><value>Anfang</value></data>
   <data name="Props_EndCap" xml:space="preserve"><value>Ende</value></data>
   <data name="Props_Opacity" xml:space="preserve"><value>Deckkraft (%)</value></data>
+  <data name="Props_Rotation" xml:space="preserve"><value>Drehung (°)</value></data>
   <data name="Shape_Rectangle" xml:space="preserve"><value>Rechteck</value></data>
   <data name="Shape_Ellipse" xml:space="preserve"><value>Ellipse</value></data>
   <data name="Shape_Triangle" xml:space="preserve"><value>Dreieck</value></data>

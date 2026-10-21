@@ -277,7 +277,7 @@ public sealed partial class SelectionPropertiesViewModel : ObservableObject, IDi
             foreach (var target in changed)
             {
                 var old = get(target);
-                _context.Undo.Execute(new PropertyChangeAction<TV>(target, key, old, value, v => set(target, v)));
+                _context.Undo.Execute(new PropertyChangeAction<TV>(target, key, old, value, v => RotationMath.PreserveFrame(target, () => set(target, v))));
             }
         }
 

@@ -53,7 +53,14 @@ public static class SelectionHandles
 
         if (movable is [PolygonAnnotation polygon])
         {
-            return [.. polygon.Points.Select((p, i) => new SelectionHandle(HandleKind.PolygonPoint, p, i))];
+            // Eckpunkte (gedreht) plus Drehgriff über dem gedrehten Rahmen.
+            var points = polygon.WorldPoints.Select((p, i) => new SelectionHandle(HandleKind.PolygonPoint, p, i)).ToList();
+            if (rotateOffset > 0 && polygon.Points.Length >= 2)
+            {
+                points.AddRange(RotatedBoxHandles(polygon.Rect, polygon.Rotation, rotateOffset).Where(h => h.Kind == HandleKind.Rotate));
+            }
+
+            return points;
         }
 
         if (movable is [CalloutAnnotation callout])
@@ -67,10 +74,15 @@ public static class SelectionHandles
         {
             var rotated = RotatedBoxHandles(rotatable.Rect.Normalize(), rotatable.Rotation, rotateOffset);
 
-            // Stempel: nur proportionales Skalieren über die Ecken (Rahmen und Schrift wachsen gemeinsam).
-            return rotatable is StampAnnotation
-                ? [.. rotated.Where(h => h.Kind is HandleKind.TopLeft or HandleKind.TopRight or HandleKind.BottomRight or HandleKind.BottomLeft or HandleKind.Rotate)]
-                : rotated;
+            return rotatable switch
+            {
+                // Stempel: nur proportionales Skalieren über die Ecken (Rahmen und Schrift wachsen gemeinsam).
+                StampAnnotation => [.. rotated.Where(h => h.Kind is HandleKind.TopLeft or HandleKind.TopRight or HandleKind.BottomRight or HandleKind.BottomLeft or HandleKind.Rotate)],
+
+                // Text: Seitengriffe ändern die Umbruchbreite, Eckgriffe skalieren die Schrift.
+                TextAnnotation => [.. rotated.Where(h => h.Kind is not (HandleKind.Top or HandleKind.Bottom))],
+                _ => rotated,
+            };
         }
 
         if (movable is [MagnifierAnnotation magnifier])
@@ -89,9 +101,6 @@ public static class SelectionHandles
         var handles = BoxHandles(bounds);
         return movable switch
         {
-            // Text: Seitengriffe aendern die Umbruchbreite, Eckgriffe skalieren die Schrift.
-            [TextAnnotation] => [.. handles.Where(h => h.Kind is not (HandleKind.Top or HandleKind.Bottom))],
-
             // Marker: nur proportionales Skalieren.
             [MarkerAnnotation] => [.. handles.Where(h => h.Kind is HandleKind.TopLeft or HandleKind.TopRight or HandleKind.BottomLeft or HandleKind.BottomRight)],
             _ => handles,
@@ -408,7 +417,7 @@ public sealed class SelectTool : ToolBase
             case Key.OemOpenBrackets or Key.OemCloseBrackets when modifiers == ModifierKeys.None && _mode == Mode.None && HasRotatable():
                 RotateByKey(key == Key.OemCloseBrackets ? ShapeGeometry.AngleStepDegrees : -ShapeGeometry.AngleStepDegrees);
                 return true;
-            case Key.H or Key.V when modifiers == ModifierKeys.Shift && _mode == Mode.None && HasRotatable():
+            case Key.H or Key.V when modifiers == ModifierKeys.Shift && _mode == Mode.None && Context.Selection.Items.Any(a => a is EmojiAnnotation && !a.IsLocked):
                 FlipSelection(horizontal: key == Key.H);
                 return true;
             case Key.Tab when _mode == Mode.None && (modifiers & (ModifierKeys.Control | ModifierKeys.Alt)) == 0:
@@ -616,6 +625,8 @@ public sealed class SelectTool : ToolBase
             return;
         }
 
+        position = polygon.ToLocal(position);
+
         var segmentCount = polygon.IsClosed ? points.Length : points.Length - 1;
         var bestIndex = 0;
         var bestDistance = double.MaxValue;
@@ -630,7 +641,7 @@ public sealed class SelectTool : ToolBase
         }
 
         var before = polygon.Clone();
-        polygon.Points = points.Insert(bestIndex + 1, position);
+        RotationMath.PreserveFrame(polygon, () => polygon.Points = points.Insert(bestIndex + 1, position));
         var after = polygon.Clone();
         Context.Undo.Execute(new ReplaceGeometryAction([(polygon, before, after)], "Punkt einfügen"));
     }
@@ -735,6 +746,15 @@ public sealed class SelectTool : ToolBase
             return;
         }
 
+        if (_snapshots is [(var frameTarget, BoxAnnotation or StrokeAnnotation or TextAnnotation)])
+        {
+            // Text: Ecken skalieren die Schrift immer proportional; Formen und Striche frei (Umschalt = proportional).
+            var frameBefore = _snapshots[0].Before;
+            ResizeInFrame(frameTarget, frameBefore, args.Position, proportional: args.Shift || frameBefore is TextAnnotation);
+            Context.InvalidateInteraction();
+            return;
+        }
+
         var (map, factor) = SelectionHandles.ResizeMap(_groupRect, _handle.Kind, args.Position, args.Shift || _snapshots.Any(s => s.Before is not (ShapeAnnotation or BlurAnnotation)));
         foreach (var (target, before) in _snapshots)
         {
@@ -768,6 +788,28 @@ public sealed class SelectTool : ToolBase
         var worldCenter = RotationMath.Rotate(resized.Center, center, before.Rotation);
         var shift = new VectorD(worldCenter.X - resized.Center.X, worldCenter.Y - resized.Center.Y);
         target.Rect = new RectD(resized.X + shift.X, resized.Y + shift.Y, resized.Width, resized.Height);
+    }
+
+    /// <summary>
+    /// Skaliert ein Objekt über einen Griff seines eigenen (gedrehten) Rahmens: Der Zeiger wird ins unverdrehte System
+    /// zurückgedreht, die Geometrie dort abgebildet und das Objekt so verschoben, dass der gegenüberliegende Rand im Bild
+    /// stehen bleibt. Ohne Drehung entspricht das dem Skalieren über den achsparallelen Rahmen.
+    /// </summary>
+    private void ResizeInFrame(Annotation target, Annotation before, PointD pointer, bool proportional)
+    {
+        var rotatable = (IRotatableAnnotation)before;
+        var rect = rotatable.Rect.Normalize();
+        var center = rotatable.Center;
+        var local = RotationMath.Unrotate(pointer, center, rotatable.Rotation);
+        var (map, factor) = SelectionHandles.ResizeMap(rect, _handle.Kind, local, proportional);
+        target.CopyFrom(before);
+        target.MapPoints(map);
+        if (factor > 0)
+        {
+            target.ScaleSizes(factor);
+        }
+
+        RotationMath.Realign(target, center);
     }
 
     /// <summary>
@@ -847,22 +889,31 @@ public sealed class SelectTool : ToolBase
         Context.InvalidateInteraction();
     }
 
-    /// <summary>Seitengriffe eines Textes ändern die Umbruchbreite (links verschiebt zusätzlich die Position).</summary>
+    /// <summary>
+    /// Seitengriffe eines Textes ändern die Umbruchbreite (links verschiebt zusätzlich die Position). Gedreht wird im
+    /// eigenen System gerechnet; der gegenüberliegende Rand und die Oberkante bleiben im Bild stehen.
+    /// </summary>
     private void ResizeTextWidth(TextAnnotation target, TextAnnotation before, PointD pointerPosition)
     {
         const double minimumWidth = 12;
-        var inflate = before.TextRect.X - before.Bounds.X;
+        var center = before.Center;
+        var local = before.ToLocal(pointerPosition);
+        var inflate = before.TextRect.X - before.Rect.X;
         var textLeft = before.TextRect.X;
         var textRight = before.TextRect.Right;
+        target.CopyFrom(before);
         if (_handle.Kind == HandleKind.Right)
         {
-            target.WrapWidth = Math.Max(minimumWidth, pointerPosition.X - inflate - textLeft);
-            return;
+            target.WrapWidth = Math.Max(minimumWidth, local.X - inflate - textLeft);
+        }
+        else
+        {
+            var left = Math.Min(local.X + inflate, textRight - minimumWidth);
+            target.Position = new PointD(left, before.Position.Y);
+            target.WrapWidth = textRight - left;
         }
 
-        var left = Math.Min(pointerPosition.X + inflate, textRight - minimumWidth);
-        target.Position = new PointD(left, before.Position.Y);
-        target.WrapWidth = textRight - left;
+        RotationMath.Realign(target, center);
     }
 
     private void DragLineHandle(EditorPointerArgs args)
@@ -921,10 +972,13 @@ public sealed class SelectTool : ToolBase
             return;
         }
 
+        // Gerastet wird im Bild (gedrehter Vorgänger), gespeichert im unverdrehten System; danach den Drehpunkt ausgleichen,
+        // damit die übrigen Eckpunkte stehen bleiben.
         var points = before.Points;
-        var origin = points.Length > 1 ? points[(_handle.Index + points.Length - 1) % points.Length] : args.Position;
+        var origin = points.Length > 1 ? before.ToWorld(points[(_handle.Index + points.Length - 1) % points.Length]) : args.Position;
         var point = args.Shift ? ShapeGeometry.SnapAngle(origin, args.Position) : args.Position;
-        polygon.Points = points.SetItem(_handle.Index, point);
+        polygon.Points = points.SetItem(_handle.Index, before.ToLocal(point));
+        RotationMath.Realign(polygon, before.Center);
         Context.InvalidateInteraction();
     }
 

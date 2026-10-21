@@ -815,6 +815,26 @@
             </StackPanel>
           </StackPanel>
 
+          <!-- Drehung ausgewählter Formen, Polygone, Freihandstriche und Texte (keine Werkzeug-Vorgabe) -->
+          <StackPanel DataContext="{Binding RotationProperties}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
+            <TextBlock Text="{l:Loc Props_Rotation}" Style="{StaticResource FieldLabel}" />
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <Slider Minimum="-180" Maximum="180" SmallChange="1" LargeChange="15" VerticalAlignment="Center"
+                      Value="{Binding RotationValue, Mode=TwoWay}"
+                      AutomationProperties.Name="{l:Loc Props_Rotation}" />
+              <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                            Minimum="-180" Maximum="180" SmallChange="1" LargeChange="15" MaxDecimalPlaces="1" ClearButtonEnabled="False"
+                            Value="{Binding Rotation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            AutomationProperties.Name="{l:Loc Props_Rotation}" />
+              <ui:Button Grid.Column="2" Content="{l:Loc Emoji_ResetRotation}" Margin="8,0,0,0" Command="{Binding ResetRotationCommand}" />
+            </Grid>
+          </StackPanel>
+
           <!-- Schatten (Formen, Linien, Text, Marker, Emoji, Sprechblasen) -->
           <StackPanel DataContext="{Binding ShadowProperties}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
             <TextBlock Text="{l:Loc Shadow_Color}" Style="{StaticResource FieldLabel}" />

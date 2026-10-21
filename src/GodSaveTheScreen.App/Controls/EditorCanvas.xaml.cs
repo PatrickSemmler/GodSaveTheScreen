@@ -474,8 +474,16 @@ public partial class EditorCanvas : UserControl
             editor.Width = wrap + (2 * pad) + (2 / scale);
         }
 
-        System.Windows.Controls.Canvas.SetLeft(editor, annotation.Position.X - pad - (1 / scale));
-        System.Windows.Controls.Canvas.SetTop(editor, annotation.Position.Y - pad - (1 / scale));
+        // Gedreht: Feld um seine linke obere Ecke drehen und diese an die gedrehte Lage setzen; das Feld wächst beim
+        // Tippen dann entlang der eigenen Achsen (wie der Text nach der Übernahme).
+        var topLeft = annotation.ToWorld(new PointD(annotation.Position.X - pad - (1 / scale), annotation.Position.Y - pad - (1 / scale)));
+        if (annotation.Rotation != 0)
+        {
+            editor.RenderTransform = new RotateTransform(annotation.Rotation);
+        }
+
+        System.Windows.Controls.Canvas.SetLeft(editor, topLeft.X);
+        System.Windows.Controls.Canvas.SetTop(editor, topLeft.Y);
         ShowTextEditor(editor, selectAll: false);
     }
 

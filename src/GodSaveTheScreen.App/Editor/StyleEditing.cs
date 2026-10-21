@@ -36,7 +36,8 @@ public static class StyleEditing
             foreach (var target in changed)
             {
                 var old = get(target);
-                context.Undo.Execute(new PropertyChangeAction<TV>(target, key, old, value, v => set(target, v), description));
+                // Ändert der Wert die Größe eines gedrehten Objekts (z. B. Schriftgröße), bleibt die Lage im Bild erhalten.
+                context.Undo.Execute(new PropertyChangeAction<TV>(target, key, old, value, v => RotationMath.PreserveFrame(target, () => set(target, v)), description));
             }
         }
 
