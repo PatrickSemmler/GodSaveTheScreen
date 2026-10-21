@@ -15,6 +15,7 @@ public static class AppServiceCollectionExtensions
     {
         services.AddSingleton<IWindowFactory, WindowFactory>();
         services.AddSingleton<IDialogService, DialogService>();
+        services.AddSingleton<IImageInsertDialogs, ImageInsertDialogs>();
         services.AddSingleton<IClipboardService, ClipboardService>();
         services.AddSingleton<IThemeService, ThemeService>();
         services.AddSingleton<GlobalExceptionHandler>();

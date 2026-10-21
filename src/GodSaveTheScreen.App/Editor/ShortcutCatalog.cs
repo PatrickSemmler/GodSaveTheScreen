@@ -22,6 +22,7 @@ public static class ShortcutCatalog
         ("Shortcuts_File", "Shortcut_Save", "Ctrl+S"),
         ("Shortcuts_File", "Shortcut_SaveAs", "Ctrl+Shift+S"),
         ("Shortcuts_File", "Shortcut_Paste", "Ctrl+V"),
+        ("Shortcuts_File", "Shortcut_PasteAsImage", "Ctrl+Shift+V"),
         ("Shortcuts_Edit", "Shortcut_Undo", "Ctrl+Z"),
         ("Shortcuts_Edit", "Shortcut_Redo", "Ctrl+Y"),
         ("Shortcuts_Edit", "Shortcut_Copy", "Ctrl+C"),

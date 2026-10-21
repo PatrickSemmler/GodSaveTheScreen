@@ -43,6 +43,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     private readonly IProjectService _projects;
     private readonly IRecentFilesService _recents;
     private readonly ILogger<EditorViewModel> _logger;
+    private readonly IImageInsertDialogs _imageDialogs;
+    private readonly System.Windows.Threading.Dispatcher _dispatcher;
     private bool _blurHintShown;
     private ToolBase? _toolBeforePipette;
     private int _pasteCount;
@@ -60,7 +62,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         ICaptureLauncher capture,
         IProjectService projects,
         IRecentFilesService recents,
-        ILogger<EditorViewModel> logger)
+        ILogger<EditorViewModel> logger,
+        IImageInsertDialogs? imageDialogs = null)
     {
         Context = context;
         Tools = tools;
@@ -74,6 +77,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         _projects = projects;
         _recents = recents;
         _logger = logger;
+        _imageDialogs = imageDialogs ?? new ImageInsertDialogs();
+        _dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
         _recents.Changed += OnRecentsChanged;
 
         _activeTool = tools.Get<SelectTool>();
@@ -86,6 +91,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         EmojiProperties = new EmojiPropertiesViewModel(context, () => ActiveTool);
         StampProperties = new StampPropertiesViewModel(context, () => ActiveTool);
         CalloutProperties = new CalloutPropertiesViewModel(context, () => ActiveTool);
+        ImageProperties = new ImagePropertiesViewModel(context, () => ActiveTool, () => InsertImage());
         ShadowProperties = new ShadowPropertiesViewModel(context, () => ActiveTool);
         RotationProperties = new RotationPropertiesViewModel(context);
         MaskTools = new MaskToolsViewModel(context, () => ActiveTool, tools.Tools.OfType<BackgroundEraserTool>().FirstOrDefault());
@@ -101,6 +107,9 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         ];
 
         context.ActivateToolHandler = ActivateToolById;
+
+        // Das Bild-Werkzeug meldet sich aus dem Zeigerereignis: Dateiauswahl erst danach öffnen (Mausfang ist dann gelöst).
+        context.ImageInsertHandler = (center, area) => _dispatcher.BeginInvoke(() => InsertImageFromFiles(center, area));
         context.SelectionStyleEdited += OnSelectionStyleEdited;
         Document.PropertyChanged += OnDocumentChanged;
         Context.Undo.Changed += OnUndoChanged;
@@ -134,6 +143,9 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     /// <summary>Form, Spitze, Schrift, Farben und Leuchten der Sprechblasen bzw. Vorgaben des Sprechblasen-Werkzeugs.</summary>
     public CalloutPropertiesViewModel CalloutProperties { get; }
+
+    /// <summary>Größe, Drehung, Spiegelung und Kontur der Bilder bzw. Vorgaben des Bild-Werkzeugs.</summary>
+    public ImagePropertiesViewModel ImageProperties { get; }
 
     /// <summary>Schatten der Auswahl bzw. Vorgaben des aktiven Werkzeugs.</summary>
     public ShadowPropertiesViewModel ShadowProperties { get; }
@@ -194,7 +206,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     /// <summary>Im Eigenschaftenbereich gibt es etwas zu bearbeiten.</summary>
     public bool HasPanelContent =>
-        Properties.IsApplicable || TextProperties.IsApplicable || MarkerProperties.IsApplicable || ToolOptions.IsApplicable || EmojiProperties.IsApplicable || StampProperties.IsApplicable || CalloutProperties.IsApplicable || ShadowProperties.IsApplicable || RotationProperties.IsApplicable || MaskTools.IsApplicable || Properties.ShowOpacity || Presets.IsApplicable;
+        Properties.IsApplicable || TextProperties.IsApplicable || MarkerProperties.IsApplicable || ToolOptions.IsApplicable || EmojiProperties.IsApplicable || StampProperties.IsApplicable || CalloutProperties.IsApplicable || ImageProperties.IsApplicable || ShadowProperties.IsApplicable || RotationProperties.IsApplicable || MaskTools.IsApplicable || Properties.ShowOpacity || Presets.IsApplicable;
 
     /// <summary>Das Panel zeigt die Einstellungen des aktiven Werkzeugs (keine Auswahl) und sie lassen sich zurücksetzen.</summary>
     public bool CanResetToolDefaults => Context.Selection.Items.Count == 0 && ToolDefaultsReset.Supports(ActiveTool);
@@ -387,6 +399,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         EmojiProperties.Refresh();
         StampProperties.Refresh();
         CalloutProperties.Refresh();
+        ImageProperties.Refresh();
         ShadowProperties.Refresh();
         RotationProperties.Refresh();
         MaskTools.Refresh();
@@ -744,6 +757,112 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         _editors.OpenFromClipboard();
     }
 
+    /// <summary>
+    /// <c>Strg+Umschalt+V</c>: Bild der Zwischenablage als Bildobjekt einfügen (kopierte Bilddateien, SVG, Bild);
+    /// Objekte im eigenen Format werden wie mit <c>Strg+V</c> eingefügt.
+    /// </summary>
+    [RelayCommand]
+    private void PasteAsImage()
+    {
+        var annotations = _clipboard.GetAnnotations();
+        if (annotations.Count > 0)
+        {
+            PasteObjects(annotations);
+            return;
+        }
+
+        var center = VisibleCenter();
+        try
+        {
+            if (_clipboard.GetImageFiles() is { Count: > 0 } files)
+            {
+                InsertImageFiles(files, center);
+                return;
+            }
+
+            ImportedImage? image = null;
+            if (_clipboard.GetSvg() is { } svg)
+            {
+                try
+                {
+                    image = ImageImport.FromBytes(svg, ".svg").Create();
+                }
+                catch (ImageImportException)
+                {
+                    image = null;
+                }
+            }
+
+            if (image is null && _clipboard.GetImage() is { } pixels)
+            {
+                image = new ImportedImage(new ImageAsset(ImageAssetFormat.Png, pixels.EncodePng()), new SizeD(pixels.Width, pixels.Height));
+            }
+
+            if (image is null)
+            {
+                _dialogs.ShowInfo(Strings.Image_InsertTitle, Strings.Image_ClipboardEmpty);
+                return;
+            }
+
+            InsertImages([(image, null)], center, null);
+        }
+        catch (System.Runtime.InteropServices.COMException ex)
+        {
+            _logger.LogError(ex, "Einfügen aus der Zwischenablage fehlgeschlagen");
+            _dialogs.ShowError(Strings.Error_Title, string.Format(CultureInfo.CurrentUICulture, Strings.Image_InsertFailed, ex.Message));
+        }
+    }
+
+    /// <summary>„Bild einfügen…“: Dateiauswahl, eingefügt mittig im sichtbaren Bereich.</summary>
+    [RelayCommand]
+    private void InsertImage() => InsertImageFromFiles(VisibleCenter(), null);
+
+    /// <summary>Dateiauswahl und Einfügen um <paramref name="center"/> bzw. in den aufgezogenen Bereich <paramref name="area"/>.</summary>
+    public IReadOnlyList<ImageAnnotation> InsertImageFromFiles(PointD center, RectD? area)
+    {
+        var paths = _imageDialogs.PickImageFiles();
+        return paths.Count == 0 ? [] : InsertImageFiles(paths, center, area);
+    }
+
+    /// <summary>Fügt Bilddateien als Bildobjekte ein (Drop, Zwischenablage, Dateiauswahl); nicht lesbare Dateien werden gemeldet.</summary>
+    public IReadOnlyList<ImageAnnotation> InsertImageFiles(IReadOnlyList<string> paths, PointD center, RectD? area = null)
+    {
+        ArgumentNullException.ThrowIfNull(paths);
+        var failed = new List<string>();
+        var images = ImageInsert.Load(paths, _imageDialogs, failed);
+        if (failed.Count > 0)
+        {
+            _dialogs.ShowError(Strings.Image_InsertTitle, string.Format(CultureInfo.CurrentUICulture, Strings.Image_InsertFailed, string.Join(Environment.NewLine, failed)));
+        }
+
+        return InsertImages(images, center, area);
+    }
+
+    /// <summary>Fügt ein vorbereitetes Bild (z. B. gezogene Bitmap) um <paramref name="center"/> ein.</summary>
+    public IReadOnlyList<ImageAnnotation> InsertImage(ImportedImage image, PointD center) => InsertImages([(image, null)], center, null);
+
+    private IReadOnlyList<ImageAnnotation> InsertImages(List<(ImportedImage Image, string? Name)> images, PointD center, RectD? area)
+    {
+        if (images.Count == 0 || IsCropping)
+        {
+            return [];
+        }
+
+        var created = Context.Image.Insert(Context, images, center, area);
+
+        // Über Drop oder Zwischenablage eingefügte Bilder sind sofort bearbeitbar; das Bild-Werkzeug folgt der Einstellung.
+        if (ActiveTool is not (SelectTool or ImageTool) || (ActiveTool is ImageTool && _settings.Current.SwitchToSelectAfterDraw))
+        {
+            ActivateToolById(SelectTool.ToolId);
+            Context.Selection.Set(created);
+        }
+
+        return created;
+    }
+
+    private PointD VisibleCenter() =>
+        Context.VisibleCenterProvider?.Invoke() ?? new PointD(Document.BaseImage.Width / 2.0, Document.BaseImage.Height / 2.0);
+
     private void PasteObjects(IReadOnlyList<Annotation> annotations)
     {
         var key = AnnotationSerializer.Serialize(annotations);
@@ -951,6 +1070,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         EmojiProperties.Dispose();
         StampProperties.Dispose();
         CalloutProperties.Dispose();
+        ImageProperties.Dispose();
         ShadowProperties.Dispose();
         RotationProperties.Dispose();
         MaskTools.Dispose();

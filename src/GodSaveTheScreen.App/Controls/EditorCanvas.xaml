@@ -38,6 +38,8 @@
           <MenuItem Header="{l:Loc Menu_Cut}" Command="{Binding CutCommand}" IsEnabled="{Binding HasSelection}" InputGestureText="{l:Shortcut Ctrl+X}" />
           <MenuItem Header="{l:Loc Menu_Copy}" Command="{Binding CopyCommand}" InputGestureText="{l:Shortcut Ctrl+C}" />
           <MenuItem Header="{l:Loc Menu_Paste}" Command="{Binding PasteCommand}" InputGestureText="{l:Shortcut Ctrl+V}" />
+          <MenuItem Header="{l:Loc Menu_PasteAsImage}" Command="{Binding PasteAsImageCommand}" InputGestureText="{l:Shortcut Ctrl+Shift+V}" />
+          <MenuItem Header="{l:Loc Menu_InsertImage}" Command="{Binding InsertImageCommand}" />
           <MenuItem Header="{l:Loc Menu_Duplicate}" Command="{Binding DuplicateCommand}" IsEnabled="{Binding HasSelection}" InputGestureText="{l:Shortcut Ctrl+D}" />
           <MenuItem Header="{l:Loc Menu_Delete}" Command="{Binding DeleteSelectionCommand}" IsEnabled="{Binding HasSelection}" InputGestureText="{l:Shortcut Del}" />
           <Separator />

@@ -8,6 +8,11 @@ CommunityToolkit.Mvvm 8.4.2
   Lizenz:     MIT
   Projekt:    https://github.com/CommunityToolkit/dotnet
 
+ExCSS 4.3.1
+  Autor(en):  Tyler Brinks
+  Lizenz:     MIT
+  Projekt:    https://github.com/TylerBrinks/ExCSS
+
 H.GeneratedIcons.System.Drawing 2.4.1
   Autor(en):  havendv
   Lizenz:     MIT
@@ -22,6 +27,30 @@ H.NotifyIcon.Wpf 2.4.1
   Autor(en):  havendv
   Lizenz:     MIT
   Projekt:    https://github.com/HavenDV/H.NotifyIcon
+
+HarfBuzzSharp 14.2.0
+  Autor(en):  Microsoft
+  Copyright:  © Microsoft Corporation. All rights reserved.
+  Lizenz:     MIT
+  Projekt:    https://go.microsoft.com/fwlink/?linkid=868515
+
+HarfBuzzSharp.NativeAssets.Linux 14.2.0
+  Autor(en):  Microsoft
+  Copyright:  © Microsoft Corporation. All rights reserved.
+  Lizenz:     MIT
+  Projekt:    https://go.microsoft.com/fwlink/?linkid=868515
+
+HarfBuzzSharp.NativeAssets.macOS 14.2.0
+  Autor(en):  Microsoft
+  Copyright:  © Microsoft Corporation. All rights reserved.
+  Lizenz:     MIT
+  Projekt:    https://go.microsoft.com/fwlink/?linkid=868515
+
+HarfBuzzSharp.NativeAssets.Win32 14.2.0
+  Autor(en):  Microsoft
+  Copyright:  © Microsoft Corporation. All rights reserved.
+  Lizenz:     MIT
+  Projekt:    https://go.microsoft.com/fwlink/?linkid=868515
 
 Microsoft.Extensions.Configuration 10.0.13
   Autor(en):  Microsoft
@@ -269,6 +298,60 @@ SharpGen.Runtime.COM 2.4.2-beta
   Copyright:  (c) 2010-2017 Alexandre Mutel, 2017-2023 Jeremy Koritzinsky, 2023-2024 Amer Koleci
   Lizenz:     MIT
   Projekt:    https://github.com/SharpGenTools/SharpGenTools
+
+ShimSkiaSharp 5.2.3
+  Autor(en):  Wiesław Šoltés
+  Copyright:  Copyright © Wiesław Šoltés 2026
+  Lizenz:     MIT
+  Projekt:    https://github.com/wieslawsoltes/Svg.Skia
+
+SkiaSharp 4.148.0
+  Autor(en):  Microsoft
+  Copyright:  © Microsoft Corporation. All rights reserved.
+  Lizenz:     MIT
+  Projekt:    https://go.microsoft.com/fwlink/?linkid=868515
+
+SkiaSharp.NativeAssets.macOS 4.148.0
+  Autor(en):  Microsoft
+  Copyright:  © Microsoft Corporation. All rights reserved.
+  Lizenz:     MIT
+  Projekt:    https://go.microsoft.com/fwlink/?linkid=868515
+
+SkiaSharp.NativeAssets.Win32 4.148.0
+  Autor(en):  Microsoft
+  Copyright:  © Microsoft Corporation. All rights reserved.
+  Lizenz:     MIT
+  Projekt:    https://go.microsoft.com/fwlink/?linkid=868515
+
+Svg.Animation 5.2.3
+  Autor(en):  Wiesław Šoltés
+  Copyright:  Copyright © Wiesław Šoltés 2026
+  Lizenz:     MIT
+  Projekt:    https://github.com/wieslawsoltes/Svg.Skia
+
+Svg.Custom 5.2.3
+  Autor(en):  Wiesław Šoltés
+  Copyright:  Copyright © Wiesław Šoltés 2026
+  Lizenz:     MS-PL
+  Projekt:    https://github.com/wieslawsoltes/Svg.Skia
+
+Svg.Model 5.2.3
+  Autor(en):  Wiesław Šoltés
+  Copyright:  Copyright © Wiesław Šoltés 2026
+  Lizenz:     MIT
+  Projekt:    https://github.com/wieslawsoltes/Svg.Skia
+
+Svg.SceneGraph 5.2.3
+  Autor(en):  Wiesław Šoltés
+  Copyright:  Copyright © Wiesław Šoltés 2026
+  Lizenz:     MIT
+  Projekt:    https://github.com/wieslawsoltes/Svg.Skia
+
+Svg.Skia 5.2.3
+  Autor(en):  Wiesław Šoltés
+  Copyright:  Copyright © Wiesław Šoltés 2026
+  Lizenz:     MIT
+  Projekt:    https://github.com/wieslawsoltes/Svg.Skia
 
 Vortice.Direct2D1 3.8.3
   Autor(en):  Amer Koleci

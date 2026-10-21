@@ -99,9 +99,10 @@ public sealed class AnnotationLayer : Canvas
         }
     }
 
-    /// <summary>Gerasterte Inhalte (Emoji, Stempel, Schatten, weiche Kontur, Leuchten) hängen von der Bildschirmauflösung ab.</summary>
+    /// <summary>Gerasterte Inhalte (Emoji, Stempel, SVG-Bild, Bildkontur, Schatten, weiche Kontur, Leuchten) hängen von der Bildschirmauflösung ab.</summary>
     private static bool DependsOnPixelScale(Annotation annotation) =>
         annotation is EmojiAnnotation or StampAnnotation
+        || annotation is ImageAnnotation { Source.Format: Core.Imaging.ImageAssetFormat.Svg } or ImageAnnotation { Outline.IsVisible: true }
         || annotation is IShadowAnnotation { Shadow.IsVisible: true }
         || annotation is TextAnnotation { OutlineBlur: > 0 }
         || annotation is LineAnnotation { OutlineBlur: > 0 }

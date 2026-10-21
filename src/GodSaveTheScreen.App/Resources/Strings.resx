@@ -516,4 +516,26 @@ Tip: You can assign the Print Screen key to a capture mode in the settings. On W
   <data name="Callout_GlowBlur" xml:space="preserve"><value>Blur (glow)</value></data>
   <data name="Callout_Padding" xml:space="preserve"><value>Padding</value></data>
   <data name="Callout_Property" xml:space="preserve"><value>Change callout</value></data>
+  <data name="Tool_Image" xml:space="preserve"><value>Image (I)</value></data>
+  <data name="Shape_Image" xml:space="preserve"><value>Image</value></data>
+  <data name="Image_InsertTitle" xml:space="preserve"><value>Insert image</value></data>
+  <data name="Image_InsertButton" xml:space="preserve"><value>Insert image from file…</value></data>
+  <data name="Image_InsertFailed" xml:space="preserve"><value>The following could not be inserted as an image:
+{0}</value></data>
+  <data name="Image_ClipboardEmpty" xml:space="preserve"><value>The clipboard does not contain an image.</value></data>
+  <data name="Image_PickFrameTitle" xml:space="preserve"><value>Choose frame</value></data>
+  <data name="Image_PickFramePrompt" xml:space="preserve"><value>“{0}” contains {1} frames. Which one should be inserted?</value></data>
+  <data name="Image_FrameLabel" xml:space="preserve"><value>Frame {0}</value></data>
+  <data name="Image_Frames" xml:space="preserve"><value>Frames</value></data>
+  <data name="Image_Placeholder" xml:space="preserve"><value>At least one image cannot be displayed (file damaged or format not available on this PC).</value></data>
+  <data name="Image_Size" xml:space="preserve"><value>Size</value></data>
+  <data name="Image_KeepAspect" xml:space="preserve"><value>Keep aspect ratio</value></data>
+  <data name="Image_ResetSize" xml:space="preserve"><value>Original size</value></data>
+  <data name="Image_ResetAspect" xml:space="preserve"><value>Original ratio</value></data>
+  <data name="Image_Outline" xml:space="preserve"><value>Outline</value></data>
+  <data name="Image_OutlineWidth" xml:space="preserve"><value>Outline width</value></data>
+  <data name="Image_OutlineBlur" xml:space="preserve"><value>Outline blur</value></data>
+  <data name="Menu_PasteAsImage" xml:space="preserve"><value>Paste as image object</value></data>
+  <data name="Menu_InsertImage" xml:space="preserve"><value>Insert image…</value></data>
+  <data name="Shortcut_PasteAsImage" xml:space="preserve"><value>Paste clipboard image as object</value></data>
 </root>

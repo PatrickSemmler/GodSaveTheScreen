@@ -1008,4 +1008,46 @@ public static class Strings
     public static string Callout_Padding => ResourceManager.GetString("Callout_Padding", Culture) ?? "Callout_Padding";
 
     public static string Callout_Property => ResourceManager.GetString("Callout_Property", Culture) ?? "Callout_Property";
+
+    public static string Tool_Image => ResourceManager.GetString("Tool_Image", Culture) ?? "Tool_Image";
+
+    public static string Shape_Image => ResourceManager.GetString("Shape_Image", Culture) ?? "Shape_Image";
+
+    public static string Image_InsertTitle => ResourceManager.GetString("Image_InsertTitle", Culture) ?? "Image_InsertTitle";
+
+    public static string Image_InsertButton => ResourceManager.GetString("Image_InsertButton", Culture) ?? "Image_InsertButton";
+
+    public static string Image_InsertFailed => ResourceManager.GetString("Image_InsertFailed", Culture) ?? "Image_InsertFailed";
+
+    public static string Image_ClipboardEmpty => ResourceManager.GetString("Image_ClipboardEmpty", Culture) ?? "Image_ClipboardEmpty";
+
+    public static string Image_PickFrameTitle => ResourceManager.GetString("Image_PickFrameTitle", Culture) ?? "Image_PickFrameTitle";
+
+    public static string Image_PickFramePrompt => ResourceManager.GetString("Image_PickFramePrompt", Culture) ?? "Image_PickFramePrompt";
+
+    public static string Image_FrameLabel => ResourceManager.GetString("Image_FrameLabel", Culture) ?? "Image_FrameLabel";
+
+    public static string Image_Frames => ResourceManager.GetString("Image_Frames", Culture) ?? "Image_Frames";
+
+    public static string Image_Placeholder => ResourceManager.GetString("Image_Placeholder", Culture) ?? "Image_Placeholder";
+
+    public static string Image_Size => ResourceManager.GetString("Image_Size", Culture) ?? "Image_Size";
+
+    public static string Image_KeepAspect => ResourceManager.GetString("Image_KeepAspect", Culture) ?? "Image_KeepAspect";
+
+    public static string Image_ResetSize => ResourceManager.GetString("Image_ResetSize", Culture) ?? "Image_ResetSize";
+
+    public static string Image_ResetAspect => ResourceManager.GetString("Image_ResetAspect", Culture) ?? "Image_ResetAspect";
+
+    public static string Image_Outline => ResourceManager.GetString("Image_Outline", Culture) ?? "Image_Outline";
+
+    public static string Image_OutlineWidth => ResourceManager.GetString("Image_OutlineWidth", Culture) ?? "Image_OutlineWidth";
+
+    public static string Image_OutlineBlur => ResourceManager.GetString("Image_OutlineBlur", Culture) ?? "Image_OutlineBlur";
+
+    public static string Menu_PasteAsImage => ResourceManager.GetString("Menu_PasteAsImage", Culture) ?? "Menu_PasteAsImage";
+
+    public static string Menu_InsertImage => ResourceManager.GetString("Menu_InsertImage", Culture) ?? "Menu_InsertImage";
+
+    public static string Shortcut_PasteAsImage => ResourceManager.GetString("Shortcut_PasteAsImage", Culture) ?? "Shortcut_PasteAsImage";
 }

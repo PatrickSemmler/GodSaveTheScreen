@@ -75,4 +75,10 @@ public interface IClipboardService
 
     /// <summary>Objekte aus dem eigenen Zwischenablageformat; leer, wenn keine vorhanden sind.</summary>
     IReadOnlyList<Annotation> GetAnnotations();
+
+    /// <summary>Kopierte Bilddateien (Rasterformate und SVG) aus der Dateiliste; leer, wenn keine vorhanden sind.</summary>
+    IReadOnlyList<string> GetImageFiles();
+
+    /// <summary>SVG als Daten (<c>image/svg+xml</c> oder Text, der mit einem SVG beginnt); <c>null</c>, wenn keines vorhanden ist.</summary>
+    byte[]? GetSvg();
 }

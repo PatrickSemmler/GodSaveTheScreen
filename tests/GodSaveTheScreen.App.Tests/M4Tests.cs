@@ -47,10 +47,14 @@ internal sealed class EditorHarness
         Projects = Substitute.For<IProjectService>();
         Recents = Substitute.For<IRecentFilesService>();
         Recents.Items.Returns([]);
+        ImageDialogs = Substitute.For<IImageInsertDialogs>();
+        ImageDialogs.PickImageFiles().Returns([]);
         Context = new EditorContext(Document, Defaults, Settings, Exporter);
         Tools = ToolRegistry.Create(Context);
-        ViewModel = new EditorViewModel(Context, Tools, Dialogs, Clipboard, Codec, Exporter, Editors, Settings, Capture, Projects, Recents, NullLogger<EditorViewModel>.Instance);
+        ViewModel = new EditorViewModel(Context, Tools, Dialogs, Clipboard, Codec, Exporter, Editors, Settings, Capture, Projects, Recents, NullLogger<EditorViewModel>.Instance, ImageDialogs);
     }
+
+    public IImageInsertDialogs ImageDialogs { get; }
 
     public ImageDocument Document { get; }
 

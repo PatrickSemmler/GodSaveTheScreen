@@ -168,6 +168,27 @@ public sealed record CalloutStyle
     }
 }
 
+/// <summary>Standardwerte des Bild-Werkzeugs (neu eingefügte Bilder).</summary>
+public sealed record ImageStyle
+{
+    public double Opacity { get; init; } = 1;
+
+    public ShadowStyle Shadow { get; init; } = ShadowStyle.None;
+
+    /// <summary>Kontur um die deckenden Bildteile (nur Farbe und Stärke); Stärke 0 = keine.</summary>
+    public StrokeStyle Outline { get; init; } = ImageAnnotation.NoOutline;
+
+    public double OutlineBlur { get; init; }
+
+    /// <summary>Ersetzt fehlende Werte (ältere oder beschädigte Einstellungen) durch die Standardwerte.</summary>
+    public ImageStyle Normalized() => this with
+    {
+        Shadow = Shadow ?? ShadowStyle.None,
+        Outline = Outline ?? ImageAnnotation.NoOutline,
+        Opacity = double.IsFinite(Opacity) ? Math.Clamp(Opacity, 0, 1) : 1,
+    };
+}
+
 /// <summary>Werkzeug-ID → Standardwerte, mit Wertgleichheit (damit <c>AppSettings</c> als Record vergleichbar bleibt).</summary>
 public sealed class ShapeDefaultsMap : Dictionary<string, ShapeStyle>
 {

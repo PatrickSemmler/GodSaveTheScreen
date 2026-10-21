@@ -836,6 +836,103 @@
             </StackPanel>
           </StackPanel>
 
+          <!-- Bild: Größe, Drehung, Spiegelung, Kontur bzw. Vorgaben neuer Bilder -->
+          <StackPanel DataContext="{Binding ImageProperties}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
+            <ui:Button Content="{l:Loc Image_InsertButton}" Icon="{ui:SymbolIcon ImageAdd24}" Margin="0,10,0,0" HorizontalAlignment="Stretch"
+                       Command="{Binding InsertCommand}" Visibility="{Binding ShowDefaults, Converter={StaticResource BoolToVisibility}}" />
+
+            <TextBlock Text="{l:Loc Image_Placeholder}" TextWrapping="Wrap" Foreground="#F5A623" Margin="0,10,0,0"
+                       Visibility="{Binding HasPlaceholder, Converter={StaticResource BoolToVisibility}}" />
+
+            <StackPanel Visibility="{Binding HasImages, Converter={StaticResource BoolToVisibility}}">
+              <TextBlock Text="{l:Loc Image_Size}" Style="{StaticResource FieldLabel}" />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ui:NumberBox Minimum="4" Maximum="100000" SmallChange="1" LargeChange="10" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                              Value="{Binding Width, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              AutomationProperties.Name="{l:Loc Emoji_Width}" ToolTip="{l:Loc Emoji_Width}" />
+                <TextBlock Grid.Column="1" Text="×" Margin="6,0" VerticalAlignment="Center" />
+                <ui:NumberBox Grid.Column="2" Minimum="4" Maximum="100000" SmallChange="1" LargeChange="10" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                              Value="{Binding Height, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              AutomationProperties.Name="{l:Loc Emoji_Height}" ToolTip="{l:Loc Emoji_Height}" />
+              </Grid>
+              <CheckBox Content="{l:Loc Image_KeepAspect}" IsChecked="{Binding KeepAspectRatio, Mode=TwoWay}" Margin="0,6,0,0" />
+              <Grid Margin="0,6,0,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <ui:Button Content="{l:Loc Image_ResetSize}" HorizontalAlignment="Stretch" Margin="0,0,3,0" Command="{Binding ResetSizeCommand}" />
+                <ui:Button Grid.Column="1" Content="{l:Loc Image_ResetAspect}" HorizontalAlignment="Stretch" Margin="3,0,0,0" Command="{Binding ResetAspectCommand}" />
+              </Grid>
+
+              <TextBlock Text="{l:Loc Props_Rotation}" Style="{StaticResource FieldLabel}" />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Slider Minimum="-180" Maximum="180" SmallChange="1" LargeChange="15" VerticalAlignment="Center"
+                        Value="{Binding RotationValue, Mode=TwoWay}"
+                        AutomationProperties.Name="{l:Loc Props_Rotation}" />
+                <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                              Minimum="-180" Maximum="180" SmallChange="1" LargeChange="15" MaxDecimalPlaces="1" ClearButtonEnabled="False"
+                              Value="{Binding Rotation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              AutomationProperties.Name="{l:Loc Props_Rotation}" />
+                <ui:Button Grid.Column="2" Content="{l:Loc Emoji_ResetRotation}" Margin="8,0,0,0" Command="{Binding ResetRotationCommand}" />
+              </Grid>
+
+              <WrapPanel Margin="0,10,0,0">
+                <ToggleButton Style="{StaticResource IconToggle}" IsChecked="{Binding FlipHorizontal, Mode=TwoWay}" ToolTip="{l:Loc Emoji_FlipH}" AutomationProperties.Name="{l:Loc Emoji_FlipH}">
+                  <ui:SymbolIcon Symbol="FlipHorizontal24" />
+                </ToggleButton>
+                <ToggleButton Style="{StaticResource IconToggle}" IsChecked="{Binding FlipVertical, Mode=TwoWay}" ToolTip="{l:Loc Emoji_FlipV}" AutomationProperties.Name="{l:Loc Emoji_FlipV}">
+                  <ui:SymbolIcon Symbol="FlipVertical24" />
+                </ToggleButton>
+              </WrapPanel>
+            </StackPanel>
+
+            <TextBlock Text="{l:Loc Image_Outline}" Style="{StaticResource FieldLabel}" />
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <controls:ColorButton Style="{StaticResource PanelColorButton}" SelectedColor="{Binding OutlineColor, Mode=TwoWay}" />
+              <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                            Minimum="0" Maximum="50" SmallChange="0.5" LargeChange="2" MaxDecimalPlaces="1" ClearButtonEnabled="False"
+                            Value="{Binding OutlineThickness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            AutomationProperties.Name="{l:Loc Image_OutlineWidth}" ToolTip="{l:Loc Image_OutlineWidth}" />
+            </Grid>
+
+            <TextBlock Text="{l:Loc Image_OutlineBlur}" Style="{StaticResource FieldLabel}" />
+            <ui:NumberBox Minimum="0" Maximum="50" SmallChange="1" LargeChange="5" MaxDecimalPlaces="1" ClearButtonEnabled="False"
+                          Value="{Binding OutlineBlur, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          AutomationProperties.Name="{l:Loc Image_OutlineBlur}" />
+
+            <StackPanel Visibility="{Binding ShowDefaults, Converter={StaticResource BoolToVisibility}}">
+              <TextBlock Text="{l:Loc Props_Opacity}" Style="{StaticResource FieldLabel}" />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Slider Minimum="0" Maximum="100" SmallChange="1" LargeChange="10" VerticalAlignment="Center"
+                        Value="{Binding DefaultOpacityValue, Mode=TwoWay}"
+                        AutomationProperties.Name="{l:Loc Props_Opacity}" />
+                <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                              Minimum="0" Maximum="100" SmallChange="1" LargeChange="10" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                              Value="{Binding DefaultOpacityPercent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              AutomationProperties.Name="{l:Loc Props_Opacity}" />
+              </Grid>
+            </StackPanel>
+          </StackPanel>
+
           <!-- Drehung ausgewählter Formen, Polygone, Freihandstriche und Texte (keine Werkzeug-Vorgabe) -->
           <StackPanel DataContext="{Binding RotationProperties}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
             <TextBlock Text="{l:Loc Props_Rotation}" Style="{StaticResource FieldLabel}" />
@@ -856,7 +953,7 @@
             </Grid>
           </StackPanel>
 
-          <!-- Schatten (Formen, Linien, Text, Marker, Emoji, Sprechblasen) -->
+          <!-- Schatten (Formen, Linien, Text, Marker, Emoji, Sprechblasen, Bilder) -->
           <StackPanel DataContext="{Binding ShadowProperties}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
             <TextBlock Text="{l:Loc Shadow_Color}" Style="{StaticResource FieldLabel}" />
             <controls:ColorButton Style="{StaticResource PanelColorButton}" SelectedColor="{Binding ShadowColor, Mode=TwoWay}" />

@@ -89,6 +89,35 @@ public sealed class ClipboardService : IClipboardService
         });
     }
 
+    public IReadOnlyList<string> GetImageFiles() => Retry(() => Clipboard.ContainsFileDropList()
+        ? (IReadOnlyList<string>)[.. Clipboard.GetFileDropList().Cast<string>().Where(ImageInsert.IsInsertable)]
+        : []);
+
+    public byte[]? GetSvg()
+    {
+        return Retry(() =>
+        {
+            if (Clipboard.GetData("image/svg+xml") is { } data)
+            {
+                switch (data)
+                {
+                    case MemoryStream stream:
+                        return stream.ToArray();
+                    case string text when SvgRasterizer.LooksLikeSvg(System.Text.Encoding.UTF8.GetBytes(text)):
+                        return System.Text.Encoding.UTF8.GetBytes(text);
+                }
+            }
+
+            if (Clipboard.ContainsText() && Clipboard.GetText().TrimStart() is { } plain
+                && (plain.StartsWith("<svg", StringComparison.OrdinalIgnoreCase) || (plain.StartsWith("<?xml", StringComparison.OrdinalIgnoreCase) && plain.Contains("<svg", StringComparison.OrdinalIgnoreCase))))
+            {
+                return System.Text.Encoding.UTF8.GetBytes(plain);
+            }
+
+            return null;
+        });
+    }
+
     private static bool ContainsImageFile() =>
         Clipboard.ContainsFileDropList() && Clipboard.GetFileDropList().Cast<string>().Any(IsImageFile);
 

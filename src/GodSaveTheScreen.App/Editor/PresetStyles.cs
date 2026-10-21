@@ -15,6 +15,7 @@ public enum PresetKind
     Blur,
     Magnifier,
     Callout,
+    Image,
 }
 
 /// <summary>
@@ -32,6 +33,7 @@ public static class PresetStyles
         BlurTool.ToolId => PresetKind.Blur,
         MagnifierTool.ToolId => PresetKind.Magnifier,
         CalloutTool.ToolId => PresetKind.Callout,
+        ImageTool.ToolId => PresetKind.Image,
         _ => null,
     };
 
@@ -49,6 +51,7 @@ public static class PresetStyles
         BlurAnnotation => BlurTool.ToolId,
         MagnifierAnnotation => MagnifierTool.ToolId,
         CalloutAnnotation => CalloutTool.ToolId,
+        ImageAnnotation => ImageTool.ToolId,
         _ => null,
     };
 
@@ -92,6 +95,8 @@ public static class PresetStyles
                 return new ToolPreset { Name = name, Magnifier = CaptureMagnifier(context.MagnifierTemplate.ToStyle(), selection.OfType<MagnifierAnnotation>().ToList()) };
             case PresetKind.Callout:
                 return new ToolPreset { Name = name, Callout = CaptureCallout(context.Callout.Style, selection.OfType<CalloutAnnotation>().ToList()) };
+            case PresetKind.Image:
+                return new ToolPreset { Name = name, Image = CaptureImage(context.Image.Style, selection.OfType<ImageAnnotation>().ToList()) };
             default:
                 throw new ArgumentException("Werkzeug ohne Vorlagen.", nameof(toolId));
         }
@@ -176,6 +181,9 @@ public static class PresetStyles
             case CalloutAnnotation callout when preset.Callout is { } style:
                 StyleApplier.Apply(callout, style.Normalized());
                 break;
+            case ImageAnnotation image when preset.Image is { } style:
+                ImageToolState.Apply(image, style);
+                break;
         }
     }
 
@@ -206,6 +214,9 @@ public static class PresetStyles
                 break;
             case PresetKind.Callout when preset.Callout is { } callout:
                 context.Callout.Style = callout.Normalized();
+                break;
+            case PresetKind.Image when preset.Image is { } image:
+                context.Image.Style = image.Normalized();
                 break;
         }
     }
@@ -327,6 +338,16 @@ public static class PresetStyles
             Padding = Common(callouts, c => c.Padding, fallback.Padding),
             Opacity = Common(callouts, c => c.Opacity, fallback.Opacity),
             Shadow = Common(callouts, c => c.Shadow, fallback.Shadow),
+        };
+
+    private static ImageStyle CaptureImage(ImageStyle fallback, List<ImageAnnotation> images) => images.Count == 0
+        ? fallback
+        : new ImageStyle
+        {
+            Opacity = Common(images, i => i.Opacity, fallback.Opacity),
+            Shadow = Common(images, i => i.Shadow, fallback.Shadow),
+            Outline = CommonStroke(images, i => i.Outline, fallback.Outline),
+            OutlineBlur = Common(images, i => i.OutlineBlur, fallback.OutlineBlur),
         };
 
     private static MagnifierStyle CaptureMagnifier(MagnifierStyle fallback, List<MagnifierAnnotation> magnifiers) => magnifiers.Count == 0

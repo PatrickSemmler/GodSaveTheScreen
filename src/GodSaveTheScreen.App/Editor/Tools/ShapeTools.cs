@@ -29,6 +29,7 @@ public static class AnnotationNames
         EmojiAnnotation => "Shape_Emoji",
         StampAnnotation => "Shape_Stamp",
         CalloutAnnotation => "Shape_Callout",
+        ImageAnnotation => "Shape_Image",
         LineAnnotation { EndCap: not LineEndStyle.None } or LineAnnotation { StartCap: not LineEndStyle.None } => "Shape_Arrow",
         LineAnnotation => "Shape_Line",
         _ => annotation.GetType().Name,

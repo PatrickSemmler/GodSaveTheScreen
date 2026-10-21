@@ -24,28 +24,13 @@ public sealed class ImageCodecService : IImageCodecService
         var dpiX = frame.DpiX > 0 ? frame.DpiX : 96;
         var dpiY = frame.DpiY > 0 ? frame.DpiY : 96;
 
-        var transform = ExifOrientation(frame) switch
+        var oriented = ApplyExifOrientation(frame);
+        if (oriented.PixelWidth != frame.PixelWidth)
         {
-            2 => new ScaleTransform(-1, 1),
-            3 => new RotateTransform(180),
-            4 => new ScaleTransform(1, -1),
-            5 => Combine(new RotateTransform(90), new ScaleTransform(-1, 1)),
-            6 => new RotateTransform(90),
-            7 => Combine(new RotateTransform(270), new ScaleTransform(-1, 1)),
-            8 => new RotateTransform(270),
-            _ => (Transform?)null,
-        };
-        if (transform is not null)
-        {
-            var transformed = new TransformedBitmap(frame, transform);
-            transformed.Freeze();
-            if (transformed.PixelWidth != frame.PixelWidth)
-            {
-                (dpiX, dpiY) = (dpiY, dpiX);
-            }
-
-            frame = transformed;
+            (dpiX, dpiY) = (dpiY, dpiX);
         }
+
+        frame = oriented;
 
         return new LoadedImage(PixelBufferExtensions.FromBitmapSource(frame), dpiX, dpiY, decoder.Frames.Count);
     }
@@ -146,6 +131,30 @@ public sealed class ImageCodecService : IImageCodecService
         _ => TiffCompressOption.Lzw,
     };
 
+    /// <summary>Dreht bzw. spiegelt ein Bild gemäß EXIF-Ausrichtung (Fotos); ohne Angabe unverändert.</summary>
+    internal static BitmapSource ApplyExifOrientation(BitmapSource frame)
+    {
+        var transform = ExifOrientation(frame) switch
+        {
+            2 => new ScaleTransform(-1, 1),
+            3 => new RotateTransform(180),
+            4 => new ScaleTransform(1, -1),
+            5 => Combine(new RotateTransform(90), new ScaleTransform(-1, 1)),
+            6 => new RotateTransform(90),
+            7 => Combine(new RotateTransform(270), new ScaleTransform(-1, 1)),
+            8 => new RotateTransform(270),
+            _ => (Transform?)null,
+        };
+        if (transform is null)
+        {
+            return frame;
+        }
+
+        var transformed = new TransformedBitmap(frame, transform);
+        transformed.Freeze();
+        return transformed;
+    }
+
     private static TransformGroup Combine(Transform first, Transform second)
     {
         var group = new TransformGroup();
@@ -154,7 +163,7 @@ public sealed class ImageCodecService : IImageCodecService
         return group;
     }
 
-    private static int ExifOrientation(BitmapSource frame)
+    internal static int ExifOrientation(BitmapSource frame)
     {
         try
         {

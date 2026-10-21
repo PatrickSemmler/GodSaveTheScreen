@@ -108,6 +108,7 @@ public sealed class ToolRegistry
         new EmojiTool(context),
         new StampTool(context),
         new CalloutTool(context),
+        new ImageTool(context),
         new CropTool(context),
         new PipetteTool(context),
     ]);

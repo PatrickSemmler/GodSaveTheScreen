@@ -417,7 +417,7 @@ public sealed class SelectTool : ToolBase
             case Key.OemOpenBrackets or Key.OemCloseBrackets when modifiers == ModifierKeys.None && _mode == Mode.None && HasRotatable():
                 RotateByKey(key == Key.OemCloseBrackets ? ShapeGeometry.AngleStepDegrees : -ShapeGeometry.AngleStepDegrees);
                 return true;
-            case Key.H or Key.V when modifiers == ModifierKeys.Shift && _mode == Mode.None && Context.Selection.Items.Any(a => a is EmojiAnnotation && !a.IsLocked):
+            case Key.H or Key.V when modifiers == ModifierKeys.Shift && _mode == Mode.None && Context.Selection.Items.Any(a => a is IFlippableAnnotation && !a.IsLocked):
                 FlipSelection(horizontal: key == Key.H);
                 return true;
             case Key.Tab when _mode == Mode.None && (modifiers & (ModifierKeys.Control | ModifierKeys.Alt)) == 0:
@@ -528,10 +528,10 @@ public sealed class SelectTool : ToolBase
         Context.InvalidateInteraction();
     }
 
-    /// <summary><c>Umschalt+H</c> / <c>Umschalt+V</c>: spiegelt alle Emojis der Auswahl (ein Undo-Schritt).</summary>
+    /// <summary><c>Umschalt+H</c> / <c>Umschalt+V</c>: spiegelt alle Emojis und Bilder der Auswahl (ein Undo-Schritt).</summary>
     public void FlipSelection(bool horizontal)
     {
-        var items = Context.Selection.Items.OfType<EmojiAnnotation>().Where(e => !e.IsLocked).ToList();
+        var items = Context.Selection.Items.Where(a => a is IFlippableAnnotation && !a.IsLocked).ToList();
         if (items.Count == 0)
         {
             return;
@@ -541,11 +541,11 @@ public sealed class SelectTool : ToolBase
         {
             foreach (var item in items)
             {
-                var target = item;
+                var target = (IFlippableAnnotation)item;
                 var old = horizontal ? target.FlipHorizontal : target.FlipVertical;
                 Context.Undo.Execute(new PropertyChangeAction<bool>(
-                    target,
-                    horizontal ? nameof(EmojiAnnotation.FlipHorizontal) : nameof(EmojiAnnotation.FlipVertical),
+                    item,
+                    horizontal ? nameof(IFlippableAnnotation.FlipHorizontal) : nameof(IFlippableAnnotation.FlipVertical),
                     old,
                     !old,
                     v =>
@@ -727,7 +727,14 @@ public sealed class SelectTool : ToolBase
 
         if (_snapshots is [(EmojiAnnotation emojiTarget, EmojiAnnotation emojiBefore)])
         {
-            ResizeRotated(emojiTarget, emojiBefore, args);
+            ResizeRotated(emojiBefore.Rect, emojiBefore.Rotation, EmojiAnnotation.MinSize, r => emojiTarget.Rect = r, args);
+            Context.InvalidateInteraction();
+            return;
+        }
+
+        if (_snapshots is [(ImageAnnotation imageTarget, ImageAnnotation imageBefore)])
+        {
+            ResizeRotated(imageBefore.Rect, imageBefore.Rotation, ImageAnnotation.MinSize, r => imageTarget.Rect = r, args);
             Context.InvalidateInteraction();
             return;
         }
@@ -773,21 +780,21 @@ public sealed class SelectTool : ToolBase
     /// Skaliert ein gedrehtes Objekt im eigenen Koordinatensystem: Der Zeiger wird zurückgedreht, der gegenüberliegende Rand
     /// bleibt auf dem Bildschirm stehen. Eckgriffe skalieren proportional, mit <c>Umschalt</c> frei; Kantengriffe immer frei.
     /// </summary>
-    private void ResizeRotated(EmojiAnnotation target, EmojiAnnotation before, EditorPointerArgs args)
+    private void ResizeRotated(RectD before, double rotation, double minSize, Action<RectD> setRect, EditorPointerArgs args)
     {
-        var rect = before.Rect.Normalize();
+        var rect = before.Normalize();
         var center = rect.Center;
-        var local = RotationMath.Unrotate(args.Position, center, before.Rotation);
+        var local = RotationMath.Unrotate(args.Position, center, rotation);
         var (map, _) = SelectionHandles.ResizeMap(rect, _handle.Kind, local, proportional: !args.Shift);
         var resized = RectD.FromPoints(map(rect.TopLeft), map(rect.BottomRight));
-        if (resized.Width < EmojiAnnotation.MinSize || resized.Height < EmojiAnnotation.MinSize)
+        if (resized.Width < minSize || resized.Height < minSize)
         {
             return;
         }
 
-        var worldCenter = RotationMath.Rotate(resized.Center, center, before.Rotation);
+        var worldCenter = RotationMath.Rotate(resized.Center, center, rotation);
         var shift = new VectorD(worldCenter.X - resized.Center.X, worldCenter.Y - resized.Center.Y);
-        target.Rect = new RectD(resized.X + shift.X, resized.Y + shift.Y, resized.Width, resized.Height);
+        setRect(new RectD(resized.X + shift.X, resized.Y + shift.Y, resized.Width, resized.Height));
     }
 
     /// <summary>

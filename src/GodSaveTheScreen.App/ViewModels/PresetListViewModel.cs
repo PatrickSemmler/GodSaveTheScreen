@@ -59,6 +59,12 @@ public sealed class PresetItem
             return (blur.Mode == BlurMode.Redact ? blur.RedactColor : ArgbColor.FromRgb(0xB0, 0xB0, 0xB0), ArgbColor.FromRgb(0x80, 0x80, 0x80));
         }
 
+        if (preset.Image is { } image)
+        {
+            // Bildvorlagen: Schattenfarbe als Fläche, Konturfarbe als Rand.
+            return (image.Shadow.IsVisible ? image.Shadow.Color : ArgbColor.Transparent, image.Outline.IsVisible ? image.Outline.Color : ArgbColor.FromRgb(0x80, 0x80, 0x80));
+        }
+
         if (preset.Magnifier is { } magnifier)
         {
             return (ArgbColor.Transparent, magnifier.Border.Color);

@@ -74,7 +74,8 @@ public sealed record ProjectContent
 }
 
 /// <summary>
-/// Projektformat <c>.gsts</c>: ZIP mit <c>manifest.json</c>, <c>document.json</c>, <c>base.png</c>, <c>preview.png</c> und optional <c>mask.bin</c>.
+/// Projektformat <c>.gsts</c>: ZIP mit <c>manifest.json</c>, <c>document.json</c>, <c>base.png</c>, <c>preview.png</c>, optional <c>mask.bin</c>
+/// und je eingefügter Bilddatei einem Eintrag <c>image-&lt;sha256&gt;.png|jpg|svg</c> (gleiche Dateien nur einmal).
 /// Es werden nur die festen Eintragsnamen gelesen (Pfade im ZIP werden ignoriert); Größen sind begrenzt (ZIP-Bomben).
 /// </summary>
 public static class ProjectSerializer
@@ -95,6 +96,9 @@ public static class ProjectSerializer
     public const long MaxDocumentBytes = 128L * 1024 * 1024;
     public const long MaxBaseBytes = 1536L * 1024 * 1024;
     public const long MaxPreviewBytes = 16L * 1024 * 1024;
+
+    /// <summary>Obergrenze aller eingebetteten Bilddateien zusammen (Bildobjekte).</summary>
+    public const long MaxImageAssetBytes = 1536L * 1024 * 1024;
     public const int MaxDimension = 32768;
     public const long MaxPixels = 16384L * 16384;
 
@@ -186,8 +190,16 @@ public static class ProjectSerializer
                 ["captureMode"] = content.Metadata.CaptureMode,
                 ["windowTitle"] = content.Metadata.WindowTitle,
             },
-            ["annotations"] = JsonSerializer.SerializeToNode(content.Annotations.ToList(), Options),
         };
+
+        // Bilddateien der Bildobjekte stehen nicht im JSON, sondern als eigene Einträge (je Hash einmal).
+        IReadOnlyCollection<ImageAsset> assets;
+        using (var scope = ImageAssetScope.ForWriting())
+        {
+            document["annotations"] = JsonSerializer.SerializeToNode(content.Annotations.ToList(), Options);
+            assets = [.. scope.Written];
+        }
+
         WriteText(zip, DocumentEntry, document.ToJsonString(Options));
 
         // PNG ist bereits komprimiert: kein weiteres Deflate.
@@ -200,6 +212,11 @@ public static class ProjectSerializer
         if (content.Mask is { Length: > 0 } mask)
         {
             WriteBytes(zip, MaskEntry, mask, CompressionLevel.Optimal);
+        }
+
+        foreach (var asset in assets)
+        {
+            WriteBytes(zip, asset.EntryName, asset.Data, asset.Format == ImageAssetFormat.Svg ? CompressionLevel.Optimal : CompressionLevel.NoCompression);
         }
     }
 
@@ -269,7 +286,30 @@ public static class ProjectSerializer
                 document["metadata"]?["captureMode"]?.GetValue<string>(),
                 document["metadata"]?["windowTitle"]?.GetValue<string>());
 
-            var annotations = document["annotations"] is JsonArray array ? ReadAnnotations(array, warnings) : [];
+            List<Annotation> annotations;
+            long assetBytes = 0;
+            var assetCache = new Dictionary<string, byte[]?>(StringComparer.Ordinal);
+            using (ImageAssetScope.ForReading((hash, format) =>
+            {
+                // Kopien eines Bildes verweisen auf denselben Eintrag: nur einmal lesen und zählen.
+                var name = ImageAsset.EntryNameOf(hash, format);
+                if (!assetCache.TryGetValue(name, out var data))
+                {
+                    data = ReadEntry(zip, name, ImageAsset.MaxBytes, required: false);
+                    assetBytes += data?.Length ?? 0;
+                    if (assetBytes > MaxImageAssetBytes)
+                    {
+                        throw new ProjectFormatException("Die eingebetteten Bilder sind zu groß.");
+                    }
+
+                    assetCache[name] = data;
+                }
+
+                return data;
+            }))
+            {
+                annotations = document["annotations"] is JsonArray array ? ReadAnnotations(array, warnings) : [];
+            }
 
             return new ProjectContent
             {

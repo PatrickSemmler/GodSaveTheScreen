@@ -60,6 +60,9 @@ public static class ToolDefaultsReset
             case CalloutTool:
                 context.Callout.Style = new CalloutStyle();
                 break;
+            case ImageTool:
+                context.Image.Style = new ImageStyle();
+                break;
             default:
                 if (tool.UsesShapeStyle)
                 {

@@ -179,6 +179,9 @@ public sealed record AppSettings
     /// <summary>Letzte Konfiguration des Sprechblasen-Werkzeugs.</summary>
     public CalloutStyle CalloutDefaults { get; init; } = new();
 
+    /// <summary>Letzte Konfiguration des Bild-Werkzeugs (Schatten, Kontur, Deckkraft neuer Bilder).</summary>
+    public ImageStyle ImageDefaults { get; init; } = new();
+
     /// <summary>Zuletzt verwendete Emojis (Sequenz), neueste zuerst, höchstens <see cref="MaxRecentEmojis"/>.</summary>
     public StringList EmojiRecent { get; init; } = [];
 
@@ -255,6 +258,7 @@ public sealed record AppSettings
                 FontSize = stamp.FontSize > 0 ? stamp.FontSize : new StampStyle().FontSize,
             },
             CalloutDefaults = callout.Normalized(),
+            ImageDefaults = (ImageDefaults ?? new ImageStyle()).Normalized(),
             EmojiRecent = EmojiRecent ?? [],
             EmojiFavorites = EmojiFavorites ?? [],
             RecentColors = RecentColors ?? [],

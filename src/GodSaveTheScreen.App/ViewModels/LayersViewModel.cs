@@ -27,11 +27,15 @@ public sealed class LayerItem : System.ComponentModel.INotifyPropertyChanged, ID
 
     public string DisplayName => AnnotationNames.DisplayName(Annotation);
 
-    /// <summary>Kleine Farbvorschau bei Emojis (sonst <c>null</c>).</summary>
-    public System.Windows.Media.ImageSource? Preview =>
-        Annotation is EmojiAnnotation emoji ? Rendering.EmojiCache.Shared.Get(emoji.Sequence, 36) : null;
+    /// <summary>Kleine Farbvorschau bei Emojis und Bildern (sonst <c>null</c>).</summary>
+    public System.Windows.Media.ImageSource? Preview => Annotation switch
+    {
+        EmojiAnnotation emoji => Rendering.EmojiCache.Shared.Get(emoji.Sequence, 36),
+        ImageAnnotation image => Rendering.AnnotationRenderer.GetImageBitmap(image, new Rendering.RenderContext { EmojiPixelScale = 36 / Math.Max(1, Math.Max(image.Rect.Normalize().Width, image.Rect.Normalize().Height)) }),
+        _ => null,
+    };
 
-    public bool HasPreview => Annotation is EmojiAnnotation;
+    public bool HasPreview => Annotation is EmojiAnnotation or ImageAnnotation;
 
     public bool IsVisible => Annotation.IsVisible;
 
@@ -49,7 +53,7 @@ public sealed class LayerItem : System.ComponentModel.INotifyPropertyChanged, ID
 
     private void OnAnnotationChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is nameof(Annotation.Name) or nameof(Annotation.IsVisible) or nameof(Annotation.IsLocked) or nameof(EmojiAnnotation.Sequence))
+        if (e.PropertyName is nameof(Annotation.Name) or nameof(Annotation.IsVisible) or nameof(Annotation.IsLocked) or nameof(EmojiAnnotation.Sequence) or nameof(ImageAnnotation.Source))
         {
             PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(string.Empty));
         }

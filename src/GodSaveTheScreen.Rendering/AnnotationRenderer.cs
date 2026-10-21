@@ -34,6 +34,9 @@ public sealed record RenderContext
 
     public EmojiCache Emojis { get; init; } = EmojiCache.Shared;
 
+    /// <summary>Dekodierte Bilddateien der Bildobjekte (SVG je Rastergröße nach <see cref="EmojiPixelScale"/>).</summary>
+    public ImageAssetCache Images { get; init; } = ImageAssetCache.Shared;
+
     /// <summary>Text von Sprechblasen weglassen (während der Textbearbeitung zeigt ein Eingabefeld den Text).</summary>
     public bool HideCalloutText { get; init; }
 
@@ -190,7 +193,7 @@ public static partial class AnnotationRenderer
     private static void DrawCore(DrawingContext dc, Annotation annotation, RenderContext context)
     {
         // Formen, Polygone, Striche und Text liegen unverdreht vor und werden hier um ihre Mitte gedreht
-        // (Emoji, Stempel und Sprechblase drehen selbst). Der Schatten entsteht aus diesem Bild und fällt daher
+        // (Emoji, Bild, Stempel und Sprechblase drehen selbst). Der Schatten entsteht aus diesem Bild und fällt daher
         // unabhängig von der Drehung nach rechts unten.
         if (annotation is BoxAnnotation or PolygonAnnotation or StrokeAnnotation or TextAnnotation
             && annotation is IRotatableAnnotation { Rotation: not 0 } rotated)
@@ -247,6 +250,9 @@ public static partial class AnnotationRenderer
                 break;
             case CalloutAnnotation callout:
                 CalloutRenderer.Draw(dc, callout, context);
+                break;
+            case ImageAnnotation image:
+                DrawImageAnnotation(dc, image, context);
                 break;
         }
     }

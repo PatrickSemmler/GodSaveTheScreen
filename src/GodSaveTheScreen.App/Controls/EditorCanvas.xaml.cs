@@ -48,6 +48,29 @@ public partial class EditorCanvas : UserControl
         return new PointD(p.X, p.Y);
     }
 
+    /// <summary>
+    /// Bildpixel unter dem Mauszeiger beim Drop, wenn er über dem sichtbaren Bereich der Zeichenfläche liegt (auf den
+    /// angezeigten Bildbereich begrenzt); sonst <c>null</c>.
+    /// </summary>
+    public PointD? DropPoint(DragEventArgs e)
+    {
+        ArgumentNullException.ThrowIfNull(e);
+        if (_viewModel is null)
+        {
+            return null;
+        }
+
+        var inViewport = e.GetPosition(Scroller);
+        if (inViewport.X < 0 || inViewport.Y < 0 || inViewport.X > Scroller.ViewportWidth || inViewport.Y > Scroller.ViewportHeight)
+        {
+            return null;
+        }
+
+        var p = e.GetPosition(Surface);
+        var view = _viewModel.ViewRect;
+        return new PointD(Math.Clamp(p.X, view.X, view.Right), Math.Clamp(p.Y, view.Y, view.Bottom));
+    }
+
     public void Initialize(EditorViewModel viewModel)
     {
         if (_viewModel is not null)

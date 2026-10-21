@@ -411,7 +411,7 @@ Tipp: In den Einstellungen können Sie die Taste Druck einem Aufnahmemodus zuwei
   <data name="Emoji_Search" xml:space="preserve"><value>Emojis suchen</value></data>
   <data name="Emoji_Categories" xml:space="preserve"><value>Emoji-Kategorien</value></data>
   <data name="Emoji_Grid" xml:space="preserve"><value>Emojis</value></data>
-  <data name="Emoji_Loading" xml:space="preserve"><value>Emojis werden geladen …</value></data>
+  <data name="Emoji_Loading" xml:space="preserve"><value>Emojis werden geladen…</value></data>
   <data name="Emoji_NoResults" xml:space="preserve"><value>Keine Emojis gefunden.</value></data>
   <data name="Emoji_Cat_Favorites" xml:space="preserve"><value>Favoriten</value></data>
   <data name="Emoji_Cat_Recent" xml:space="preserve"><value>Zuletzt verwendet</value></data>
@@ -516,4 +516,26 @@ Tipp: In den Einstellungen können Sie die Taste Druck einem Aufnahmemodus zuwei
   <data name="Callout_GlowBlur" xml:space="preserve"><value>Unschärfe (Leuchten)</value></data>
   <data name="Callout_Padding" xml:space="preserve"><value>Innenabstand</value></data>
   <data name="Callout_Property" xml:space="preserve"><value>Sprechblase ändern</value></data>
+  <data name="Tool_Image" xml:space="preserve"><value>Bild (I)</value></data>
+  <data name="Shape_Image" xml:space="preserve"><value>Bild</value></data>
+  <data name="Image_InsertTitle" xml:space="preserve"><value>Bild einfügen</value></data>
+  <data name="Image_InsertButton" xml:space="preserve"><value>Bild aus Datei einfügen…</value></data>
+  <data name="Image_InsertFailed" xml:space="preserve"><value>Folgendes konnte nicht als Bild eingefügt werden:
+{0}</value></data>
+  <data name="Image_ClipboardEmpty" xml:space="preserve"><value>Die Zwischenablage enthält kein Bild.</value></data>
+  <data name="Image_PickFrameTitle" xml:space="preserve"><value>Einzelbild wählen</value></data>
+  <data name="Image_PickFramePrompt" xml:space="preserve"><value>„{0}“ enthält {1} Einzelbilder. Welches soll eingefügt werden?</value></data>
+  <data name="Image_FrameLabel" xml:space="preserve"><value>Bild {0}</value></data>
+  <data name="Image_Frames" xml:space="preserve"><value>Einzelbilder</value></data>
+  <data name="Image_Placeholder" xml:space="preserve"><value>Mindestens ein Bild lässt sich nicht darstellen (Datei beschädigt oder Format auf diesem PC nicht verfügbar).</value></data>
+  <data name="Image_Size" xml:space="preserve"><value>Größe</value></data>
+  <data name="Image_KeepAspect" xml:space="preserve"><value>Seitenverhältnis beibehalten</value></data>
+  <data name="Image_ResetSize" xml:space="preserve"><value>Originalgröße</value></data>
+  <data name="Image_ResetAspect" xml:space="preserve"><value>Originalverhältnis</value></data>
+  <data name="Image_Outline" xml:space="preserve"><value>Kontur</value></data>
+  <data name="Image_OutlineWidth" xml:space="preserve"><value>Konturstärke</value></data>
+  <data name="Image_OutlineBlur" xml:space="preserve"><value>Kontur-Unschärfe</value></data>
+  <data name="Menu_PasteAsImage" xml:space="preserve"><value>Als Bildobjekt einfügen</value></data>
+  <data name="Menu_InsertImage" xml:space="preserve"><value>Bild einfügen…</value></data>
+  <data name="Shortcut_PasteAsImage" xml:space="preserve"><value>Bild der Zwischenablage als Objekt einfügen</value></data>
 </root>

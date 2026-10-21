@@ -7,7 +7,7 @@ using GodSaveTheScreen.Core.Undo;
 namespace GodSaveTheScreen.App.ViewModels;
 
 /// <summary>
-/// Schatten der Auswahl (Formen, Linien, Text, Marker, Emoji, Sprechblasen; gemischte Werte = <c>null</c>). Ohne Auswahl bearbeitet es
+/// Schatten der Auswahl (Formen, Linien, Text, Marker, Emoji, Sprechblasen, Bilder; gemischte Werte = <c>null</c>). Ohne Auswahl bearbeitet es
 /// die Standardwerte des aktiven Werkzeugs. Freihandstriche haben keinen Schatten. Änderungen laufen über den <see cref="UndoManager"/>.
 /// </summary>
 public sealed partial class ShadowPropertiesViewModel : ObservableObject, IDisposable
@@ -23,6 +23,7 @@ public sealed partial class ShadowPropertiesViewModel : ObservableObject, IDispo
         _context.Undo.Changed += OnStateChanged;
         _context.Emoji.Changed += OnStateChanged;
         _context.Callout.Changed += OnStateChanged;
+        _context.Image.Changed += OnStateChanged;
     }
 
     private IReadOnlyList<Annotation> Targets => [.. _context.Selection.Items.Where(Supports)];
@@ -61,12 +62,13 @@ public sealed partial class ShadowPropertiesViewModel : ObservableObject, IDispo
         _context.Undo.Changed -= OnStateChanged;
         _context.Emoji.Changed -= OnStateChanged;
         _context.Callout.Changed -= OnStateChanged;
+        _context.Image.Changed -= OnStateChanged;
     }
 
     private static bool Supports(Annotation annotation) => annotation is IShadowAnnotation and not StrokeAnnotation;
 
     private static bool SupportsTool(ToolBase tool) =>
-        tool is TextTool or MarkerTool or EmojiTool or CalloutTool || (tool.UsesShapeStyle && tool is not FreehandToolBase);
+        tool is TextTool or MarkerTool or EmojiTool or CalloutTool or ImageTool || (tool.UsesShapeStyle && tool is not FreehandToolBase);
 
     private static ShadowStyle ShadowOf(Annotation annotation) => ((IShadowAnnotation)annotation).Shadow ?? ShadowStyle.None;
 
@@ -78,6 +80,7 @@ public sealed partial class ShadowPropertiesViewModel : ObservableObject, IDispo
         MarkerTool => _context.Defaults.GetMarker().Shadow,
         EmojiTool => _context.Emoji.Shadow,
         CalloutTool => _context.Callout.Style.Shadow,
+        ImageTool => _context.Image.Style.Shadow,
         _ => _context.Defaults.GetShape(tool.Id, tool.BuiltInStyle).Shadow,
     } ?? ShadowStyle.None;
 
@@ -96,6 +99,9 @@ public sealed partial class ShadowPropertiesViewModel : ObservableObject, IDispo
                 break;
             case CalloutTool:
                 _context.Callout.Style = _context.Callout.Style with { Shadow = shadow };
+                break;
+            case ImageTool:
+                _context.Image.Style = _context.Image.Style with { Shadow = shadow };
                 break;
             default:
                 _context.Defaults.SetShape(tool.Id, _context.Defaults.GetShape(tool.Id, tool.BuiltInStyle) with { Shadow = shadow });

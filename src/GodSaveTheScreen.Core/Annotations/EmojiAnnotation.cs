@@ -146,7 +146,7 @@ public static class RotationMath
 /// Farbiges Emoji (Segoe UI Emoji). <see cref="Rect"/> ist der Rahmen vor der Drehung, die Drehung erfolgt um dessen Mitte;
 /// <see cref="Annotation.Bounds"/> ist die achsparallele Hülle des gedrehten Rahmens.
 /// </summary>
-public sealed partial class EmojiAnnotation : Annotation, IRotatableAnnotation, IShadowAnnotation
+public sealed partial class EmojiAnnotation : Annotation, IRotatableAnnotation, IShadowAnnotation, IFlippableAnnotation
 {
     public const double MinSize = 8;
 

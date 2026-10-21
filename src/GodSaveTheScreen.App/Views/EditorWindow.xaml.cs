@@ -31,6 +31,9 @@ public partial class EditorWindow : FluentWindow
     private bool _closeConfirmed;
     private Point _dragStart;
 
+    /// <summary>Das eigene Bild wird gerade hinausgezogen (ein Drop auf die eigene Zeichenfläche fügt es nicht als Objekt ein).</summary>
+    private bool _draggingOut;
+
     public EditorWindow(EditorViewModel viewModel, IEditorService editors, IThemeService themes, IAppShell shell)
     {
         _viewModel = viewModel;
@@ -283,7 +286,7 @@ public partial class EditorWindow : FluentWindow
                 (shift ? vm.CopyImageCommand : vm.CopyCommand).Execute(null);
                 return true;
             case Key.V:
-                vm.PasteCommand.Execute(null);
+                (shift ? vm.PasteAsImageCommand : vm.PasteCommand).Execute(null);
                 return true;
             case Key.X:
                 vm.CutCommand.Execute(null);
@@ -328,16 +331,45 @@ public partial class EditorWindow : FluentWindow
         e.Handled = true;
     }
 
+    /// <summary>
+    /// Bilder auf der Zeichenfläche werden Bildobjekte an der Drop-Position; Projekte, andere Dateien, ein Drop außerhalb
+    /// der Zeichenfläche oder mit gedrückter <c>Strg</c>-Taste öffnen wie bisher ein neues Editorfenster.
+    /// </summary>
     private async void OnDrop(object sender, DragEventArgs e)
     {
         e.Handled = true;
+        var asObject = !_draggingOut && !_viewModel.IsCropping && (e.KeyStates & DragDropKeyStates.ControlKey) == 0;
+        var point = asObject ? Canvas.DropPoint(e) : null;
         if (e.Data.GetData(DataFormats.FileDrop) is string[] files && files.Length > 0)
         {
-            await _editors.OpenFilesAsync(files);
+            if (point is { } at)
+            {
+                var images = files.Where(ImageInsert.IsInsertable).ToList();
+                if (images.Count > 0)
+                {
+                    _viewModel.InsertImageFiles(images, at);
+                    Activate();
+                }
+
+                files = [.. files.Except(images)];
+            }
+
+            if (files.Length > 0)
+            {
+                await _editors.OpenFilesAsync(files);
+            }
         }
         else if (e.Data.GetDataPresent(DataFormats.Bitmap) && e.Data.GetData(DataFormats.Bitmap) is System.Windows.Media.Imaging.BitmapSource bitmap)
         {
-            _editors.Open(new Core.Imaging.ImageDocument(PixelBufferExtensions.FromBitmapSource(bitmap)) { IsDirty = true });
+            if (point is { } at)
+            {
+                _viewModel.InsertImage(ImageImport.FromBitmap(bitmap), at);
+                Activate();
+            }
+            else
+            {
+                _editors.Open(new Core.Imaging.ImageDocument(PixelBufferExtensions.FromBitmapSource(bitmap)) { IsDirty = true });
+            }
         }
     }
 
@@ -365,6 +397,14 @@ public partial class EditorWindow : FluentWindow
         var data = new DataObject();
         data.SetData(DataFormats.FileDrop, new[] { payload.TempFile });
         data.SetData(DataFormats.Bitmap, payload.Image.ToBitmapSource());
-        DragDrop.DoDragDrop(DragHandle, data, DragDropEffects.Copy);
+        _draggingOut = true;
+        try
+        {
+            DragDrop.DoDragDrop(DragHandle, data, DragDropEffects.Copy);
+        }
+        finally
+        {
+            _draggingOut = false;
+        }
     }
 }
