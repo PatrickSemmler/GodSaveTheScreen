@@ -18,6 +18,7 @@ public sealed partial class SelectionPropertiesViewModel : ObservableObject, IDi
     private readonly EditorContext _context;
     private readonly Func<ToolBase?> _activeTool;
     private readonly Action<Action<ArgbColor>> _startPipette;
+    private readonly EffectSwitch<double> _outlineSwitch = new(t => t > 0, 0, 2);
 
     public SelectionPropertiesViewModel(EditorContext context, Func<ToolBase?> activeTool, Action<Action<ArgbColor>> startPipette)
     {
@@ -136,6 +137,19 @@ public sealed partial class SelectionPropertiesViewModel : ObservableObject, IDi
     {
         get => GetFrom<LineAnnotation, double>(l => l.Outline.Thickness, st => (st.Outline ?? LineAnnotation.NoOutline).Thickness);
         set => SetOn<LineAnnotation, double>(nameof(OutlineThickness), value is { } v ? Math.Clamp(v, 0, 50) : null, l => l.Outline.Thickness, (l, v) => l.Outline = l.Outline with { Thickness = v }, (st, v) => st with { Outline = (st.Outline ?? LineAnnotation.NoOutline) with { Thickness = v } });
+    }
+
+    /// <summary>Ein/Aus-Schalter der Kontur: aus = Stärke 0, ein = zuletzt verwendete Stärke (sonst 2).</summary>
+    public bool? IsOutlineOn
+    {
+        get => _outlineSwitch.IsOn(OutlineThickness);
+        set
+        {
+            if (value is { } on)
+            {
+                OutlineThickness = _outlineSwitch.Switch(OutlineThickness, on);
+            }
+        }
     }
 
     public double? OutlineBlur

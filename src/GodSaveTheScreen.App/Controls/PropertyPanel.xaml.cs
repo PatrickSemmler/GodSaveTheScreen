@@ -1,30 +1,16 @@
-using System.Windows;
+using System.Globalization;
 using System.Windows.Controls;
-using GodSaveTheScreen.App.ViewModels;
+using System.Windows.Markup;
 
 namespace GodSaveTheScreen.App.Controls;
 
-/// <summary>Eigenschaften der Auswahl bzw. der Werkzeug-Standardwerte (Form, Text, Marker, Sprechblase …) plus Ebenenliste.</summary>
+/// <summary>Eigenschaften der Auswahl bzw. der Werkzeug-Standardwerte (Form, Text, Marker, Sprechblase …) in aufklappbaren Abschnitten plus Ebenenliste.</summary>
 public partial class PropertyPanel : UserControl
 {
-    public PropertyPanel() => InitializeComponent();
-
-    /// <summary>Wahl aus der Größenliste sofort übernehmen (die editierbare Box übernimmt Eingaben erst beim Verlassen).</summary>
-    private void OnFontSizeDropDownClosed(object? sender, EventArgs e)
+    public PropertyPanel()
     {
-        if (sender is not ComboBox { SelectedItem: double size } box)
-        {
-            return;
-        }
-
-        switch (box.DataContext)
-        {
-            case TextPropertiesViewModel text:
-                text.FontSize = size;
-                break;
-            case CalloutPropertiesViewModel callout:
-                callout.FontSize = size;
-                break;
-        }
+        // Zahlen in Kurzfassungen (StringFormat) im Format der Benutzerkultur statt en-US.
+        Language = XmlLanguage.GetLanguage(CultureInfo.CurrentCulture.IetfLanguageTag);
+        InitializeComponent();
     }
 }

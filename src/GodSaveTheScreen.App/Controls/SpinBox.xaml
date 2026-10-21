@@ -1,0 +1,64 @@
+<UserControl x:Class="GodSaveTheScreen.App.Controls.SpinBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+             xmlns:l="clr-namespace:GodSaveTheScreen.App.Localization"
+             x:Name="Root"
+             Height="32"
+             Focusable="False">
+  <UserControl.Resources>
+    <Style x:Key="SpinButton" TargetType="RepeatButton">
+      <Setter Property="Delay" Value="400" />
+      <Setter Property="Interval" Value="50" />
+      <Setter Property="Focusable" Value="False" />
+      <Setter Property="IsTabStop" Value="False" />
+      <Setter Property="Foreground" Value="{DynamicResource TextFillColorSecondaryBrush}" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="RepeatButton">
+            <Border x:Name="Bg" Background="Transparent" CornerRadius="2">
+              <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Bg" Property="Background" Value="{DynamicResource SubtleFillColorSecondaryBrush}" />
+                <Setter Property="Foreground" Value="{DynamicResource TextFillColorPrimaryBrush}" />
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="Bg" Property="Background" Value="{DynamicResource SubtleFillColorTertiaryBrush}" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </UserControl.Resources>
+  <Grid>
+    <!-- Rechts Platz für Einheit und Pfeile lassen (Padding wird im Code gesetzt) -->
+    <TextBox x:Name="Input"
+             MinWidth="0"
+             VerticalContentAlignment="Center"
+             AutomationProperties.Name="{Binding (AutomationProperties.Name), ElementName=Root}"
+             ToolTip="{Binding ToolTip, ElementName=Root}" />
+    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,1,2,3">
+      <TextBlock x:Name="UnitText"
+                 VerticalAlignment="Center"
+                 Margin="0,0,3,0"
+                 FontSize="11"
+                 IsHitTestVisible="False"
+                 Foreground="{DynamicResource TextFillColorTertiaryBrush}" />
+      <Grid Width="18">
+        <Grid.RowDefinitions>
+          <RowDefinition />
+          <RowDefinition />
+        </Grid.RowDefinitions>
+        <RepeatButton x:Name="UpButton" Style="{StaticResource SpinButton}" Click="OnUp" AutomationProperties.Name="{l:Loc Spin_Increase}">
+          <ui:SymbolIcon Symbol="ChevronUp16" FontSize="10" />
+        </RepeatButton>
+        <RepeatButton x:Name="DownButton" Grid.Row="1" Style="{StaticResource SpinButton}" Click="OnDown" AutomationProperties.Name="{l:Loc Spin_Decrease}">
+          <ui:SymbolIcon Symbol="ChevronDown16" FontSize="10" />
+        </RepeatButton>
+      </Grid>
+    </StackPanel>
+  </Grid>
+</UserControl>

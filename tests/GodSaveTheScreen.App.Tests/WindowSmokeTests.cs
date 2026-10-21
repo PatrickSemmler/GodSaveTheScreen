@@ -84,6 +84,11 @@ public sealed class WindowSmokeTests
     private static void EditorWindowSmoke()
     {
         var h = new EditorHarness();
+        foreach (var key in new[] { "Shadow", "Outline", "Background", "Glow", "Rotation" })
+        {
+            h.ViewModel.PanelSections.SetExpanded(key, true);
+        }
+
         var window = new EditorWindow(h.ViewModel, Substitute.For<IEditorService>(), Substitute.For<IThemeService>(), Substitute.For<IAppShell>());
         window.Show();
         try
@@ -100,6 +105,13 @@ public sealed class WindowSmokeTests
 
             h.ViewModel.Layers.Items.Count.ShouldBe(1);
             h.ViewModel.Properties.IsApplicable.ShouldBeTrue();
+            Screenshot(window, "panel-rectangle");
+
+            // Ein/Aus-Schalter des Schattens klappt den Abschnitt auf und setzt eine sichtbare Farbe.
+            h.ViewModel.ShadowProperties.IsShadowOn = true;
+            Idle(window);
+            h.ViewModel.ShadowProperties.ShadowColor!.Value.IsTransparent.ShouldBeFalse();
+            Screenshot(window, "panel-rectangle-shadow");
             var canvas = (GodSaveTheScreen.App.Controls.EditorCanvas)window.FindName("Canvas");
             canvas.ShouldNotBeNull();
 
@@ -175,6 +187,7 @@ public sealed class WindowSmokeTests
             {
                 h.ViewModel.Activate(t);
                 Idle(window);
+                Screenshot(window, "panel-tool-" + t.Id);
             }
 
             // Schließen mit ungespeicherten Änderungen und „Nicht speichern“: Fenster schließt ohne Ausnahme.
@@ -236,6 +249,16 @@ public sealed class WindowSmokeTests
 
         window.UpdateLayout();
         var bitmap = new System.Windows.Media.Imaging.RenderTargetBitmap((int)window.ActualWidth, (int)window.ActualHeight, 96, 96, System.Windows.Media.PixelFormats.Pbgra32);
+
+        // Mica-Hintergrund fehlt beim Rendern: dunkle Fläche unterlegen, damit helle Schrift lesbar bleibt.
+        var bounds = new Rect(0, 0, window.ActualWidth, window.ActualHeight);
+        var backdrop = new System.Windows.Media.DrawingVisual();
+        using (var dc = backdrop.RenderOpen())
+        {
+            dc.DrawRectangle(new System.Windows.Media.SolidColorBrush(System.Windows.Media.Color.FromRgb(0x20, 0x20, 0x20)), null, bounds);
+        }
+
+        bitmap.Render(backdrop);
         bitmap.Render(window);
         var encoder = new System.Windows.Media.Imaging.PngBitmapEncoder();
         encoder.Frames.Add(System.Windows.Media.Imaging.BitmapFrame.Create(bitmap));

@@ -666,14 +666,15 @@ public sealed class TextPropertiesTests
     }
 
     [StaFact]
-    public void Schriftgroesse_AusFreierEingabe()
+    public void Schriftgroesse_WirdUebernommenUndBegrenzt()
     {
         var (h, text) = WithText();
 
-        h.ViewModel.TextProperties.FontSizeText = "36,5";
-
+        h.ViewModel.TextProperties.FontSize = 36.5;
         text.FontSize.ShouldBe(36.5);
-        h.ViewModel.TextProperties.FontSizeText.ShouldContain("36");
+
+        h.ViewModel.TextProperties.FontSize = 5000;
+        text.FontSize.ShouldBe(999);
     }
 
     [StaFact]

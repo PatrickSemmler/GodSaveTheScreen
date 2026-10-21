@@ -14,6 +14,7 @@ public sealed partial class ShadowPropertiesViewModel : ObservableObject, IDispo
 {
     private readonly EditorContext _context;
     private readonly Func<ToolBase?> _activeTool;
+    private readonly EffectSwitch<ArgbColor> _switch = new(c => !c.IsTransparent, ArgbColor.Transparent, new ArgbColor(128, 0, 0, 0));
 
     public ShadowPropertiesViewModel(EditorContext context, Func<ToolBase?> activeTool)
     {
@@ -38,6 +39,19 @@ public sealed partial class ShadowPropertiesViewModel : ObservableObject, IDispo
     {
         get => Get(s => s.Color);
         set => Set(nameof(ShadowColor), value, s => s.Color, (s, v) => s with { Color = v });
+    }
+
+    /// <summary>Ein/Aus-Schalter: aus = transparente Farbe, ein = zuletzt verwendete Farbe (sonst halbtransparentes Schwarz).</summary>
+    public bool? IsShadowOn
+    {
+        get => _switch.IsOn(ShadowColor);
+        set
+        {
+            if (value is { } on)
+            {
+                ShadowColor = _switch.Switch(ShadowColor, on);
+            }
+        }
     }
 
     /// <summary>Versatz nach rechts unten in Bildpixeln.</summary>

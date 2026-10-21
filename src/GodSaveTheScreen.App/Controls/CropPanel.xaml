@@ -2,7 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-             xmlns:l="clr-namespace:GodSaveTheScreen.App.Localization">
+             xmlns:l="clr-namespace:GodSaveTheScreen.App.Localization"
+             xmlns:controls="clr-namespace:GodSaveTheScreen.App.Controls">
   <UserControl.Resources>
     <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
     <Style x:Key="FieldLabel" TargetType="TextBlock">
@@ -37,13 +38,11 @@
           <ColumnDefinition Width="Auto" />
           <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <ui:NumberBox Grid.Column="0" Minimum="1" Maximum="10000" MaxDecimalPlaces="2" ClearButtonEnabled="False"
-                      Value="{Binding CustomWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      AutomationProperties.Name="{l:Loc Crop_CustomWidth}" />
+        <controls:SpinBox Grid.Column="0" Minimum="1" Maximum="10000" Decimals="2"
+                          Value="{Binding CustomWidth}" AutomationProperties.Name="{l:Loc Crop_CustomWidth}" />
         <TextBlock Grid.Column="1" Text=":" Margin="6,0" VerticalAlignment="Center" />
-        <ui:NumberBox Grid.Column="2" Minimum="1" Maximum="10000" MaxDecimalPlaces="2" ClearButtonEnabled="False"
-                      Value="{Binding CustomHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      AutomationProperties.Name="{l:Loc Crop_CustomHeight}" />
+        <controls:SpinBox Grid.Column="2" Minimum="1" Maximum="10000" Decimals="2"
+                          Value="{Binding CustomHeight}" AutomationProperties.Name="{l:Loc Crop_CustomHeight}" />
       </Grid>
 
       <TextBlock Text="{l:Loc Crop_Position}" Style="{StaticResource FieldLabel}" />
@@ -52,10 +51,10 @@
           <ColumnDefinition Width="*" />
           <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <ui:NumberBox Grid.Column="0" Margin="0,0,3,0" Minimum="0" MaxDecimalPlaces="0" ClearButtonEnabled="False" PlaceholderText="X"
-                      Value="{Binding X, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="X" />
-        <ui:NumberBox Grid.Column="1" Margin="3,0,0,0" Minimum="0" MaxDecimalPlaces="0" ClearButtonEnabled="False" PlaceholderText="Y"
-                      Value="{Binding Y, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="Y" />
+        <controls:SpinBox Grid.Column="0" Margin="0,0,3,0" Minimum="0" Maximum="1000000" SmallChange="1" LargeChange="10" Unit="X"
+                          Value="{Binding X}" AutomationProperties.Name="X" />
+        <controls:SpinBox Grid.Column="1" Margin="3,0,0,0" Minimum="0" Maximum="1000000" SmallChange="1" LargeChange="10" Unit="Y"
+                          Value="{Binding Y}" AutomationProperties.Name="Y" />
       </Grid>
       <TextBlock Text="{l:Loc Crop_Size}" Style="{StaticResource FieldLabel}" />
       <Grid>
@@ -63,10 +62,10 @@
           <ColumnDefinition Width="*" />
           <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
-        <ui:NumberBox Grid.Column="0" Margin="0,0,3,0" Minimum="1" MaxDecimalPlaces="0" ClearButtonEnabled="False"
-                      Value="{Binding Width, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{l:Loc Crop_Width}" />
-        <ui:NumberBox Grid.Column="1" Margin="3,0,0,0" Minimum="1" MaxDecimalPlaces="0" ClearButtonEnabled="False"
-                      Value="{Binding Height, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{l:Loc Crop_Height}" />
+        <controls:SpinBox Grid.Column="0" Margin="0,0,3,0" Minimum="1" Maximum="1000000" SmallChange="1" LargeChange="10" Unit="px"
+                          Value="{Binding Width}" AutomationProperties.Name="{l:Loc Crop_Width}" ToolTip="{l:Loc Crop_Width}" />
+        <controls:SpinBox Grid.Column="1" Margin="3,0,0,0" Minimum="1" Maximum="1000000" SmallChange="1" LargeChange="10" Unit="px"
+                          Value="{Binding Height}" AutomationProperties.Name="{l:Loc Crop_Height}" ToolTip="{l:Loc Crop_Height}" />
       </Grid>
 
       <TextBlock Text="{l:Loc Crop_Commands}" Style="{StaticResource FieldLabel}" Margin="0,16,0,4" />

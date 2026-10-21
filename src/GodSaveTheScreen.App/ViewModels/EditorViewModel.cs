@@ -98,6 +98,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         EmojiPicker = new EmojiPickerViewModel(context);
         Presets = new PresetListViewModel(context, tools, () => ActiveTool, dialogs, RefreshProperties);
         Crop = new CropViewModel(context, () => tools.Get<CropTool>());
+        PanelSections = new PanelSectionStore(context.Settings);
         context.Ruler.PropertyChanged += OnRulerChanged;
         context.Crop.Changed += OnCropChanged;
         ZoomChoices =
@@ -159,6 +160,9 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     /// <summary>Bereichsauswahl und Hintergrundradierer (entfernte Bereiche des Screenshots).</summary>
     public MaskToolsViewModel MaskTools { get; }
+
+    /// <summary>Gemerkter Auf-/Zugeklappt-Zustand der Abschnitte im Eigenschaftenpanel.</summary>
+    public PanelSectionStore PanelSections { get; }
 
     public CropViewModel Crop { get; }
 

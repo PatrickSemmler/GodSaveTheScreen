@@ -1,4 +1,3 @@
-using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GodSaveTheScreen.App.Editor;
@@ -17,11 +16,10 @@ namespace GodSaveTheScreen.App.ViewModels;
 /// </summary>
 public sealed partial class CalloutPropertiesViewModel : ObservableObject, IDisposable
 {
-    private static readonly double[] SizeList = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 32, 36, 48, 64, 72, 96, 120, 144];
 
     private readonly EditorContext _context;
     private readonly Func<ToolBase?> _activeTool;
-    private readonly IReadOnlyList<double> _sizes = SizeList;
+    private readonly EffectSwitch<double> _glowSwitch = new(t => t > 0, 0, 4);
     private IReadOnlyList<FontItem>? _fonts;
     private string _fontsRecentKey = string.Empty;
     private IReadOnlyList<TypefaceItem>? _typefaces;
@@ -44,8 +42,6 @@ public sealed partial class CalloutPropertiesViewModel : ObservableObject, IDisp
     }
 
     public IReadOnlyList<Choice<CalloutShape>> ShapeChoices { get; }
-
-    public IReadOnlyList<double> FontSizes => _sizes;
 
     private IReadOnlyList<CalloutAnnotation> Callouts => [.. _context.Selection.Items.OfType<CalloutAnnotation>()];
 
@@ -175,19 +171,6 @@ public sealed partial class CalloutPropertiesViewModel : ObservableObject, IDisp
             (s, v) => s with { FontSize = v });
     }
 
-    /// <summary>Für die editierbare Größen-ComboBox (freie Eingabe).</summary>
-    public string FontSizeText
-    {
-        get => FontSize is { } size ? size.ToString("0.##", CultureInfo.CurrentUICulture) : string.Empty;
-        set
-        {
-            if (double.TryParse(value, NumberStyles.Float, CultureInfo.CurrentUICulture, out var size) && size > 0)
-            {
-                FontSize = size;
-            }
-        }
-    }
-
     public bool IsBold
     {
         get => (FontWeight ?? 400) >= 600;
@@ -270,6 +253,19 @@ public sealed partial class CalloutPropertiesViewModel : ObservableObject, IDisp
             c => c.Border.Thickness,
             (c, v) => c.Border = c.Border with { Thickness = v },
             (s, v) => s with { Border = s.Border with { Thickness = v } });
+    }
+
+    /// <summary>Ein/Aus-Schalter des Leuchtens (Rahmen): aus = Breite 0, ein = zuletzt verwendete Breite (sonst 4).</summary>
+    public bool? IsGlowOn
+    {
+        get => _glowSwitch.IsOn(BorderThickness);
+        set
+        {
+            if (value is { } on)
+            {
+                BorderThickness = _glowSwitch.Switch(BorderThickness, on);
+            }
+        }
     }
 
     /// <summary>Weicher Rand des Rahmens (Leuchten) in Bildpixeln.</summary>

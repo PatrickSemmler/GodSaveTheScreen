@@ -538,4 +538,24 @@ Tip: You can assign the Print Screen key to a capture mode in the settings. On W
   <data name="Menu_PasteAsImage" xml:space="preserve"><value>Paste as image object</value></data>
   <data name="Menu_InsertImage" xml:space="preserve"><value>Insert image…</value></data>
   <data name="Shortcut_PasteAsImage" xml:space="preserve"><value>Paste clipboard image as object</value></data>
+  <data name="Section_Style" xml:space="preserve"><value>Appearance</value></data>
+  <data name="Section_Font" xml:space="preserve"><value>Font</value></data>
+  <data name="Section_Shadow" xml:space="preserve"><value>Shadow</value></data>
+  <data name="Section_Rotation" xml:space="preserve"><value>Rotation</value></data>
+  <data name="Section_Geometry" xml:space="preserve"><value>Size &amp; position</value></data>
+  <data name="Section_Numbering" xml:space="preserve"><value>Numbering</value></data>
+  <data name="Section_Drawing" xml:space="preserve"><value>Drawing</value></data>
+  <data name="Section_Effect" xml:space="preserve"><value>Effect</value></data>
+  <data name="Section_Magnifier" xml:space="preserve"><value>Magnifier</value></data>
+  <data name="Section_Selection" xml:space="preserve"><value>Selection</value></data>
+  <data name="Section_Brush" xml:space="preserve"><value>Brush</value></data>
+  <data name="Section_Colors" xml:space="preserve"><value>Colours</value></data>
+  <data name="Section_Glow" xml:space="preserve"><value>Glow</value></data>
+  <data name="Section_Switch" xml:space="preserve"><value>On/off</value></data>
+  <data name="Field_Color" xml:space="preserve"><value>Colour</value></data>
+  <data name="Field_Width" xml:space="preserve"><value>Width</value></data>
+  <data name="Field_Blur" xml:space="preserve"><value>Blur</value></data>
+  <data name="Section_CalloutShape" xml:space="preserve"><value>Shape &amp; tail</value></data>
+  <data name="Spin_Increase" xml:space="preserve"><value>Increase</value></data>
+  <data name="Spin_Decrease" xml:space="preserve"><value>Decrease</value></data>
 </root>

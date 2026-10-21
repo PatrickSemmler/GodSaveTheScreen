@@ -206,6 +206,9 @@ public sealed record AppSettings
     /// <summary>Der einmalige Erststart-Hinweis wurde angezeigt.</summary>
     public bool FirstRunHintShown { get; init; }
 
+    /// <summary>Auf-/Zugeklappt-Zustand der Abschnitte im Eigenschaftenpanel (fehlender Schlüssel = Vorgabe des Abschnitts).</summary>
+    public PanelSectionMap PanelSections { get; init; } = [];
+
     // Globale Hotkeys (Format siehe HotkeyGesture; leer = nicht belegt)
 
     public string HotkeyRectangle { get; init; } = "Ctrl+Shift+1";
@@ -263,6 +266,7 @@ public sealed record AppSettings
             EmojiFavorites = EmojiFavorites ?? [],
             RecentColors = RecentColors ?? [],
             RecentFonts = RecentFonts ?? [],
+            PanelSections = PanelSections ?? [],
             TextDefaults = text with { Stroke = text.Stroke ?? new StrokeStyle(ArgbColor.White, 0), FontFamilyName = text.FontFamilyName ?? "Segoe UI", Shadow = text.Shadow ?? ShadowStyle.None },
             MarkerDefaults = marker with { Stroke = marker.Stroke ?? new StrokeStyle(ArgbColor.White, 2), FontFamilyName = marker.FontFamilyName ?? "Segoe UI", Shadow = marker.Shadow ?? ShadowStyle.None },
             FileNamePattern = FileNamePattern ?? DefaultFileNamePattern,

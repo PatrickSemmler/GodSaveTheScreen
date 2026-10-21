@@ -1050,4 +1050,44 @@ public static class Strings
     public static string Menu_InsertImage => ResourceManager.GetString("Menu_InsertImage", Culture) ?? "Menu_InsertImage";
 
     public static string Shortcut_PasteAsImage => ResourceManager.GetString("Shortcut_PasteAsImage", Culture) ?? "Shortcut_PasteAsImage";
+
+    public static string Section_Style => ResourceManager.GetString("Section_Style", Culture) ?? "Section_Style";
+
+    public static string Section_Font => ResourceManager.GetString("Section_Font", Culture) ?? "Section_Font";
+
+    public static string Section_Shadow => ResourceManager.GetString("Section_Shadow", Culture) ?? "Section_Shadow";
+
+    public static string Section_Rotation => ResourceManager.GetString("Section_Rotation", Culture) ?? "Section_Rotation";
+
+    public static string Section_Geometry => ResourceManager.GetString("Section_Geometry", Culture) ?? "Section_Geometry";
+
+    public static string Section_Numbering => ResourceManager.GetString("Section_Numbering", Culture) ?? "Section_Numbering";
+
+    public static string Section_Drawing => ResourceManager.GetString("Section_Drawing", Culture) ?? "Section_Drawing";
+
+    public static string Section_Effect => ResourceManager.GetString("Section_Effect", Culture) ?? "Section_Effect";
+
+    public static string Section_Magnifier => ResourceManager.GetString("Section_Magnifier", Culture) ?? "Section_Magnifier";
+
+    public static string Section_Selection => ResourceManager.GetString("Section_Selection", Culture) ?? "Section_Selection";
+
+    public static string Section_Brush => ResourceManager.GetString("Section_Brush", Culture) ?? "Section_Brush";
+
+    public static string Section_Colors => ResourceManager.GetString("Section_Colors", Culture) ?? "Section_Colors";
+
+    public static string Section_Glow => ResourceManager.GetString("Section_Glow", Culture) ?? "Section_Glow";
+
+    public static string Section_Switch => ResourceManager.GetString("Section_Switch", Culture) ?? "Section_Switch";
+
+    public static string Field_Color => ResourceManager.GetString("Field_Color", Culture) ?? "Field_Color";
+
+    public static string Field_Width => ResourceManager.GetString("Field_Width", Culture) ?? "Field_Width";
+
+    public static string Field_Blur => ResourceManager.GetString("Field_Blur", Culture) ?? "Field_Blur";
+
+    public static string Section_CalloutShape => ResourceManager.GetString("Section_CalloutShape", Culture) ?? "Section_CalloutShape";
+
+    public static string Spin_Increase => ResourceManager.GetString("Spin_Increase", Culture) ?? "Spin_Increase";
+
+    public static string Spin_Decrease => ResourceManager.GetString("Spin_Decrease", Culture) ?? "Spin_Decrease";
 }

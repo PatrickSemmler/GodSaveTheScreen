@@ -20,6 +20,7 @@ public sealed partial class ImagePropertiesViewModel : ObservableObject, IDispos
     private readonly EditorContext _context;
     private readonly Func<ToolBase?> _activeTool;
     private readonly Action _insertImage;
+    private readonly EffectSwitch<double> _outlineSwitch = new(t => t > 0, 0, 2);
 
     /// <summary>Breite und Höhe ändern sich gemeinsam (nur Panel-Zustand, nicht gespeichert).</summary>
     [ObservableProperty]
@@ -103,6 +104,19 @@ public sealed partial class ImagePropertiesViewModel : ObservableObject, IDispos
     {
         get => Get(i => i.Outline.Thickness, s => s.Outline.Thickness);
         set => Set(nameof(OutlineThickness), value is { } v ? Math.Clamp(v, 0, ImageAnnotation.MaxOutlineThickness) : null, i => i.Outline.Thickness, (i, v) => i.Outline = i.Outline with { Thickness = v }, (s, v) => s with { Outline = s.Outline with { Thickness = v } });
+    }
+
+    /// <summary>Ein/Aus-Schalter der Kontur: aus = Stärke 0, ein = zuletzt verwendete Stärke (sonst 2).</summary>
+    public bool? IsOutlineOn
+    {
+        get => _outlineSwitch.IsOn(OutlineThickness);
+        set
+        {
+            if (value is { } on)
+            {
+                OutlineThickness = _outlineSwitch.Switch(OutlineThickness, on);
+            }
+        }
     }
 
     public double? OutlineBlur

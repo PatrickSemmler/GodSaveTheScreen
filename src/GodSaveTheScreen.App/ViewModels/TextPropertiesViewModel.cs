@@ -1,4 +1,3 @@
-using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GodSaveTheScreen.App.Editor;
@@ -16,11 +15,11 @@ namespace GodSaveTheScreen.App.ViewModels;
 /// </summary>
 public sealed partial class TextPropertiesViewModel : ObservableObject, IDisposable
 {
-    private static readonly double[] SizeList = [8, 9, 10, 11, 12, 14, 16, 18, 20, 24, 28, 32, 36, 48, 64, 72, 96, 120, 144];
 
     private readonly EditorContext _context;
     private readonly Func<ToolBase?> _activeTool;
-    private readonly IReadOnlyList<double> _sizes = SizeList;
+    private readonly EffectSwitch<double> _outlineSwitch = new(t => t > 0, 0, 2);
+    private readonly EffectSwitch<ArgbColor> _backgroundSwitch = new(c => !c.IsTransparent, ArgbColor.Transparent, ArgbColor.White);
     private IReadOnlyList<FontItem>? _fonts;
     private string _fontsRecentKey = string.Empty;
     private IReadOnlyList<TypefaceItem>? _typefaces;
@@ -34,8 +33,6 @@ public sealed partial class TextPropertiesViewModel : ObservableObject, IDisposa
         _context.Undo.Changed += OnStateChanged;
         _context.Defaults.RecentColorsChanged += OnStateChanged;
     }
-
-    public IReadOnlyList<double> FontSizes => _sizes;
 
     private IReadOnlyList<TextAnnotation> Texts => [.. _context.Selection.Items.OfType<TextAnnotation>()];
 
@@ -149,19 +146,6 @@ public sealed partial class TextPropertiesViewModel : ObservableObject, IDisposa
         set => SetNullable(nameof(FontSize), value is { } size ? Math.Clamp(size, 1, 999) : null, t => t.FontSize, (t, v) => t.FontSize = v, (s, v) => s with { FontSize = v });
     }
 
-    /// <summary>Für die editierbare Größen-ComboBox (freie Eingabe).</summary>
-    public string FontSizeText
-    {
-        get => FontSize is { } size ? size.ToString("0.##", CultureInfo.CurrentUICulture) : string.Empty;
-        set
-        {
-            if (double.TryParse(value, NumberStyles.Float, CultureInfo.CurrentUICulture, out var size) && size > 0)
-            {
-                FontSize = size;
-            }
-        }
-    }
-
     public bool IsBold
     {
         get => (FontWeight ?? 400) >= 600;
@@ -234,6 +218,19 @@ public sealed partial class TextPropertiesViewModel : ObservableObject, IDisposa
         set => SetNullable(nameof(OutlineThickness), value is { } thickness ? Math.Clamp(thickness, 0, 50) : null, t => t.Stroke.Thickness, (t, v) => t.Stroke = t.Stroke with { Thickness = v }, (s, v) => s with { Stroke = s.Stroke with { Thickness = v } });
     }
 
+    /// <summary>Ein/Aus-Schalter der Kontur: aus = Stärke 0, ein = zuletzt verwendete Stärke (sonst 2).</summary>
+    public bool? IsOutlineOn
+    {
+        get => _outlineSwitch.IsOn(OutlineThickness);
+        set
+        {
+            if (value is { } on)
+            {
+                OutlineThickness = _outlineSwitch.Switch(OutlineThickness, on);
+            }
+        }
+    }
+
     /// <summary>Weicher Rand der Kontur in Bildpixeln (0 = scharf).</summary>
     public double? OutlineBlur
     {
@@ -245,6 +242,19 @@ public sealed partial class TextPropertiesViewModel : ObservableObject, IDisposa
     {
         get => TryGet(t => t.Background, s => s.Background, out var v) ? v : null;
         set => SetNullable(nameof(BackgroundColor), value, t => t.Background, (t, v) => t.Background = v, (s, v) => s with { Background = v });
+    }
+
+    /// <summary>Ein/Aus-Schalter des Hintergrunds: aus = transparent, ein = zuletzt verwendete Farbe (sonst Weiß).</summary>
+    public bool? IsBackgroundOn
+    {
+        get => _backgroundSwitch.IsOn(BackgroundColor);
+        set
+        {
+            if (value is { } on)
+            {
+                BackgroundColor = _backgroundSwitch.Switch(BackgroundColor, on);
+            }
+        }
     }
 
     public double? BackgroundCornerRadius

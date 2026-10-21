@@ -538,4 +538,24 @@ Tipp: In den Einstellungen können Sie die Taste Druck einem Aufnahmemodus zuwei
   <data name="Menu_PasteAsImage" xml:space="preserve"><value>Als Bildobjekt einfügen</value></data>
   <data name="Menu_InsertImage" xml:space="preserve"><value>Bild einfügen…</value></data>
   <data name="Shortcut_PasteAsImage" xml:space="preserve"><value>Bild der Zwischenablage als Objekt einfügen</value></data>
+  <data name="Section_Style" xml:space="preserve"><value>Darstellung</value></data>
+  <data name="Section_Font" xml:space="preserve"><value>Schrift</value></data>
+  <data name="Section_Shadow" xml:space="preserve"><value>Schatten</value></data>
+  <data name="Section_Rotation" xml:space="preserve"><value>Drehung</value></data>
+  <data name="Section_Geometry" xml:space="preserve"><value>Größe &amp; Lage</value></data>
+  <data name="Section_Numbering" xml:space="preserve"><value>Nummerierung</value></data>
+  <data name="Section_Drawing" xml:space="preserve"><value>Zeichnen</value></data>
+  <data name="Section_Effect" xml:space="preserve"><value>Effekt</value></data>
+  <data name="Section_Magnifier" xml:space="preserve"><value>Lupe</value></data>
+  <data name="Section_Selection" xml:space="preserve"><value>Auswahl</value></data>
+  <data name="Section_Brush" xml:space="preserve"><value>Pinsel</value></data>
+  <data name="Section_Colors" xml:space="preserve"><value>Farben</value></data>
+  <data name="Section_Glow" xml:space="preserve"><value>Leuchten</value></data>
+  <data name="Section_Switch" xml:space="preserve"><value>Ein/Aus</value></data>
+  <data name="Field_Color" xml:space="preserve"><value>Farbe</value></data>
+  <data name="Field_Width" xml:space="preserve"><value>Stärke</value></data>
+  <data name="Field_Blur" xml:space="preserve"><value>Unschärfe</value></data>
+  <data name="Section_CalloutShape" xml:space="preserve"><value>Form &amp; Spitze</value></data>
+  <data name="Spin_Increase" xml:space="preserve"><value>Erhöhen</value></data>
+  <data name="Spin_Decrease" xml:space="preserve"><value>Verringern</value></data>
 </root>
