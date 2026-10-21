@@ -164,12 +164,39 @@ public sealed partial class LineAnnotation : ShapeAnnotation
     [ObservableProperty]
     private double _capSize = 4;
 
+    /// <summary>
+    /// Kontur um Linie und Spitzen (Stärke = Breite außerhalb der Linie); Stärke 0 = keine. Folgt der Strichelung.
+    /// Strichart, Verbindung und Enden der Kontur werden nicht verwendet.
+    /// </summary>
+    [ObservableProperty]
+    [property: JsonIgnore]
+    private StrokeStyle _outline = NoOutline;
+
+    /// <summary>Weicher Rand der Kontur in Bildpixeln; 0 = scharfe Kontur. Die Linie bleibt scharf.</summary>
+    [ObservableProperty]
+    [property: JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    private double _outlineBlur;
+
+    /// <summary>Keine Kontur (Weiß, Stärke 0) – Standard neuer Linien.</summary>
+    public static StrokeStyle NoOutline { get; } = new(ArgbColor.White, 0);
+
     [JsonIgnore]
     public override RectD Bounds => RectD.FromPoints(Start, End);
 
     [JsonIgnore]
     public override double VisualMargin =>
-        Math.Max(base.VisualMargin, (StartCap != LineEndStyle.None || EndCap != LineEndStyle.None) ? Math.Max(CapSize * Stroke.Thickness, 6) : 0);
+        Math.Max(base.VisualMargin, (StartCap != LineEndStyle.None || EndCap != LineEndStyle.None) ? Math.Max(CapSize * Stroke.Thickness, 6) : 0)
+        + (Outline.IsVisible ? Outline.Thickness + Math.Clamp(OutlineBlur, 0, TextAnnotation.MaxOutlineBlur) : 0);
+
+    /// <summary>Kontur im Projektformat: nur geschrieben, wenn sie vom Standard abweicht (ältere Dateien bleiben gleich).</summary>
+    [JsonInclude]
+    [JsonPropertyName(nameof(Outline))]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    private StrokeStyle? OutlineData
+    {
+        get => Outline == NoOutline ? null : Outline;
+        set => Outline = value ?? NoOutline;
+    }
 
     public override void MapPoints(Func<PointD, PointD> map)
     {

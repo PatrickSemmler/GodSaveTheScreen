@@ -254,6 +254,8 @@ public static class PresetStyles
             CornerRadius = Common(rectangles, r => r.CornerRadius, fallback.CornerRadius),
             StartCap = Common(lines, l => l.StartCap, fallback.StartCap),
             EndCap = Common(lines, l => l.EndCap, fallback.EndCap),
+            Outline = CommonStroke(lines, l => l.Outline, fallback.Outline),
+            OutlineBlur = Common(lines, l => l.OutlineBlur, fallback.OutlineBlur),
             Shadow = Common(shapes.Where(s => s is not StrokeAnnotation), s => s.Shadow, fallback.Shadow),
         };
     }

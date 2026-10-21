@@ -222,7 +222,7 @@ public static partial class AnnotationRenderer
                 DrawPolygon(dc, polygon.Points, polygon.IsClosed, polygon);
                 break;
             case LineAnnotation line:
-                DrawLine(dc, line);
+                DrawLine(dc, line, context);
                 break;
             case TextAnnotation text:
                 DrawText(dc, text, context);
@@ -471,7 +471,7 @@ public static partial class AnnotationRenderer
         dc.DrawGeometry(closed ? BrushCache.GetBrush(shape.Fill) : null, BrushCache.GetPen(shape.Stroke), geometry);
     }
 
-    private static void DrawLine(DrawingContext dc, LineAnnotation a)
+    private static void DrawLine(DrawingContext dc, LineAnnotation a, RenderContext context)
     {
         var pen = BrushCache.GetPen(a.Stroke);
         if (pen is null)
@@ -480,13 +480,94 @@ public static partial class AnnotationRenderer
         }
 
         var layout = LineLayout.Compute(a.Start, a.End, a.Stroke.Thickness, a.StartCap, a.EndCap, a.CapSize);
-        dc.DrawLine(pen, ToPoint(layout.LineStart), ToPoint(layout.LineEnd));
 
         // Spitzen werden immer durchgezogen gezeichnet (nicht gestrichelt) und mit Rundung verbunden.
-        var solid = BrushCache.GetPen(a.Stroke with { Dash = DashKind.Solid, Join = LineJoinKind.Round });
+        var solid = BrushCache.GetPen(a.Stroke with { Dash = DashKind.Solid, Join = LineJoinKind.Round })!;
+        if (a.Outline.IsVisible)
+        {
+            DrawLineOutline(dc, a, LineSilhouette(layout, pen, solid), context);
+        }
+
+        dc.DrawLine(pen, ToPoint(layout.LineStart), ToPoint(layout.LineEnd));
         var fill = BrushCache.GetBrush(a.Stroke.Color);
         DrawCap(dc, layout.StartCap, fill, solid);
         DrawCap(dc, layout.EndCap, fill, solid);
+    }
+
+    /// <summary>Fläche von Linie (mit Strichelung) und Spitzen als Geometrie: Grundlage der Kontur.</summary>
+    private static GeometryGroup LineSilhouette(LineLayoutResult layout, Pen pen, Pen solid)
+    {
+        var group = new GeometryGroup();
+        var line = new LineGeometry(ToPoint(layout.LineStart), ToPoint(layout.LineEnd));
+        group.Children.Add(line.GetWidenedPathGeometry(pen));
+        foreach (var cap in new[] { layout.StartCap, layout.EndCap })
+        {
+            if (cap is not null)
+            {
+                group.Children.Add(CapSilhouette(cap, solid));
+            }
+        }
+
+        group.Freeze();
+        return group;
+    }
+
+    private static Geometry CapSilhouette(CapGeometry cap, Pen solid)
+    {
+        if (cap.Style == LineEndStyle.Circle)
+        {
+            return new EllipseGeometry(ToPoint(cap.Center), cap.Radius, cap.Radius);
+        }
+
+        var isOpen = cap.Style == LineEndStyle.OpenArrow;
+        var geometry = new StreamGeometry();
+        using (var ctx = geometry.Open())
+        {
+            ctx.BeginFigure(ToPoint(cap.Points[0]), isFilled: !isOpen, isClosed: !isOpen);
+            for (var i = 1; i < cap.Points.Count; i++)
+            {
+                ctx.LineTo(ToPoint(cap.Points[i]), true, false);
+            }
+        }
+
+        geometry.Freeze();
+        return isOpen ? geometry.GetWidenedPathGeometry(solid) : geometry;
+    }
+
+    /// <summary>
+    /// Kontur wie beim Text: Umriss der Linienfläche mit doppelter Konturstärke (die innere Hälfte verdeckt die Linie),
+    /// weich als gerasterte Ebene in Konturfarbe.
+    /// </summary>
+    private static void DrawLineOutline(DrawingContext dc, LineAnnotation a, Geometry silhouette, RenderContext context)
+    {
+        Pen OutlinePen(Brush? brush)
+        {
+            var pen = new Pen(brush, a.Outline.Thickness * 2)
+            {
+                LineJoin = PenLineJoin.Round,
+                StartLineCap = PenLineCap.Round,
+                EndLineCap = PenLineCap.Round,
+            };
+            pen.Freeze();
+            return pen;
+        }
+
+        if (a.OutlineBlur <= 0)
+        {
+            dc.DrawGeometry(null, OutlinePen(BrushCache.GetBrush(a.Outline.Color)), silhouette);
+            return;
+        }
+
+        var layer = SoftLayerCache.Get(a, "outline", SoftScale(context), () =>
+        {
+            var drawing = new GeometryDrawing(null, OutlinePen(Brushes.Black), silhouette);
+            drawing.Freeze();
+            return SoftLayer.Create(drawing, a.Outline.Color, Math.Clamp(a.OutlineBlur, 0, TextAnnotation.MaxOutlineBlur), SoftScale(context), context.EmojiMaxPixels);
+        });
+        if (layer is not null)
+        {
+            dc.DrawImage(layer.Bitmap, layer.Rect);
+        }
     }
 
     private static void DrawCap(DrawingContext dc, CapGeometry? cap, Brush? fill, Pen? pen)

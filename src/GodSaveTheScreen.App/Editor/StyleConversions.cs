@@ -84,6 +84,8 @@ public static class StyleConversions
         CornerRadius = shape is RectangleAnnotation rectangle ? rectangle.CornerRadius : fallback.CornerRadius,
         StartCap = shape is LineAnnotation line ? line.StartCap : fallback.StartCap,
         EndCap = shape is LineAnnotation line2 ? line2.EndCap : fallback.EndCap,
+        Outline = shape is LineAnnotation line3 ? line3.Outline : fallback.Outline,
+        OutlineBlur = shape is LineAnnotation line4 ? line4.OutlineBlur : fallback.OutlineBlur,
         Shadow = shape is StrokeAnnotation ? fallback.Shadow : shape.Shadow,
     };
 
@@ -109,6 +111,8 @@ public static class StyleConversions
             case LineAnnotation line:
                 line.StartCap = style.StartCap;
                 line.EndCap = style.EndCap;
+                line.Outline = style.Outline ?? LineAnnotation.NoOutline;
+                line.OutlineBlur = style.OutlineBlur;
                 break;
         }
     }

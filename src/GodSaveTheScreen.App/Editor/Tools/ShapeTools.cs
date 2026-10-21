@@ -311,6 +311,8 @@ public class LineTool : ShapeToolBase<LineAnnotation>
     {
         shape.StartCap = style.StartCap;
         shape.EndCap = style.EndCap;
+        shape.Outline = style.Outline ?? LineAnnotation.NoOutline;
+        shape.OutlineBlur = style.OutlineBlur;
     }
 }
 

@@ -125,6 +125,25 @@ public sealed partial class SelectionPropertiesViewModel : ObservableObject, IDi
         set => SetOn<LineAnnotation, LineEndStyle>(nameof(EndCap), value, l => l.EndCap, (l, v) => l.EndCap = v, (st, v) => st with { EndCap = v });
     }
 
+    /// <summary>Kontur von Linie/Pfeil (wie beim Text: Farbe, Stärke, Unschärfe).</summary>
+    public ArgbColor? OutlineColor
+    {
+        get => GetFrom<LineAnnotation, ArgbColor>(l => l.Outline.Color, st => (st.Outline ?? LineAnnotation.NoOutline).Color);
+        set => SetOn<LineAnnotation, ArgbColor>(nameof(OutlineColor), value, l => l.Outline.Color, (l, v) => l.Outline = l.Outline with { Color = v }, (st, v) => st with { Outline = (st.Outline ?? LineAnnotation.NoOutline) with { Color = v } });
+    }
+
+    public double? OutlineThickness
+    {
+        get => GetFrom<LineAnnotation, double>(l => l.Outline.Thickness, st => (st.Outline ?? LineAnnotation.NoOutline).Thickness);
+        set => SetOn<LineAnnotation, double>(nameof(OutlineThickness), value is { } v ? Math.Clamp(v, 0, 50) : null, l => l.Outline.Thickness, (l, v) => l.Outline = l.Outline with { Thickness = v }, (st, v) => st with { Outline = (st.Outline ?? LineAnnotation.NoOutline) with { Thickness = v } });
+    }
+
+    public double? OutlineBlur
+    {
+        get => GetFrom<LineAnnotation, double>(l => l.OutlineBlur, st => st.OutlineBlur);
+        set => SetOn<LineAnnotation, double>(nameof(OutlineBlur), value is { } v ? Math.Clamp(v, 0, TextAnnotation.MaxOutlineBlur) : null, l => l.OutlineBlur, (l, v) => l.OutlineBlur = v, (st, v) => st with { OutlineBlur = v });
+    }
+
     /// <summary>Deckkraft in Prozent (0–100).</summary>
     public double? OpacityPercent
     {

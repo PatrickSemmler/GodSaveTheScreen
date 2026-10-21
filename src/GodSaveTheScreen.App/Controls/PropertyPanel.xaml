@@ -812,6 +812,27 @@
                         SelectedValue="{Binding EndCap, Mode=TwoWay}"
                         HorizontalAlignment="Stretch"
                         AutomationProperties.Name="{l:Loc Props_EndCap}" />
+
+              <TextBlock Text="{l:Loc Text_Outline}" Style="{StaticResource FieldLabel}" />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <controls:ColorButton SelectedColor="{Binding OutlineColor, Mode=TwoWay}"
+                                      RecentColors="{Binding RecentColors}"
+                                      PipetteCommand="{Binding PipetteCommand}"
+                                      RememberCommand="{Binding RememberColorCommand}" />
+                <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                              Minimum="0" Maximum="50" SmallChange="0.5" LargeChange="2" MaxDecimalPlaces="1" ClearButtonEnabled="False"
+                              Value="{Binding OutlineThickness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              AutomationProperties.Name="{l:Loc Text_OutlineWidth}" />
+              </Grid>
+
+              <TextBlock Text="{l:Loc Text_OutlineBlur}" Style="{StaticResource FieldLabel}" />
+              <ui:NumberBox Minimum="0" Maximum="50" SmallChange="1" LargeChange="5" MaxDecimalPlaces="1" ClearButtonEnabled="False"
+                            Value="{Binding OutlineBlur, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            AutomationProperties.Name="{l:Loc Text_OutlineBlur}" />
             </StackPanel>
           </StackPanel>
 

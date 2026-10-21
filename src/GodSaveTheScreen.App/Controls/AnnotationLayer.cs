@@ -104,6 +104,7 @@ public sealed class AnnotationLayer : Canvas
         annotation is EmojiAnnotation or StampAnnotation
         || annotation is IShadowAnnotation { Shadow.IsVisible: true }
         || annotation is TextAnnotation { OutlineBlur: > 0 }
+        || annotation is LineAnnotation { OutlineBlur: > 0 }
         || annotation is CalloutAnnotation { BorderBlur: > 0 };
 
     /// <summary>Basisbild, das Unschärfe und Lupe gerade sehen.</summary>

@@ -18,6 +18,11 @@ public sealed record ShapeStyle
     public double Opacity { get; init; } = 1;
 
     public ShadowStyle Shadow { get; init; } = ShadowStyle.None;
+
+    /// <summary>Kontur von Linie/Pfeil (Stärke 0 = keine).</summary>
+    public StrokeStyle Outline { get; init; } = LineAnnotation.NoOutline;
+
+    public double OutlineBlur { get; init; }
 }
 
 /// <summary>Standardwerte des Textwerkzeugs.</summary>
