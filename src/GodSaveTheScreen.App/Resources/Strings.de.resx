@@ -92,7 +92,9 @@
   <data name="Settings_DataFolder" xml:space="preserve"><value>Einstellungsordner</value></data>
   <data name="Settings_LogFolder" xml:space="preserve"><value>Protokollordner</value></data>
   <data name="Settings_Open" xml:space="preserve"><value>Öffnen</value></data>
-  <data name="Settings_Licenses" xml:space="preserve"><value>Drittanbieter-Komponenten</value></data>
+  <data name="Settings_Licenses" xml:space="preserve"><value>Lizenz</value></data>
+  <data name="Settings_LicenseInfo" xml:space="preserve"><value>GodSaveTheScreen ist freie Software unter der Apache License 2.0. Nutzung, Weitergabe, Änderungen und eigene Versionen (Forks) sind erlaubt. Die Lizenzseite enthält den Lizenztext und die Lizenzen aller Drittanbieter-Komponenten.</value></data>
+  <data name="Settings_ShowLicense" xml:space="preserve"><value>Lizenz und Drittanbieter-Lizenzen anzeigen</value></data>
   <data name="Hotkey_Help" xml:space="preserve"><value>Feld anklicken und Tastenkombination drücken. Entf löscht das Tastenkürzel.</value></data>
   <data name="Hotkey_Active" xml:space="preserve"><value>Aktiv</value></data>
   <data name="Hotkey_Conflict" xml:space="preserve"><value>Bereits von Windows oder einer anderen Anwendung belegt</value></data>
@@ -562,6 +564,9 @@ Tipp: In den Einstellungen können Sie die Taste Druck einem Aufnahmemodus zuwei
   <data name="Help_Tip" xml:space="preserve"><value>Hilfe (F1) – Umschalt+F1: Hilfe zum aktuellen Werkzeug</value></data>
   <data name="Help_PageTip" xml:space="preserve"><value>Hilfe zu dieser Seite (Umschalt+F1)</value></data>
   <data name="Help_NotFound" xml:space="preserve"><value>Die Hilfedatei wurde nicht gefunden. Sie wird im Programmordner erwartet:
+{0}</value></data>
+  <data name="License_Title" xml:space="preserve"><value>Lizenz</value></data>
+  <data name="License_NotFound" xml:space="preserve"><value>Die Lizenzdatei wurde nicht gefunden. Sie wird im Programmordner erwartet:
 {0}</value></data>
   <data name="Shortcut_ContextHelp" xml:space="preserve"><value>Hilfe zum aktuellen Werkzeug bzw. Objekt</value></data>
   <data name="Shortcut_ShowShortcuts" xml:space="preserve"><value>Tastenkürzel anzeigen</value></data>

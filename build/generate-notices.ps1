@@ -41,6 +41,12 @@ foreach ($package in $packages) {
         $copyright = $meta.copyright
         if ($meta.license) {
             $license = if ($meta.license.type -eq 'expression') { $meta.license.'#text' } else { "siehe Datei $($meta.license.'#text') im Paket" }
+            # Lizenzdatei statt SPDX-Ausdruck: MIT am Anfang des Textes erkennen (z. B. PixiEditor.ColorPicker).
+            $licenseFile = Join-Path (Split-Path $nuspecPath) $meta.license.'#text'
+            if ($meta.license.type -eq 'file' -and (Test-Path $licenseFile) -and
+                ((Get-Content $licenseFile -TotalCount 3) -join ' ') -match '^\W*(The )?MIT License') {
+                $license = "MIT (Datei $($meta.license.'#text') im Paket)"
+            }
         } elseif ($meta.licenseUrl) {
             $license = $meta.licenseUrl
         }
@@ -54,10 +60,13 @@ foreach ($package in $packages) {
     [void]$sb.AppendLine('')
 }
 
-# Feste Abschnitte: Daten, die nicht über NuGet kommen (Emoji-Katalog aus build\generate-emoji-data.ps1).
+# Feste Abschnitte: Daten, die nicht über NuGet kommen. Die Lizenzseite (build\HelpBundle.targets) liest dieses Format:
+# Kopfzeile "Name" bzw. "Deutsch / English", eingerückte Schlüssel (Autor(en), Copyright, Lizenz, Projekt, Beschreibung,
+# Description), danach eingerückter Freitext = Lizenztext (Leerzeilen darin sind erlaubt, solange die Folgezeile eingerückt ist).
+# (Emoji-Katalog aus build\generate-emoji-data.ps1).
 [void]$sb.AppendLine('Unicode-Daten (emoji-test.txt, CLDR) / Unicode data files (emoji-test.txt, CLDR)')
-[void]$sb.AppendLine('  Verwendet für den Emoji-Katalog (Liste, Gruppen, Namen und Stichwörter in Deutsch und Englisch).')
-[void]$sb.AppendLine('  Used for the emoji catalog (list, groups, names and keywords in German and English).')
+[void]$sb.AppendLine('  Beschreibung: Verwendet für den Emoji-Katalog (Liste, Gruppen, Namen und Stichwörter in Deutsch und Englisch).')
+[void]$sb.AppendLine('  Description:  Used for the emoji catalog (list, groups, names and keywords in German and English).')
 [void]$sb.AppendLine('  Lizenz:     Unicode License v3')
 [void]$sb.AppendLine('  Projekt:    https://www.unicode.org/license.txt')
 [void]$sb.AppendLine('')
@@ -80,9 +89,8 @@ foreach ($package in $packages) {
 [void]$sb.AppendLine('  copyright holder.')
 [void]$sb.AppendLine('')
 [void]$sb.AppendLine('Segoe UI Emoji')
-[void]$sb.AppendLine('  Die Emoji-Grafiken stammen aus der auf dem Rechner installierten Windows-Schrift und werden zur Laufzeit gezeichnet;')
-[void]$sb.AppendLine('  sie sind nicht Bestandteil dieses Programms. / The emoji artwork comes from the Windows font installed on the')
-[void]$sb.AppendLine('  computer and is drawn at runtime; it is not part of this program.')
+[void]$sb.AppendLine('  Beschreibung: Die Emoji-Grafiken stammen aus der auf dem Rechner installierten Windows-Schrift und werden zur Laufzeit gezeichnet; sie sind nicht Bestandteil dieses Programms.')
+[void]$sb.AppendLine('  Description:  The emoji artwork comes from the Windows font installed on the computer and is drawn at runtime; it is not part of this program.')
 [void]$sb.AppendLine('')
 
 Set-Content -Path $Output -Value $sb.ToString() -Encoding UTF8

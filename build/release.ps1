@@ -2,7 +2,7 @@
 .SYNOPSIS
   Baut das portable Release: Tests -> Publish -> ZIP.
 .DESCRIPTION
-  Ergebnis: artifacts\release\GodSaveTheScreen-<Version>-<Runtime>.zip mit der EXE, der Hilfe (DE/EN), README.txt, LICENSE (falls vorhanden)
+  Ergebnis: artifacts\release\GodSaveTheScreen-<Version>-<Runtime>.zip mit der EXE, Hilfe und Lizenzseite (DE/EN), README.txt, LICENSE, NOTICE
   und THIRD-PARTY-NOTICES.txt. Die Datei portable.txt liegt bewusst NICHT bei (siehe README.txt: ohne sie liegen die Daten in %APPDATA%).
 .PARAMETER Runtime
   win-x64 (Standard) oder win-arm64.
@@ -56,19 +56,17 @@ if (Test-Path $staging) { Remove-Item $staging -Recurse -Force }
 New-Item -ItemType Directory -Path $staging | Out-Null
 
 Copy-Item $exe $staging
-# Benutzeranleitung (deutsch/englisch) liegt neben der EXE, damit F1 sie findet.
-foreach ($help in 'GodSaveTheScreen-Hilfe.html', 'GodSaveTheScreen-Help.html') {
+# Benutzeranleitung und Lizenzseite (deutsch/englisch) liegen neben der EXE, damit F1 bzw. Einstellungen → Info sie finden.
+foreach ($help in 'GodSaveTheScreen-Hilfe.html', 'GodSaveTheScreen-Help.html', 'GodSaveTheScreen-Lizenz.html', 'GodSaveTheScreen-License.html') {
     $helpFile = Join-Path $publishDir $help
-    if (-not (Test-Path $helpFile)) { throw "Die Hilfedatei fehlt: $helpFile" }
+    if (-not (Test-Path $helpFile)) { throw "Die Datei fehlt: $helpFile" }
     Copy-Item $helpFile $staging
 }
 (Get-Content (Join-Path $PSScriptRoot 'README.txt') -Raw).Replace('{{VERSION}}', $version) |
     Set-Content (Join-Path $staging 'README.txt') -Encoding UTF8
-Copy-Item (Join-Path $root 'THIRD-PARTY-NOTICES.txt') $staging
-if (Test-Path (Join-Path $root 'LICENSE')) {
-    Copy-Item (Join-Path $root 'LICENSE') $staging
-} else {
-    Write-Warning 'Es gibt keine LICENSE-Datei im Repository – das ZIP enthält sie nicht.'
+# Apache-2.0 §4: Lizenz und NOTICE liegen jeder Weitergabe bei.
+foreach ($file in 'LICENSE', 'NOTICE', 'THIRD-PARTY-NOTICES.txt') {
+    Copy-Item (Join-Path $root $file) $staging
 }
 
 $zip = Join-Path $root "artifacts\release\$name.zip"

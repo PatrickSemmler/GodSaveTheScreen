@@ -9,11 +9,14 @@ using Microsoft.Extensions.Logging;
 
 namespace GodSaveTheScreen.App.Services;
 
-/// <summary>Öffnet die Benutzeranleitung (HTML neben der EXE) im Standardbrowser, optional an einem Abschnitt.</summary>
+/// <summary>Öffnet die Benutzeranleitung bzw. die Lizenzseite (HTML neben der EXE) im Standardbrowser.</summary>
 public interface IHelpService
 {
     /// <summary>Öffnet die Hilfe in der Programmsprache; <paramref name="topic"/> = Abschnitts-ID (<see cref="HelpTopics"/>), <c>null</c> = Anfang.</summary>
     void Show(string? topic = null);
+
+    /// <summary>Öffnet die Lizenzseite (Apache-2.0 und Drittanbieter-Lizenzen) in der Programmsprache.</summary>
+    void ShowLicense();
 }
 
 /// <summary>Abschnitts-IDs der Hilfe. Müssen in beiden Sprachfassungen (<c>docs/help/*/index.html</c>) existieren (<c>HelpContentTests</c>).</summary>
@@ -64,12 +67,19 @@ public static class HelpFiles
 {
     public const string German = "GodSaveTheScreen-Hilfe.html";
     public const string English = "GodSaveTheScreen-Help.html";
+    public const string LicenseGerman = "GodSaveTheScreen-Lizenz.html";
+    public const string LicenseEnglish = "GodSaveTheScreen-License.html";
 
     /// <summary>Hilfedatei zur Sprache (Deutsch bei <c>de</c>, sonst Englisch); fehlt sie, die andere Sprachfassung, sonst <c>null</c>.</summary>
-    public static string? Resolve(string directory, CultureInfo culture)
+    public static string? Resolve(string directory, CultureInfo culture) => Resolve(directory, culture, German, English);
+
+    /// <summary>Lizenzseite zur Sprache, Auswahl wie bei <see cref="Resolve(string, CultureInfo)"/>.</summary>
+    public static string? ResolveLicense(string directory, CultureInfo culture) => Resolve(directory, culture, LicenseGerman, LicenseEnglish);
+
+    private static string? Resolve(string directory, CultureInfo culture, string german, string english)
     {
-        var preferred = culture.TwoLetterISOLanguageName == "de" ? German : English;
-        var fallback = preferred == German ? English : German;
+        var preferred = culture.TwoLetterISOLanguageName == "de" ? german : english;
+        var fallback = preferred == german ? english : german;
         foreach (var name in new[] { preferred, fallback })
         {
             var path = Path.Combine(directory, name);
@@ -118,9 +128,20 @@ public sealed class HelpService : IHelpService
     public void Show(string? topic = null)
     {
         var file = HelpFiles.Resolve(AppContext.BaseDirectory, CultureInfo.CurrentUICulture);
+        Open(file, topic, Strings.Help_Title, Strings.Help_NotFound);
+    }
+
+    public void ShowLicense()
+    {
+        var file = HelpFiles.ResolveLicense(AppContext.BaseDirectory, CultureInfo.CurrentUICulture);
+        Open(file, null, Strings.License_Title, Strings.License_NotFound);
+    }
+
+    private void Open(string? file, string? topic, string title, string notFound)
+    {
         if (file is null)
         {
-            _dialogs.ShowError(Strings.Help_Title, string.Format(CultureInfo.CurrentUICulture, Strings.Help_NotFound, AppContext.BaseDirectory));
+            _dialogs.ShowError(title, string.Format(CultureInfo.CurrentUICulture, notFound, AppContext.BaseDirectory));
             return;
         }
 
@@ -135,12 +156,12 @@ public sealed class HelpService : IHelpService
             }
 
             Process.Start(new ProcessStartInfo(target) { UseShellExecute = true })?.Dispose();
-            _logger.LogInformation("Hilfe geöffnet: {Topic}", topic ?? "(Anfang)");
+            _logger.LogInformation("{File} geöffnet: {Topic}", Path.GetFileName(file), topic ?? "(Anfang)");
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or System.ComponentModel.Win32Exception)
         {
-            _logger.LogWarning(ex, "Hilfe konnte nicht geöffnet werden");
-            _dialogs.ShowError(Strings.Help_Title, string.Format(CultureInfo.CurrentUICulture, Strings.Error_OpenFailed, file, ex.Message));
+            _logger.LogWarning(ex, "{File} konnte nicht geöffnet werden", Path.GetFileName(file));
+            _dialogs.ShowError(title, string.Format(CultureInfo.CurrentUICulture, Strings.Error_OpenFailed, file, ex.Message));
         }
     }
 }

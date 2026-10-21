@@ -1,0 +1,33 @@
+/* Ergänzungen der Lizenzseite zu ../help/help.css */
+
+pre.license {
+  margin: 14px 0;
+  padding: 16px 18px;
+  max-height: 520px;
+  overflow: auto;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  font: 13px/1.5 var(--mono);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+ul.checks { list-style: none; padding: 0; }
+ul.checks li { position: relative; padding-left: 30px; margin: 8px 0; }
+ul.checks li::before { position: absolute; left: 2px; top: 0; font-weight: 700; }
+ul.checks.yes li::before { content: "✓"; color: var(--tip); }
+ul.checks.must li::before { content: "!"; color: var(--warn); left: 7px; }
+ul.checks.no li::before { content: "✕"; color: var(--muted); }
+
+table.notices td:first-child { white-space: normal; min-width: 220px; }
+table.notices td { font-size: 14px; overflow-wrap: anywhere; }
+table.notices .desc { margin-top: 2px; color: var(--muted); font-size: 13.5px; }
+table.notices details { margin-top: 6px; }
+table.notices summary { cursor: pointer; color: var(--link); font-size: 13.5px; }
+table.notices pre.license { max-height: 320px; font-size: 12px; }
+
+@media print {
+  pre.license { max-height: none; overflow: visible; }
+  table.notices details > pre.license { display: block; }
+}

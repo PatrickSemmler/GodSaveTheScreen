@@ -185,6 +185,10 @@ public static class Strings
 
     public static string Settings_Licenses => ResourceManager.GetString("Settings_Licenses", Culture) ?? "Settings_Licenses";
 
+    public static string Settings_LicenseInfo => ResourceManager.GetString("Settings_LicenseInfo", Culture) ?? "Settings_LicenseInfo";
+
+    public static string Settings_ShowLicense => ResourceManager.GetString("Settings_ShowLicense", Culture) ?? "Settings_ShowLicense";
+
     public static string Hotkey_Help => ResourceManager.GetString("Hotkey_Help", Culture) ?? "Hotkey_Help";
 
     public static string Hotkey_Active => ResourceManager.GetString("Hotkey_Active", Culture) ?? "Hotkey_Active";
@@ -1098,6 +1102,10 @@ public static class Strings
     public static string Help_PageTip => ResourceManager.GetString("Help_PageTip", Culture) ?? "Help_PageTip";
 
     public static string Help_NotFound => ResourceManager.GetString("Help_NotFound", Culture) ?? "Help_NotFound";
+
+    public static string License_Title => ResourceManager.GetString("License_Title", Culture) ?? "License_Title";
+
+    public static string License_NotFound => ResourceManager.GetString("License_NotFound", Culture) ?? "License_NotFound";
 
     public static string Shortcut_ContextHelp => ResourceManager.GetString("Shortcut_ContextHelp", Culture) ?? "Shortcut_ContextHelp";
 

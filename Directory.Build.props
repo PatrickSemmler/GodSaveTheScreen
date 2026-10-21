@@ -5,9 +5,12 @@
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
-    <Version>1.8.0.2</Version>
+    <Version>1.9.0.0</Version>
     <Company>GodSaveTheScreen</Company>
     <Product>GodSaveTheScreen</Product>
+    <Authors>Patrick Semmler</Authors>
+    <Copyright>Copyright © 2026 Patrick Semmler</Copyright>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
 </Project>

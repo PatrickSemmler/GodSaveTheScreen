@@ -8,7 +8,7 @@ DEUTSCH
 Start
   GodSaveTheScreen.exe ausfuehren. Eine Installation und ein installiertes .NET sind nicht noetig.
   Das Programm laeuft danach im Infobereich der Taskleiste (Tray). Hotkeys (Standard):
-  Strg+Umschalt+1 Rechteck, +2 Fenster, +3 Freiform, +4 Vollbild. F1 zeigt alle Tastenkuerzel.
+  Strg+Umschalt+1 Rechteck, +2 Fenster, +3 Freiform, +4 Vollbild. F1 oeffnet die Hilfe, Strg+F1 zeigt alle Tastenkuerzel.
 
 Daten
   Standard:  Einstellungen in %APPDATA%\GodSaveTheScreen, Logs und automatische Sicherungen in %LOCALAPPDATA%\GodSaveTheScreen.
@@ -27,15 +27,17 @@ Deinstallation
   EXE loeschen. Optional den Datenordner (siehe oben) loeschen. Falls "Mit Windows starten" aktiv war, vorher in den
   Einstellungen ausschalten.
 
-Lizenzen
-  Siehe LICENSE (falls vorhanden) und THIRD-PARTY-NOTICES.txt.
+Lizenz
+  GodSaveTheScreen ist freie Software unter der Apache License 2.0 (Copyright 2026 Patrick Semmler).
+  Nutzung, Weitergabe, Aenderungen und Forks sind erlaubt; Details in GodSaveTheScreen-Lizenz.html
+  (auch ueber Einstellungen > Info), LICENSE, NOTICE und THIRD-PARTY-NOTICES.txt.
 
 ENGLISH
 -------
 Start
   Run GodSaveTheScreen.exe. No installation and no installed .NET runtime are required.
   The app keeps running in the notification area (tray). Default hotkeys:
-  Ctrl+Shift+1 rectangle, +2 window, +3 freeform, +4 full screen. Press F1 for all keyboard shortcuts.
+  Ctrl+Shift+1 rectangle, +2 window, +3 freeform, +4 full screen. F1 opens the help, Ctrl+F1 shows all keyboard shortcuts.
 
 Data
   Default:   settings in %APPDATA%\GodSaveTheScreen, logs and automatic backups in %LOCALAPPDATA%\GodSaveTheScreen.
@@ -54,5 +56,7 @@ Uninstall
   Delete the EXE. Optionally delete the data folder (see above). If "Start with Windows" was enabled, turn it off in the
   settings first.
 
-Licenses
-  See LICENSE (if present) and THIRD-PARTY-NOTICES.txt.
+License
+  GodSaveTheScreen is free software under the Apache License 2.0 (Copyright 2026 Patrick Semmler).
+  Use, redistribution, modification and forks are permitted; details in GodSaveTheScreen-License.html
+  (also via Settings > About), LICENSE, NOTICE and THIRD-PARTY-NOTICES.txt.

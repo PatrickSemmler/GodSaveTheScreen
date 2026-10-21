@@ -4,10 +4,16 @@
     einer eigenständigen HTML-Datei zusammengesetzt (CSS/JS inline, Bilder als Base64, {{VERSION}} = Programmversion) und neben die EXE kopiert
     (auch beim Single-File-Publish, ExcludeFromSingleFile). Die Bilder erzeugt build/generate-help-screenshots.ps1.
     Fehlt eine referenzierte Datei, bricht der Build ab (außer mit -p:HelpAllowMissingImages=true, nur für den Generator).
+
+    Lizenzseite: docs/license/<sprache>/index.html läuft durch dieselbe Bündelung. Zusätzlich:
+    <pre … data-include="pfad"></pre> = Textdatei HTML-kodiert einsetzen (LICENSE, Lizenztexte),
+    HTML-Kommentar "third-party: pfad" = THIRD-PARTY-NOTICES.txt als Tabelle (Format siehe build/generate-notices.ps1).
   -->
   <ItemGroup>
     <HelpTemplate Include="$(MSBuildThisFileDirectory)..\docs\help\de\index.html" OutputName="GodSaveTheScreen-Hilfe.html" />
     <HelpTemplate Include="$(MSBuildThisFileDirectory)..\docs\help\en\index.html" OutputName="GodSaveTheScreen-Help.html" />
+    <HelpTemplate Include="$(MSBuildThisFileDirectory)..\docs\license\de\index.html" OutputName="GodSaveTheScreen-Lizenz.html" Language="de" />
+    <HelpTemplate Include="$(MSBuildThisFileDirectory)..\docs\license\en\index.html" OutputName="GodSaveTheScreen-License.html" Language="en" />
   </ItemGroup>
 
   <UsingTask TaskName="BundleHelpPage" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
@@ -16,10 +22,13 @@
       <Output ParameterType="System.String" Required="true" />
       <AllowMissing ParameterType="System.Boolean" />
       <Version ParameterType="System.String" />
+      <Language ParameterType="System.String" />
     </ParameterGroup>
     <Task>
       <Using Namespace="System" />
+      <Using Namespace="System.Collections.Generic" />
       <Using Namespace="System.IO" />
+      <Using Namespace="System.Linq" />
       <Using Namespace="System.Text" />
       <Using Namespace="System.Text.RegularExpressions" />
       <Code Type="Fragment" Language="cs"><![CDATA[
@@ -76,6 +85,109 @@
             return "src=\"data:" + mime + ";base64," + Convert.ToBase64String(File.ReadAllBytes(path)) + "\"";
         });
 
+        Func<string, string> encode = text => text.Replace("&", "&amp;").Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;");
+        html = Regex.Replace(html, "<pre([^>]*) data-include=\"([^\"]+)\"></pre>", m =>
+        {
+            var path = read(m.Groups[2].Value);
+            return path == null ? m.Value : "<pre" + m.Groups[1].Value + ">" + encode(File.ReadAllText(path, Encoding.UTF8).Trim('\r', '\n')) + "</pre>";
+        });
+
+        // THIRD-PARTY-NOTICES.txt: Blöcke durch Leerzeilen getrennt (eingerückte Folgezeile = derselbe Block),
+        // erster Block = Kopf. Je Block Name, Schlüssel "Name:  Wert", Rest = Lizenztext.
+        var german = Language == "de";
+        Func<string, string> renderNotices = path =>
+        {
+            var blocks = new List<List<string>>();
+            List<string> current = null;
+            var pendingBlank = false;
+            foreach (var line in File.ReadAllLines(path, Encoding.UTF8))
+            {
+                if (line.Trim().Length == 0)
+                {
+                    pendingBlank = current != null;
+                    continue;
+                }
+
+                if (current == null || (pendingBlank && !char.IsWhiteSpace(line[0])))
+                {
+                    current = new List<string>();
+                    blocks.Add(current);
+                }
+                else if (pendingBlank)
+                {
+                    current.Add(string.Empty);
+                }
+
+                pendingBlank = false;
+                current.Add(line);
+            }
+
+            var sb = new StringBuilder();
+            sb.Append("<div class=\"table-wrap\"><table class=\"notices\">\n<tr><th>")
+              .Append(german ? "Komponente" : "Component").Append("</th><th>")
+              .Append(german ? "Lizenz" : "License").Append("</th><th>")
+              .Append(german ? "Rechteinhaber" : "Copyright holder").Append("</th></tr>\n");
+            var count = 0;
+            foreach (var block in blocks.Skip(1))
+            {
+                var names = block[0].Split(new[] { " / " }, StringSplitOptions.None);
+                var name = names.Length == 2 ? names[german ? 0 : 1] : block[0];
+                var fields = new Dictionary<string, string>();
+                var text = new List<string>();
+                foreach (var line in block.Skip(1))
+                {
+                    var field = Regex.Match(line, @"^  (Autor\(en\)|Copyright|Lizenz|Projekt|Beschreibung|Description):\s+(.*)$");
+                    if (field.Success && text.Count == 0)
+                    {
+                        fields[field.Groups[1].Value] = field.Groups[2].Value.Trim();
+                    }
+                    else
+                    {
+                        text.Add(line.StartsWith("  ") ? line.Substring(2) : line);
+                    }
+                }
+
+                string value;
+                var license = fields.TryGetValue("Lizenz", out value) ? value : string.Empty;
+                if (!german)
+                {
+                    license = Regex.Replace(license, "^siehe Datei (.+) im Paket$", "see file $1 in the package");
+                    license = Regex.Replace(license, @"\(Datei (.+) im Paket\)$", "(file $1 in the package)");
+                }
+
+                var holder = fields.TryGetValue("Copyright", out value) ? value
+                    : fields.TryGetValue("Autor(en)", out value) ? value : string.Empty;
+                var description = fields.TryGetValue(german ? "Beschreibung" : "Description", out value) ? value : string.Empty;
+                var url = fields.TryGetValue("Projekt", out value) && value.StartsWith("http") ? value : null;
+
+                sb.Append("<tr><td>");
+                sb.Append(url == null ? "<strong>" + encode(name) + "</strong>" : "<a href=\"" + encode(url) + "\"><strong>" + encode(name) + "</strong></a>");
+                if (description.Length > 0)
+                {
+                    sb.Append("<div class=\"desc\">").Append(encode(description)).Append("</div>");
+                }
+
+                if (text.Count > 0)
+                {
+                    sb.Append("<details><summary>").Append(german ? "Lizenztext" : "License text").Append("</summary><pre class=\"license\">")
+                      .Append(encode(string.Join("\n", text).Trim('\n'))).Append("</pre></details>");
+                }
+
+                var licenseHtml = Regex.IsMatch(license, "^https?://") ? "<a href=\"" + encode(license) + "\">" + encode(license) + "</a>" : encode(license);
+                sb.Append("</td><td>").Append(licenseHtml).Append("</td><td>").Append(encode(holder)).Append("</td></tr>\n");
+                count++;
+            }
+
+            sb.Append("</table></div>\n");
+            Log.LogMessage(MessageImportance.Low, "Lizenzseite: " + count + " Drittanbieter-Einträge aus " + path);
+            return sb.ToString();
+        };
+        html = Regex.Replace(html, @"<!--\s*third-party:\s*(\S+)\s*-->", m =>
+        {
+            var path = read(m.Groups[1].Value);
+            return path == null ? m.Value : renderNotices(path);
+        });
+
         if (failed)
         {
             return false;
@@ -95,7 +207,7 @@
     <PropertyGroup>
       <_HelpOutputDir>$([MSBuild]::NormalizeDirectory($(MSBuildProjectDirectory), $(IntermediateOutputPath), 'help'))</_HelpOutputDir>
     </PropertyGroup>
-    <BundleHelpPage Template="%(HelpTemplate.FullPath)" Output="$(_HelpOutputDir)%(HelpTemplate.OutputName)" AllowMissing="$(HelpAllowMissingImages)" Version="$(Version)" />
+    <BundleHelpPage Template="%(HelpTemplate.FullPath)" Output="$(_HelpOutputDir)%(HelpTemplate.OutputName)" AllowMissing="$(HelpAllowMissingImages)" Version="$(Version)" Language="%(HelpTemplate.Language)" />
     <ItemGroup>
       <_HelpBundled Include="@(HelpTemplate->'$(_HelpOutputDir)%(OutputName)')" />
       <!-- Link: sonst wird der Zielpfad relativ zum Projekt berechnet (obj im Projektordner -> bin\obj\...\help\). -->

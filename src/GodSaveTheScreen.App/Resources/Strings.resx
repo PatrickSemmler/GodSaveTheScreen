@@ -92,7 +92,9 @@
   <data name="Settings_DataFolder" xml:space="preserve"><value>Settings folder</value></data>
   <data name="Settings_LogFolder" xml:space="preserve"><value>Log folder</value></data>
   <data name="Settings_Open" xml:space="preserve"><value>Open</value></data>
-  <data name="Settings_Licenses" xml:space="preserve"><value>Third-party components</value></data>
+  <data name="Settings_Licenses" xml:space="preserve"><value>License</value></data>
+  <data name="Settings_LicenseInfo" xml:space="preserve"><value>GodSaveTheScreen is free software under the Apache License 2.0. Use, redistribution, modification and your own versions (forks) are permitted. The license page contains the license text and the licenses of all third-party components.</value></data>
+  <data name="Settings_ShowLicense" xml:space="preserve"><value>Show license and third-party licenses</value></data>
   <data name="Hotkey_Help" xml:space="preserve"><value>Click a field and press the key combination. Delete clears the hotkey.</value></data>
   <data name="Hotkey_Active" xml:space="preserve"><value>Active</value></data>
   <data name="Hotkey_Conflict" xml:space="preserve"><value>Already in use by Windows or another application</value></data>
@@ -562,6 +564,9 @@ Tip: You can assign the Print Screen key to a capture mode in the settings. On W
   <data name="Help_Tip" xml:space="preserve"><value>Help (F1) – Shift+F1: help for the current tool</value></data>
   <data name="Help_PageTip" xml:space="preserve"><value>Help for this page (Shift+F1)</value></data>
   <data name="Help_NotFound" xml:space="preserve"><value>The help file was not found. It is expected in the program folder:
+{0}</value></data>
+  <data name="License_Title" xml:space="preserve"><value>License</value></data>
+  <data name="License_NotFound" xml:space="preserve"><value>The license file was not found. It is expected in the program folder:
 {0}</value></data>
   <data name="Shortcut_ContextHelp" xml:space="preserve"><value>Help for the current tool or object</value></data>
   <data name="Shortcut_ShowShortcuts" xml:space="preserve"><value>Show keyboard shortcuts</value></data>

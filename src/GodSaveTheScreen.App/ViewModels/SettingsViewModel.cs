@@ -71,6 +71,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     private readonly IThemeService _theme;
     private readonly IAppPaths _paths;
     private readonly IDialogService _dialogs;
+    private readonly IHelpService _help;
     private readonly string _startLanguage;
 
     public SettingsViewModel(
@@ -79,7 +80,8 @@ public sealed partial class SettingsViewModel : ObservableObject
         IHotkeyService hotkeys,
         IThemeService theme,
         IAppPaths paths,
-        IDialogService dialogs)
+        IDialogService dialogs,
+        IHelpService help)
     {
         _settings = settings;
         _autostart = autostart;
@@ -87,6 +89,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         _theme = theme;
         _paths = paths;
         _dialogs = dialogs;
+        _help = help;
         _startLanguage = settings.Current.Language;
 
         Languages =
@@ -315,16 +318,10 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     public string LogDirectory => _paths.LogDirectory;
 
-    public IReadOnlyList<string> Licenses { get; } =
-    [
-        "WPF-UI (Lepo) – MIT",
-        "CommunityToolkit.Mvvm (Microsoft) – MIT",
-        "H.NotifyIcon.Wpf (HavenDV) – MIT",
-        "NHotkey.Wpf (Thomas Levesque) – Apache-2.0",
-        "Microsoft.Extensions.Hosting / DependencyInjection / Logging (Microsoft) – MIT",
-        "Microsoft.Windows.CsWin32 (Microsoft) – MIT",
-        "Serilog, Serilog.Extensions.Hosting, Serilog.Sinks.File – Apache-2.0",
-    ];
+    /// <summary>Copyright-Vermerk aus <c>Directory.Build.props</c> (<c>&lt;Copyright&gt;</c>).</summary>
+    public string Copyright { get; } =
+        typeof(SettingsViewModel).Assembly.GetCustomAttributes(typeof(System.Reflection.AssemblyCopyrightAttribute), false)
+            is [System.Reflection.AssemblyCopyrightAttribute { Copyright: { Length: > 0 } text }, ..] ? text : string.Empty;
 
     /// <summary>Hotkeys während einer Aufnahme im Recorder ausschalten, damit die Kombination nicht auslöst.</summary>
     public void SuspendHotkeys() => _hotkeys.SuspendHotkeys();
@@ -353,6 +350,9 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     [RelayCommand]
     private void OpenLogDirectory() => OpenFolder(LogDirectory);
+
+    [RelayCommand]
+    private void ShowLicense() => _help.ShowLicense();
 
     [RelayCommand]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822", Justification = "Wird von RelayCommand als Instanzmethode benötigt")]

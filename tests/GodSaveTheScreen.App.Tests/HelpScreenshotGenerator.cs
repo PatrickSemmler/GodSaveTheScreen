@@ -102,7 +102,7 @@ public sealed class HelpScreenshotGenerator
     {
         var hotkeys = Substitute.For<IHotkeyService>();
         hotkeys.Statuses.Returns(new Dictionary<CaptureMode, HotkeyStatus>());
-        var viewModel = new SettingsViewModel(new FakeSettings(), Substitute.For<IAutostartService>(), hotkeys, Substitute.For<IThemeService>(), Substitute.For<IAppPaths>(), Substitute.For<IDialogService>());
+        var viewModel = new SettingsViewModel(new FakeSettings(), Substitute.For<IAutostartService>(), hotkeys, Substitute.For<IThemeService>(), Substitute.For<IAppPaths>(), Substitute.For<IDialogService>(), Substitute.For<IHelpService>());
         var window = new SettingsWindow(viewModel, Substitute.For<IThemeService>(), Substitute.For<IAppShell>());
         ShowOffscreen(window);
         try

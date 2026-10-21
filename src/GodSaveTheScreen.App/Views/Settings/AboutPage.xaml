@@ -15,6 +15,7 @@
         <Run Text="{l:Loc App_Name}" FontWeight="SemiBold" />
         <Run Text="{Binding Version, Mode=OneWay}" />
       </TextBlock>
+      <TextBlock Text="{Binding Copyright, Mode=OneWay}" Margin="0,2,0,0" />
       <TextBlock Style="{StaticResource Label}" Text="{l:Loc Settings_DataFolder}" />
       <Grid>
         <Grid.ColumnDefinitions>
@@ -34,13 +35,8 @@
         <ui:Button Grid.Column="1" Margin="8,0,0,0" Content="{l:Loc Settings_Open}" Command="{Binding OpenLogDirectoryCommand}" />
       </Grid>
       <TextBlock Style="{StaticResource Label}" Text="{l:Loc Settings_Licenses}" Margin="0,16,0,4" />
-      <ItemsControl ItemsSource="{Binding Licenses}">
-        <ItemsControl.ItemTemplate>
-          <DataTemplate>
-            <TextBlock Text="{Binding}" Margin="0,0,0,2" TextWrapping="Wrap" />
-          </DataTemplate>
-        </ItemsControl.ItemTemplate>
-      </ItemsControl>
+      <TextBlock Text="{l:Loc Settings_LicenseInfo}" TextWrapping="Wrap" />
+      <ui:Button Margin="0,8,0,0" Icon="{ui:SymbolIcon DocumentText24}" Content="{l:Loc Settings_ShowLicense}" Command="{Binding ShowLicenseCommand}" />
     </StackPanel>
   </ScrollViewer>
 </Page>

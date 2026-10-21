@@ -257,13 +257,13 @@ NHotkey.Wpf 4.0.0
 PixiEditor.ColorPicker 3.4.2.3
   Autor(en):  Egor Mozgovoy,Krzysztof Krysiński
   Copyright:  PixiEditor
-  Lizenz:     siehe Datei LICENSE.md im Paket
+  Lizenz:     MIT (Datei LICENSE.md im Paket)
   Projekt:    https://github.com/PixiEditor/ColorPicker
 
 PixiEditor.ColorPicker.Models 1.0.11
   Autor(en):  Egor Mozgovoy,Krzysztof Krysiński
   Copyright:  PixiEditor
-  Lizenz:     siehe Datei LICENSE.md im Paket
+  Lizenz:     MIT (Datei LICENSE.md im Paket)
   Projekt:    https://github.com/PixiEditor/ColorPicker
 
 Serilog 4.3.0
@@ -390,8 +390,8 @@ WPF-UI.Abstractions 4.3.0
   Projekt:    https://github.com/lepoco/wpfui
 
 Unicode-Daten (emoji-test.txt, CLDR) / Unicode data files (emoji-test.txt, CLDR)
-  Verwendet für den Emoji-Katalog (Liste, Gruppen, Namen und Stichwörter in Deutsch und Englisch).
-  Used for the emoji catalog (list, groups, names and keywords in German and English).
+  Beschreibung: Verwendet für den Emoji-Katalog (Liste, Gruppen, Namen und Stichwörter in Deutsch und Englisch).
+  Description:  Used for the emoji catalog (list, groups, names and keywords in German and English).
   Lizenz:     Unicode License v3
   Projekt:    https://www.unicode.org/license.txt
 
@@ -414,8 +414,7 @@ Unicode-Daten (emoji-test.txt, CLDR) / Unicode data files (emoji-test.txt, CLDR)
   copyright holder.
 
 Segoe UI Emoji
-  Die Emoji-Grafiken stammen aus der auf dem Rechner installierten Windows-Schrift und werden zur Laufzeit gezeichnet;
-  sie sind nicht Bestandteil dieses Programms. / The emoji artwork comes from the Windows font installed on the
-  computer and is drawn at runtime; it is not part of this program.
+  Beschreibung: Die Emoji-Grafiken stammen aus der auf dem Rechner installierten Windows-Schrift und werden zur Laufzeit gezeichnet; sie sind nicht Bestandteil dieses Programms.
+  Description:  The emoji artwork comes from the Windows font installed on the computer and is drawn at runtime; it is not part of this program.
 
 

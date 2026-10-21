@@ -36,6 +36,17 @@ public sealed class HelpFilesTests : IDisposable
     }
 
     [Fact]
+    public void ResolveLicense_WaehltSpracheDerOberflaeche()
+    {
+        File.WriteAllText(Path.Combine(_directory, HelpFiles.LicenseGerman), "de");
+        File.WriteAllText(Path.Combine(_directory, HelpFiles.LicenseEnglish), "en");
+
+        Path.GetFileName(HelpFiles.ResolveLicense(_directory, CultureInfo.GetCultureInfo("de-DE"))).ShouldBe(HelpFiles.LicenseGerman);
+        Path.GetFileName(HelpFiles.ResolveLicense(_directory, CultureInfo.GetCultureInfo("fr-FR"))).ShouldBe(HelpFiles.LicenseEnglish);
+        HelpFiles.Resolve(_directory, CultureInfo.GetCultureInfo("de-DE")).ShouldBeNull();
+    }
+
+    [Fact]
     public void Resolve_KeineDatei_LiefertNull() =>
         HelpFiles.Resolve(_directory, CultureInfo.GetCultureInfo("de-DE")).ShouldBeNull();
 
@@ -150,5 +161,57 @@ public sealed class HelpContentTests
             html.ShouldNotContain("{{VERSION}}");
             html.ShouldContain("data:image/png;base64,");
         }
+    }
+}
+
+/// <summary>Lizenzseite: beim Build aus <c>docs/license</c>, <c>LICENSE</c> und <c>THIRD-PARTY-NOTICES.txt</c> gebündelt.</summary>
+public sealed class LicensePageTests
+{
+    private static string Bundled(string name) => File.ReadAllText(Path.Combine(AppContext.BaseDirectory, name));
+
+    [Theory]
+    [InlineData(HelpFiles.LicenseGerman, "Komponente")]
+    [InlineData(HelpFiles.LicenseEnglish, "Component")]
+    public void Lizenz_LiegtGebuendeltNebenDerAnwendung(string name, string columnHeader)
+    {
+        var html = Bundled(name);
+
+        html.ShouldContain("Version 2.0, January 2004");
+        html.ShouldContain("Copyright © 2026 Patrick Semmler");
+        html.ShouldContain("<th>" + columnHeader + "</th>");
+        html.ShouldContain("Microsoft Public License (Ms-PL)");
+        html.ShouldContain("Permission is hereby granted");
+        html.ShouldNotContain("{{VERSION}}");
+        html.ShouldNotContain("data-include=");
+        html.ShouldNotContain("third-party:");
+        html.ShouldNotContain("<link rel=\"stylesheet\"");
+    }
+
+    [Fact]
+    public void Lizenz_EnthaeltAlleDrittanbieterKomponenten()
+    {
+        var html = Bundled(HelpFiles.LicenseEnglish);
+        var notices = File.ReadAllLines(Path.Combine(RepoPaths.Root(), "THIRD-PARTY-NOTICES.txt"));
+        var components = notices.Skip(3)
+            .Where(l => l.Length > 0 && !char.IsWhiteSpace(l[0]))
+            .Select(l => l.Split(" / ") is [_, var english] ? english : l)
+            .ToList();
+
+        components.Count.ShouldBeGreaterThan(50);
+        components.Where(c => !html.Contains("<strong>" + c + "</strong>", StringComparison.Ordinal))
+            .ShouldBeEmpty();
+        html.ShouldContain("Svg.Custom 5.2.3");
+        html.ShouldContain("<td>MS-PL</td>");
+    }
+
+    [Fact]
+    public void LicenseDatei_IstUnveraenderterApacheText()
+    {
+        var lines = File.ReadAllLines(Path.Combine(RepoPaths.Root(), "LICENSE"));
+
+        lines[1].Trim().ShouldBe("Apache License");
+        lines[2].Trim().ShouldBe("Version 2.0, January 2004");
+        lines.ShouldContain(l => l.Trim() == "END OF TERMS AND CONDITIONS");
+        File.ReadAllText(Path.Combine(RepoPaths.Root(), "NOTICE")).ShouldContain("Copyright 2026 Patrick Semmler");
     }
 }

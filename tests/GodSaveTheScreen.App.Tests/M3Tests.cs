@@ -26,7 +26,7 @@ public sealed class SettingsViewModelTests
         });
         var autostart = Substitute.For<IAutostartService>();
         var paths = Substitute.For<IAppPaths>();
-        var vm = new SettingsViewModel(settings, autostart, hotkeys, Substitute.For<IThemeService>(), paths, Substitute.For<IDialogService>());
+        var vm = new SettingsViewModel(settings, autostart, hotkeys, Substitute.For<IThemeService>(), paths, Substitute.For<IDialogService>(), Substitute.For<IHelpService>());
         return (vm, settings, hotkeys, autostart);
     }
 

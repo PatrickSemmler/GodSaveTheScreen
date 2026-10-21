@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GodSaveTheScreen – Lizenz</title>
+<meta name="description" content="Lizenz von GodSaveTheScreen {{VERSION}} (Apache License 2.0) und Lizenzen der Drittanbieter-Komponenten.">
+<link rel="stylesheet" href="../../help/help.css">
+<link rel="stylesheet" href="../license.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu" aria-label="Inhaltsverzeichnis">☰</button>
+  <a class="brand" href="#intro"><span class="logo">G</span>GodSaveTheScreen <small>Lizenz</small></a>
+  <span class="spacer"></span>
+  <span class="pill">Version {{VERSION}}</span>
+  <button class="icon-btn" id="theme" type="button">◐</button>
+</header>
+
+<div class="layout">
+<nav class="sidebar" aria-label="Inhaltsverzeichnis">
+  <input class="search" id="search" type="search" placeholder="Durchsuchen …  ( / )" aria-label="Durchsuchen">
+  <p class="toc-title">Inhalt</p>
+  <div class="toc" id="toc"></div>
+</nav>
+
+<main>
+<div class="content">
+
+<section class="hero">
+  <h1>Lizenz</h1>
+  <p class="lead">GodSaveTheScreen ist freie Software unter der <b>Apache License 2.0</b>. Sie dürfen das Programm kostenlos nutzen, weitergeben, verändern und eigene Versionen (Forks) davon veröffentlichen – privat wie kommerziell.</p>
+  <div class="meta">
+    <span class="pill">Copyright © 2026 Patrick Semmler</span>
+    <span class="pill">SPDX: Apache-2.0</span>
+  </div>
+</section>
+
+<h2 id="intro">Auf einen Blick</h2>
+<div class="box warn"><p><span class="label">Hinweis:</span> Die folgende Zusammenfassung ist eine unverbindliche Lesehilfe. Rechtsverbindlich ist allein der englische <a href="#license-text">Lizenztext</a>.</p></div>
+
+<h3 id="intro-allowed">Das dürfen Sie</h3>
+<ul class="checks yes">
+  <li>Das Programm für jeden Zweck <b>nutzen</b> – privat, im Unternehmen, kommerziell.</li>
+  <li>Programm und Quelltext <b>kopieren und weitergeben</b>, auch gegen Geld.</li>
+  <li>Den Quelltext <b>verändern</b> und darauf aufbauen.</li>
+  <li><b>Eigene Versionen (Forks)</b> veröffentlichen, unter Apache 2.0 oder für Ihre Änderungen unter einer anderen Lizenz.</li>
+  <li>Patente der Mitwirkenden nutzen, soweit sie deren Beiträge betreffen (Patentlizenz, Abschnitt 3).</li>
+</ul>
+
+<h3 id="intro-conditions">Das müssen Sie beachten, wenn Sie weitergeben</h3>
+<ul class="checks must">
+  <li>Eine <b>Kopie dieser Lizenz</b> beilegen (Datei <span class="path">LICENSE</span> oder diese Seite).</li>
+  <li>Vorhandene <b>Copyright-, Patent- und Urheberhinweise</b> erhalten, auch die Datei <span class="path">NOTICE</span>.</li>
+  <li><b>Geänderte Dateien kennzeichnen</b>, z. B. mit einem Vermerk „geändert von …“.</li>
+  <li>Die Lizenzen der <a href="#third-party">Drittanbieter-Komponenten</a> einhalten (alle erlauben die Weitergabe; meist genügt es, ihre Hinweise beizulegen).</li>
+</ul>
+
+<h3 id="intro-not">Das ist nicht enthalten</h3>
+<ul class="checks no">
+  <li><b>Keine Markenrechte:</b> Der Name „GodSaveTheScreen“ und das Logo sind nicht mitlizenziert (Abschnitt 6).</li>
+  <li><b>Keine Gewährleistung:</b> Das Programm wird „wie besehen“ bereitgestellt (Abschnitt 7).</li>
+  <li><b>Keine Haftung</b> der Mitwirkenden für Schäden, soweit gesetzlich zulässig (Abschnitt 8).</li>
+</ul>
+
+<h2 id="forks">Forks und eigene Versionen</h2>
+<p>Forks sind ausdrücklich erwünscht. Damit Nutzer Original und Fork auseinanderhalten können, bitte:</p>
+<ol class="steps">
+  <li><b>Einen eigenen Namen</b> verwenden, der nicht mit „GodSaveTheScreen“ verwechselt werden kann. Ein Hinweis wie „basiert auf GodSaveTheScreen“ ist erlaubt und erwünscht.</li>
+  <li>Die Dateien <span class="path">LICENSE</span>, <span class="path">NOTICE</span> und <span class="path">THIRD-PARTY-NOTICES.txt</span> mitliefern; eigene Hinweise dürfen Sie in <span class="path">NOTICE</span> ergänzen.</li>
+  <li>Geänderte Quelldateien als geändert kennzeichnen.</li>
+</ol>
+<div class="box tip"><p>Ihre eigenen Änderungen dürfen Sie unter einer anderen Lizenz veröffentlichen. Der übernommene Code bleibt aber unter der Apache License 2.0, mit allen Hinweisen.</p></div>
+
+<h2 id="license-text">Lizenztext (Apache License 2.0)</h2>
+<p>Der verbindliche Originaltext, wie er auch in der Datei <span class="path">LICENSE</span> beiliegt. Der Anhang am Ende ist die Vorlage für Lizenzvermerke in Quelldateien. Der Rechteinhaber dieses Programms steht oben und in <span class="path">NOTICE</span>.</p>
+<pre class="license" data-include="../../../LICENSE"></pre>
+
+<h2 id="third-party">Drittanbieter-Komponenten</h2>
+<p>GodSaveTheScreen enthält bzw. verwendet die folgenden Komponenten anderer Autoren. Ihre Rechte bleiben unberührt; jede Komponente steht unter ihrer eigenen Lizenz. Die Liste entspricht der beiliegenden Datei <span class="path">THIRD-PARTY-NOTICES.txt</span>.</p>
+<div class="box note"><p>Die Win32-Metadaten von Microsoft (<span class="path">Microsoft.Windows.SDK.Win32Metadata</span>, <span class="path">…Win32Docs</span>, <span class="path">…WDK.Win32Metadata</span>) und der Generator <span class="path">Microsoft.Windows.CsWin32</span> werden nur beim Erstellen des Programms verwendet und sind nicht Bestandteil der ausgelieferten Dateien.</p></div>
+<!-- third-party: ../../../THIRD-PARTY-NOTICES.txt -->
+
+<h3 id="third-party-texts">Lizenztexte</h3>
+<p>Die Copyright-Zeilen der einzelnen Komponenten stehen in der Tabelle oben.</p>
+<h4 id="text-mit">MIT License</h4>
+<pre class="license" data-include="../texts/MIT.txt"></pre>
+<h4 id="text-ms-pl">Microsoft Public License (MS-PL)</h4>
+<pre class="license" data-include="../texts/MS-PL.txt"></pre>
+<h4 id="text-apache">Apache License 2.0</h4>
+<p>Gleicher Text wie oben unter <a href="#license-text">Lizenztext</a>.</p>
+<h4 id="text-unicode">Unicode License v3</h4>
+<p>In der Tabelle beim Eintrag „Unicode-Daten“ unter „Lizenztext“.</p>
+
+<footer>GodSaveTheScreen {{VERSION}} · Copyright © 2026 Patrick Semmler · Apache License 2.0 · <a href="#intro">Zum Anfang</a></footer>
+</div>
+</main>
+</div>
+<script src="../../help/help.js"></script>
+</body>
+</html>

@@ -75,11 +75,16 @@ Hinweise:
 - Läuft die App, sperrt sie die DLLs in `bin\`: für parallele Builds `-p:ArtifactsPath=C:/Temp/gsts` verwenden.
 - WPF ist nicht trimmbar, das Release wird deshalb ohne `PublishTrimmed` veröffentlicht.
 - Die Versionsnummer steht in `Directory.Build.props`; der Git-Hash wird automatisch an die `InformationalVersion` gehängt.
-- Die Lizenzhinweise der NuGet-Pakete erzeugt `build\generate-notices.ps1` (`THIRD-PARTY-NOTICES.txt`).
+- Die Lizenzhinweise der NuGet-Pakete erzeugt `build\generate-notices.ps1` (`THIRD-PARTY-NOTICES.txt`); nach Paketänderungen neu erzeugen, die Lizenzseite übernimmt sie beim nächsten Build.
 
 ## Dokumentation
 
 - Benutzeranleitung: Quellen in [docs/help](docs/help/) (`de/index.html`, `en/index.html`, gemeinsames `help.css`/`help.js`); der Build bettet CSS, Skript und Bilder ein und legt die fertigen HTML-Dateien neben die EXE. Bildschirmfotos neu erzeugen: `pwsh build/generate-help-screenshots.ps1`
+- Lizenzseite: Quellen in [docs/license](docs/license/); der Build setzt [LICENSE](LICENSE), die Lizenztexte aus `docs/license/texts` und `THIRD-PARTY-NOTICES.txt` ein (`GodSaveTheScreen-Lizenz.html`/`-License.html` neben der EXE, aufrufbar unter Einstellungen → Info)
 - [Umsetzungsplan](docs/Umsetzungsplan.md) und [Meilensteine](docs/meilensteine/)
 - [Architektur für Agenten](docs/agent/architecture.md)
 - [Änderungen](CHANGELOG.md)
+
+## Lizenz
+
+GodSaveTheScreen ist freie Software unter der [Apache License 2.0](LICENSE) – Copyright © 2026 Patrick Semmler. Nutzung, Weitergabe, Änderungen und Forks sind erlaubt; bitte dabei `LICENSE` und [NOTICE](NOTICE) mitgeben, geänderte Dateien kennzeichnen und für Forks einen eigenen Namen verwenden. Die Lizenzen der verwendeten Komponenten stehen in [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt).

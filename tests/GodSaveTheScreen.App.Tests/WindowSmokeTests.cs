@@ -51,7 +51,8 @@ public sealed class WindowSmokeTests
             hotkeys,
             Substitute.For<IThemeService>(),
             Substitute.For<IAppPaths>(),
-            Substitute.For<IDialogService>());
+            Substitute.For<IDialogService>(),
+            Substitute.For<IHelpService>());
     }
 
     [StaFact]
