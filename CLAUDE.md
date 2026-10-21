@@ -196,3 +196,12 @@ Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `doc
 - **Was wurde gemacht**: Die Symbole `icon-<id>.png` werden eigenständig aus `ToolBase.Symbol`/`IconPath` gerendert (32 × 32, mittig) statt den Listeneintrag der Werkzeugleiste abzubilden; alle Bildschirmfotos neu erzeugt
 - **Warum**: Das Abbild des Listeneintrags war um dessen Versatz verschoben, sichtbar war nur die linke obere Ecke des Symbols
 - **Seiteneffekte / Hinweise**: Die Werkzeugleiste in der Editor-Übersicht wird dadurch nicht mehr gescrollt. Tests: App 615 grün
+
+### Hilfe landete im Unterordner, Release-Tests scheiterten – 21.10.2026
+- **Kategorie**: Bugfix
+- **Verbesserungsliste-ID**: – (Nutzermeldung)
+- **Version**: 1.8.0.2
+- **Geänderte Dateien**: `build/HelpBundle.targets`, `tests/GodSaveTheScreen.App.Tests/WindowSmokeTests.cs`, `PropertyPanelLayoutTests.cs`, `HelpScreenshotGenerator.cs`, `Directory.Build.props`, `docs/agent/architecture.md`
+- **Was wurde gemacht**: Die gebündelten Hilfedateien bekommen `Link` = Dateiname, damit sie direkt neben der EXE landen. Tests, die eine WPF-`Application` anlegen oder WPF-UI-Steuerelemente erzeugen (`WindowSmokeTests`, `PropertyPanelLayoutTests`, `HelpScreenshotGenerator`), laufen in der gemeinsamen Collection `WpfApplicationTests` nacheinander
+- **Warum**: Liegt `obj` im Projektordner (normaler Build ohne `ArtifactsPath`, also auch `release.ps1`), berechnete MSBuild den Zielpfad relativ zum Projekt -> `bin\…\obj\…\help\`; `Hilfe_LiegtGebuendeltNebenDerAnwendung` schlug fehl. Zusätzlich scheiterte sporadisch `SpinBox_BegrenztRundetUndSchrittweite` bzw. die Smoke-Tests („concurrent update“, „"" ist kein gültiger Wert für FontSize“): WPF-UI liest beim Erzeugen eines `SymbolIcon` die Ressourcen der `Application`, die ein paralleler Test gerade befüllt
+- **Seiteneffekte / Hinweise**: Vorher 4 von 10 Läufen mit Fehler, danach 12 von 12 grün

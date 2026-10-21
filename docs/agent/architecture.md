@@ -102,6 +102,8 @@ Verified against working tree on top of commit d8621a0 (Benutzeranleitung uncomm
 - Eigene Fenster: `WDA_EXCLUDEFROMCAPTURE` (Build 19041+), sonst im Snapshot; `CountdownWindow` nie aktivieren
 - Tray-Symbol braucht `System.Drawing.Icon`; Hotkeys beim `HotkeyRecorder` pausieren
 - WPF-`Application` ist threadgebunden: alle Smoke-Tests mit echten Fenstern in EINEM `[StaFact]` (`WindowSmokeTests`)
+- Tests, die eine `Application` anlegen oder WPF-UI-Steuerelemente (z. B. `SymbolIcon`, `SpinBox`) erzeugen, gehören in `[Collection(WpfApplicationTests.Name)]` – parallel lesen die Steuerelemente die gerade befüllten `Application`-Ressourcen (sporadische Fehler)
+- Eigene Ausgabedateien aus `obj` (z. B. Hilfe) brauchen `Link`/`TargetPath`, sonst landen sie bei `obj` im Projektordner in `bin\…\obj\…`
 - Tests/Builds nicht aus sehr langen Pfaden: Prozess stürzt beim Anzeigen eines `FluentWindow` ab (0xC0000409); kurzen `-p:ArtifactsPath=C:/Temp/...` nutzen; Resx-Tests brauchen Ausgabe unter dem Repo
 - Läuft die App, sperrt sie `bin\`-DLLs: Build/Test mit abweichendem `ArtifactsPath`
 - `RenderTargetBitmap` liefert `Pbgra32`; Text im Export `PixelsPerDip=1`, `TextRenderingMode=Grayscale`

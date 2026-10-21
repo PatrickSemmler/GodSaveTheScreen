@@ -98,7 +98,9 @@
     <BundleHelpPage Template="%(HelpTemplate.FullPath)" Output="$(_HelpOutputDir)%(HelpTemplate.OutputName)" AllowMissing="$(HelpAllowMissingImages)" Version="$(Version)" />
     <ItemGroup>
       <_HelpBundled Include="@(HelpTemplate->'$(_HelpOutputDir)%(OutputName)')" />
+      <!-- Link: sonst wird der Zielpfad relativ zum Projekt berechnet (obj im Projektordner -> bin\obj\...\help\). -->
       <None Include="@(_HelpBundled)" Condition="Exists('%(_HelpBundled.FullPath)')"
+            Link="%(_HelpBundled.Filename)%(_HelpBundled.Extension)"
             CopyToOutputDirectory="PreserveNewest"
             CopyToPublishDirectory="PreserveNewest"
             ExcludeFromSingleFile="true" />

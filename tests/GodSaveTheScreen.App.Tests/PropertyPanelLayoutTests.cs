@@ -10,6 +10,7 @@ using GodSaveTheScreen.Core.Undo;
 namespace GodSaveTheScreen.App.Tests;
 
 /// <summary>Überarbeitetes Eigenschaftenpanel: Ein/Aus-Schalter der Effekte, gemerkter Aufklapp-Zustand, Zahlenfeld.</summary>
+[Collection(WpfApplicationTests.Name)]
 public sealed class PropertyPanelLayoutTests
 {
     private static (EditorHarness Harness, TextAnnotation Text) WithText()

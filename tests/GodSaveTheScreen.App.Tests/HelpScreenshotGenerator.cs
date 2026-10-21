@@ -29,6 +29,7 @@ namespace GodSaveTheScreen.App.Tests;
 /// Läuft nur mit Umgebungsvariable <c>GSTS_HELP_OUT</c> (Pfad zu <c>docs/help</c>) und allein im Prozess
 /// (eine WPF-<c>Application</c> je Prozess): <c>build/generate-help-screenshots.ps1</c>.
 /// </summary>
+[Collection(WpfApplicationTests.Name)]
 public sealed class HelpScreenshotGenerator
 {
     /// <summary>Auflösung der Bilder (1,5 = 144 dpi, scharf auf hochauflösenden Bildschirmen); die Hilfe zeigt sie in Originalgröße (<c>help.js</c>).</summary>

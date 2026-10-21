@@ -14,7 +14,19 @@ using Wpf.Ui.Controls;
 
 namespace GodSaveTheScreen.App.Tests;
 
+/// <summary>
+/// Tests, die eine WPF-<c>Application</c> anlegen oder WPF-UI-Steuerelemente erzeugen, laufen nacheinander: WPF-UI liest beim
+/// Erzeugen von Steuerelementen (z. B. <c>SymbolIcon</c>) die Ressourcen der <c>Application</c>, die ein paralleler Test gerade
+/// auf einem anderen Thread befüllt – sporadisch „concurrent update“ bzw. „"" ist kein gültiger Wert für FontSize“.
+/// </summary>
+[CollectionDefinition(Name)]
+public sealed class WpfApplicationTests
+{
+    public const string Name = "WPF-Anwendung";
+}
+
 /// <summary>Instanziiert die neuen Fenster mit den echten XAML-Ressourcen, um Markup- und Bindungsfehler früh zu finden.</summary>
+[Collection(WpfApplicationTests.Name)]
 public sealed class WindowSmokeTests
 {
     private static void EnsureApplication()
