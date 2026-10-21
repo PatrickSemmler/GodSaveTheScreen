@@ -43,6 +43,30 @@ public static class StyleApplier
         marker.FontFamilyName = style.FontFamilyName;
         marker.Shadow = style.Shadow ?? ShadowStyle.None;
     }
+
+    /// <summary>Alle Felder des Stils (inklusive Deckkraft); Text, Körper und Spitze bleiben.</summary>
+    public static void Apply(CalloutAnnotation callout, CalloutStyle style)
+    {
+        callout.Shape = style.Shape;
+        callout.CornerRadius = Math.Clamp(style.CornerRadius, 0, CalloutAnnotation.MaxCornerRadius);
+        callout.TailWidth = Math.Clamp(style.TailWidth, 1, CalloutAnnotation.MaxTailWidth);
+        callout.TailCurved = style.TailCurved;
+        callout.TailCurveReversed = style.TailCurveReversed;
+        callout.FontFamilyName = style.FontFamilyName;
+        callout.FontWeight = style.FontWeight;
+        callout.FontStyle = style.FontStyle;
+        callout.FontStretch = style.FontStretch;
+        callout.FontSize = Math.Clamp(style.FontSize, CalloutAnnotation.MinFontSize, CalloutAnnotation.MaxFontSize);
+        callout.Decorations = style.Decorations;
+        callout.TextAlignment = style.TextAlignment;
+        callout.TextColor = style.TextColor;
+        callout.Background = style.Background;
+        callout.Border = style.Border ?? new CalloutStyle().Border;
+        callout.BorderBlur = Math.Clamp(style.BorderBlur, 0, CalloutAnnotation.MaxBorderBlur);
+        callout.Padding = Math.Clamp(style.Padding, 0, CalloutAnnotation.MaxPadding);
+        callout.Shadow = style.Shadow ?? ShadowStyle.None;
+        callout.Opacity = Math.Clamp(style.Opacity, 0, 1);
+    }
 }
 
 /// <summary>Text: Klick setzt einen Text, Ziehen zieht eine Textbox mit Umbruchbreite; danach sofort Bearbeitung.</summary>

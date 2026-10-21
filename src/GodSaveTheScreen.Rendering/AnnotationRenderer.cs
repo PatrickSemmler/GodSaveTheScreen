@@ -34,6 +34,9 @@ public sealed record RenderContext
 
     public EmojiCache Emojis { get; init; } = EmojiCache.Shared;
 
+    /// <summary>Text von Sprechblasen weglassen (während der Textbearbeitung zeigt ein Eingabefeld den Text).</summary>
+    public bool HideCalloutText { get; init; }
+
     public static RenderContext Default { get; } = new();
 }
 
@@ -157,7 +160,7 @@ public static partial class AnnotationRenderer
     /// <summary>Schatten = Deckung des ganzen Objekts in Schattenfarbe, weichgezeichnet und nach rechts unten versetzt.</summary>
     private static void DrawShadow(DrawingContext dc, Annotation annotation, ShadowStyle shadow, RenderContext context)
     {
-        var layer = SoftLayerCache.Get(annotation, "shadow", SoftScale(context), () =>
+        SoftLayer? Create()
         {
             var drawing = new DrawingGroup();
             using (var inner = drawing.Open())
@@ -167,7 +170,12 @@ public static partial class AnnotationRenderer
 
             drawing.Freeze();
             return SoftLayer.Create(drawing, shadow.Color, Math.Clamp(shadow.Blur, 0, ShadowStyle.MaxBlur), SoftScale(context), context.EmojiMaxPixels);
-        });
+        }
+
+        // Ohne Text gezeichnete Sprechblase (Textbearbeitung) nicht cachen, sonst fehlte der Text danach im Schatten.
+        var layer = context.HideCalloutText && annotation is CalloutAnnotation
+            ? Create()
+            : SoftLayerCache.Get(annotation, "shadow", SoftScale(context), Create);
         if (layer is null)
         {
             return;
@@ -218,6 +226,9 @@ public static partial class AnnotationRenderer
                 break;
             case StampAnnotation stamp:
                 StampRenderer.Draw(dc, stamp, context);
+                break;
+            case CalloutAnnotation callout:
+                CalloutRenderer.Draw(dc, callout, context);
                 break;
         }
     }

@@ -28,6 +28,7 @@ public static class AnnotationNames
         MagnifierAnnotation => "Shape_Magnifier",
         EmojiAnnotation => "Shape_Emoji",
         StampAnnotation => "Shape_Stamp",
+        CalloutAnnotation => "Shape_Callout",
         LineAnnotation { EndCap: not LineEndStyle.None } or LineAnnotation { StartCap: not LineEndStyle.None } => "Shape_Arrow",
         LineAnnotation => "Shape_Line",
         _ => annotation.GetType().Name,
@@ -53,7 +54,12 @@ public static class AnnotationNames
             return EmojiCatalog.Shared.Find(emoji.Sequence)?.GetName() ?? KindName(annotation);
         }
 
-        return annotation is TextAnnotation { Text.Length: > 0 } text ? text.Text.Split('\n')[0] : KindName(annotation);
+        return annotation switch
+        {
+            TextAnnotation { Text.Length: > 0 } text => text.Text.Split('\n')[0],
+            CalloutAnnotation { Text.Length: > 0 } callout => callout.Text.Split('\n')[0],
+            _ => KindName(annotation),
+        };
     }
 }
 

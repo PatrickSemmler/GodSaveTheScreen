@@ -176,6 +176,9 @@ public sealed record AppSettings
     /// <summary>Letzte Konfiguration des Stempelwerkzeugs.</summary>
     public StampStyle StampDefaults { get; init; } = new();
 
+    /// <summary>Letzte Konfiguration des Sprechblasen-Werkzeugs.</summary>
+    public CalloutStyle CalloutDefaults { get; init; } = new();
+
     /// <summary>Zuletzt verwendete Emojis (Sequenz), neueste zuerst, höchstens <see cref="MaxRecentEmojis"/>.</summary>
     public StringList EmojiRecent { get; init; } = [];
 
@@ -229,6 +232,7 @@ public sealed record AppSettings
         var freehand = FreehandDefaults ?? new FreehandStyle();
         var emoji = EmojiDefaults ?? new EmojiStyle();
         var stamp = StampDefaults ?? new StampStyle();
+        var callout = CalloutDefaults ?? new CalloutStyle();
         var presets = new ToolPresetMap();
         foreach (var (key, list) in ToolPresets ?? [])
         {
@@ -250,6 +254,7 @@ public sealed record AppSettings
                 FontFamilyName = stamp.FontFamilyName ?? new StampStyle().FontFamilyName,
                 FontSize = stamp.FontSize > 0 ? stamp.FontSize : new StampStyle().FontSize,
             },
+            CalloutDefaults = callout.Normalized(),
             EmojiRecent = EmojiRecent ?? [],
             EmojiFavorites = EmojiFavorites ?? [],
             RecentColors = RecentColors ?? [],

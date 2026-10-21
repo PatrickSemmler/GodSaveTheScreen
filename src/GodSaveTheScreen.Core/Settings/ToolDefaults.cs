@@ -105,6 +105,64 @@ public sealed record StampStyle
     public double Opacity { get; init; } = 1;
 }
 
+/// <summary>Standardwerte des Sprechblasen-Werkzeugs.</summary>
+public sealed record CalloutStyle
+{
+    public CalloutShape Shape { get; init; }
+
+    public double CornerRadius { get; init; } = 12;
+
+    public double TailWidth { get; init; } = 24;
+
+    public bool TailCurved { get; init; }
+
+    public bool TailCurveReversed { get; init; }
+
+    public string FontFamilyName { get; init; } = "Segoe UI";
+
+    public int FontWeight { get; init; } = 400;
+
+    public FontStyleKind FontStyle { get; init; }
+
+    public int FontStretch { get; init; } = 5;
+
+    public double FontSize { get; init; } = 20;
+
+    public TextDecorationKind Decorations { get; init; }
+
+    public TextAlignmentKind TextAlignment { get; init; } = TextAlignmentKind.Center;
+
+    public ArgbColor TextColor { get; init; } = ArgbColor.White;
+
+    public ArgbColor Background { get; init; } = ArgbColor.FromRgb(0xE5, 0x39, 0x35);
+
+    /// <summary>Rahmen („Leuchtfarbe“) außen um die Blase; Stärke 0 = keiner.</summary>
+    public StrokeStyle Border { get; init; } = new(ArgbColor.FromRgb(0xB7, 0x1C, 0x1C), 0);
+
+    /// <summary>Weicher Rand des Rahmens (Leuchten).</summary>
+    public double BorderBlur { get; init; }
+
+    public double Padding { get; init; } = 10;
+
+    public double Opacity { get; init; } = 1;
+
+    public ShadowStyle Shadow { get; init; } = new(new ArgbColor(0x59, 0, 0, 0), 3, 6);
+
+    /// <summary>Ersetzt fehlende Werte (ältere oder beschädigte Einstellungen) durch die Standardwerte.</summary>
+    public CalloutStyle Normalized()
+    {
+        var defaults = new CalloutStyle();
+        return this with
+        {
+            FontFamilyName = string.IsNullOrWhiteSpace(FontFamilyName) ? defaults.FontFamilyName : FontFamilyName,
+            FontSize = FontSize > 0 ? FontSize : defaults.FontSize,
+            Border = Border ?? defaults.Border,
+            Shadow = Shadow ?? ShadowStyle.None,
+            TailWidth = TailWidth > 0 ? TailWidth : defaults.TailWidth,
+        };
+    }
+}
+
 /// <summary>Werkzeug-ID → Standardwerte, mit Wertgleichheit (damit <c>AppSettings</c> als Record vergleichbar bleibt).</summary>
 public sealed class ShapeDefaultsMap : Dictionary<string, ShapeStyle>
 {

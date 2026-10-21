@@ -14,6 +14,7 @@ public enum PresetKind
     Marker,
     Blur,
     Magnifier,
+    Callout,
 }
 
 /// <summary>
@@ -30,6 +31,7 @@ public static class PresetStyles
         MarkerTool.ToolId => PresetKind.Marker,
         BlurTool.ToolId => PresetKind.Blur,
         MagnifierTool.ToolId => PresetKind.Magnifier,
+        CalloutTool.ToolId => PresetKind.Callout,
         _ => null,
     };
 
@@ -46,6 +48,7 @@ public static class PresetStyles
         MarkerAnnotation => MarkerTool.ToolId,
         BlurAnnotation => BlurTool.ToolId,
         MagnifierAnnotation => MagnifierTool.ToolId,
+        CalloutAnnotation => CalloutTool.ToolId,
         _ => null,
     };
 
@@ -87,6 +90,8 @@ public static class PresetStyles
                 return new ToolPreset { Name = name, Blur = CaptureBlur(context.BlurTemplate.ToStyle(), selection.OfType<BlurAnnotation>().ToList()) };
             case PresetKind.Magnifier:
                 return new ToolPreset { Name = name, Magnifier = CaptureMagnifier(context.MagnifierTemplate.ToStyle(), selection.OfType<MagnifierAnnotation>().ToList()) };
+            case PresetKind.Callout:
+                return new ToolPreset { Name = name, Callout = CaptureCallout(context.Callout.Style, selection.OfType<CalloutAnnotation>().ToList()) };
             default:
                 throw new ArgumentException("Werkzeug ohne Vorlagen.", nameof(toolId));
         }
@@ -168,6 +173,9 @@ public static class PresetStyles
             case MagnifierAnnotation magnifier when preset.Magnifier is { } style:
                 magnifier.Apply(style);
                 break;
+            case CalloutAnnotation callout when preset.Callout is { } style:
+                StyleApplier.Apply(callout, style.Normalized());
+                break;
         }
     }
 
@@ -195,6 +203,9 @@ public static class PresetStyles
             case PresetKind.Magnifier when preset.Magnifier is { } magnifier:
                 context.MagnifierTemplate.Apply(magnifier);
                 context.SaveMagnifierTemplate();
+                break;
+            case PresetKind.Callout when preset.Callout is { } callout:
+                context.Callout.Style = callout.Normalized();
                 break;
         }
     }
@@ -289,6 +300,31 @@ public static class PresetStyles
             Shape = Common(blurs, b => b.Shape, fallback.Shape),
             FeatherEdge = Common(blurs, b => b.FeatherEdge, fallback.FeatherEdge),
             RedactColor = Common(blurs, b => b.RedactColor, fallback.RedactColor),
+        };
+
+    private static CalloutStyle CaptureCallout(CalloutStyle fallback, List<CalloutAnnotation> callouts) => callouts.Count == 0
+        ? fallback
+        : new CalloutStyle
+        {
+            Shape = Common(callouts, c => c.Shape, fallback.Shape),
+            CornerRadius = Common(callouts, c => c.CornerRadius, fallback.CornerRadius),
+            TailWidth = Common(callouts, c => c.TailWidth, fallback.TailWidth),
+            TailCurved = Common(callouts, c => c.TailCurved, fallback.TailCurved),
+            TailCurveReversed = Common(callouts, c => c.TailCurveReversed, fallback.TailCurveReversed),
+            FontFamilyName = Common(callouts, c => c.FontFamilyName, fallback.FontFamilyName),
+            FontWeight = Common(callouts, c => c.FontWeight, fallback.FontWeight),
+            FontStyle = Common(callouts, c => c.FontStyle, fallback.FontStyle),
+            FontStretch = Common(callouts, c => c.FontStretch, fallback.FontStretch),
+            FontSize = Common(callouts, c => c.FontSize, fallback.FontSize),
+            Decorations = Common(callouts, c => c.Decorations, fallback.Decorations),
+            TextAlignment = Common(callouts, c => c.TextAlignment, fallback.TextAlignment),
+            TextColor = Common(callouts, c => c.TextColor, fallback.TextColor),
+            Background = Common(callouts, c => c.Background, fallback.Background),
+            Border = CommonStroke(callouts, c => c.Border, fallback.Border),
+            BorderBlur = Common(callouts, c => c.BorderBlur, fallback.BorderBlur),
+            Padding = Common(callouts, c => c.Padding, fallback.Padding),
+            Opacity = Common(callouts, c => c.Opacity, fallback.Opacity),
+            Shadow = Common(callouts, c => c.Shadow, fallback.Shadow),
         };
 
     private static MagnifierStyle CaptureMagnifier(MagnifierStyle fallback, List<MagnifierAnnotation> magnifiers) => magnifiers.Count == 0

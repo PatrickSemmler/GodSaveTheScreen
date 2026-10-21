@@ -113,7 +113,7 @@ public sealed class InteractionState
 /// <summary>Vorschau der Bereichsauswahl: Rechteck/Ellipse über <see cref="Rect"/>, Lasso über <see cref="Points"/>.</summary>
 public sealed record AreaPreview(AreaSelectShape Shape, RectD Rect, IReadOnlyList<PointD> Points);
 
-/// <summary>Laufende Textbearbeitung eines Text- oder Stempelobjekts (bei <see cref="IsNew"/> noch nicht im Dokument).</summary>
+/// <summary>Laufende Textbearbeitung eines Text-, Stempel- oder Sprechblasenobjekts (bei <see cref="IsNew"/> noch nicht im Dokument).</summary>
 public sealed record TextEditSession(Annotation Annotation, bool IsNew)
 {
     public IEditableTextAnnotation Editable => (IEditableTextAnnotation)Annotation;
@@ -133,6 +133,7 @@ public sealed class EditorContext : IDisposable
         Presets = new ToolPresetService(settings);
         Emoji = new EmojiToolState(settings);
         Stamp = new StampToolState(settings);
+        Callout = new CalloutToolState(settings);
         Document.HighlightersBehind = settings.Current.HighlighterBehind;
         Document.Annotations.CollectionChanged += OnAnnotationsChanged;
         Crop = new CropState(document);
@@ -149,6 +150,9 @@ public sealed class EditorContext : IDisposable
 
     /// <summary>Standardwerte des Stempelwerkzeugs (letzte Konfiguration, in den Einstellungen gespeichert).</summary>
     public StampToolState Stamp { get; }
+
+    /// <summary>Standardwerte des Sprechblasen-Werkzeugs (letzte Konfiguration, in den Einstellungen gespeichert).</summary>
+    public CalloutToolState Callout { get; }
 
     /// <summary>Zustand des Zuschnittmodus.</summary>
     public CropState Crop { get; }
@@ -278,16 +282,26 @@ public sealed class EditorContext : IDisposable
         var annotation = session.Annotation;
         var editable = session.Editable;
         var isStamp = annotation is StampAnnotation;
+        var callout = annotation as CalloutAnnotation;
         var normalized = (text ?? string.Empty).Replace("\r\n", "\n", StringComparison.Ordinal);
         var isEmpty = string.IsNullOrWhiteSpace(normalized);
+        var (addDescription, removeDescription) = annotation switch
+        {
+            StampAnnotation => ("Stempel setzen", "Stempel löschen"),
+            CalloutAnnotation => ("Sprechblase einfügen", "Sprechblase löschen"),
+            _ => ("Text einfügen", "Text löschen"),
+        };
 
         if (session.IsNew)
         {
             if (!isEmpty)
             {
                 editable.Text = normalized;
+
+                // Die Sprechblase wächst nach unten, bis der Text hineinpasst.
+                callout?.FitHeightToText();
                 annotation.Name = AnnotationNames.NextName(Document.Annotations, annotation);
-                Undo.Execute(new AddAnnotationAction(Document.Annotations, annotation, description: isStamp ? "Stempel setzen" : "Text einfügen"));
+                Undo.Execute(new AddAnnotationAction(Document.Annotations, annotation, description: addDescription));
                 Selection.Set(annotation);
                 if (isStamp)
                 {
@@ -298,12 +312,13 @@ public sealed class EditorContext : IDisposable
         }
         else if (isEmpty)
         {
-            Undo.Execute(new RemoveAnnotationsAction(Document.Annotations, [annotation], isStamp ? "Stempel löschen" : "Text löschen"));
+            Undo.Execute(new RemoveAnnotationsAction(Document.Annotations, [annotation], removeDescription));
         }
         else if (normalized != editable.Text)
         {
             var before = annotation.Clone();
             editable.Text = normalized;
+            callout?.FitHeightToText();
             Undo.Execute(new ReplaceGeometryAction([(annotation, before, annotation.Clone())], "Text bearbeiten"));
         }
 

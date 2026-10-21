@@ -424,6 +424,12 @@ public partial class EditorCanvas : UserControl
             return;
         }
 
+        if (session.Annotation is CalloutAnnotation callout)
+        {
+            ShowTextEditor(CreateCalloutEditor(callout), selectAll: false);
+            return;
+        }
+
         var annotation = (TextAnnotation)session.Annotation;
         var pad = annotation.EffectivePadding;
         var scale = Math.Max(_viewModel?.Context.Scale ?? 1, 0.01);
@@ -525,6 +531,66 @@ public partial class EditorCanvas : UserControl
         editor.SizeChanged += (_, _) => Center();
         System.Windows.Controls.Canvas.SetLeft(editor, stamp.Center.X);
         System.Windows.Controls.Canvas.SetTop(editor, stamp.Center.Y);
+        return editor;
+    }
+
+    /// <summary>
+    /// Eingabefeld für eine Sprechblase: transparent über der Textfläche der Blase (Blase selbst zeichnet die
+    /// Interaktionsebene ohne Text), Breite = Umbruchbreite, senkrecht mittig gehalten und mit der Blase gedreht.
+    /// </summary>
+    private TextBox CreateCalloutEditor(CalloutAnnotation callout)
+    {
+        var scale = Math.Max(_viewModel?.Context.Scale ?? 1, 0.01);
+        var area = callout.TextArea;
+        var color = BrushCache.GetBrush(callout.TextColor with { A = 255 }) ?? Brushes.Black;
+        var editor = new TextBox
+        {
+            Style = null,
+            Text = callout.Text,
+            AcceptsReturn = true,
+            FontFamily = new FontFamily(callout.FontFamilyName),
+            FontSize = callout.FontSize,
+            FontWeight = FontWeight.FromOpenTypeWeight(Math.Clamp(callout.FontWeight, 1, 999)),
+            FontStyle = callout.FontStyle switch
+            {
+                FontStyleKind.Italic => FontStyles.Italic,
+                FontStyleKind.Oblique => FontStyles.Oblique,
+                _ => FontStyles.Normal,
+            },
+            FontStretch = FontStretch.FromOpenTypeStretch(Math.Clamp(callout.FontStretch, 1, 9)),
+            TextDecorations = ToTextDecorations(callout.Decorations),
+            Foreground = color,
+            CaretBrush = color,
+            SelectionBrush = Brushes.DodgerBlue,
+            Background = Brushes.Transparent,
+            BorderBrush = Brushes.DodgerBlue,
+            BorderThickness = new Thickness(1 / scale),
+            Padding = new Thickness(0),
+            Width = area.Width + (2 / scale),
+            MinHeight = callout.FontSize * 1.3,
+            TextWrapping = TextWrapping.Wrap,
+            TextAlignment = callout.TextAlignment switch
+            {
+                TextAlignmentKind.Left => TextAlignment.Left,
+                TextAlignmentKind.Right => TextAlignment.Right,
+                _ => TextAlignment.Center,
+            },
+            VerticalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Disabled,
+            FocusVisualStyle = null,
+            SnapsToDevicePixels = false,
+
+            // Die Textfläche liegt mittig im Körper: Drehung um die Feldmitte = Drehung um die Körpermitte.
+            RenderTransformOrigin = new Point(0.5, 0.5),
+            RenderTransform = new RotateTransform(callout.Rotation),
+        };
+
+        // Senkrecht mittig in der Textfläche halten, auch wenn das Feld beim Tippen wächst.
+        void Center() => System.Windows.Controls.Canvas.SetTop(editor, area.Y + (area.Height / 2) - (editor.ActualHeight / 2));
+
+        editor.SizeChanged += (_, _) => Center();
+        System.Windows.Controls.Canvas.SetLeft(editor, area.X - (1 / scale));
+        System.Windows.Controls.Canvas.SetTop(editor, area.Y);
         return editor;
     }
 

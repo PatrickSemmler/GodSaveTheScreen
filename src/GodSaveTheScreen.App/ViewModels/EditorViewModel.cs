@@ -85,6 +85,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         ToolOptions = new ToolOptionsViewModel(context, () => ActiveTool);
         EmojiProperties = new EmojiPropertiesViewModel(context, () => ActiveTool);
         StampProperties = new StampPropertiesViewModel(context, () => ActiveTool);
+        CalloutProperties = new CalloutPropertiesViewModel(context, () => ActiveTool);
         ShadowProperties = new ShadowPropertiesViewModel(context, () => ActiveTool);
         MaskTools = new MaskToolsViewModel(context, () => ActiveTool, tools.Tools.OfType<BackgroundEraserTool>().FirstOrDefault());
         EmojiPicker = new EmojiPickerViewModel(context);
@@ -129,6 +130,9 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     /// <summary>Stempeltext, Schrift, Rahmen, Abnutzung und Neigung bzw. Vorgaben des Stempelwerkzeugs.</summary>
     public StampPropertiesViewModel StampProperties { get; }
+
+    /// <summary>Form, Spitze, Schrift, Farben und Leuchten der Sprechblasen bzw. Vorgaben des Sprechblasen-Werkzeugs.</summary>
+    public CalloutPropertiesViewModel CalloutProperties { get; }
 
     /// <summary>Schatten der Auswahl bzw. Vorgaben des aktiven Werkzeugs.</summary>
     public ShadowPropertiesViewModel ShadowProperties { get; }
@@ -187,7 +191,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     /// <summary>Im Eigenschaftenbereich gibt es etwas zu bearbeiten.</summary>
     public bool HasPanelContent =>
-        Properties.IsApplicable || TextProperties.IsApplicable || MarkerProperties.IsApplicable || ToolOptions.IsApplicable || EmojiProperties.IsApplicable || StampProperties.IsApplicable || ShadowProperties.IsApplicable || MaskTools.IsApplicable || Properties.ShowOpacity || Presets.IsApplicable;
+        Properties.IsApplicable || TextProperties.IsApplicable || MarkerProperties.IsApplicable || ToolOptions.IsApplicable || EmojiProperties.IsApplicable || StampProperties.IsApplicable || CalloutProperties.IsApplicable || ShadowProperties.IsApplicable || MaskTools.IsApplicable || Properties.ShowOpacity || Presets.IsApplicable;
 
     /// <summary>Das Panel zeigt die Einstellungen des aktiven Werkzeugs (keine Auswahl) und sie lassen sich zurücksetzen.</summary>
     public bool CanResetToolDefaults => Context.Selection.Items.Count == 0 && ToolDefaultsReset.Supports(ActiveTool);
@@ -379,6 +383,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         ToolOptions.Refresh();
         EmojiProperties.Refresh();
         StampProperties.Refresh();
+        CalloutProperties.Refresh();
         ShadowProperties.Refresh();
         MaskTools.Refresh();
         if (EmojiProperties.IsApplicable)
@@ -941,6 +946,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         ToolOptions.Dispose();
         EmojiProperties.Dispose();
         StampProperties.Dispose();
+        CalloutProperties.Dispose();
         ShadowProperties.Dispose();
         MaskTools.Dispose();
         EmojiPicker.Dispose();

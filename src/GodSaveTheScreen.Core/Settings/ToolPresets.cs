@@ -78,7 +78,7 @@ public sealed record MagnifierStyle
 /// <summary>
 /// Benannte Vorlage eines Werkzeugs. Genau der zur Werkzeugart passende Stil ist gesetzt:
 /// <see cref="Shape"/> (Formen, Stift, Textmarker; Stift/Textmarker zusätzlich <see cref="Smoothing"/> und <see cref="UsePressure"/>),
-/// <see cref="Text"/>, <see cref="Marker"/>, <see cref="Blur"/> oder <see cref="Magnifier"/>.
+/// <see cref="Text"/>, <see cref="Marker"/>, <see cref="Blur"/>, <see cref="Magnifier"/> oder <see cref="Callout"/>.
 /// </summary>
 public sealed record ToolPreset
 {
@@ -97,6 +97,8 @@ public sealed record ToolPreset
     public BlurStyle? Blur { get; init; }
 
     public MagnifierStyle? Magnifier { get; init; }
+
+    public CalloutStyle? Callout { get; init; }
 }
 
 /// <summary>Vorlagenliste mit Wertgleichheit.</summary>

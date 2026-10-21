@@ -588,6 +588,165 @@
             </StackPanel>
           </StackPanel>
 
+          <!-- Sprechblase -->
+          <StackPanel DataContext="{Binding CalloutProperties}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
+            <TextBlock Text="{l:Loc Callout_Hint}" TextWrapping="Wrap" Opacity="0.75" Margin="0,10,0,0"
+                       Visibility="{Binding ShowDefaults, Converter={StaticResource BoolToVisibility}}" />
+
+            <TextBlock Text="{l:Loc Callout_Shape}" Style="{StaticResource FieldLabel}" />
+            <ComboBox ItemsSource="{Binding ShapeChoices}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                      SelectedValue="{Binding Shape, Mode=TwoWay}" HorizontalAlignment="Stretch"
+                      AutomationProperties.Name="{l:Loc Callout_Shape}" />
+
+            <StackPanel Visibility="{Binding ShowCornerRadius, Converter={StaticResource BoolToVisibility}}">
+              <TextBlock Text="{l:Loc Props_CornerRadius}" Style="{StaticResource FieldLabel}" />
+              <ui:NumberBox Minimum="0" Maximum="500" SmallChange="1" LargeChange="10" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                            Value="{Binding CornerRadius, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            AutomationProperties.Name="{l:Loc Props_CornerRadius}" />
+            </StackPanel>
+
+            <TextBlock Text="{l:Loc Callout_TailWidth}" Style="{StaticResource FieldLabel}" />
+            <ui:NumberBox Minimum="1" Maximum="500" SmallChange="1" LargeChange="5" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                          Value="{Binding TailWidth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          AutomationProperties.Name="{l:Loc Callout_TailWidth}" />
+            <StackPanel Visibility="{Binding ShowTailCurved, Converter={StaticResource BoolToVisibility}}">
+              <CheckBox Content="{l:Loc Callout_TailCurved}" Margin="0,10,0,0" IsChecked="{Binding TailCurved, Mode=TwoWay}" />
+              <CheckBox Content="{l:Loc Callout_TailCurveReversed}" Margin="24,6,0,0" IsChecked="{Binding TailCurveReversed, Mode=TwoWay}"
+                        IsEnabled="{Binding TailCurved}" />
+            </StackPanel>
+
+            <!-- Drehung nur für ausgewählte Blasen (keine Werkzeug-Vorgabe) -->
+            <StackPanel Visibility="{Binding ShowRotation, Converter={StaticResource BoolToVisibility}}">
+              <TextBlock Text="{l:Loc Callout_Rotation}" Style="{StaticResource FieldLabel}" />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Slider Minimum="-180" Maximum="180" SmallChange="1" LargeChange="15" VerticalAlignment="Center"
+                        Value="{Binding RotationValue, Mode=TwoWay}"
+                        AutomationProperties.Name="{l:Loc Callout_Rotation}" />
+                <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                              Minimum="-180" Maximum="180" SmallChange="1" LargeChange="15" MaxDecimalPlaces="1" ClearButtonEnabled="False"
+                              Value="{Binding Rotation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              AutomationProperties.Name="{l:Loc Callout_Rotation}" />
+                <ui:Button Grid.Column="2" Content="{l:Loc Emoji_ResetRotation}" Margin="8,0,0,0" Command="{Binding ResetRotationCommand}" />
+              </Grid>
+            </StackPanel>
+
+            <TextBlock Text="{l:Loc Text_Font}" Style="{StaticResource FieldLabel}" />
+            <ComboBox ItemsSource="{Binding Fonts}"
+                      SelectedValuePath="Key"
+                      SelectedValue="{Binding FontFamilyName, Mode=TwoWay}"
+                      IsTextSearchEnabled="True"
+                      TextSearch.TextPath="DisplayName"
+                      MaxDropDownHeight="360"
+                      HorizontalAlignment="Stretch"
+                      VirtualizingPanel.IsVirtualizing="True"
+                      VirtualizingPanel.VirtualizationMode="Recycling"
+                      AutomationProperties.Name="{l:Loc Text_Font}">
+              <ComboBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <VirtualizingStackPanel />
+                </ItemsPanelTemplate>
+              </ComboBox.ItemsPanel>
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding DisplayName}" FontFamily="{Binding Family}" FontSize="15" />
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+            <TextBlock Text="{l:Loc Text_FontMissing}" Foreground="#F5A623" TextWrapping="Wrap" Margin="0,4,0,0"
+                       Visibility="{Binding IsFontMissing, Converter={StaticResource BoolToVisibility}}" />
+
+            <TextBlock Text="{l:Loc Text_Typeface}" Style="{StaticResource FieldLabel}" />
+            <ComboBox ItemsSource="{Binding Typefaces}"
+                      DisplayMemberPath="Name"
+                      SelectedItem="{Binding SelectedTypeface, Mode=TwoWay}"
+                      HorizontalAlignment="Stretch"
+                      AutomationProperties.Name="{l:Loc Text_Typeface}" />
+
+            <TextBlock Text="{l:Loc Text_Size}" Style="{StaticResource FieldLabel}" />
+            <ComboBox IsEditable="True"
+                      ItemsSource="{Binding FontSizes}"
+                      Text="{Binding FontSizeText, Mode=TwoWay, UpdateSourceTrigger=LostFocus}"
+                      DropDownClosed="OnFontSizeDropDownClosed"
+                      HorizontalAlignment="Stretch"
+                      AutomationProperties.Name="{l:Loc Text_Size}" />
+
+            <WrapPanel Margin="0,10,0,0">
+              <ToggleButton Style="{StaticResource IconToggle}" IsChecked="{Binding IsBold, Mode=TwoWay}" ToolTip="{l:Loc Text_Bold}" AutomationProperties.Name="{l:Loc Text_Bold}">
+                <ui:SymbolIcon Symbol="TextBold24" />
+              </ToggleButton>
+              <ToggleButton Style="{StaticResource IconToggle}" IsChecked="{Binding IsItalic, Mode=TwoWay}" ToolTip="{l:Loc Text_Italic}" AutomationProperties.Name="{l:Loc Text_Italic}">
+                <ui:SymbolIcon Symbol="TextItalic24" />
+              </ToggleButton>
+              <ToggleButton Style="{StaticResource IconToggle}" IsChecked="{Binding IsUnderline, Mode=TwoWay}" ToolTip="{l:Loc Text_Underline}" AutomationProperties.Name="{l:Loc Text_Underline}">
+                <ui:SymbolIcon Symbol="TextUnderline24" />
+              </ToggleButton>
+              <ToggleButton Style="{StaticResource IconToggle}" IsChecked="{Binding IsStrikethrough, Mode=TwoWay}" ToolTip="{l:Loc Text_Strikethrough}" AutomationProperties.Name="{l:Loc Text_Strikethrough}">
+                <ui:SymbolIcon Symbol="TextStrikethrough24" />
+              </ToggleButton>
+              <Rectangle Width="1" Height="24" Margin="4,0,7,3" Fill="{DynamicResource ControlStrokeColorDefaultBrush}" />
+              <ToggleButton Style="{StaticResource IconToggle}" IsChecked="{Binding IsAlignLeft, Mode=TwoWay}" ToolTip="{l:Loc Text_AlignLeft}" AutomationProperties.Name="{l:Loc Text_AlignLeft}">
+                <ui:SymbolIcon Symbol="TextAlignLeft24" />
+              </ToggleButton>
+              <ToggleButton Style="{StaticResource IconToggle}" IsChecked="{Binding IsAlignCenter, Mode=TwoWay}" ToolTip="{l:Loc Text_AlignCenter}" AutomationProperties.Name="{l:Loc Text_AlignCenter}">
+                <ui:SymbolIcon Symbol="TextAlignCenter24" />
+              </ToggleButton>
+              <ToggleButton Style="{StaticResource IconToggle}" IsChecked="{Binding IsAlignRight, Mode=TwoWay}" ToolTip="{l:Loc Text_AlignRight}" AutomationProperties.Name="{l:Loc Text_AlignRight}">
+                <ui:SymbolIcon Symbol="TextAlignRight24" />
+              </ToggleButton>
+            </WrapPanel>
+
+            <TextBlock Text="{l:Loc Text_Color}" Style="{StaticResource FieldLabel}" />
+            <controls:ColorButton Style="{StaticResource PanelColorButton}" SelectedColor="{Binding TextColor, Mode=TwoWay}" />
+
+            <TextBlock Text="{l:Loc Text_Background}" Style="{StaticResource FieldLabel}" />
+            <controls:ColorButton Style="{StaticResource PanelColorButton}" SelectedColor="{Binding BackgroundColor, Mode=TwoWay}" />
+
+            <TextBlock Text="{l:Loc Callout_Glow}" Style="{StaticResource FieldLabel}" />
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+              </Grid.ColumnDefinitions>
+              <controls:ColorButton Style="{StaticResource PanelColorButton}" SelectedColor="{Binding BorderColor, Mode=TwoWay}" />
+              <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                            Minimum="0" Maximum="50" SmallChange="0.5" LargeChange="2" MaxDecimalPlaces="1" ClearButtonEnabled="False"
+                            Value="{Binding BorderThickness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                            ToolTip="{l:Loc Callout_GlowWidth}" AutomationProperties.Name="{l:Loc Callout_GlowWidth}" />
+            </Grid>
+
+            <TextBlock Text="{l:Loc Callout_GlowBlur}" Style="{StaticResource FieldLabel}" />
+            <ui:NumberBox Minimum="0" Maximum="50" SmallChange="1" LargeChange="5" MaxDecimalPlaces="1" ClearButtonEnabled="False"
+                          Value="{Binding BorderBlur, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          AutomationProperties.Name="{l:Loc Callout_GlowBlur}" />
+
+            <TextBlock Text="{l:Loc Callout_Padding}" Style="{StaticResource FieldLabel}" />
+            <ui:NumberBox Minimum="0" Maximum="200" SmallChange="1" LargeChange="5" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                          Value="{Binding Padding, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                          AutomationProperties.Name="{l:Loc Callout_Padding}" />
+
+            <StackPanel Visibility="{Binding ShowDefaults, Converter={StaticResource BoolToVisibility}}">
+              <TextBlock Text="{l:Loc Props_Opacity}" Style="{StaticResource FieldLabel}" />
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Slider Minimum="0" Maximum="100" SmallChange="1" LargeChange="10" VerticalAlignment="Center"
+                        Value="{Binding DefaultOpacityValue, Mode=TwoWay}"
+                        AutomationProperties.Name="{l:Loc Props_Opacity}" />
+                <ui:NumberBox Grid.Column="1" Width="72" Margin="8,0,0,0" SpinButtonPlacementMode="Hidden"
+                              Minimum="0" Maximum="100" SmallChange="1" LargeChange="10" MaxDecimalPlaces="0" ClearButtonEnabled="False"
+                              Value="{Binding DefaultOpacityPercent, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              AutomationProperties.Name="{l:Loc Props_Opacity}" />
+              </Grid>
+            </StackPanel>
+          </StackPanel>
+
           <!-- Formen -->
           <StackPanel DataContext="{Binding Properties}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
             <TextBlock Text="{l:Loc Props_StrokeColor}" Style="{StaticResource FieldLabel}" />
@@ -656,7 +815,7 @@
             </StackPanel>
           </StackPanel>
 
-          <!-- Schatten (Formen, Linien, Text, Marker, Emoji) -->
+          <!-- Schatten (Formen, Linien, Text, Marker, Emoji, Sprechblasen) -->
           <StackPanel DataContext="{Binding ShadowProperties}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
             <TextBlock Text="{l:Loc Shadow_Color}" Style="{StaticResource FieldLabel}" />
             <controls:ColorButton Style="{StaticResource PanelColorButton}" SelectedColor="{Binding ShadowColor, Mode=TwoWay}" />

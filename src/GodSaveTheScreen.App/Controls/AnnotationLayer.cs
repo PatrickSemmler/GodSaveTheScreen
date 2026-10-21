@@ -99,11 +99,12 @@ public sealed class AnnotationLayer : Canvas
         }
     }
 
-    /// <summary>Gerasterte Inhalte (Emoji, Stempel, Schatten, weiche Kontur) hängen von der Bildschirmauflösung ab.</summary>
+    /// <summary>Gerasterte Inhalte (Emoji, Stempel, Schatten, weiche Kontur, Leuchten) hängen von der Bildschirmauflösung ab.</summary>
     private static bool DependsOnPixelScale(Annotation annotation) =>
         annotation is EmojiAnnotation or StampAnnotation
         || annotation is IShadowAnnotation { Shadow.IsVisible: true }
-        || annotation is TextAnnotation { OutlineBlur: > 0 };
+        || annotation is TextAnnotation { OutlineBlur: > 0 }
+        || annotation is CalloutAnnotation { BorderBlur: > 0 };
 
     /// <summary>Basisbild, das Unschärfe und Lupe gerade sehen.</summary>
     public PixelBuffer? BasePixels => _context.BasePixels;

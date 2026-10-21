@@ -974,4 +974,36 @@ public static class Strings
     public static string Stamp_InkBlend => ResourceManager.GetString("Stamp_InkBlend", Culture) ?? "Stamp_InkBlend";
 
     public static string Stamp_Property => ResourceManager.GetString("Stamp_Property", Culture) ?? "Stamp_Property";
+
+    public static string Tool_Callout => ResourceManager.GetString("Tool_Callout", Culture) ?? "Tool_Callout";
+
+    public static string Shape_Callout => ResourceManager.GetString("Shape_Callout", Culture) ?? "Shape_Callout";
+
+    public static string Callout_Hint => ResourceManager.GetString("Callout_Hint", Culture) ?? "Callout_Hint";
+
+    public static string Callout_Shape => ResourceManager.GetString("Callout_Shape", Culture) ?? "Callout_Shape";
+
+    public static string Callout_Shape_Rounded => ResourceManager.GetString("Callout_Shape_Rounded", Culture) ?? "Callout_Shape_Rounded";
+
+    public static string Callout_Shape_Ellipse => ResourceManager.GetString("Callout_Shape_Ellipse", Culture) ?? "Callout_Shape_Ellipse";
+
+    public static string Callout_Shape_Cloud => ResourceManager.GetString("Callout_Shape_Cloud", Culture) ?? "Callout_Shape_Cloud";
+
+    public static string Callout_TailWidth => ResourceManager.GetString("Callout_TailWidth", Culture) ?? "Callout_TailWidth";
+
+    public static string Callout_TailCurved => ResourceManager.GetString("Callout_TailCurved", Culture) ?? "Callout_TailCurved";
+
+    public static string Callout_TailCurveReversed => ResourceManager.GetString("Callout_TailCurveReversed", Culture) ?? "Callout_TailCurveReversed";
+
+    public static string Callout_Rotation => ResourceManager.GetString("Callout_Rotation", Culture) ?? "Callout_Rotation";
+
+    public static string Callout_Glow => ResourceManager.GetString("Callout_Glow", Culture) ?? "Callout_Glow";
+
+    public static string Callout_GlowWidth => ResourceManager.GetString("Callout_GlowWidth", Culture) ?? "Callout_GlowWidth";
+
+    public static string Callout_GlowBlur => ResourceManager.GetString("Callout_GlowBlur", Culture) ?? "Callout_GlowBlur";
+
+    public static string Callout_Padding => ResourceManager.GetString("Callout_Padding", Culture) ?? "Callout_Padding";
+
+    public static string Callout_Property => ResourceManager.GetString("Callout_Property", Culture) ?? "Callout_Property";
 }

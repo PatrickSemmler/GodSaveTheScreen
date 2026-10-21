@@ -499,4 +499,20 @@ Tip: You can assign the Print Screen key to a capture mode in the settings. On W
   <data name="Stamp_Rotation" xml:space="preserve"><value>Tilt (°)</value></data>
   <data name="Stamp_InkBlend" xml:space="preserve"><value>Ink look (multiply with the image)</value></data>
   <data name="Stamp_Property" xml:space="preserve"><value>Change stamp</value></data>
+  <data name="Tool_Callout" xml:space="preserve"><value>Callout (K)</value></data>
+  <data name="Shape_Callout" xml:space="preserve"><value>Callout</value></data>
+  <data name="Callout_Hint" xml:space="preserve"><value>Drag the frame of the callout (click = default size) and type the text (Ctrl+Enter or Esc finishes). Drag the tail in any direction using the round handle of the select tool.</value></data>
+  <data name="Callout_Shape" xml:space="preserve"><value>Shape</value></data>
+  <data name="Callout_Shape_Rounded" xml:space="preserve"><value>Rounded rectangle</value></data>
+  <data name="Callout_Shape_Ellipse" xml:space="preserve"><value>Ellipse</value></data>
+  <data name="Callout_Shape_Cloud" xml:space="preserve"><value>Thought bubble</value></data>
+  <data name="Callout_TailWidth" xml:space="preserve"><value>Tail width</value></data>
+  <data name="Callout_TailCurved" xml:space="preserve"><value>Curved tail</value></data>
+  <data name="Callout_TailCurveReversed" xml:space="preserve"><value>Bend the other way</value></data>
+  <data name="Callout_Rotation" xml:space="preserve"><value>Rotation (°)</value></data>
+  <data name="Callout_Glow" xml:space="preserve"><value>Glow colour (border)</value></data>
+  <data name="Callout_GlowWidth" xml:space="preserve"><value>Border width</value></data>
+  <data name="Callout_GlowBlur" xml:space="preserve"><value>Blur (glow)</value></data>
+  <data name="Callout_Padding" xml:space="preserve"><value>Padding</value></data>
+  <data name="Callout_Property" xml:space="preserve"><value>Change callout</value></data>
 </root>

@@ -97,6 +97,12 @@ public sealed class InteractionLayer : FrameworkElement
             AnnotationRenderer.Render(drawingContext, preview, RenderContext);
         }
 
+        if (_context.Interaction.Hidden is CalloutAnnotation edited)
+        {
+            // Sprechblase in Textbearbeitung: Blase sichtbar lassen, den Text zeigt das Eingabefeld.
+            AnnotationRenderer.Render(drawingContext, edited, RenderContext with { HideCalloutText = true });
+        }
+
         if (_context.Crop.IsActive)
         {
             DrawCrop(drawingContext, unit);
@@ -156,7 +162,8 @@ public sealed class InteractionLayer : FrameworkElement
                 continue;
             }
 
-            var bounds = Normalize(item.Bounds);
+            // Sprechblase: Rahmen um den Körper, die Spitze hat einen eigenen Griff.
+            var bounds = Normalize(item is CalloutAnnotation callout ? callout.Rect : item.Bounds);
             bounds.Inflate(unit * 2, unit * 2);
             dc.DrawRectangle(null, item.IsLocked ? locked : outline, bounds);
         }
@@ -179,7 +186,7 @@ public sealed class InteractionLayer : FrameworkElement
                 dc.DrawLine(handlePen, new Point(top.X, top.Y), center);
                 dc.DrawEllipse(HandleBack, handlePen, center, half, half);
             }
-            else if (handle.Kind is HandleKind.LineStart or HandleKind.LineEnd or HandleKind.PolygonPoint)
+            else if (handle.Kind is HandleKind.LineStart or HandleKind.LineEnd or HandleKind.PolygonPoint or HandleKind.CalloutTail)
             {
                 dc.DrawEllipse(HandleBack, handlePen, center, half, half);
             }

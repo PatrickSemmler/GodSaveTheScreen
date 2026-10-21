@@ -26,6 +26,9 @@ public enum HandleKind
 
     /// <summary>Drehgriff über der oberen Kante (nur bei genau einem drehbaren Objekt).</summary>
     Rotate,
+
+    /// <summary>Spitze einer Sprechblase (frei verschiebbar).</summary>
+    CalloutTail,
 }
 
 public readonly record struct SelectionHandle(HandleKind Kind, PointD Position, int Index = 0);
@@ -51,6 +54,13 @@ public static class SelectionHandles
         if (movable is [PolygonAnnotation polygon])
         {
             return [.. polygon.Points.Select((p, i) => new SelectionHandle(HandleKind.PolygonPoint, p, i))];
+        }
+
+        if (movable is [CalloutAnnotation callout])
+        {
+            // Sprechblase: (gedrehte) Griffe am Körper samt Drehgriff – die Spitze bleibt beim Skalieren und Drehen
+            // stehen – plus Griff an der Spitze.
+            return [.. RotatedBoxHandles(callout.Rect.Normalize(), callout.Rotation, rotateOffset), new(HandleKind.CalloutTail, callout.Tail)];
         }
 
         if (movable is [IRotatableAnnotation rotatable])
@@ -204,6 +214,7 @@ public sealed class SelectTool : ToolBase
         PolygonPoint,
         MagnifierSource,
         Rotate,
+        CalloutTail,
         RubberBand,
     }
 
@@ -249,7 +260,7 @@ public sealed class SelectTool : ToolBase
 
     public override void Cancel()
     {
-        if (_mode is Mode.Move or Mode.Resize or Mode.LineHandle or Mode.PolygonPoint or Mode.MagnifierSource or Mode.Rotate)
+        if (_mode is Mode.Move or Mode.Resize or Mode.LineHandle or Mode.PolygonPoint or Mode.MagnifierSource or Mode.Rotate or Mode.CalloutTail)
         {
             foreach (var (target, before) in _snapshots)
             {
@@ -337,6 +348,9 @@ public sealed class SelectTool : ToolBase
             case Mode.Rotate:
                 DragRotate(args);
                 break;
+            case Mode.CalloutTail:
+                DragCalloutTail(args);
+                break;
             case Mode.RubberBand:
                 UpdateRubberBand(args.Position);
                 break;
@@ -357,7 +371,7 @@ public sealed class SelectTool : ToolBase
         }
         else if (mode != Mode.None && _moved)
         {
-            Commit(mode switch { Mode.Move => "Verschieben", Mode.Rotate => "Drehen", _ => "Größe ändern" });
+            Commit(mode switch { Mode.Move => "Verschieben", Mode.Rotate => "Drehen", Mode.CalloutTail => "Spitze verschieben", _ => "Größe ändern" });
         }
 
         _snapshots = [];
@@ -585,6 +599,9 @@ public sealed class SelectTool : ToolBase
             case StampAnnotation stamp when !stamp.IsLocked:
                 Context.BeginTextEdit(stamp, isNew: false);
                 break;
+            case CalloutAnnotation callout when !callout.IsLocked:
+                Context.BeginTextEdit(callout, isNew: false);
+                break;
             case PolygonAnnotation polygon when !polygon.IsLocked:
                 InsertPolygonPoint(polygon, position);
                 break;
@@ -649,6 +666,7 @@ public sealed class SelectTool : ToolBase
             HandleKind.PolygonPoint => Mode.PolygonPoint,
             HandleKind.SourceTopLeft or HandleKind.SourceTopRight or HandleKind.SourceBottomRight or HandleKind.SourceBottomLeft => Mode.MagnifierSource,
             HandleKind.Rotate => Mode.Rotate,
+            HandleKind.CalloutTail => Mode.CalloutTail,
             _ => Mode.Resize,
         };
         _groupRect = items.Select(a => a.Bounds).Aggregate((x, y) => x.Union(y));
@@ -699,6 +717,13 @@ public sealed class SelectTool : ToolBase
         if (_snapshots is [(EmojiAnnotation emojiTarget, EmojiAnnotation emojiBefore)])
         {
             ResizeRotated(emojiTarget, emojiBefore, args);
+            Context.InvalidateInteraction();
+            return;
+        }
+
+        if (_snapshots is [(CalloutAnnotation calloutTarget, CalloutAnnotation calloutBefore)])
+        {
+            ResizeCallout(calloutTarget, calloutBefore, args);
             Context.InvalidateInteraction();
             return;
         }
@@ -765,6 +790,41 @@ public sealed class SelectTool : ToolBase
         target.CopyFrom(before);
         target.ScaleSizes(factor);
         target.Center = RotationMath.Rotate(resized.Center, center, before.Rotation);
+    }
+
+    /// <summary>
+    /// Skaliert den Körper einer Sprechblase frei (mit <c>Umschalt</c> proportional über die Ecken) im eigenen (gedrehten)
+    /// Koordinatensystem; Schrift und Spitze bleiben unverändert, der Text wird neu umbrochen.
+    /// </summary>
+    private void ResizeCallout(CalloutAnnotation target, CalloutAnnotation before, EditorPointerArgs args)
+    {
+        var rect = before.Rect.Normalize();
+        var center = rect.Center;
+        var local = RotationMath.Unrotate(args.Position, center, before.Rotation);
+        var (map, _) = SelectionHandles.ResizeMap(rect, _handle.Kind, local, args.Shift);
+        var resized = RectD.FromPoints(map(rect.TopLeft), map(rect.BottomRight));
+        resized = resized with
+        {
+            Width = Math.Max(resized.Width, CalloutAnnotation.MinBodySize),
+            Height = Math.Max(resized.Height, CalloutAnnotation.MinBodySize),
+        };
+
+        // Gedreht: Mitte zurück ins Bild drehen, damit der gegenüberliegende Rand stehen bleibt.
+        var worldCenter = RotationMath.Rotate(resized.Center, center, before.Rotation);
+        target.Rect = new RectD(worldCenter.X - (resized.Width / 2), worldCenter.Y - (resized.Height / 2), resized.Width, resized.Height);
+    }
+
+    /// <summary>Griff an der Spitze: Zielpunkt folgt dem Zeiger; die Spitze wandert dabei auf die passende Seite.</summary>
+    private void DragCalloutTail(EditorPointerArgs args)
+    {
+        _moved = true;
+        if (_snapshots is not [(CalloutAnnotation callout, _)])
+        {
+            return;
+        }
+
+        callout.Tail = args.Position;
+        Context.InvalidateInteraction();
     }
 
     /// <summary>Drehgriff: dreht um die Mitte; <c>Umschalt</c> rastet in 15°-Schritten ein.</summary>
@@ -889,6 +949,7 @@ public sealed class SelectTool : ToolBase
                 HandleKind.TopLeft or HandleKind.BottomRight or HandleKind.SourceTopLeft or HandleKind.SourceBottomRight => Cursors.SizeNWSE,
                 HandleKind.TopRight or HandleKind.BottomLeft or HandleKind.SourceTopRight or HandleKind.SourceBottomLeft => Cursors.SizeNESW,
                 HandleKind.Rotate => Cursors.Hand,
+                HandleKind.CalloutTail => Cursors.SizeAll,
                 _ => Cursors.Cross,
             }
             : Context.HitTest(position) is { IsLocked: false } ? Cursors.SizeAll : Cursors.Arrow;

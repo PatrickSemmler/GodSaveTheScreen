@@ -57,6 +57,9 @@ public static class ToolDefaultsReset
             case StampTool:
                 context.Stamp.Style = new StampStyle();
                 break;
+            case CalloutTool:
+                context.Callout.Style = new CalloutStyle();
+                break;
             default:
                 if (tool.UsesShapeStyle)
                 {

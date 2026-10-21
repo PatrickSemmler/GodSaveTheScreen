@@ -499,4 +499,20 @@ Tipp: In den Einstellungen können Sie die Taste Druck einem Aufnahmemodus zuwei
   <data name="Stamp_Rotation" xml:space="preserve"><value>Neigung (°)</value></data>
   <data name="Stamp_InkBlend" xml:space="preserve"><value>Tinten-Look (mit dem Bild multiplizieren)</value></data>
   <data name="Stamp_Property" xml:space="preserve"><value>Stempel ändern</value></data>
+  <data name="Tool_Callout" xml:space="preserve"><value>Sprechblase (K)</value></data>
+  <data name="Shape_Callout" xml:space="preserve"><value>Sprechblase</value></data>
+  <data name="Callout_Hint" xml:space="preserve"><value>Rahmen der Sprechblase aufziehen (Klick = Standardgröße) und Text eingeben (Strg+Eingabe oder Esc beendet). Die Spitze mit dem Auswahlwerkzeug am runden Griff in jede Richtung ziehen.</value></data>
+  <data name="Callout_Shape" xml:space="preserve"><value>Form</value></data>
+  <data name="Callout_Shape_Rounded" xml:space="preserve"><value>Abgerundetes Rechteck</value></data>
+  <data name="Callout_Shape_Ellipse" xml:space="preserve"><value>Ellipse</value></data>
+  <data name="Callout_Shape_Cloud" xml:space="preserve"><value>Gedankenblase</value></data>
+  <data name="Callout_TailWidth" xml:space="preserve"><value>Breite der Spitze</value></data>
+  <data name="Callout_TailCurved" xml:space="preserve"><value>Gebogene Spitze</value></data>
+  <data name="Callout_TailCurveReversed" xml:space="preserve"><value>Biegung umkehren</value></data>
+  <data name="Callout_Rotation" xml:space="preserve"><value>Drehung (°)</value></data>
+  <data name="Callout_Glow" xml:space="preserve"><value>Leuchtfarbe (Rahmen)</value></data>
+  <data name="Callout_GlowWidth" xml:space="preserve"><value>Breite des Rahmens</value></data>
+  <data name="Callout_GlowBlur" xml:space="preserve"><value>Unschärfe (Leuchten)</value></data>
+  <data name="Callout_Padding" xml:space="preserve"><value>Innenabstand</value></data>
+  <data name="Callout_Property" xml:space="preserve"><value>Sprechblase ändern</value></data>
 </root>

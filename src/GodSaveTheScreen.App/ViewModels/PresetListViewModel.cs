@@ -21,7 +21,7 @@ public sealed class PresetItem
         (var fill, var line) = Colors(preset);
         FillBrush = ToBrush(fill);
         LineBrush = ToBrush(line);
-        ShowSample = preset.Text is not null;
+        ShowSample = preset.Text is not null || preset.Callout is not null;
     }
 
     public ToolPreset Preset { get; }
@@ -42,6 +42,11 @@ public sealed class PresetItem
         if (preset.Text is { } text)
         {
             return (text.Background, text.Fill);
+        }
+
+        if (preset.Callout is { } callout)
+        {
+            return (callout.Background, callout.Border.IsVisible ? callout.Border.Color : callout.TextColor);
         }
 
         if (preset.Marker is { } marker)
