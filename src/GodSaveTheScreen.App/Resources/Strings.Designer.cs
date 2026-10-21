@@ -348,6 +348,9 @@ public static class Strings
     public static string Props_NothingSelected => ResourceManager.GetString("Props_NothingSelected", Culture) ?? "Props_NothingSelected";
 
     public static string Props_DefaultsFor => ResourceManager.GetString("Props_DefaultsFor", Culture) ?? "Props_DefaultsFor";
+    public static string Props_ResetDefaults => ResourceManager.GetString("Props_ResetDefaults", Culture) ?? "Props_ResetDefaults";
+    public static string Props_ResetDefaultsTip => ResourceManager.GetString("Props_ResetDefaultsTip", Culture) ?? "Props_ResetDefaultsTip";
+    public static string Props_ResetDefaultsConfirm => ResourceManager.GetString("Props_ResetDefaultsConfirm", Culture) ?? "Props_ResetDefaultsConfirm";
 
     public static string Props_Objects => ResourceManager.GetString("Props_Objects", Culture) ?? "Props_Objects";
 

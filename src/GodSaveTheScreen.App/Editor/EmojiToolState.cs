@@ -91,6 +91,16 @@ public sealed class EmojiToolState
         }
     }
 
+    /// <summary>Setzt Deckkraft, Standardgröße und Schatten auf die Standardwerte zurück (der Hautton gehört zur Emoji-Auswahl und bleibt).</summary>
+    public void ResetStyle()
+    {
+        var style = new EmojiStyle { SkinTone = Style.SkinTone };
+        if (style != Style)
+        {
+            Save(style);
+        }
+    }
+
     /// <summary>Zuletzt verwendete Emojis (höchstens <see cref="AppSettings.MaxRecentEmojis"/>), neueste zuerst.</summary>
     public IReadOnlyList<string> Recent => _settings.Current.EmojiRecent;
 

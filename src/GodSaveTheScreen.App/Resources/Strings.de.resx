@@ -177,6 +177,9 @@
   <data name="Layers_ToggleLock" xml:space="preserve"><value>Sperren/entsperren</value></data>
   <data name="Props_NothingSelected" xml:space="preserve"><value>Wählen Sie ein Objekt oder ein Zeichenwerkzeug, um Eigenschaften zu bearbeiten.</value></data>
   <data name="Props_DefaultsFor" xml:space="preserve"><value>Standardwerte: {0}</value></data>
+  <data name="Props_ResetDefaults" xml:space="preserve"><value>Standard wiederherstellen</value></data>
+  <data name="Props_ResetDefaultsTip" xml:space="preserve"><value>Einstellungen dieses Werkzeugs auf die Standardwerte zurücksetzen</value></data>
+  <data name="Props_ResetDefaultsConfirm" xml:space="preserve"><value>Alle Einstellungen von „{0}“ auf die Standardwerte zurücksetzen? Vorlagen bleiben erhalten.</value></data>
   <data name="Props_Objects" xml:space="preserve"><value>{0} Objekte</value></data>
   <data name="Props_StrokeColor" xml:space="preserve"><value>Linienfarbe</value></data>
   <data name="Props_FillColor" xml:space="preserve"><value>Füllfarbe</value></data>

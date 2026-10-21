@@ -189,6 +189,9 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     public bool HasPanelContent =>
         Properties.IsApplicable || TextProperties.IsApplicable || MarkerProperties.IsApplicable || ToolOptions.IsApplicable || EmojiProperties.IsApplicable || StampProperties.IsApplicable || ShadowProperties.IsApplicable || MaskTools.IsApplicable || Properties.ShowOpacity || Presets.IsApplicable;
 
+    /// <summary>Das Panel zeigt die Einstellungen des aktiven Werkzeugs (keine Auswahl) und sie lassen sich zurücksetzen.</summary>
+    public bool CanResetToolDefaults => Context.Selection.Items.Count == 0 && ToolDefaultsReset.Supports(ActiveTool);
+
     public IReadOnlyList<ZoomChoice> ZoomChoices { get; }
 
     /// <summary>Hinweis über der Zeichenfläche (z. B. mehrseitige Bilddatei).</summary>
@@ -316,6 +319,20 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     }
 
     [RelayCommand]
+    private void ResetToolDefaults()
+    {
+        var tool = ActiveTool;
+        if (!CanResetToolDefaults
+            || !_dialogs.Confirm(Strings.Props_ResetDefaults, string.Format(CultureInfo.CurrentUICulture, Strings.Props_ResetDefaultsConfirm, tool.DisplayName)))
+        {
+            return;
+        }
+
+        ToolDefaultsReset.Reset(Context, tool);
+        RefreshProperties();
+    }
+
+    [RelayCommand]
     private void ToggleRuler() => SetRulerVisible(!Context.Ruler.IsVisible);
 
     private void SetRulerVisible(bool visible)
@@ -373,6 +390,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         Presets.Refresh();
         OnPropertyChanged(nameof(PanelHeader));
         OnPropertyChanged(nameof(HasPanelContent));
+        OnPropertyChanged(nameof(CanResetToolDefaults));
     }
 
     private void ActivateToolById(string id)
@@ -906,6 +924,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         OnPropertyChanged(nameof(PanelHeader));
         OnPropertyChanged(nameof(HasPanelContent));
         OnPropertyChanged(nameof(HasSelection));
+        OnPropertyChanged(nameof(CanResetToolDefaults));
         Context.InvalidateInteraction();
     }
 

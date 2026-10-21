@@ -177,6 +177,9 @@
   <data name="Layers_ToggleLock" xml:space="preserve"><value>Lock or unlock</value></data>
   <data name="Props_NothingSelected" xml:space="preserve"><value>Select an object or a drawing tool to edit its properties.</value></data>
   <data name="Props_DefaultsFor" xml:space="preserve"><value>Defaults: {0}</value></data>
+  <data name="Props_ResetDefaults" xml:space="preserve"><value>Restore defaults</value></data>
+  <data name="Props_ResetDefaultsTip" xml:space="preserve"><value>Reset this tool's settings to the built-in defaults</value></data>
+  <data name="Props_ResetDefaultsConfirm" xml:space="preserve"><value>Reset all settings of “{0}” to the defaults? Presets are kept.</value></data>
   <data name="Props_Objects" xml:space="preserve"><value>{0} objects</value></data>
   <data name="Props_StrokeColor" xml:space="preserve"><value>Line colour</value></data>
   <data name="Props_FillColor" xml:space="preserve"><value>Fill colour</value></data>

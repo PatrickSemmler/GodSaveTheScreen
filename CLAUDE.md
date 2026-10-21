@@ -106,3 +106,12 @@ Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `doc
 - **Was wurde gemacht**: Schaltflächen Fett, Kursiv, Unterstrichen, Durchgestrichen im Stempel-Panel (wie beim Text). Neue Eigenschaft `Decorations` am Stempel; Unter-/Durchstreichung werden kräftiger gezeichnet als die Linien der Schrift (7,5 % der Schriftgröße), damit sie den Stempel-Look überstehen. Standardschrift jetzt Bahnschrift Bold (bei jedem Windows 10/11 vorhanden, DIN-artig, auch abgenutzt gut lesbar) statt Arial Black
 - **Warum**: Nutzerwunsch
 - **Seiteneffekte / Hinweise**: Wer schon Einstellungen mit dem bisherigen Standard gespeichert hat, behält Arial Black (gespeicherte Vorgaben werden nicht überschrieben). Rockwell/Stencil sähen ebenfalls gut aus, kommen aber nur mit Office. Projektformat bleibt v1 (optionales Feld). Tests: Core 325, App 498 grün; manuelle Prüfung im laufenden Editor steht noch aus
+
+### Werkzeug-Einstellungen zurücksetzen – 21.10.2026
+- **Kategorie**: Funktionserweiterung
+- **Verbesserungsliste-ID**: – (Nutzerwunsch)
+- **Version**: 1.5.0.0
+- **Geänderte Dateien**: `src/GodSaveTheScreen.App/Editor/ToolDefaultsReset.cs` (neu), `Editor/ToolDefaultsService.cs`, `Editor/EmojiToolState.cs`, `ViewModels/EditorViewModel.cs`, `Controls/PropertyPanel.xaml`, `Resources/Strings*.resx`, `Strings.Designer.cs`, `tests/GodSaveTheScreen.App.Tests/ToolDefaultsResetTests.cs` (neu), `Directory.Build.props`, `docs/agent/architecture.md`
+- **Was wurde gemacht**: Schaltfläche „Standard wiederherstellen“ im Eigenschaftenpanel (über der Vorlagenliste) für alle Werkzeuge mit Einstellungen: Formen, Linie/Pfeil, Stift, Textmarker, Radierer, Text, Marker (inkl. Startnummer), Unschärfe, Lupe, Bereichsauswahl, Hintergrundradierer, Emoji, Stempel. Nach Rückfrage werden die gespeicherten Werte durch die eingebauten Standardwerte ersetzt
+- **Warum**: Nutzerwunsch
+- **Seiteneffekte / Hinweise**: Nur sichtbar, wenn nichts ausgewählt ist (dann zeigt das Panel die Werkzeug-Vorgaben); kein Undo, daher Rückfrage. Stift und Textmarker teilen sich Glättung/Druck – Zurücksetzen des einen setzt diese auch beim anderen zurück. Emoji behält den Hautton, Stempel bekommt wieder den lokalisierten Standardtext. Vorlagen, zuletzt verwendete Farben/Schriften/Emojis und „Textmarker hinter Objekten“ (Dokumentoption) bleiben unverändert. Auswahl, Zuschneiden und Pipette haben keinen Button. Tests: Core 325, App 505 grün; manuelle Prüfung im laufenden Editor steht noch aus

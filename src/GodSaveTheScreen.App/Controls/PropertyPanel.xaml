@@ -691,6 +691,11 @@
             </Grid>
           </StackPanel>
 
+          <!-- Werkzeug-Einstellungen auf die Standardwerte zurücksetzen -->
+          <ui:Button Content="{l:Loc Props_ResetDefaults}" Icon="{ui:SymbolIcon ArrowReset24}" Margin="0,16,0,0" HorizontalAlignment="Stretch"
+                     Command="{Binding ResetToolDefaultsCommand}" ToolTip="{l:Loc Props_ResetDefaultsTip}"
+                     Visibility="{Binding CanResetToolDefaults, Converter={StaticResource BoolToVisibility}}" />
+
           <!-- Vorlagen des aktiven Werkzeugs -->
           <controls:PresetList DataContext="{Binding Presets}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}" />
         </StackPanel>

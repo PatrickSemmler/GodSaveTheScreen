@@ -12,6 +12,9 @@ public interface IToolDefaultsService
 
     void SetShape(string toolId, ShapeStyle style);
 
+    /// <summary>Entfernt die gespeicherten Werte des Formwerkzeugs (danach gelten wieder die eingebauten).</summary>
+    void ResetShape(string toolId);
+
     TextStyle GetText();
 
     void SetText(TextStyle style);
@@ -67,6 +70,19 @@ public sealed class ToolDefaultsService : IToolDefaultsService
     public void SetShape(string toolId, ShapeStyle style)
     {
         var defaults = new ShapeDefaultsMap(_settings.Current.ShapeDefaults) { [toolId] = style };
+        _settings.Current = _settings.Current with { ShapeDefaults = defaults };
+        _ = _settings.SaveAsync();
+    }
+
+    public void ResetShape(string toolId)
+    {
+        if (!_settings.Current.ShapeDefaults.ContainsKey(toolId))
+        {
+            return;
+        }
+
+        var defaults = new ShapeDefaultsMap(_settings.Current.ShapeDefaults);
+        defaults.Remove(toolId);
         _settings.Current = _settings.Current with { ShapeDefaults = defaults };
         _ = _settings.SaveAsync();
     }
