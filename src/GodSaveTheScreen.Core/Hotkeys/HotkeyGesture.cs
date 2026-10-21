@@ -80,7 +80,9 @@ public sealed record HotkeyGesture(HotkeyModifiers Modifiers, string KeyName)
             }
             else if (key is null)
             {
-                key = raw;
+                // „1“ → „D1“: Der WPF-Key-Name einer Zifferntaste ist D0–D9; eine nackte Zahl würde
+                // Enum.TryParse<Key> als Enum-Wert lesen ((Key)1 = Cancel).
+                key = raw.Length == 1 && char.IsAsciiDigit(raw[0]) ? "D" + raw : raw;
             }
             else
             {

@@ -117,7 +117,8 @@ public sealed class HotkeyService : IHotkeyService, IHostedService
         }
 
         var gesture = HotkeyGesture.TryParse(text);
-        if (gesture is null || !Enum.TryParse<Key>(gesture.KeyName, out var key))
+        // Nur Namen zulassen: Enum.TryParse liest Zahlen als Enum-Wert ("1" → Key.Cancel).
+        if (gesture is null || !char.IsLetter(gesture.KeyName[0]) || !Enum.TryParse<Key>(gesture.KeyName, out var key))
         {
             _logger.LogWarning("Ungültiger Hotkey für {Mode}: {Gesture}", mode, text);
             return HotkeyStatus.Invalid;

@@ -211,13 +211,13 @@ public sealed record AppSettings
 
     // Globale Hotkeys (Format siehe HotkeyGesture; leer = nicht belegt)
 
-    public string HotkeyRectangle { get; init; } = "Ctrl+Shift+1";
+    public string HotkeyRectangle { get; init; } = "Ctrl+Shift+D1";
 
-    public string HotkeyWindow { get; init; } = "Ctrl+Shift+2";
+    public string HotkeyWindow { get; init; } = "Ctrl+Shift+D2";
 
-    public string HotkeyFreeform { get; init; } = "Ctrl+Shift+3";
+    public string HotkeyFreeform { get; init; } = "Ctrl+Shift+D3";
 
-    public string HotkeyFullScreen { get; init; } = "Ctrl+Shift+4";
+    public string HotkeyFullScreen { get; init; } = "Ctrl+Shift+D4";
 
     /// <summary>
     /// Ersetzt Werte, die beim Lesen einer älteren Datei als <c>null</c> ankommen (der JSON-Deserialisierer

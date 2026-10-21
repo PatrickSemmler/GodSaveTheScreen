@@ -52,6 +52,24 @@ public sealed class HotkeyGestureTests
     }
 
     [Fact]
+    public void TryParse_NackteZiffer_WirdZuWpfTastenname()
+    {
+        // „1“ würde Enum.TryParse<Key> als (Key)1 = Cancel lesen
+        HotkeyGesture.TryParse("Ctrl+Shift+1")!.KeyName.ShouldBe("D1");
+        HotkeyGesture.TryParse("Ctrl+Shift+1").ShouldBe(HotkeyGesture.TryParse("Ctrl+Shift+D1"));
+    }
+
+    [Fact]
+    public void Standardhotkeys_SindZifferntasten()
+    {
+        var settings = new GodSaveTheScreen.Core.Settings.AppSettings();
+        foreach (var gesture in new[] { settings.HotkeyRectangle, settings.HotkeyWindow, settings.HotkeyFreeform, settings.HotkeyFullScreen })
+        {
+            HotkeyGesture.TryParse(gesture)!.KeyName.ShouldMatch("^D[1-4]$");
+        }
+    }
+
+    [Fact]
     public void Gleichheit_GleicheKombination_IstGleich()
     {
         HotkeyGesture.TryParse("Ctrl+Shift+S").ShouldBe(HotkeyGesture.TryParse("shift+CTRL+S"));
