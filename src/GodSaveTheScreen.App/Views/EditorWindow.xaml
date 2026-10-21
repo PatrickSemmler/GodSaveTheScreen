@@ -131,6 +131,8 @@
       </StackPanel>
 
       <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+        <ui:Button Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon QuestionCircle24}" Click="OnHelpClick"
+                   ToolTip="{l:Loc Help_Tip}" AutomationProperties.Name="{l:Loc Help_Title}" />
         <ui:Button Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon Keyboard24}" Click="OnShortcutsClick"
                    ToolTip="{l:Loc Shortcuts_Tip}" AutomationProperties.Name="{l:Loc Shortcuts_Title}" />
         <ui:Button x:Name="DragHandle" Style="{StaticResource BarButton}" Icon="{ui:SymbolIcon Drag24}"

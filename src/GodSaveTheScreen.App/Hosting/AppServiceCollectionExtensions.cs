@@ -25,6 +25,7 @@ public static class AppServiceCollectionExtensions
         services.AddSingleton<ISelectionService, SelectionService>();
         services.AddSingleton<IAutostartRegistry, RunKeyAutostartRegistry>();
         services.AddSingleton<IAutostartService, AutostartService>();
+        services.AddSingleton<IHelpService, HelpService>();
         services.AddSingleton<IAppShell, AppShell>();
         services.AddSingleton<ISessionState, SessionState>();
         services.AddSingleton<FirstRunHint>();

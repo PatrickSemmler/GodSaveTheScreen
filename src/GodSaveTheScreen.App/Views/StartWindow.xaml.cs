@@ -66,7 +66,16 @@ public partial class StartWindow : FluentWindow
     {
         if (e.Key == Key.F1)
         {
-            _viewModel.ShowShortcutsCommand.Execute(null);
+            var modifiers = Keyboard.Modifiers;
+            if ((modifiers & ModifierKeys.Control) != 0)
+            {
+                _viewModel.ShowShortcutsCommand.Execute(null);
+            }
+            else
+            {
+                _viewModel.ShowHelpCommand.Execute((modifiers & ModifierKeys.Shift) != 0 ? HelpTopics.StartWindow : null);
+            }
+
             e.Handled = true;
             return;
         }

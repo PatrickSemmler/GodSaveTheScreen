@@ -1,0 +1,107 @@
+<Project>
+  <!--
+    Benutzeranleitung: docs/help/<sprache>/index.html + ../help.css + ../help.js + images/*.png werden bei jedem Build zu je
+    einer eigenständigen HTML-Datei zusammengesetzt (CSS/JS inline, Bilder als Base64, {{VERSION}} = Programmversion) und neben die EXE kopiert
+    (auch beim Single-File-Publish, ExcludeFromSingleFile). Die Bilder erzeugt build/generate-help-screenshots.ps1.
+    Fehlt eine referenzierte Datei, bricht der Build ab (außer mit -p:HelpAllowMissingImages=true, nur für den Generator).
+  -->
+  <ItemGroup>
+    <HelpTemplate Include="$(MSBuildThisFileDirectory)..\docs\help\de\index.html" OutputName="GodSaveTheScreen-Hilfe.html" />
+    <HelpTemplate Include="$(MSBuildThisFileDirectory)..\docs\help\en\index.html" OutputName="GodSaveTheScreen-Help.html" />
+  </ItemGroup>
+
+  <UsingTask TaskName="BundleHelpPage" TaskFactory="RoslynCodeTaskFactory" AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Template ParameterType="System.String" Required="true" />
+      <Output ParameterType="System.String" Required="true" />
+      <AllowMissing ParameterType="System.Boolean" />
+      <Version ParameterType="System.String" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Text" />
+      <Using Namespace="System.Text.RegularExpressions" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        var directory = Path.GetDirectoryName(Template);
+        if (AllowMissing && !File.Exists(Template))
+        {
+            return true;
+        }
+
+        var html = File.ReadAllText(Template, Encoding.UTF8);
+        html = html.Replace("{{VERSION}}", Version ?? string.Empty);
+        var failed = false;
+        Func<string, string> read = relative =>
+        {
+            var path = Path.GetFullPath(Path.Combine(directory, relative));
+            if (File.Exists(path))
+            {
+                return path;
+            }
+
+            if (AllowMissing)
+            {
+                Log.LogMessage(MessageImportance.High, "Hilfe: Datei fehlt (ignoriert): " + path);
+            }
+            else
+            {
+                Log.LogError("Hilfe: Datei fehlt: " + path + " (referenziert in " + Template + ")");
+                failed = true;
+            }
+
+            return null;
+        };
+
+        html = Regex.Replace(html, "<link rel=\"stylesheet\" href=\"([^\"]+)\"\\s*/?>", m =>
+        {
+            var path = read(m.Groups[1].Value);
+            return path == null ? m.Value : "<style>\n" + File.ReadAllText(path, Encoding.UTF8) + "\n</style>";
+        });
+        html = Regex.Replace(html, "<script src=\"([^\"]+)\"></script>", m =>
+        {
+            var path = read(m.Groups[1].Value);
+            return path == null ? m.Value : "<script>\n" + File.ReadAllText(path, Encoding.UTF8) + "\n</script>";
+        });
+        html = Regex.Replace(html, "src=\"(images/[^\"]+)\"", m =>
+        {
+            var path = read(m.Groups[1].Value);
+            if (path == null)
+            {
+                return m.Value;
+            }
+
+            var mime = path.EndsWith(".svg", StringComparison.OrdinalIgnoreCase) ? "image/svg+xml"
+                : path.EndsWith(".jpg", StringComparison.OrdinalIgnoreCase) ? "image/jpeg" : "image/png";
+            return "src=\"data:" + mime + ";base64," + Convert.ToBase64String(File.ReadAllBytes(path)) + "\"";
+        });
+
+        if (failed)
+        {
+            return false;
+        }
+
+        // Nur bei Änderung schreiben: PreserveNewest kopiert dann nicht bei jedem Build neu.
+        Directory.CreateDirectory(Path.GetDirectoryName(Output));
+        if (!File.Exists(Output) || File.ReadAllText(Output, Encoding.UTF8) != html)
+        {
+            File.WriteAllText(Output, html, new UTF8Encoding(false));
+        }
+]]></Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="BundleHelp" BeforeTargets="AssignTargetPaths">
+    <PropertyGroup>
+      <_HelpOutputDir>$([MSBuild]::NormalizeDirectory($(MSBuildProjectDirectory), $(IntermediateOutputPath), 'help'))</_HelpOutputDir>
+    </PropertyGroup>
+    <BundleHelpPage Template="%(HelpTemplate.FullPath)" Output="$(_HelpOutputDir)%(HelpTemplate.OutputName)" AllowMissing="$(HelpAllowMissingImages)" Version="$(Version)" />
+    <ItemGroup>
+      <_HelpBundled Include="@(HelpTemplate->'$(_HelpOutputDir)%(OutputName)')" />
+      <None Include="@(_HelpBundled)" Condition="Exists('%(_HelpBundled.FullPath)')"
+            CopyToOutputDirectory="PreserveNewest"
+            CopyToPublishDirectory="PreserveNewest"
+            ExcludeFromSingleFile="true" />
+    </ItemGroup>
+  </Target>
+</Project>

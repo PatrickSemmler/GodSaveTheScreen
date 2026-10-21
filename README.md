@@ -29,7 +29,8 @@ Screenshot- und Annotationstool für Windows (.NET 10, WPF). Es läuft im Infobe
 
 **Bedienung**
 - Deutsch und Englisch, Hell/Dunkel/Hochkontrast
-- Alle Funktionen per Tastatur erreichbar; `F1` zeigt alle Tastenkürzel
+- Alle Funktionen per Tastatur erreichbar; `Strg+F1` zeigt alle Tastenkürzel
+- Ausführliche Benutzeranleitung auf Deutsch und Englisch (HTML neben der EXE): `F1` öffnet sie, `Umschalt+F1` springt zum Abschnitt des aktuellen Werkzeugs bzw. der Einstellungsseite
 
 ## Tastenkürzel (Auszug)
 
@@ -44,13 +45,14 @@ Screenshot- und Annotationstool für Windows (.NET 10, WPF). Es läuft im Infobe
 | `Tab` / `Umschalt+Tab` | nächstes / vorheriges Objekt auswählen |
 | `[` / `]` | ausgewähltes Emoji um 15° drehen (`Umschalt` am Drehgriff rastet ein); `Umschalt+H` / `Umschalt+V` spiegeln |
 | Pfeiltasten (+`Umschalt`) | Auswahl um 1 px (10 px) verschieben, mit `Alt` Größe ändern |
-| `F1` | Alle Tastenkürzel |
+| `F1` / `Umschalt+F1` | Hilfe / Hilfe zum aktuellen Werkzeug |
+| `Strg+F1` | Alle Tastenkürzel |
 
 ## Installation und Portable-Modus
 
 Es gibt keinen Installer. Das Release ist ein ZIP mit einer einzelnen EXE (enthält die .NET-Laufzeit, keine Installation nötig):
 
-1. ZIP entpacken und `GodSaveTheScreen.exe` starten.
+1. ZIP entpacken und `GodSaveTheScreen.exe` starten. Die Benutzeranleitung (`GodSaveTheScreen-Hilfe.html` / `GodSaveTheScreen-Help.html`) muss im selben Ordner bleiben.
 2. Standardmäßig liegen Einstellungen in `%APPDATA%\GodSaveTheScreen`, Logs und Sicherungen in `%LOCALAPPDATA%\GodSaveTheScreen`.
 3. **Portabler Modus:** eine leere Datei `portable.txt` neben die EXE legen – dann liegen alle Daten im Ordner `data` daneben (z. B. für USB-Sticks).
 
@@ -77,6 +79,7 @@ Hinweise:
 
 ## Dokumentation
 
+- Benutzeranleitung: Quellen in [docs/help](docs/help/) (`de/index.html`, `en/index.html`, gemeinsames `help.css`/`help.js`); der Build bettet CSS, Skript und Bilder ein und legt die fertigen HTML-Dateien neben die EXE. Bildschirmfotos neu erzeugen: `pwsh build/generate-help-screenshots.ps1`
 - [Umsetzungsplan](docs/Umsetzungsplan.md) und [Meilensteine](docs/meilensteine/)
 - [Architektur für Agenten](docs/agent/architecture.md)
 - [Änderungen](CHANGELOG.md)

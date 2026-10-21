@@ -2,7 +2,7 @@
 .SYNOPSIS
   Baut das portable Release: Tests -> Publish -> ZIP.
 .DESCRIPTION
-  Ergebnis: artifacts\release\GodSaveTheScreen-<Version>-<Runtime>.zip mit der EXE, README.txt, LICENSE (falls vorhanden)
+  Ergebnis: artifacts\release\GodSaveTheScreen-<Version>-<Runtime>.zip mit der EXE, der Hilfe (DE/EN), README.txt, LICENSE (falls vorhanden)
   und THIRD-PARTY-NOTICES.txt. Die Datei portable.txt liegt bewusst NICHT bei (siehe README.txt: ohne sie liegen die Daten in %APPDATA%).
 .PARAMETER Runtime
   win-x64 (Standard) oder win-arm64.
@@ -56,6 +56,12 @@ if (Test-Path $staging) { Remove-Item $staging -Recurse -Force }
 New-Item -ItemType Directory -Path $staging | Out-Null
 
 Copy-Item $exe $staging
+# Benutzeranleitung (deutsch/englisch) liegt neben der EXE, damit F1 sie findet.
+foreach ($help in 'GodSaveTheScreen-Hilfe.html', 'GodSaveTheScreen-Help.html') {
+    $helpFile = Join-Path $publishDir $help
+    if (-not (Test-Path $helpFile)) { throw "Die Hilfedatei fehlt: $helpFile" }
+    Copy-Item $helpFile $staging
+}
 (Get-Content (Join-Path $PSScriptRoot 'README.txt') -Raw).Replace('{{VERSION}}', $version) |
     Set-Content (Join-Path $staging 'README.txt') -Encoding UTF8
 Copy-Item (Join-Path $root 'THIRD-PARTY-NOTICES.txt') $staging

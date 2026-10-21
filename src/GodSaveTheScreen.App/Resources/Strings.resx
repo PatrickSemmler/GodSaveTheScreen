@@ -359,11 +359,11 @@ Window: {1}
 Freeform: {2}
 Full screen: {3}
 
-Tip: You can assign the Print Screen key to a capture mode in the settings. On Windows 11 turn off "Use the Print screen button to open screen capturing" in Settings &gt; Accessibility &gt; Keyboard first. Press F1 at any time for all keyboard shortcuts.</value></data>
+Tip: You can assign the Print Screen key to a capture mode in the settings. On Windows 11 turn off "Use the Print screen button to open screen capturing" in Settings &gt; Accessibility &gt; Keyboard first. Press F1 for help and Ctrl+F1 for all keyboard shortcuts.</value></data>
   <data name="LargeImage_Title" xml:space="preserve"><value>Very large image</value></data>
   <data name="LargeImage_Message" xml:space="preserve"><value>“{0}” is very large ({1} × {2} pixels, about {3} MB of memory for the image alone). Editing it can need several times that and may be slow. Open it anyway?</value></data>
   <data name="Shortcuts_Title" xml:space="preserve"><value>Keyboard shortcuts</value></data>
-  <data name="Shortcuts_Tip" xml:space="preserve"><value>Keyboard shortcuts (F1)</value></data>
+  <data name="Shortcuts_Tip" xml:space="preserve"><value>Keyboard shortcuts (Ctrl+F1)</value></data>
   <data name="Shortcuts_Filter" xml:space="preserve"><value>Filter shortcuts</value></data>
   <data name="Shortcuts_Capture" xml:space="preserve"><value>Capture (global)</value></data>
   <data name="Shortcuts_Tools" xml:space="preserve"><value>Tools</value></data>
@@ -394,7 +394,7 @@ Tip: You can assign the Print Screen key to a capture mode in the settings. On W
   <data name="Shortcut_ActualSize" xml:space="preserve"><value>Actual size (100 %)</value></data>
   <data name="Shortcut_Pan" xml:space="preserve"><value>Pan (hold and drag)</value></data>
   <data name="Shortcut_Ruler" xml:space="preserve"><value>Show or hide ruler</value></data>
-  <data name="Shortcut_Help" xml:space="preserve"><value>Keyboard shortcuts</value></data>
+  <data name="Shortcut_Help" xml:space="preserve"><value>Open help</value></data>
   <data name="Shortcut_NextObject" xml:space="preserve"><value>Select next object</value></data>
   <data name="Shortcut_PreviousObject" xml:space="preserve"><value>Select previous object</value></data>
   <data name="Shortcut_Nudge" xml:space="preserve"><value>Move selection by 1 px</value></data>
@@ -558,4 +558,11 @@ Tip: You can assign the Print Screen key to a capture mode in the settings. On W
   <data name="Section_CalloutShape" xml:space="preserve"><value>Shape &amp; tail</value></data>
   <data name="Spin_Increase" xml:space="preserve"><value>Increase</value></data>
   <data name="Spin_Decrease" xml:space="preserve"><value>Decrease</value></data>
+  <data name="Help_Title" xml:space="preserve"><value>Help</value></data>
+  <data name="Help_Tip" xml:space="preserve"><value>Help (F1) – Shift+F1: help for the current tool</value></data>
+  <data name="Help_PageTip" xml:space="preserve"><value>Help for this page (Shift+F1)</value></data>
+  <data name="Help_NotFound" xml:space="preserve"><value>The help file was not found. It is expected in the program folder:
+{0}</value></data>
+  <data name="Shortcut_ContextHelp" xml:space="preserve"><value>Help for the current tool or object</value></data>
+  <data name="Shortcut_ShowShortcuts" xml:space="preserve"><value>Show keyboard shortcuts</value></data>
 </root>

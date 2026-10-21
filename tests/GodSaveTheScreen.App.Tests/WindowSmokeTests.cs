@@ -53,7 +53,7 @@ public sealed class WindowSmokeTests
         dialog.Show();
         dialog.Close();
         var viewModel = CreateSettingsViewModel();
-        var window = new SettingsWindow(viewModel, Substitute.For<IThemeService>());
+        var window = new SettingsWindow(viewModel, Substitute.For<IThemeService>(), Substitute.For<IAppShell>());
         window.Show();
         try
         {

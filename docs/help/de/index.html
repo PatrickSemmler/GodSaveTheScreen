@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GodSaveTheScreen – Benutzeranleitung</title>
+<meta name="description" content="Benutzeranleitung für GodSaveTheScreen {{VERSION}}: Bildschirmfotos aufnehmen, beschriften und weitergeben.">
+<link rel="stylesheet" href="../help.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu" aria-label="Inhaltsverzeichnis">☰</button>
+  <a class="brand" href="#intro"><span class="logo">G</span>GodSaveTheScreen <small>Benutzeranleitung</small></a>
+  <span class="spacer"></span>
+  <span class="pill">Version {{VERSION}}</span>
+  <button class="icon-btn" id="theme" type="button">◐</button>
+</header>
+
+<div class="layout">
+<nav class="sidebar" aria-label="Inhaltsverzeichnis">
+  <input class="search" id="search" type="search" placeholder="Hilfe durchsuchen …  ( / )" aria-label="Hilfe durchsuchen">
+  <p class="toc-title">Inhalt</p>
+  <div class="toc" id="toc"></div>
+</nav>
+
+<main>
+<div class="content">
+
+<!-- ===================================================================== -->
+<section class="hero">
+  <h1>GodSaveTheScreen</h1>
+  <p class="lead">Bildschirmfotos aufnehmen, verständlich beschriften und in Sekunden weitergeben – mit Formen, Pfeilen, Text, Sprechblasen, Nummern, Unschärfe, Lupe, Stempeln und vielem mehr.</p>
+  <div class="meta">
+    <span class="pill">F1 öffnet diese Hilfe</span>
+    <span class="pill">Umschalt+F1 springt zum aktuellen Werkzeug</span>
+    <span class="pill">Strg+F1 zeigt alle Tastenkürzel</span>
+  </div>
+</section>
+
+<h2 id="intro">Willkommen</h2>
+<p>GodSaveTheScreen ist ein Werkzeug für Bildschirmfotos unter Windows. Es läuft unauffällig im Infobereich der Taskleiste, nimmt per Tastenkürzel einen Bildschirmbereich auf und öffnet das Ergebnis in einem Editor. Dort legen Sie Objekte – Rahmen, Pfeile, Texte, Markierungen – <em>über</em> das Bild. Das Bild selbst bleibt dabei unverändert: Jedes Objekt lässt sich bis zum Schluss verschieben, ändern oder löschen.</p>
+<p>Diese Anleitung folgt dem Weg eines Bildschirmfotos: vom <a href="#capture">Aufnehmen</a> über das <a href="#editor">Bearbeiten</a> im Editor mit seinen <a href="#tools">Werkzeugen</a> bis zum <a href="#output">Speichern und Weitergeben</a>. Die Kapitel <a href="#settings">Einstellungen</a>, <a href="#shortcuts">Tastenkürzel</a> und <a href="#faq">Tipps und Problemlösung</a> dienen zum Nachschlagen.</p>
+
+<h3 id="intro-workflow">Der Arbeitsablauf in drei Schritten</h3>
+<div class="flow">
+  <div class="step"><h4>Aufnehmen</h4><p>Tastenkürzel drücken (Standard <kbd>Strg+Umschalt+1</kbd>), Bereich aufziehen – fertig.</p></div>
+  <div class="step"><h4>Beschriften</h4><p>Im Editor mit Pfeilen, Text, Nummern oder Unschärfe das Wesentliche zeigen.</p></div>
+  <div class="step"><h4>Weitergeben</h4><p>Kopieren, als Bild speichern, in ein anderes Programm ziehen oder als Projekt sichern.</p></div>
+</div>
+<div class="box tip"><p><span class="label">Hilfe an jeder Stelle:</span> <kbd>F1</kbd> öffnet diese Anleitung. <kbd>Umschalt+F1</kbd> springt direkt zum Abschnitt über das gerade gewählte Werkzeug, die ausgewählten Objekte oder die geöffnete Einstellungsseite.</p></div>
+
+<!-- ===================================================================== -->
+<h2 id="getting-started">Erste Schritte</h2>
+
+<h3 id="install">Installation und portabler Modus</h3>
+<p>GodSaveTheScreen braucht keine Installation. Das Programm besteht aus einer einzigen Datei <span class="path">GodSaveTheScreen.exe</span>, die die .NET-Laufzeit bereits enthält. Diese Anleitung liegt als <span class="path">GodSaveTheScreen-Hilfe.html</span> (Deutsch) bzw. <span class="path">GodSaveTheScreen-Help.html</span> (Englisch) daneben.</p>
+<ol class="steps">
+  <li>ZIP-Archiv in einen beliebigen Ordner entpacken.</li>
+  <li><span class="path">GodSaveTheScreen.exe</span> starten.</li>
+  <li>Zeigt Windows „Der Computer wurde durch Windows geschützt“, auf <span class="ui">Weitere Informationen → Trotzdem ausführen</span> klicken (die EXE ist nicht signiert).</li>
+</ol>
+<p>Einstellungen liegen standardmäßig in <span class="path">%APPDATA%\GodSaveTheScreen</span>, Protokolle und automatische Sicherungen in <span class="path">%LOCALAPPDATA%\GodSaveTheScreen</span>.</p>
+<div class="box note"><p><span class="label">Portabler Modus:</span> Legen Sie eine leere Datei <span class="path">portable.txt</span> neben die EXE. Dann speichert GodSaveTheScreen alle Daten im Ordner <span class="path">data</span> daneben – praktisch für USB-Sticks.</p></div>
+
+<h3 id="tray">Das Programm im Infobereich</h3>
+<p>Nach dem Start läuft GodSaveTheScreen im Infobereich der Taskleiste (rechts unten neben der Uhr) weiter, auch wenn alle Fenster geschlossen sind. Beim allerersten Start erklärt ein Begrüßungsfenster die wichtigsten Tastenkürzel.</p>
+<ul>
+  <li><b>Linksklick</b> auf das Symbol startet eine Aufnahme (Standard: Rechteck; einstellbar unter <a href="#settings-general">Allgemein</a>).</li>
+  <li><b>Rechtsklick</b> öffnet das Menü: Aufnahmemodi, <span class="ui">Mit Timer</span>, <span class="ui">Bild öffnen…</span>, <span class="ui">Zuletzt verwendet</span>, <span class="ui">Startfenster</span>, <span class="ui">Einstellungen</span>, <span class="ui">Hilfe</span> und <span class="ui">Beenden</span>.</li>
+</ul>
+<p>Zuletzt verwendete Dateien erscheinen außerdem in der Sprungliste des Programms in der Taskleiste.</p>
+
+<h3 id="start-window">Das Startfenster</h3>
+<p>Das Startfenster ist der klassische Einstieg mit der Maus. Es erscheint beim Programmstart (sofern nicht <a href="#settings-general">„Minimiert im Infobereich starten“</a> eingeschaltet ist) und lässt sich jederzeit über das Tray-Menü öffnen.</p>
+<figure class="shot"><img src="images/start-window.png" alt="Startfenster mit den Schaltflächen Neu, Modus, Öffnen, Aus Zwischenablage, Einstellungen, Tastenkürzel und Hilfe"><figcaption>Das Startfenster</figcaption></figure>
+<div class="table-wrap"><table>
+  <tr><th>Element</th><th>Funktion</th></tr>
+  <tr><td><span class="ui">Neu</span> + Modus</td><td>Startet eine Aufnahme im gewählten Modus: Rechteck, Fenster, Freiform, Vollbild (aktueller Monitor) oder Vollbild (alle Monitore).</td></tr>
+  <tr><td><span class="ui">Öffnen</span></td><td>Öffnet Bilder oder Projekte (<span class="path">.gsts</span>) im Editor.</td></tr>
+  <tr><td><span class="ui">Aus Zwischenablage</span></td><td>Öffnet das Bild aus der Zwischenablage im Editor (auch <kbd>Strg+V</kbd>).</td></tr>
+  <tr><td><span class="ui">Einstellungen</span></td><td>Öffnet die <a href="#settings">Einstellungen</a>.</td></tr>
+  <tr><td>Tastatur-Symbol</td><td>Übersicht aller Tastenkürzel (<kbd>Strg+F1</kbd>).</td></tr>
+  <tr><td>Fragezeichen</td><td>Diese Hilfe (<kbd>F1</kbd>).</td></tr>
+  <tr><td><span class="ui">Timer</span></td><td>Verzögert die nächste Aufnahme (siehe <a href="#capture-timer">Timer</a>).</td></tr>
+  <tr><td><span class="ui">Zuletzt verwendet</span></td><td>Liste mit Vorschaubildern; Doppelklick oder <kbd>Eingabe</kbd> öffnet, <kbd>Entf</kbd> entfernt einen Eintrag. Die Liste erscheint, sobald Dateien geöffnet oder gespeichert wurden.</td></tr>
+</table></div>
+<p>Sie können Bilddateien auch einfach auf das Startfenster ziehen, um sie im Editor zu öffnen.</p>
+
+<h3 id="quickstart">Die erste Aufnahme in einer Minute</h3>
+<ol class="steps">
+  <li><kbd>Strg+Umschalt+1</kbd> drücken. Der Bildschirm wird eingefroren und abgedunkelt.</li>
+  <li>Mit gedrückter linker Maustaste den gewünschten Bereich aufziehen und loslassen.</li>
+  <li>Der Editor öffnet sich mit der Aufnahme. Taste <kbd>A</kbd> drücken und einen Pfeil ziehen, mit <kbd>T</kbd> einen Text schreiben.</li>
+  <li><kbd>Strg+C</kbd> kopiert das fertige Bild – jetzt z. B. in eine E-Mail oder einen Chat einfügen. Oder <kbd>Strg+S</kbd> zum Speichern.</li>
+</ol>
+
+<!-- ===================================================================== -->
+<h2 id="capture">Aufnehmen</h2>
+<p>Eine Aufnahme starten Sie über ein globales Tastenkürzel, das Tray-Symbol, das Startfenster oder im Editor über <span class="ui">Neu</span>. Sobald die Aufnahme beginnt, friert GodSaveTheScreen den Bildschirm ein – Menüs und Tooltips bleiben also sichtbar, während Sie den Bereich wählen. Eigene Fenster von GodSaveTheScreen erscheinen nicht in der Aufnahme.</p>
+
+<h3 id="capture-modes">Aufnahmemodi</h3>
+<div class="table-wrap"><table>
+  <tr><th>Modus</th><th>Standard-Kürzel</th><th>So geht's</th></tr>
+  <tr><td><b>Rechteck</b></td><td><kbd>Strg+Umschalt+1</kbd></td><td>Rechteckigen Bereich mit gedrückter Maustaste aufziehen.</td></tr>
+  <tr><td><b>Fenster</b></td><td><kbd>Strg+Umschalt+2</kbd></td><td>Das Fenster unter dem Mauszeiger wird hervorgehoben; ein Klick nimmt es auf. Ziehen wählt stattdessen einen freien Bereich.</td></tr>
+  <tr><td><b>Freiform</b></td><td><kbd>Strg+Umschalt+3</kbd></td><td>Mit gedrückter Maustaste eine beliebige Form um den Bereich zeichnen (Lasso). Außerhalb der Form wird das Bild transparent.</td></tr>
+  <tr><td><b>Vollbild</b></td><td><kbd>Strg+Umschalt+4</kbd></td><td>Nimmt sofort den Monitor auf, auf dem sich der Mauszeiger befindet. Im Startfenster gibt es zusätzlich „Vollbild (alle Monitore)“.</td></tr>
+</table></div>
+
+<h3 id="capture-overlay">Bereich auswählen</h3>
+<p>Während der Auswahl liegt eine abgedunkelte Ebene über allen Monitoren. Der gewählte Bereich erscheint hell, seine Größe wird in Pixeln angezeigt. Eine Lupe am Mauszeiger hilft beim pixelgenauen Ansetzen (abschaltbar unter <a href="#settings-capture">Aufnahme</a>).</p>
+<figure class="center">
+<svg viewBox="0 0 640 300" width="640" role="img" aria-label="Schema der Bereichsauswahl: abgedunkelter Bildschirm, heller Auswahlrahmen mit Größenangabe und Lupe" style="max-width:100%;height:auto;border-radius:10px;border:1px solid var(--line)">
+  <rect width="640" height="300" fill="#5b6475"/>
+  <rect x="30" y="30" width="250" height="150" rx="6" fill="#7d879a"/><rect x="330" y="60" width="270" height="200" rx="6" fill="#7d879a"/>
+  <rect width="640" height="300" fill="#000" opacity=".45"/>
+  <rect x="160" y="80" width="260" height="140" fill="#dfe6f2"/>
+  <rect x="160" y="80" width="260" height="140" fill="none" stroke="#3a96dd" stroke-width="2"/>
+  <rect x="172" y="96" width="120" height="10" rx="3" fill="#9aa8bf"/><rect x="172" y="114" width="200" height="8" rx="3" fill="#b9c3d4"/><rect x="172" y="130" width="170" height="8" rx="3" fill="#b9c3d4"/>
+  <rect x="160" y="226" width="92" height="22" rx="4" fill="#1f1f1f"/><text x="206" y="242" fill="#fff" font-family="Segoe UI, sans-serif" font-size="13" text-anchor="middle">260 × 140</text>
+  <rect x="436" y="96" width="78" height="78" fill="#dfe6f2" stroke="#fff" stroke-width="2"/><rect x="471" y="131" width="8" height="8" fill="none" stroke="#c42b1c" stroke-width="1.5"/>
+  <path d="M420 220 l0 18 l5 -5 l4 9 l4 -2 l-4 -9 l7 0 z" fill="#fff" stroke="#000" stroke-width="1"/>
+</svg>
+<figcaption>Schema: abgedunkelter Bildschirm, heller Auswahlbereich mit Größe, Lupe am Mauszeiger</figcaption>
+</figure>
+<div class="table-wrap"><table class="keys">
+  <tr><th>Taste</th><th>Wirkung</th></tr>
+  <tr><td><kbd>Esc</kbd></td><td>Aufnahme abbrechen</td></tr>
+  <tr><td><kbd>Eingabe</kbd></td><td>Aktuellen Bereich übernehmen</td></tr>
+  <tr><td><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd></td><td>Auswahl um 1 Pixel verschieben, mit <kbd>Umschalt</kbd> um 10 Pixel</td></tr>
+</table></div>
+
+<h3 id="capture-timer">Timer</h3>
+<p>Mit dem Timer lässt sich die Aufnahme verzögern – etwa um vorher ein Menü aufzuklappen. Wählen Sie im Startfenster unter <span class="ui">Timer</span> eine Wartezeit oder <span class="ui">Benutzerdefiniert…</span> mit beliebigen Sekunden. Im Tray-Menü gibt es dafür <span class="ui">Mit Timer</span>. Ein Countdown zeigt die verbleibende Zeit; auf Wunsch ertönt in den letzten drei Sekunden ein Ton. Den Standard-Timer für Tastenkürzel und Tray legen Sie unter <a href="#settings-capture">Aufnahme</a> fest.</p>
+
+<h3 id="capture-hotkeys">Tastenkürzel und Druck-Taste</h3>
+<p>Die globalen Tastenkürzel funktionieren in jedem Programm. Sie lassen sich unter <a href="#settings-hotkeys">Einstellungen → Tastenkürzel</a> ändern. Ist eine Kombination bereits von Windows oder einem anderen Programm belegt, wird das dort angezeigt.</p>
+<div class="box note"><p><span class="label">Druck-Taste:</span> Unter Windows 11 öffnet die Taste <kbd>Druck</kbd> normalerweise das Snipping Tool. Um sie GodSaveTheScreen zuzuweisen, schalten Sie zuerst in Windows unter <span class="ui">Einstellungen → Barrierefreiheit → Tastatur</span> die Option „Druck-Taste zum Öffnen der Bildschirmaufnahme verwenden“ aus.</p></div>
+
+<h3 id="capture-after">Was nach der Aufnahme passiert</h3>
+<p>Nach jeder Aufnahme führt GodSaveTheScreen die Schritte aus, die Sie unter <a href="#settings-postcapture">Nach der Aufnahme</a> eingestellt haben – in dieser Reihenfolge:</p>
+<ol class="steps">
+  <li><b>In die Zwischenablage kopieren</b> – das Bild ist sofort einfügbar.</li>
+  <li><b>Automatisch speichern</b> – in einen festen Ordner mit Dateinamensmuster; eine Benachrichtigung zeigt den Speicherort (Klick öffnet den Ordner).</li>
+  <li><b>Im Editor öffnen</b> – zum Beschriften (Standard).</li>
+</ol>
+
+<!-- ===================================================================== -->
+<h2 id="editor">Der Editor</h2>
+<p>Im Editor beschriften Sie die Aufnahme. Jede Aufnahme und jede geöffnete Datei bekommt ein eigenes Editorfenster. Alles, was Sie hinzufügen, sind eigenständige <b>Objekte</b> über dem Bild – das Originalbild wird nie verändert.</p>
+
+<h3 id="editor-layout">Aufbau des Fensters</h3>
+<figure class="shot"><img src="images/editor-overview.png" alt="Editorfenster mit nummerierten Bereichen: Befehlsleiste, Werkzeugleiste, Zeichenfläche, Eigenschaftenbereich, Statusleiste"><figcaption>Der Editor mit einer beschrifteten Aufnahme</figcaption></figure>
+<ol class="legend">
+  <li><b>Befehlsleiste</b> – Neu, Öffnen, Speichern, Exportieren, Kopieren, Einfügen, Rückgängig, Lineal und rechts Hilfe, Tastenkürzel, Bild herausziehen, Eigenschaftenbereich ein/aus (<a href="#editor-toolbar">Details</a>).</li>
+  <li><b>Werkzeugleiste</b> – alle <a href="#tools">Werkzeuge</a>; jedes hat einen Ein-Buchstaben-Kürzel.</li>
+  <li><b>Zeichenfläche</b> – das Bild mit allen Objekten (<a href="#editor-canvas">Zoom und Verschieben</a>).</li>
+  <li><b>Eigenschaftenbereich</b> – Einstellungen des Werkzeugs bzw. der Auswahl und die <a href="#layers">Ebenen</a>.</li>
+  <li><b>Statusleiste</b> – Bildgröße, Mausposition in Pixeln und Zoom.</li>
+</ol>
+
+<h3 id="editor-toolbar">Befehlsleiste</h3>
+<figure class="shot"><img src="images/editor-toolbar.png" alt="Befehlsleiste des Editors"></figure>
+<div class="table-wrap"><table>
+  <tr><th>Schaltfläche</th><th>Funktion</th></tr>
+  <tr><td><span class="ui">Neu</span></td><td>Menü: neue Aufnahme (Rechteck, Fenster, Freiform, Vollbild) oder <span class="ui">Aus Zwischenablage</span>.</td></tr>
+  <tr><td><span class="ui">Öffnen</span> ▾</td><td>Datei öffnen (<kbd>Strg+O</kbd>); der Pfeil zeigt die zuletzt verwendeten Dateien.</td></tr>
+  <tr><td><span class="ui">Speichern</span></td><td>Speichert (<kbd>Strg+S</kbd>), daneben <span class="ui">Speichern unter…</span> (<kbd>Strg+Umschalt+S</kbd>) – siehe <a href="#save">Speichern</a>.</td></tr>
+  <tr><td>Exportieren</td><td>Ergebnis als Bilddatei exportieren, ohne den Projektstand zu ändern (<a href="#export">Exportieren</a>).</td></tr>
+  <tr><td>Speicheroptionen</td><td>Format, Qualität und Hintergrund für transparente Bereiche (<a href="#export">Details</a>).</td></tr>
+  <tr><td>Kopieren / Einfügen</td><td>Bild kopieren bzw. einfügen (<a href="#clipboard">Zwischenablage</a>).</td></tr>
+  <tr><td>Rückgängig / Wiederholen</td><td><kbd>Strg+Z</kbd> / <kbd>Strg+Y</kbd></td></tr>
+  <tr><td>Lineal</td><td>Blendet das <a href="#ruler">Lineal</a> ein (<kbd>Strg+R</kbd>).</td></tr>
+  <tr><td>Hilfe</td><td>Diese Anleitung (<kbd>F1</kbd>).</td></tr>
+  <tr><td>Tastenkürzel</td><td>Übersicht aller Kürzel mit Suchfeld (<kbd>Strg+F1</kbd>).</td></tr>
+  <tr><td>Ziehpunkt</td><td>Das fertige Bild mit der Maus in ein anderes Programm ziehen (<a href="#drag-drop">Drag &amp; Drop</a>).</td></tr>
+  <tr><td>Eigenschaftenbereich</td><td>Blendet die rechte Seitenleiste ein oder aus.</td></tr>
+</table></div>
+
+<h3 id="editor-canvas">Zeichenfläche, Zoom und Verschieben</h3>
+<ul>
+  <li><b>Zoomen:</b> <kbd>Strg</kbd> + Mausrad (der Punkt unter dem Mauszeiger bleibt stehen), <kbd>Strg++</kbd> / <kbd>Strg+-</kbd>, oder das Zoomfeld in der Statusleiste.</li>
+  <li><b>Einpassen</b> (<kbd>Strg+0</kbd>) zeigt das ganze Bild, <b>100 %</b> (<kbd>Strg+1</kbd>) die Originalgröße.</li>
+  <li><b>Verschieben:</b> <kbd>Leertaste</kbd> gedrückt halten und ziehen – oder mit gedrückter mittlerer Maustaste ziehen.</li>
+  <li><b>Über den Rand hinaus:</b> Ragen Objekte über das Bild hinaus, wächst die Zeichenfläche mit. Der zusätzliche Bereich wird als Schachbrett angezeigt und ist im gespeicherten PNG transparent (JPG/BMP: weiß).</li>
+</ul>
+
+<h3 id="ruler">Lineal</h3>
+<p>Das virtuelle Lineal (<kbd>Strg+R</kbd>) hilft beim Zeichnen gerader Linien mit Stift und Textmarker: Beginnen Sie den Strich nahe an der Linealkante, rastet er an der Kante ein.</p>
+<ul>
+  <li>Lineal verschieben: auf das Lineal klicken und ziehen.</li>
+  <li>Drehen: Mausrad über dem Lineal (1°), mit <kbd>Umschalt</kbd> 15°, mit <kbd>Strg</kbd> 0,1°.</li>
+  <li>Rechtsklick auf das Lineal: Winkel direkt setzen oder Lineal ausblenden.</li>
+</ul>
+
+<h3 id="properties">Eigenschaftenbereich</h3>
+<div class="split">
+<div>
+<p>Rechts im Editor sehen Sie die Einstellungen. Was dort steht, hängt davon ab, was gerade aktiv ist:</p>
+<ul>
+  <li><b>Ein Zeichenwerkzeug, nichts ausgewählt:</b> Überschrift <span class="ui">Standardwerte: …</span>. Die Werte gelten für alle neuen Objekte dieses Werkzeugs und bleiben auch nach einem Neustart erhalten.</li>
+  <li><b>Objekte ausgewählt:</b> Die Werte gelten für die Auswahl. Änderungen werden gleichzeitig zum neuen Standard des Werkzeugs.</li>
+</ul>
+<p>Die Einstellungen sind in <b>Karten</b> gegliedert, z. B. <span class="ui">Darstellung</span>, <span class="ui">Schrift</span>, <span class="ui">Kontur</span>, <span class="ui">Schatten</span>. Ein Klick auf den Kopf klappt eine Karte auf oder zu; zugeklappt zeigt der Kopf eine Kurzfassung (Farbe, Stärke). Der Auf-/Zu-Zustand wird gemerkt und gilt für alle Werkzeuge.</p>
+<p>Effekte wie <span class="ui">Kontur</span>, <span class="ui">Schatten</span>, <span class="ui">Hintergrund</span> und <span class="ui">Leuchten</span> haben einen <b>Ein/Aus-Schalter</b> im Kopf. Beim Einschalten werden die zuletzt genutzten Werte wiederhergestellt.</p>
+<p>Zahlenfelder ändern Sie per Eingabe, mit den kleinen Pfeilen, mit <kbd>↑</kbd>/<kbd>↓</kbd>, <kbd>Bild auf</kbd>/<kbd>Bild ab</kbd> oder dem Mausrad (wenn das Feld den Fokus hat).</p>
+</div>
+<figure class="shot"><img src="images/properties-panel.png" alt="Eigenschaftenbereich des Rechteck-Werkzeugs mit Karten"><figcaption>Standardwerte des Rechtecks</figcaption></figure>
+</div>
+
+<h3 id="presets">Vorlagen und Standardwerte</h3>
+<p>Am Ende des Eigenschaftenbereichs stehen die <b>Vorlagen</b> des Werkzeugs – gespeicherte Kombinationen aller Einstellungen, z. B. „roter Warnrahmen“ oder „gelbe Notiz“.</p>
+<ul>
+  <li><b>Speichern:</b> Diskettensymbol – speichert die aktuellen Einstellungen unter einem Namen (gleicher Name = überschreiben, nach Rückfrage).</li>
+  <li><b>Anwenden:</b> Klick auf eine Vorlage – ohne Auswahl wird sie zum Standard des Werkzeugs, mit Auswahl wird sie auf die ausgewählten Objekte übertragen.</li>
+  <li><b>Umbenennen</b> und <b>Löschen</b> über die Schaltflächen daneben. Für Text gibt es mitgelieferte Vorlagen (Beschriftung, Warnung, Notiz, Hinweis), die sich wiederherstellen lassen.</li>
+</ul>
+<p><span class="ui">Standard wiederherstellen</span> (nur sichtbar, wenn nichts ausgewählt ist) setzt alle Einstellungen des Werkzeugs auf die eingebauten Werte zurück. Vorlagen bleiben dabei erhalten.</p>
+
+<h3 id="colors">Farben und Pipette</h3>
+<p>Ein Klick auf ein Farbfeld öffnet die Farbauswahl mit Farbfläche, Hex-Wert (<span class="path">#RRGGBB</span> oder mit Deckkraft <span class="path">#AARRGGBB</span>), Palette und zuletzt verwendeten Farben. <span class="ui">Keine</span> macht die Farbe transparent (z. B. Rechteck ohne Füllung).</p>
+<p>Mit der <b>Pipette</b> („Farbe aus dem Bild aufnehmen“) klicken Sie auf eine Stelle des Bildes, um genau diese Farbe zu übernehmen. <kbd>Esc</kbd> bricht ab.</p>
+
+<h3 id="objects">Objekte bearbeiten</h3>
+<p>Mit dem <a href="#tool-select">Auswahlwerkzeug</a> (<kbd>V</kbd>) wählen, verschieben und ändern Sie vorhandene Objekte. Die wichtigsten Handgriffe:</p>
+<div class="table-wrap"><table>
+  <tr><th>Aktion</th><th>So geht's</th></tr>
+  <tr><td>Auswählen</td><td>Klick auf das Objekt; mehrere mit <kbd>Umschalt</kbd> oder <kbd>Strg</kbd> + Klick oder durch Aufziehen eines Rahmens; <kbd>Strg+A</kbd> wählt alle.</td></tr>
+  <tr><td>Nächstes / vorheriges</td><td><kbd>Tab</kbd> / <kbd>Umschalt+Tab</kbd> (Fokus auf der Zeichenfläche)</td></tr>
+  <tr><td>Verschieben</td><td>Ziehen; <kbd>Pfeiltasten</kbd> um 1 px, mit <kbd>Umschalt</kbd> um 10 px.</td></tr>
+  <tr><td>Größe ändern</td><td>An den Griffen ziehen (<kbd>Umschalt</kbd> = Seitenverhältnis); <kbd>Alt+Pfeiltasten</kbd> um 1 px (mit <kbd>Umschalt</kbd> 10 px).</td></tr>
+  <tr><td>Drehen</td><td>Runder Griff über der Auswahl (<kbd>Umschalt</kbd> = 15°-Schritte) oder <kbd>[</kbd> / <kbd>]</kbd>; im Panel unter <span class="ui">Drehung</span>.</td></tr>
+  <tr><td>Text bearbeiten</td><td>Doppelklick auf Text, Sprechblase oder Stempel; beenden mit <kbd>Strg+Eingabe</kbd>, <kbd>Esc</kbd> oder Klick daneben.</td></tr>
+  <tr><td>Duplizieren</td><td><kbd>Strg+D</kbd></td></tr>
+  <tr><td>Löschen</td><td><kbd>Entf</kbd></td></tr>
+  <tr><td>Reihenfolge</td><td><kbd>Strg+]</kbd> eine Ebene nach vorn, <kbd>Strg+[</kbd> nach hinten, mit <kbd>Umschalt</kbd> ganz nach vorn/hinten.</td></tr>
+  <tr><td>Kontextmenü</td><td>Rechtsklick: Ausschneiden, Kopieren, Einfügen, Als Bildobjekt einfügen, Bild einfügen…, Duplizieren, Löschen, Reihenfolge, Sperren.</td></tr>
+  <tr><td>Sperren</td><td>Gesperrte Objekte lassen sich nicht versehentlich verschieben (Kontextmenü oder Schloss in den <a href="#layers">Ebenen</a>).</td></tr>
+</table></div>
+<p>Objekte lassen sich mit <kbd>Strg+C</kbd> und <kbd>Strg+V</kbd> auch zwischen zwei Editorfenstern kopieren.</p>
+
+<h3 id="layers">Ebenen</h3>
+<div class="split">
+<div>
+<p>Der Reiter <span class="ui">Ebenen</span> im Eigenschaftenbereich listet alle Objekte – oben liegt das vorderste. Die Liste ist mit der Zeichenfläche verbunden: Ein Klick wählt das Objekt aus.</p>
+<ul>
+  <li><b>Auge</b> – Objekt aus- und einblenden (ausgeblendete Objekte erscheinen auch nicht im gespeicherten Bild).</li>
+  <li><b>Schloss</b> – Objekt sperren bzw. entsperren.</li>
+  <li><b>Ziehen</b> – ändert die Reihenfolge (vorne/hinten).</li>
+  <li><b>Doppelklick</b> auf den Namen – umbenennen.</li>
+</ul>
+<p>Objekte außerhalb eines <a href="#tool-crop">Zuschnitts</a> sind in der Liste gekennzeichnet; sie sind im Ergebnis nicht sichtbar.</p>
+</div>
+<figure class="shot"><img src="images/layers.png" alt="Ebenenliste mit mehreren Objekten"><figcaption>Ebenenliste</figcaption></figure>
+</div>
+
+<h3 id="undo">Rückgängig und Wiederholen</h3>
+<p>Jede Änderung – auch Zuschneiden und das Entfernen von Bildbereichen – lässt sich mit <kbd>Strg+Z</kbd> rückgängig machen und mit <kbd>Strg+Y</kbd> (oder <kbd>Strg+Umschalt+Z</kbd>) wiederholen. Mehrere schnell aufeinanderfolgende Änderungen am selben Wert werden zu einem Schritt zusammengefasst.</p>
+
+<!-- ===================================================================== -->
+<h2 id="tools">Werkzeuge</h2>
+<p>Ein Werkzeug wählen Sie in der Werkzeugleiste links oder mit seiner Taste. Mit <kbd>Umschalt+F1</kbd> öffnet sich die Hilfe direkt beim gewählten Werkzeug. Beim Aufziehen gilt fast überall: <kbd>Umschalt</kbd> hält Proportionen (Quadrat, Kreis, 15°-Winkel), <kbd>Alt</kbd> zeichnet von der Mitte aus.</p>
+<div class="table-wrap"><table>
+  <tr><th></th><th>Werkzeug</th><th>Taste</th><th>Wofür</th></tr>
+  <tr class="group-row"><td colspan="4">Auswählen</td></tr>
+  <tr><td><img class="icon" src="images/icon-select.png" alt=""></td><td><a href="#tool-select">Auswahl</a></td><td><kbd>V</kbd></td><td>Objekte wählen, verschieben, ändern</td></tr>
+  <tr class="group-row"><td colspan="4">Formen und Linien</td></tr>
+  <tr><td><img class="icon" src="images/icon-rectangle.png" alt=""></td><td><a href="#tool-rectangle">Rechteck</a></td><td><kbd>R</kbd></td><td>Rahmen, Flächen, abgerundete Ecken</td></tr>
+  <tr><td><img class="icon" src="images/icon-ellipse.png" alt=""></td><td><a href="#tool-ellipse">Ellipse</a></td><td><kbd>E</kbd></td><td>Einkreisen</td></tr>
+  <tr><td><img class="icon" src="images/icon-line.png" alt=""></td><td><a href="#tool-line">Linie</a></td><td><kbd>L</kbd></td><td>Gerade Linien</td></tr>
+  <tr><td><img class="icon" src="images/icon-arrow.png" alt=""></td><td><a href="#tool-arrow">Pfeil</a></td><td><kbd>A</kbd></td><td>Auf etwas zeigen</td></tr>
+  <tr><td><img class="icon" src="images/icon-triangle.png" alt=""></td><td><a href="#tool-triangle">Dreieck</a></td><td><kbd>G</kbd></td><td>Warn- und Richtungszeichen</td></tr>
+  <tr><td><img class="icon" src="images/icon-polygon.png" alt=""></td><td><a href="#tool-polygon">Polygon</a></td><td><kbd>P</kbd></td><td>Beliebige Vielecke</td></tr>
+  <tr class="group-row"><td colspan="4">Beschriften</td></tr>
+  <tr><td><img class="icon" src="images/icon-text.png" alt=""></td><td><a href="#tool-text">Text</a></td><td><kbd>T</kbd></td><td>Beschriftungen</td></tr>
+  <tr><td><img class="icon" src="images/icon-marker.png" alt=""></td><td><a href="#tool-marker">Nummerierter Marker</a></td><td><kbd>M</kbd></td><td>Schritte 1, 2, 3 …</td></tr>
+  <tr><td><img class="icon" src="images/icon-callout.png" alt=""></td><td><a href="#tool-callout">Sprechblase</a></td><td><kbd>K</kbd></td><td>Text mit Spitze</td></tr>
+  <tr><td><img class="icon" src="images/icon-stamp.png" alt=""></td><td><a href="#tool-stamp">Stempel</a></td><td><kbd>S</kbd></td><td>„GENEHMIGT“, „ENTWURF“ …</td></tr>
+  <tr><td><img class="icon" src="images/icon-emoji.png" alt=""></td><td><a href="#tool-emoji">Emoji</a></td><td><kbd>J</kbd></td><td>Farbige Emojis</td></tr>
+  <tr><td><img class="icon" src="images/icon-image.png" alt=""></td><td><a href="#tool-image">Bild</a></td><td><kbd>I</kbd></td><td>Logos, Symbole, weitere Bilder</td></tr>
+  <tr class="group-row"><td colspan="4">Freihand</td></tr>
+  <tr><td><img class="icon" src="images/icon-pen.png" alt=""></td><td><a href="#tool-pen">Stift</a></td><td><kbd>B</kbd></td><td>Freihand zeichnen</td></tr>
+  <tr><td><img class="icon" src="images/icon-highlighter.png" alt=""></td><td><a href="#tool-highlighter">Textmarker</a></td><td><kbd>H</kbd></td><td>Text hervorheben</td></tr>
+  <tr><td><img class="icon" src="images/icon-eraser.png" alt=""></td><td><a href="#tool-eraser">Radierer</a></td><td><kbd>X</kbd></td><td>Striche entfernen</td></tr>
+  <tr class="group-row"><td colspan="4">Verbergen und hervorheben</td></tr>
+  <tr><td><img class="icon" src="images/icon-blur.png" alt=""></td><td><a href="#tool-blur">Unschärfe, Verpixeln, Schwärzen</a></td><td><kbd>U</kbd></td><td>Vertrauliches unkenntlich machen</td></tr>
+  <tr><td><img class="icon" src="images/icon-magnifier.png" alt=""></td><td><a href="#tool-magnifier">Lupe</a></td><td><kbd>Z</kbd></td><td>Details vergrößern</td></tr>
+  <tr class="group-row"><td colspan="4">Bild bearbeiten</td></tr>
+  <tr><td><img class="icon" src="images/icon-area-select.png" alt=""></td><td><a href="#tool-area-select">Bereich auswählen und entfernen</a></td><td><kbd>W</kbd></td><td>Teile des Screenshots transparent machen</td></tr>
+  <tr><td><img class="icon" src="images/icon-background-eraser.png" alt=""></td><td><a href="#tool-background-eraser">Hintergrundradierer</a></td><td><kbd>D</kbd></td><td>Transparenz malen</td></tr>
+  <tr><td><img class="icon" src="images/icon-crop.png" alt=""></td><td><a href="#tool-crop">Zuschneiden</a></td><td><kbd>C</kbd></td><td>Bildausschnitt festlegen</td></tr>
+</table></div>
+
+<h3 id="tool-select"><img class="icon" src="images/icon-select.png" alt="">Auswahl <kbd>V</kbd></h3>
+<p>Das Auswahlwerkzeug ist das Standardwerkzeug zum Bearbeiten vorhandener Objekte. Alle Handgriffe – Auswählen, Verschieben, Größe ändern, Drehen, Reihenfolge – sind im Abschnitt <a href="#objects">Objekte bearbeiten</a> beschrieben. Einige Objekte haben zusätzliche Griffe:</p>
+<ul>
+  <li><b>Sprechblase:</b> runder Griff an der Spitze – Spitze frei ziehen.</li>
+  <li><b>Lupe:</b> Quelle und vergrößerte Ansicht lassen sich getrennt verschieben.</li>
+  <li><b>Polygon:</b> jeder Eckpunkt ist ein Griff; Doppelklick auf eine Kante fügt einen Punkt ein.</li>
+  <li><b>Pfeil/Linie:</b> Griffe an Anfang und Ende (<kbd>Umschalt</kbd> rastet auf 15° ein).</li>
+</ul>
+<p>Bei ausgewählten Objekten zeigt der Eigenschaftenbereich deren Werte. <kbd>Umschalt+F1</kbd> öffnet die Hilfe zum Typ der ausgewählten Objekte.</p>
+
+<h3 id="tools-shapes">Formen</h3>
+<div class="split">
+<div>
+<p>Formen ziehen Sie mit gedrückter Maustaste auf. <kbd>Umschalt</kbd> erzeugt ein Quadrat bzw. einen Kreis, <kbd>Alt</kbd> zeichnet von der Mitte aus.</p>
+<p>Gemeinsame Einstellungen in der Karte <span class="ui">Darstellung</span>:</p>
+<ul>
+  <li><b>Linienfarbe</b> und <b>Füllfarbe</b> (<span class="ui">Keine</span> = nur Rahmen)</li>
+  <li><b>Linienstärke</b> und <b>Strichart</b> (durchgezogen, gestrichelt, gepunktet, Strichpunkt)</li>
+  <li><b>Deckkraft</b> des ganzen Objekts</li>
+  <li><b>Schatten</b> mit Farbe, Größe (Versatz nach rechts unten) und Unschärfe</li>
+  <li><b>Drehung</b> (bei ausgewählten Objekten)</li>
+</ul>
+</div>
+<figure class="shot"><img src="images/panel-rectangle.png" alt="Eigenschaften des Rechtecks"><figcaption>Rechteck: alle Karten geöffnet</figcaption></figure>
+</div>
+<h4 id="tool-rectangle"><img class="icon" src="images/icon-rectangle.png" alt="">Rechteck <kbd>R</kbd></h4>
+<p>Für Rahmen um wichtige Stellen oder halbtransparente Flächen. Zusätzlich: <b>Eckenradius</b> für abgerundete Ecken.</p>
+<h4 id="tool-ellipse"><img class="icon" src="images/icon-ellipse.png" alt="">Ellipse <kbd>E</kbd></h4>
+<p>Zum Einkreisen. Mit <kbd>Umschalt</kbd> entsteht ein Kreis.</p>
+<h4 id="tool-triangle"><img class="icon" src="images/icon-triangle.png" alt="">Dreieck <kbd>G</kbd></h4>
+<p>Gleichschenkliges Dreieck im aufgezogenen Rahmen – drehbar für Richtungszeichen.</p>
+<h4 id="tool-polygon"><img class="icon" src="images/icon-polygon.png" alt="">Polygon <kbd>P</kbd></h4>
+<ol class="steps">
+  <li>Für jeden Eckpunkt einmal klicken (<kbd>Umschalt</kbd> rastet den Winkel auf 15° ein).</li>
+  <li><kbd>Rücktaste</kbd> entfernt den letzten Punkt.</li>
+  <li>Doppelklick oder <kbd>Eingabe</kbd> schließt das Polygon, <kbd>Esc</kbd> bricht ab.</li>
+</ol>
+<p>Später verschieben Sie einzelne Eckpunkte mit dem Auswahlwerkzeug; ein Doppelklick auf eine Kante fügt einen Punkt hinzu.</p>
+
+<h3 id="tools-lines">Linien und Pfeile</h3>
+<div class="split">
+<div>
+<p>Linie und Pfeil ziehen Sie vom Anfangs- zum Endpunkt. <kbd>Umschalt</kbd> rastet den Winkel auf 15°-Schritte ein, <kbd>Alt</kbd> zeichnet vom Mittelpunkt aus.</p>
+<ul>
+  <li><b>Anfang</b> und <b>Ende</b>: keine Spitze, Pfeil, offener Pfeil, Kreis oder Quadrat – unabhängig für beide Enden.</li>
+  <li><b>Linienfarbe</b>, <b>Linienstärke</b>, <b>Strichart</b>, <b>Deckkraft</b></li>
+  <li><b>Kontur</b> mit Farbe, Stärke und Unschärfe – ein Rand um Linie und Spitzen, damit sie auf jedem Hintergrund gut lesbar sind.</li>
+  <li><b>Schatten</b></li>
+</ul>
+</div>
+<figure class="shot"><img src="images/panel-arrow.png" alt="Eigenschaften des Pfeils"><figcaption>Pfeil</figcaption></figure>
+</div>
+<h4 id="tool-line"><img class="icon" src="images/icon-line.png" alt="">Linie <kbd>L</kbd></h4>
+<p>Gerade Linie ohne Spitzen (Spitzen lassen sich nachträglich hinzufügen).</p>
+<h4 id="tool-arrow"><img class="icon" src="images/icon-arrow.png" alt="">Pfeil <kbd>A</kbd></h4>
+<p>Linie mit Pfeilspitze am Ende. Linie und Pfeil haben getrennte Standardwerte.</p>
+
+<h3 id="tool-text"><img class="icon" src="images/icon-text.png" alt="">Text <kbd>T</kbd></h3>
+<div class="split">
+<div>
+<ul>
+  <li><b>Klick</b> setzt einen Text, der mit jeder Zeile wächst.</li>
+  <li><b>Ziehen</b> erzeugt ein Textfeld mit fester Breite und automatischem Zeilenumbruch.</li>
+  <li>Text direkt auf der Zeichenfläche tippen; <kbd>Eingabe</kbd> beginnt eine neue Zeile, <kbd>Strg+Eingabe</kbd> oder <kbd>Esc</kbd> beendet die Eingabe.</li>
+  <li>Doppelklick auf einen vorhandenen Text bearbeitet ihn.</li>
+</ul>
+<p>Einstellungen:</p>
+<ul>
+  <li><b>Schrift</b>: Schriftart, Schnitt, Größe, Fett, Kursiv, Unterstrichen, Durchgestrichen, Ausrichtung</li>
+  <li><b>Textfarbe</b></li>
+  <li><b>Kontur</b> mit Farbe, Stärke und weicher Kante (<span class="ui">Kontur-Unschärfe</span>)</li>
+  <li><b>Hintergrund</b> mit Farbe und Innenabstand – wie ein Etikett</li>
+  <li><b>Schatten</b>, <b>Deckkraft</b>, <b>Drehung</b></li>
+</ul>
+<p>Mitgelieferte <a href="#presets">Vorlagen</a>: Beschriftung, Warnung, Notiz und Hinweis.</p>
+</div>
+<figure class="shot"><img src="images/panel-text.png" alt="Eigenschaften des Text-Werkzeugs"><figcaption>Text</figcaption></figure>
+</div>
+
+<h3 id="tool-callout"><img class="icon" src="images/icon-callout.png" alt="">Sprechblase <kbd>K</kbd></h3>
+<div class="split">
+<div>
+<ol class="steps">
+  <li>Rahmen der Blase aufziehen (ein einfacher Klick erzeugt eine Blase in Standardgröße).</li>
+  <li>Text eingeben – er wird umbrochen und mittig gesetzt; passt er nicht, wächst die Blase nach unten. <kbd>Strg+Eingabe</kbd> oder <kbd>Esc</kbd> beendet die Eingabe.</li>
+  <li>Mit dem <a href="#tool-select">Auswahlwerkzeug</a> den runden Griff an der Spitze auf das Ziel ziehen. Die Spitze wandert dabei automatisch auf die passende Seite der Blase.</li>
+</ol>
+<p>Einstellungen:</p>
+<ul>
+  <li><b>Form &amp; Spitze</b>: abgerundetes Rechteck (mit Eckenradius), Ellipse oder Gedankenblase; Breite der Spitze, <span class="ui">Gebogene Spitze</span> und <span class="ui">Biegung umkehren</span>; Drehung</li>
+  <li><b>Schrift</b> wie beim Text</li>
+  <li><b>Farben</b>: Textfarbe, Hintergrund, Innenabstand</li>
+  <li><b>Leuchten</b>: farbiger Rahmen außen um Blase und Spitze, mit Breite und Unschärfe</li>
+  <li><b>Schatten</b>, <b>Deckkraft</b>, Vorlagen</li>
+</ul>
+<p>Eckgriffe ändern nur die Größe der Blase (die Schrift bleibt, der Text wird neu umbrochen). Beim Verschieben wandert die Spitze mit.</p>
+</div>
+<figure class="shot"><img src="images/panel-callout.png" alt="Eigenschaften der Sprechblase"><figcaption>Sprechblase</figcaption></figure>
+</div>
+
+<h3 id="tool-stamp"><img class="icon" src="images/icon-stamp.png" alt="">Stempel <kbd>S</kbd></h3>
+<div class="split">
+<div>
+<p>Ein Stempel ist ein einfarbiger Rahmen mit Text im Look eines echten Gummistempels – ideal für „GENEHMIGT“, „ENTWURF“ oder „VERTRAULICH“.</p>
+<ol class="steps">
+  <li>Auf die Zeichenfläche klicken – der Stempel erscheint mit markiertem Text.</li>
+  <li>Eigenen Text tippen (mehrzeilig möglich) oder einen Text der <span class="ui">Schnellauswahl</span> im Panel wählen.</li>
+  <li><kbd>Strg+Eingabe</kbd> oder <kbd>Esc</kbd> beendet die Eingabe.</li>
+</ol>
+<ul>
+  <li><b>Farbe</b> und <b>Rahmen</b>: Rechteck, abgerundet, Doppelrahmen, Oval; Rahmenstärke</li>
+  <li><b>Stempel-Look</b>: ausgefranste Kanten, Fehlstellen, Sprenkel, Kratzer; <span class="ui">Neu würfeln</span> erzeugt ein anderes Muster</li>
+  <li><b>Neigung</b> (Standard −8°), Schrift mit Fett/Kursiv/Unter- und Durchstreichung</li>
+  <li><b>Tinten-Look</b>: Farbe wird mit dem Bild multipliziert, als wäre echte Tinte aufgedrückt</li>
+  <li><b>Deckkraft</b></li>
+</ul>
+<p>Ein Stempel passt sich der Textlänge an. Ziehen an einem Eckgriff skaliert Rahmen und Schrift gemeinsam. Der zuletzt gestempelte Text wird zum Standardtext.</p>
+</div>
+<figure class="shot"><img src="images/panel-stamp.png" alt="Eigenschaften des Stempels"><figcaption>Stempel</figcaption></figure>
+</div>
+
+<h3 id="tool-marker"><img class="icon" src="images/icon-marker.png" alt="">Nummerierter Marker <kbd>M</kbd></h3>
+<div class="split">
+<div>
+<p>Marker nummerieren Arbeitsschritte: Jeder Klick setzt die nächste freie Nummer. <b>Ziehen</b> erzeugt zusätzlich eine Spitze, die auf den Zielpunkt zeigt.</p>
+<ul>
+  <li><b>Form</b>: Kreis, Quadrat, abgerundet; <b>Größe</b></li>
+  <li><b>Füllfarbe</b>, <b>Zahlenfarbe</b>, <b>Randfarbe</b></li>
+  <li><b>Startnummer</b> für neue Marker</li>
+  <li><b>Neu nummerieren</b> nach Ebenenreihenfolge oder nach Erstellreihenfolge – nützlich, nachdem Marker gelöscht wurden</li>
+  <li><b>Schatten</b></li>
+</ul>
+</div>
+<figure class="shot"><img src="images/panel-marker.png" alt="Eigenschaften des Markers"><figcaption>Marker</figcaption></figure>
+</div>
+
+<h3 id="tools-freehand">Freihand</h3>
+<h4 id="tool-pen"><img class="icon" src="images/icon-pen.png" alt="">Stift <kbd>B</kbd></h4>
+<div class="split">
+<div>
+<p>Zeichnen Sie mit gedrückter Maustaste oder mit einem Grafikstift. Jeder Strich wird ein eigenes Objekt.</p>
+<ul>
+  <li><b>Farbe</b>, <b>Linienstärke</b>, <b>Deckkraft</b></li>
+  <li><b>Glättung</b> – beruhigt zittrige Striche</li>
+  <li><b>Stiftdruck steuert die Breite</b> – bei Grafiktabletts</li>
+</ul>
+<p>Mit eingeblendetem <a href="#ruler">Lineal</a> entstehen gerade Striche.</p>
+</div>
+<figure class="shot"><img src="images/panel-pen.png" alt="Eigenschaften des Stifts"><figcaption>Stift</figcaption></figure>
+</div>
+<h4 id="tool-highlighter"><img class="icon" src="images/icon-highlighter.png" alt="">Textmarker <kbd>H</kbd></h4>
+<p>Wie der Stift, aber breit und halbtransparent – zum Hervorheben von Text. Die Option <span class="ui">Textmarker hinter anderen Objekten zeichnen</span> legt alle Textmarker-Striche des Dokuments unter die übrigen Objekte.</p>
+<h4 id="tool-eraser"><img class="icon" src="images/icon-eraser.png" alt="">Radierer <kbd>X</kbd></h4>
+<p>Ziehen Sie über Striche, um sie zu entfernen; beim Loslassen werden alle markierten Striche gelöscht (ein Rückgängig-Schritt). Mit <span class="ui">Alle Objekte radieren, nicht nur Striche</span> entfernt der Radierer jedes berührte Objekt.</p>
+<div class="box note"><p>Der Radierer entfernt <em>Objekte</em>. Um Teile des Screenshots selbst transparent zu machen, nutzen Sie den <a href="#tool-background-eraser">Hintergrundradierer</a>.</p></div>
+
+<h3 id="tool-blur"><img class="icon" src="images/icon-blur.png" alt="">Unschärfe, Verpixeln, Schwärzen <kbd>U</kbd></h3>
+<div class="split">
+<div>
+<p>Machen Sie Namen, E-Mail-Adressen oder Kennwörter unkenntlich: Bereich aufziehen (<kbd>Umschalt</kbd> = Quadrat). Der Bereich bleibt ein Objekt und lässt sich verschieben oder in der Größe ändern.</p>
+<ul>
+  <li><b>Modus</b>: Verpixeln, Weichzeichnen oder Schwärzen (deckend, mit Farbe)</li>
+  <li><b>Stärke / Blockgröße</b> in Pixeln</li>
+  <li><b>Form</b>: Rechteck oder Ellipse; <b>Weicher Rand</b></li>
+</ul>
+</div>
+<figure class="shot"><img src="images/panel-blur.png" alt="Eigenschaften der Unschärfe"><figcaption>Unschärfe</figcaption></figure>
+</div>
+<div class="box warn"><p><span class="label">Sicherheit:</span> Leichtes Weichzeichnen lässt sich teilweise rückgängig rechnen. Verwenden Sie für sensible Daten <b>Schwärzen</b>. Geben Sie außerdem immer das <a href="#export">exportierte Bild</a> weiter, nicht die Projektdatei: Das Projekt enthält das unveränderte Original.</p></div>
+
+<h3 id="tool-magnifier"><img class="icon" src="images/icon-magnifier.png" alt="">Lupe <kbd>Z</kbd></h3>
+<div class="split">
+<div>
+<p>Die Lupe zeigt einen Bildausschnitt vergrößert an einer anderen Stelle. Ziehen Sie den <b>Quellbereich</b> auf; die vergrößerte Ansicht erscheint daneben. Mit dem Auswahlwerkzeug verschieben Sie Quelle und Lupe unabhängig voneinander.</p>
+<ul>
+  <li><b>Vergrößerung</b>, <b>Form</b> (Kreis oder Rechteck), <b>Rahmen</b></li>
+  <li><b>Verbindung anzeigen</b> – Linien zwischen Quelle und Lupe</li>
+  <li><b>Quellrahmen anzeigen</b></li>
+  <li><b>Nur Basisbild vergrößern</b> – ohne die Objekte darüber</li>
+  <li><b>Glatte Skalierung</b> – aus: Pixel bleiben scharf sichtbar</li>
+</ul>
+</div>
+<figure class="shot"><img src="images/panel-magnifier.png" alt="Eigenschaften der Lupe"><figcaption>Lupe</figcaption></figure>
+</div>
+
+<h3 id="tool-emoji"><img class="icon" src="images/icon-emoji.png" alt="">Emoji <kbd>J</kbd></h3>
+<div class="split">
+<div>
+<p>Fügen Sie farbige Emojis ein – alle Windows-Emojis außer Länderflaggen.</p>
+<ol class="steps">
+  <li>Im Panel ein Emoji suchen (Deutsch oder Englisch) oder über Kategorien, <span class="ui">Zuletzt verwendet</span> und <span class="ui">Favoriten</span> wählen. Den <span class="ui">Hautton</span> stellen Sie darüber ein.</li>
+  <li>Auf die Zeichenfläche klicken (Standardgröße) oder einen Bereich aufziehen (<kbd>Umschalt</kbd> = frei, <kbd>Alt</kbd> = von der Mitte). Doppelklick oder <kbd>Eingabe</kbd> in der Auswahl fügt in der Bildmitte ein.</li>
+</ol>
+<p>Ist ein Emoji ausgewählt, tauscht ein Klick in der Auswahlliste es aus. Emojis lassen sich drehen (<kbd>[</kbd> / <kbd>]</kbd>), spiegeln (<kbd>Umschalt+H</kbd> / <kbd>Umschalt+V</kbd>) und mit Deckkraft und Schatten versehen. Per Rechtsklick auf ein Emoji der Auswahl fügen Sie es zu den Favoriten hinzu oder entfernen es wieder.</p>
+</div>
+<figure class="shot"><img src="images/panel-emoji.png" alt="Emoji-Auswahl im Eigenschaftenbereich"><figcaption>Emoji-Auswahl</figcaption></figure>
+</div>
+
+<h3 id="tool-image"><img class="icon" src="images/icon-image.png" alt="">Bild <kbd>I</kbd></h3>
+<div class="split">
+<div>
+<p>Fügen Sie weitere Bilder als Objekte ein – Logos, Symbole, Fotos oder SVG-Grafiken.</p>
+<ul>
+  <li><b>Klick</b> öffnet die Dateiauswahl und setzt das Bild in Originalgröße (höchstens 80 % des Screenshots).</li>
+  <li><b>Bereich aufziehen</b> passt das Bild proportional in den Bereich ein.</li>
+  <li><b>Bilddatei auf die Zeichenfläche ziehen</b> fügt sie an dieser Stelle ein.</li>
+  <li><kbd>Strg+Umschalt+V</kbd> fügt ein Bild oder eine kopierte Bilddatei aus der Zwischenablage als Objekt ein.</li>
+  <li><span class="ui">Bild aus Datei einfügen…</span> im Panel oder im Kontextmenü.</li>
+</ul>
+<p>Animierte GIFs und mehrseitige TIFFs fragen nach dem gewünschten Einzelbild. SVG-Grafiken bleiben bei jedem Zoom scharf.</p>
+<p>Einstellungen: <b>Größe</b> mit <span class="ui">Seitenverhältnis beibehalten</span>, <span class="ui">Originalgröße</span>, <span class="ui">Originalverhältnis</span>; <b>Drehung</b>, <b>Spiegeln</b>, <b>Kontur</b> (folgt den nicht transparenten Bildteilen), <b>Schatten</b> und <b>Deckkraft</b>.</p>
+</div>
+<figure class="shot"><img src="images/panel-image.png" alt="Eigenschaften des Bild-Werkzeugs"><figcaption>Bild</figcaption></figure>
+</div>
+<div class="box note"><p>Aus Sicherheitsgründen laden SVG-Grafiken keine externen Dateien oder Internetadressen nach; solche Inhalte erscheinen grau.</p></div>
+
+<h3 id="tools-remove">Bildbereiche entfernen (Freistellen)</h3>
+<p>Diese beiden Werkzeuge machen Teile des <em>Screenshots</em> transparent – etwa um ein Fenster freizustellen oder störenden Hintergrund zu entfernen. Objekte darüber bleiben unberührt. Die Änderung ist nicht endgültig: Alles lässt sich mit <span class="ui">Ganzen Screenshot wiederherstellen</span> zurückholen. Transparente Stellen sind im PNG durchsichtig; JPG und BMP füllen sie weiß (bzw. mit dem Hintergrund aus den <a href="#export">Speicheroptionen</a>).</p>
+<h4 id="tool-area-select"><img class="icon" src="images/icon-area-select.png" alt="">Bereich auswählen und entfernen <kbd>W</kbd></h4>
+<div class="split">
+<div>
+<ol class="steps">
+  <li><b>Auswahlform</b> wählen: Rechteck, Ellipse, Freihand (Lasso) oder Zauberstab (wählt zusammenhängende ähnliche Farben, mit <span class="ui">Farbtoleranz</span>).</li>
+  <li>Bereich aufziehen bzw. klicken. <kbd>Umschalt</kbd> fügt zur Auswahl hinzu, <kbd>Alt</kbd> zieht ab.</li>
+  <li><kbd>Entf</kbd> oder <span class="ui">Bereich entfernen</span> macht den Bereich transparent – optional mit <span class="ui">Weicher Kante</span>.</li>
+</ol>
+<p>Weitere Befehle: <span class="ui">Auswahl umkehren</span> (<kbd>Strg+Umschalt+I</kbd>) – praktisch, um alles <em>außer</em> dem gewählten Bereich zu entfernen –, <span class="ui">Alles auswählen</span>, <span class="ui">Auswahl aufheben</span>, <span class="ui">Auf sichtbaren Bereich zuschneiden</span>.</p>
+<p>Die Bereichsauswahl selbst ist kein Objekt; sie wird beim Werkzeugwechsel aufgehoben.</p>
+</div>
+<figure class="shot"><img src="images/panel-area-select.png" alt="Eigenschaften der Bereichsauswahl"><figcaption>Bereichsauswahl</figcaption></figure>
+</div>
+<h4 id="tool-background-eraser"><img class="icon" src="images/icon-background-eraser.png" alt="">Hintergrundradierer <kbd>D</kbd></h4>
+<div class="split">
+<div>
+<p>Malen Sie über den Screenshot, um diese Stellen transparent zu machen. Mit gedrückter <kbd>Alt</kbd>-Taste malen Sie die Stellen wieder zurück.</p>
+<ul>
+  <li><b>Größe</b> des Pinsels (auch mit <kbd>[</kbd> / <kbd>]</kbd>)</li>
+  <li><b>Härte</b> – weiche oder harte Pinselkante</li>
+</ul>
+</div>
+<figure class="shot"><img src="images/panel-background-eraser.png" alt="Eigenschaften des Hintergrundradierers"><figcaption>Hintergrundradierer</figcaption></figure>
+</div>
+
+<h3 id="tool-crop"><img class="icon" src="images/icon-crop.png" alt="">Zuschneiden <kbd>C</kbd></h3>
+<p>Im Zuschnittmodus legen Sie den sichtbaren Bildausschnitt fest. Das Zuschneiden ist nicht endgültig: Das ganze Bild bleibt erhalten, und Sie können den Ausschnitt später wieder vergrößern.</p>
+<figure class="shot"><img src="images/crop-mode.png" alt="Editor im Zuschnittmodus mit Zuschneiden-Bereich rechts"><figcaption>Zuschnittmodus</figcaption></figure>
+<ul>
+  <li><b>Griffe ziehen</b> ändert die Größe, <b>Ziehen im Inneren</b> verschiebt den Rahmen, <b>Ziehen außerhalb</b> zieht einen neuen Bereich auf.</li>
+  <li><kbd>Umschalt</kbd> hält beim Ziehen das Seitenverhältnis, <kbd>Alt</kbd> schaltet das Einrasten an Kanten aus, <kbd>Pfeiltasten</kbd> verschieben um 1 px.</li>
+  <li><b>Seitenverhältnis</b>: Frei, Original, 1:1, 4:3, 3:2, 16:9, 9:16 oder benutzerdefiniert.</li>
+  <li><b>Position</b> und <b>Größe</b> in Pixeln exakt eingeben.</li>
+  <li><b>Schnellbefehle</b>: <span class="ui">Auf Objekte zuschneiden</span> (nur der Bereich mit Objekten) und <span class="ui">Leeren Rand entfernen</span> (einfarbigen Rand abschneiden).</li>
+  <li><span class="ui">Übernehmen</span> bzw. <kbd>Eingabe</kbd> beendet den Modus, <span class="ui">Abbrechen</span> bzw. <kbd>Esc</kbd> verwirft die Änderung, <span class="ui">Zurücksetzen</span> wählt wieder das ganze Bild.</li>
+</ul>
+
+<!-- ===================================================================== -->
+<h2 id="output">Speichern und weitergeben</h2>
+<p>Für das fertige Ergebnis gibt es mehrere Wege – je nachdem, ob Sie das Bild sofort weitergeben, als Datei ablegen oder später weiterbearbeiten möchten.</p>
+<div class="cards">
+  <a class="card" href="#clipboard"><strong>📋 Zwischenablage</strong><span>Schnell in E-Mail, Chat oder Dokument einfügen</span></a>
+  <a class="card" href="#export"><strong>🖼️ Bilddatei</strong><span>PNG, JPEG, BMP, GIF, TIFF oder JPEG XR</span></a>
+  <a class="card" href="#projects"><strong>🗂️ Projekt (.gsts)</strong><span>Alle Objekte bleiben bearbeitbar</span></a>
+  <a class="card" href="#drag-drop"><strong>🖱️ Drag &amp; Drop</strong><span>Bild direkt in ein anderes Programm ziehen</span></a>
+</div>
+
+<h3 id="save">Speichern</h3>
+<p><kbd>Strg+S</kbd> speichert dorthin, woher das Dokument stammt: ein geöffnetes Projekt wieder als Projekt, eine geöffnete Bilddatei wieder als Bild. Bei einer neuen Aufnahme fragt ein Dialog nach Ort und Dateityp – zuerst angeboten wird das Projektformat. <kbd>Strg+Umschalt+S</kbd> (<span class="ui">Speichern unter…</span>) fragt immer.</p>
+<p>Beim Schließen eines Editors mit ungespeicherten Änderungen fragt GodSaveTheScreen nach: <span class="ui">Speichern</span>, <span class="ui">Als Projekt speichern</span>, <span class="ui">Nicht speichern</span> oder <span class="ui">Abbrechen</span>.</p>
+
+<h3 id="export">Exportieren und Speicheroptionen</h3>
+<p><span class="ui">Exportieren…</span> schreibt das Ergebnis als Bilddatei, ohne dass das Dokument dadurch zu dieser Datei wird – ideal, wenn Sie am Projekt weiterarbeiten. Das Bild enthält alle sichtbaren Objekte und den Zuschnitt.</p>
+<p>Die <b>Speicheroptionen</b> (Regler-Symbol in der Befehlsleiste) legen fest:</p>
+<ul>
+  <li><b>Format</b>: PNG, JPEG, BMP, GIF, TIFF oder JPEG XR</li>
+  <li><b>Qualität</b> (JPEG, JPEG XR), <b>Interlaced</b> (PNG), <b>Kompression</b> (TIFF), <b>Verlustfrei</b> (JPEG XR)</li>
+  <li><b>Hintergrund für transparente Bereiche</b> bei Formaten ohne Transparenz</li>
+</ul>
+<p>Öffnen können Sie alle Bildformate, die Windows kennt.</p>
+
+<h3 id="clipboard">Zwischenablage</h3>
+<div class="table-wrap"><table class="keys">
+  <tr><th>Taste</th><th>Wirkung</th></tr>
+  <tr><td><kbd>Strg+C</kbd></td><td>Mit Auswahl: die ausgewählten Objekte kopieren (zum Einfügen in einem Editor). Ohne Auswahl: das fertige Bild kopieren.</td></tr>
+  <tr><td><kbd>Strg+Umschalt+C</kbd></td><td>Immer das fertige Bild kopieren.</td></tr>
+  <tr><td><kbd>Strg+X</kbd></td><td>Ausgewählte Objekte ausschneiden.</td></tr>
+  <tr><td><kbd>Strg+V</kbd></td><td>Kopierte Objekte einfügen; enthält die Zwischenablage ein Bild, öffnet es sich in einem neuen Editorfenster.</td></tr>
+  <tr><td><kbd>Strg+Umschalt+V</kbd></td><td>Bild aus der Zwischenablage als <a href="#tool-image">Bildobjekt</a> in das aktuelle Bild einfügen.</td></tr>
+</table></div>
+<p>Das Bild wird mit Transparenz (PNG) und zusätzlich im klassischen Windows-Format kopiert, damit alle Programme es einfügen können.</p>
+
+<h3 id="drag-drop">Drag &amp; Drop</h3>
+<ul>
+  <li><b>Hinaus:</b> Ziehen Sie den Ziehpunkt rechts in der Befehlsleiste in ein anderes Programm (E-Mail, Chat, Explorer) – das fertige Bild wird übergeben.</li>
+  <li><b>Hinein:</b> Bilddateien auf die Zeichenfläche ziehen fügt sie als <a href="#tool-image">Bildobjekte</a> ein. Mit gedrückter <kbd>Strg</kbd>-Taste, außerhalb der Zeichenfläche oder bei Projektdateien öffnet sich stattdessen ein neues Editorfenster.</li>
+</ul>
+
+<h3 id="projects">Projekte (.gsts)</h3>
+<p>Ein Projekt speichert das Originalbild, den Zuschnitt, entfernte Bereiche und alle Objekte in einer Datei. Öffnen Sie es später wieder, ist alles weiterhin bearbeitbar – ideal für Anleitungen, die Sie aktualisieren möchten.</p>
+<div class="box warn"><p>Weil das Projekt das unveränderte Original enthält, bleiben unscharf gemachte oder geschwärzte Bereiche darin lesbar. Geben Sie deshalb an Dritte immer ein <a href="#export">exportiertes Bild</a> weiter.</p></div>
+
+<h3 id="recent">Zuletzt verwendet</h3>
+<p>Die letzten 15 geöffneten oder gespeicherten Dateien finden Sie im Startfenster, im Tray-Menü, im Editor unter dem Pfeil neben <span class="ui">Öffnen</span> und in der Sprungliste der Taskleiste. Nicht mehr vorhandene Dateien sind ausgegraut und lassen sich entfernen; <span class="ui">Liste leeren</span> löscht alle Einträge.</p>
+
+<h3 id="backup">Automatische Sicherung</h3>
+<p>Ungespeicherte Arbeit wird regelmäßig im Hintergrund gesichert. Endet GodSaveTheScreen unerwartet, bietet es beim nächsten Start an, die Dokumente wiederherzustellen. Wiederhergestellte Dokumente sollten Sie anschließend speichern.</p>
+
+<!-- ===================================================================== -->
+<h2 id="settings">Einstellungen</h2>
+<p>Die Einstellungen öffnen Sie über das Startfenster oder das Tray-Menü. Änderungen gelten sofort. Die Schaltfläche <span class="ui">Hilfe</span> unten links bzw. <kbd>Umschalt+F1</kbd> springt zur Beschreibung der angezeigten Seite.</p>
+
+<h3 id="settings-general">Allgemein</h3>
+<figure class="shot"><img src="images/settings-general.png" alt="Einstellungsseite Allgemein"></figure>
+<ul>
+  <li><b>Sprache</b>: Systemsprache, Deutsch oder Englisch (wird nach einem Neustart wirksam). Die Hilfe öffnet sich in der eingestellten Sprache.</li>
+  <li><b>Design</b>: Systemeinstellung, Hell oder Dunkel.</li>
+  <li><b>Klick auf das Tray-Symbol</b>: welcher Aufnahmemodus startet, Startfenster öffnen oder keine Aktion.</li>
+  <li><b>Mit Windows starten</b> und <b>Minimiert im Infobereich starten</b> (ohne Startfenster).</li>
+</ul>
+
+<h3 id="settings-capture">Aufnahme</h3>
+<figure class="shot"><img src="images/settings-capture.png" alt="Einstellungsseite Aufnahme"></figure>
+<ul>
+  <li><b>Standard-Aufnahmemodus</b> und <b>Standard-Timer</b> (für Tastenkürzel und Tray).</li>
+  <li><b>Quelle der Fensteraufnahme</b>: <span class="ui">Snapshot (wie sichtbar)</span> oder <span class="ui">Fensterinhalt (auch verdeckte Teile)</span>.</li>
+  <li><b>Mauszeiger aufnehmen</b>.</li>
+  <li><b>Abgerundete Fensterecken transparent machen</b> (Windows 11).</li>
+  <li><b>Kanten der Freiformaufnahme glätten</b>.</li>
+  <li><b>Eigene Fenster nicht aufnehmen</b>.</li>
+  <li><b>Lupe im Auswahl-Overlay anzeigen</b>.</li>
+  <li><b>Ton bei 3-2-1 abspielen</b> (Timer).</li>
+</ul>
+
+<h3 id="settings-postcapture">Nach der Aufnahme</h3>
+<figure class="shot"><img src="images/settings-postcapture.png" alt="Einstellungsseite Nach der Aufnahme"></figure>
+<ul>
+  <li><b>Im Editor öffnen</b>, <b>In die Zwischenablage kopieren</b> und <b>Automatisch speichern</b> – einzeln ein- und ausschaltbar.</li>
+  <li><b>Zielordner</b> und <b>Format</b> für das automatische Speichern.</li>
+  <li><b>Dateinamensmuster</b> mit Platzhaltern:
+    <div class="table-wrap"><table>
+      <tr><th>Platzhalter</th><th>Bedeutung</th></tr>
+      <tr><td><span class="path">{date:yyyy-MM-dd}</span></td><td>Datum (Format frei wählbar)</td></tr>
+      <tr><td><span class="path">{time:HH-mm-ss}</span></td><td>Uhrzeit</td></tr>
+      <tr><td><span class="path">{mode}</span></td><td>Aufnahmemodus</td></tr>
+      <tr><td><span class="path">{window}</span></td><td>Titel des aufgenommenen Fensters</td></tr>
+      <tr><td><span class="path">{counter:000}</span></td><td>Fortlaufende Nummer</td></tr>
+    </table></div>
+    <span class="ui">Zurücksetzen</span> stellt das Standardmuster <span class="path">Screenshot {date:yyyy-MM-dd} {time:HH-mm-ss}</span> wieder her.</li>
+</ul>
+
+<h3 id="settings-hotkeys">Tastenkürzel</h3>
+<figure class="shot"><img src="images/settings-hotkeys.png" alt="Einstellungsseite Tastenkürzel"></figure>
+<p>Klicken Sie in ein Feld und drücken Sie die gewünschte Tastenkombination; <kbd>Entf</kbd> löscht das Kürzel. Neben jedem Feld steht, ob das Kürzel aktiv ist oder bereits von Windows bzw. einem anderen Programm belegt wird. Für die Druck-Taste gibt es einen direkten Link zur passenden Windows-Einstellung (siehe <a href="#capture-hotkeys">Druck-Taste</a>).</p>
+
+<h3 id="settings-about">Info</h3>
+<figure class="shot"><img src="images/settings-about.png" alt="Einstellungsseite Info"></figure>
+<p>Zeigt die Programmversion, öffnet den <b>Einstellungsordner</b> und den <b>Protokollordner</b> und listet die verwendeten <b>Drittanbieter-Komponenten</b> mit ihren Lizenzen.</p>
+
+<!-- ===================================================================== -->
+<h2 id="shortcuts">Tastenkürzel</h2>
+<p>Die vollständige Liste – mit Ihren eigenen globalen Tastenkürzeln und Suchfeld – zeigt <kbd>Strg+F1</kbd> jederzeit im Programm an.</p>
+<figure class="shot center"><img src="images/shortcuts-window.png" alt="Fenster Tastenkürzel"><figcaption>Das Fenster „Tastenkürzel“</figcaption></figure>
+
+<h3 id="shortcuts-general">Hilfe und Aufnahme</h3>
+<div class="table-wrap"><table class="keys">
+  <tr><td><kbd>F1</kbd></td><td>Diese Hilfe öffnen</td></tr>
+  <tr><td><kbd>Umschalt+F1</kbd></td><td>Hilfe zum aktuellen Werkzeug, zur Auswahl oder zur Einstellungsseite</td></tr>
+  <tr><td><kbd>Strg+F1</kbd></td><td>Alle Tastenkürzel anzeigen</td></tr>
+  <tr><td><kbd>Strg+Umschalt+1</kbd> … <kbd>4</kbd></td><td>Aufnahme Rechteck / Fenster / Freiform / Vollbild (Standard, änderbar)</td></tr>
+</table></div>
+
+<h3 id="shortcuts-editor">Im Editor</h3>
+<div class="table-wrap"><table class="keys">
+  <tr class="group-row"><td colspan="2">Datei</td></tr>
+  <tr><td><kbd>Strg+O</kbd></td><td>Öffnen</td></tr>
+  <tr><td><kbd>Strg+S</kbd> / <kbd>Strg+Umschalt+S</kbd></td><td>Speichern / Speichern unter</td></tr>
+  <tr><td><kbd>Strg+V</kbd> / <kbd>Strg+Umschalt+V</kbd></td><td>Einfügen / Bild als Objekt einfügen</td></tr>
+  <tr class="group-row"><td colspan="2">Bearbeiten</td></tr>
+  <tr><td><kbd>Strg+Z</kbd> / <kbd>Strg+Y</kbd></td><td>Rückgängig / Wiederholen</td></tr>
+  <tr><td><kbd>Strg+C</kbd> / <kbd>Strg+Umschalt+C</kbd></td><td>Kopieren (Auswahl oder Bild) / Bild kopieren</td></tr>
+  <tr><td><kbd>Strg+X</kbd> / <kbd>Strg+D</kbd> / <kbd>Entf</kbd></td><td>Ausschneiden / Duplizieren / Löschen</td></tr>
+  <tr><td><kbd>Strg+A</kbd></td><td>Alles auswählen</td></tr>
+  <tr><td><kbd>Strg+]</kbd> / <kbd>Strg+[</kbd></td><td>Eine Ebene nach vorn / hinten (mit <kbd>Umschalt</kbd>: ganz)</td></tr>
+  <tr class="group-row"><td colspan="2">Ansicht</td></tr>
+  <tr><td><kbd>Strg++</kbd> / <kbd>Strg+-</kbd></td><td>Vergrößern / Verkleinern (auch <kbd>Strg</kbd> + Mausrad)</td></tr>
+  <tr><td><kbd>Strg+0</kbd> / <kbd>Strg+1</kbd></td><td>Einpassen / 100 %</td></tr>
+  <tr><td><kbd>Leertaste</kbd> + Ziehen</td><td>Ansicht verschieben</td></tr>
+  <tr><td><kbd>Strg+R</kbd></td><td>Lineal ein/aus</td></tr>
+  <tr class="group-row"><td colspan="2">Objekte</td></tr>
+  <tr><td><kbd>Tab</kbd> / <kbd>Umschalt+Tab</kbd></td><td>Nächstes / vorheriges Objekt</td></tr>
+  <tr><td><kbd>Pfeiltasten</kbd></td><td>Verschieben um 1 px (mit <kbd>Umschalt</kbd> 10 px)</td></tr>
+  <tr><td><kbd>Alt+Pfeiltasten</kbd></td><td>Größe um 1 px ändern (mit <kbd>Umschalt</kbd> 10 px)</td></tr>
+  <tr><td><kbd>[</kbd> / <kbd>]</kbd></td><td>Drehen um 15°</td></tr>
+  <tr><td><kbd>Umschalt+H</kbd> / <kbd>Umschalt+V</kbd></td><td>Emoji oder Bild horizontal / vertikal spiegeln</td></tr>
+  <tr class="group-row"><td colspan="2">Bereiche entfernen und Zuschneiden</td></tr>
+  <tr><td><kbd>Umschalt</kbd> / <kbd>Alt</kbd></td><td>Zur Bereichsauswahl hinzufügen / abziehen</td></tr>
+  <tr><td><kbd>Entf</kbd> / <kbd>Strg+Umschalt+I</kbd></td><td>Bereich entfernen / Auswahl umkehren</td></tr>
+  <tr><td><kbd>Alt</kbd> / <kbd>[</kbd> <kbd>]</kbd></td><td>Hintergrundradierer: wiederherstellen / Größe</td></tr>
+  <tr><td><kbd>Eingabe</kbd> / <kbd>Esc</kbd></td><td>Zuschnitt übernehmen / abbrechen</td></tr>
+</table></div>
+<p>Die Tasten der Werkzeuge stehen in der <a href="#tools">Werkzeugübersicht</a>.</p>
+
+<!-- ===================================================================== -->
+<h2 id="faq">Tipps und Problemlösung</h2>
+
+<h3 id="faq-hotkey">Ein Tastenkürzel funktioniert nicht</h3>
+<p>Wahrscheinlich ist die Kombination bereits von Windows oder einem anderen Programm belegt. Unter <a href="#settings-hotkeys">Einstellungen → Tastenkürzel</a> sehen Sie den Status jedes Kürzels und können eine andere Kombination wählen. Bei gesperrtem Bildschirm reagieren die Kürzel bewusst nicht.</p>
+
+<h3 id="faq-print">Die Druck-Taste öffnet das Snipping Tool</h3>
+<p>Schalten Sie in Windows unter <span class="ui">Einstellungen → Barrierefreiheit → Tastatur</span> die Option „Druck-Taste zum Öffnen der Bildschirmaufnahme verwenden“ aus und weisen Sie die Taste danach unter <a href="#settings-hotkeys">Tastenkürzel</a> zu.</p>
+
+<h3 id="faq-sensitive">Vertrauliche Daten sicher entfernen</h3>
+<p>Verwenden Sie <a href="#tool-blur">Schwärzen</a> statt leichter Unschärfe und geben Sie nur <a href="#export">exportierte Bilder</a> weiter, keine Projektdateien.</p>
+
+<h3 id="faq-large">Sehr große Bilder</h3>
+<p>Vor dem Öffnen sehr großer Bilder (über 100 Millionen Pixel) fragt GodSaveTheScreen nach, da die Bearbeitung viel Arbeitsspeicher braucht.</p>
+
+<h3 id="faq-help">Die Hilfe öffnet sich nicht</h3>
+<p>Die Hilfedateien <span class="path">GodSaveTheScreen-Hilfe.html</span> und <span class="path">GodSaveTheScreen-Help.html</span> müssen im selben Ordner wie <span class="path">GodSaveTheScreen.exe</span> liegen. Geöffnet werden sie mit dem Standardbrowser.</p>
+
+<h3 id="faq-logs">Fehler melden</h3>
+<p>Bei Problemen helfen die Protokolle weiter. Den Protokollordner öffnen Sie unter <a href="#settings-about">Einstellungen → Info</a>.</p>
+
+<footer>GodSaveTheScreen {{VERSION}} · Benutzeranleitung · <a href="#intro">Zum Anfang</a></footer>
+</div>
+</main>
+</div>
+<script src="../help.js"></script>
+</body>
+</html>

@@ -13,12 +13,14 @@ public sealed class AppShell : IAppShell
     private readonly IDialogService _dialogs;
     private readonly ILogger<AppShell> _logger;
     private readonly GodSaveTheScreen.Core.Settings.ISettingsService _settings;
+    private readonly IHelpService _help;
 
-    public AppShell(IWindowFactory windows, IDialogService dialogs, GodSaveTheScreen.Core.Settings.ISettingsService settings, ILogger<AppShell> logger)
+    public AppShell(IWindowFactory windows, IDialogService dialogs, GodSaveTheScreen.Core.Settings.ISettingsService settings, IHelpService help, ILogger<AppShell> logger)
     {
         _windows = windows;
         _dialogs = dialogs;
         _settings = settings;
+        _help = help;
         _logger = logger;
     }
 
@@ -40,6 +42,8 @@ public sealed class AppShell : IAppShell
         window.Show();
         window.Activate();
     }
+
+    public void ShowHelp(string? topic = null) => _help.Show(topic);
 
     public void ExitApplication()
     {

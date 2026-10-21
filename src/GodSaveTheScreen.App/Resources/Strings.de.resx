@@ -359,11 +359,11 @@ Fenster: {1}
 Freiform: {2}
 Vollbild: {3}
 
-Tipp: In den Einstellungen können Sie die Taste Druck einem Aufnahmemodus zuweisen. Unter Windows 11 muss dafür vorher „Schaltfläche ‚Druck‘ zum Öffnen der Bildschirmaufnahme verwenden“ unter Einstellungen &gt; Barrierefreiheit &gt; Tastatur ausgeschaltet werden. Mit F1 sehen Sie jederzeit alle Tastenkürzel.</value></data>
+Tipp: In den Einstellungen können Sie die Taste Druck einem Aufnahmemodus zuweisen. Unter Windows 11 muss dafür vorher „Schaltfläche ‚Druck‘ zum Öffnen der Bildschirmaufnahme verwenden“ unter Einstellungen &gt; Barrierefreiheit &gt; Tastatur ausgeschaltet werden. F1 öffnet die Hilfe, Strg+F1 zeigt alle Tastenkürzel.</value></data>
   <data name="LargeImage_Title" xml:space="preserve"><value>Sehr großes Bild</value></data>
   <data name="LargeImage_Message" xml:space="preserve"><value>„{0}“ ist sehr groß ({1} × {2} Pixel, allein für das Bild etwa {3} MB Arbeitsspeicher). Die Bearbeitung kann ein Mehrfaches davon benötigen und langsam sein. Trotzdem öffnen?</value></data>
   <data name="Shortcuts_Title" xml:space="preserve"><value>Tastenkürzel</value></data>
-  <data name="Shortcuts_Tip" xml:space="preserve"><value>Tastenkürzel (F1)</value></data>
+  <data name="Shortcuts_Tip" xml:space="preserve"><value>Tastenkürzel (Strg+F1)</value></data>
   <data name="Shortcuts_Filter" xml:space="preserve"><value>Kürzel filtern</value></data>
   <data name="Shortcuts_Capture" xml:space="preserve"><value>Aufnahme (global)</value></data>
   <data name="Shortcuts_Tools" xml:space="preserve"><value>Werkzeuge</value></data>
@@ -394,7 +394,7 @@ Tipp: In den Einstellungen können Sie die Taste Druck einem Aufnahmemodus zuwei
   <data name="Shortcut_ActualSize" xml:space="preserve"><value>Originalgröße (100 %)</value></data>
   <data name="Shortcut_Pan" xml:space="preserve"><value>Verschieben (gedrückt halten und ziehen)</value></data>
   <data name="Shortcut_Ruler" xml:space="preserve"><value>Lineal ein-/ausblenden</value></data>
-  <data name="Shortcut_Help" xml:space="preserve"><value>Tastenkürzel anzeigen</value></data>
+  <data name="Shortcut_Help" xml:space="preserve"><value>Hilfe öffnen</value></data>
   <data name="Shortcut_NextObject" xml:space="preserve"><value>Nächstes Objekt auswählen</value></data>
   <data name="Shortcut_PreviousObject" xml:space="preserve"><value>Vorheriges Objekt auswählen</value></data>
   <data name="Shortcut_Nudge" xml:space="preserve"><value>Auswahl um 1 px verschieben</value></data>
@@ -558,4 +558,11 @@ Tipp: In den Einstellungen können Sie die Taste Druck einem Aufnahmemodus zuwei
   <data name="Section_CalloutShape" xml:space="preserve"><value>Form &amp; Spitze</value></data>
   <data name="Spin_Increase" xml:space="preserve"><value>Erhöhen</value></data>
   <data name="Spin_Decrease" xml:space="preserve"><value>Verringern</value></data>
+  <data name="Help_Title" xml:space="preserve"><value>Hilfe</value></data>
+  <data name="Help_Tip" xml:space="preserve"><value>Hilfe (F1) – Umschalt+F1: Hilfe zum aktuellen Werkzeug</value></data>
+  <data name="Help_PageTip" xml:space="preserve"><value>Hilfe zu dieser Seite (Umschalt+F1)</value></data>
+  <data name="Help_NotFound" xml:space="preserve"><value>Die Hilfedatei wurde nicht gefunden. Sie wird im Programmordner erwartet:
+{0}</value></data>
+  <data name="Shortcut_ContextHelp" xml:space="preserve"><value>Hilfe zum aktuellen Werkzeug bzw. Objekt</value></data>
+  <data name="Shortcut_ShowShortcuts" xml:space="preserve"><value>Tastenkürzel anzeigen</value></data>
 </root>

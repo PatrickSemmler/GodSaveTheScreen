@@ -12,7 +12,7 @@ namespace GodSaveTheScreen.App.Editor;
 /// <summary>Eintrag der Tastenkürzel-Übersicht.</summary>
 public sealed record ShortcutEntry(string Category, string Name, string Keys);
 
-/// <summary>Stellt die Tastenkürzel-Übersicht (Fenster „Tastenkürzel“, <c>F1</c>) aus Werkzeugen, Befehlen und Einstellungen zusammen.</summary>
+/// <summary>Stellt die Tastenkürzel-Übersicht (Fenster „Tastenkürzel“, <c>Strg+F1</c>) aus Werkzeugen, Befehlen und Einstellungen zusammen.</summary>
 public static class ShortcutCatalog
 {
     /// <summary>Befehle des Editors: (Kategorie-Schlüssel, Namens-Schlüssel, Kürzel in invarianter Schreibweise).</summary>
@@ -42,6 +42,8 @@ public static class ShortcutCatalog
         ("Shortcuts_View", "Shortcut_Pan", "Space"),
         ("Shortcuts_View", "Shortcut_Ruler", "Ctrl+R"),
         ("Shortcuts_View", "Shortcut_Help", "F1"),
+        ("Shortcuts_View", "Shortcut_ContextHelp", "Shift+F1"),
+        ("Shortcuts_View", "Shortcut_ShowShortcuts", "Ctrl+F1"),
         ("Shortcuts_Objects", "Shortcut_NextObject", "Tab"),
         ("Shortcuts_Objects", "Shortcut_PreviousObject", "Shift+Tab"),
         ("Shortcuts_Objects", "Shortcut_Nudge", "Arrow"),

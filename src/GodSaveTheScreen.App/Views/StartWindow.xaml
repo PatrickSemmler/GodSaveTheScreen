@@ -28,6 +28,7 @@
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
         <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="Auto" />
       </Grid.ColumnDefinitions>
       <ui:Button Grid.Column="0"
                  Appearance="Primary"
@@ -63,6 +64,12 @@
                  Command="{Binding ShowShortcutsCommand}"
                  ToolTip="{l:Loc Shortcuts_Tip}"
                  AutomationProperties.Name="{l:Loc Shortcuts_Title}" />
+      <ui:Button Grid.Column="6"
+                 Margin="8,0,0,0"
+                 Icon="{ui:SymbolIcon QuestionCircle24}"
+                 Command="{Binding ShowHelpCommand}"
+                 ToolTip="{l:Loc Help_Tip}"
+                 AutomationProperties.Name="{l:Loc Help_Title}" />
     </Grid>
     <StackPanel Orientation="Horizontal" Margin="16,0,16,16">
       <TextBlock Text="{l:Loc Timer_Label}" VerticalAlignment="Center" />

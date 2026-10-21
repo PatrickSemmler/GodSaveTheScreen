@@ -1090,4 +1090,16 @@ public static class Strings
     public static string Spin_Increase => ResourceManager.GetString("Spin_Increase", Culture) ?? "Spin_Increase";
 
     public static string Spin_Decrease => ResourceManager.GetString("Spin_Decrease", Culture) ?? "Spin_Decrease";
+
+    public static string Help_Title => ResourceManager.GetString("Help_Title", Culture) ?? "Help_Title";
+
+    public static string Help_Tip => ResourceManager.GetString("Help_Tip", Culture) ?? "Help_Tip";
+
+    public static string Help_PageTip => ResourceManager.GetString("Help_PageTip", Culture) ?? "Help_PageTip";
+
+    public static string Help_NotFound => ResourceManager.GetString("Help_NotFound", Culture) ?? "Help_NotFound";
+
+    public static string Shortcut_ContextHelp => ResourceManager.GetString("Shortcut_ContextHelp", Culture) ?? "Shortcut_ContextHelp";
+
+    public static string Shortcut_ShowShortcuts => ResourceManager.GetString("Shortcut_ShowShortcuts", Culture) ?? "Shortcut_ShowShortcuts";
 }

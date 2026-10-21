@@ -162,6 +162,7 @@ public sealed class TrayService : IHostedService, INotificationService, IDisposa
         FillRecentMenu(recent);
         menu.Items.Add(Item(Strings.Tray_StartWindow, _shell.ShowStartWindow));
         menu.Items.Add(Item(Strings.Start_Settings, _shell.ShowSettings));
+        menu.Items.Add(Item(Strings.Help_Title, () => _shell.ShowHelp()));
         menu.Items.Add(new Separator());
         menu.Items.Add(Item(Strings.Tray_Exit, _shell.ExitApplication));
         return menu;

@@ -155,6 +155,10 @@ public sealed partial class StartViewModel : ObservableObject
     [RelayCommand]
     private void ShowShortcuts() => _shell.ShowShortcuts();
 
+    /// <summary>Hilfe öffnen; mit Parameter am Abschnitt (Umschalt+F1: <see cref="HelpTopics.StartWindow"/>).</summary>
+    [RelayCommand]
+    private void ShowHelp(string? topic) => _shell.ShowHelp(topic);
+
     [RelayCommand]
     private async Task OpenRecentAsync(RecentItemViewModel? item)
     {

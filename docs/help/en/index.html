@@ -1,0 +1,722 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GodSaveTheScreen – User Guide</title>
+<meta name="description" content="User guide for GodSaveTheScreen {{VERSION}}: capture, annotate and share screenshots.">
+<link rel="stylesheet" href="../help.css">
+</head>
+<body>
+<header class="topbar">
+  <button class="icon-btn menu-btn" id="menu" aria-label="Table of contents">☰</button>
+  <a class="brand" href="#intro"><span class="logo">G</span>GodSaveTheScreen <small>User Guide</small></a>
+  <span class="spacer"></span>
+  <span class="pill">Version {{VERSION}}</span>
+  <button class="icon-btn" id="theme" type="button">◐</button>
+</header>
+
+<div class="layout">
+<nav class="sidebar" aria-label="Table of contents">
+  <input class="search" id="search" type="search" placeholder="Search help …  ( / )" aria-label="Search help">
+  <p class="toc-title">Contents</p>
+  <div class="toc" id="toc"></div>
+</nav>
+
+<main>
+<div class="content">
+
+<!-- ===================================================================== -->
+<section class="hero">
+  <h1>GodSaveTheScreen</h1>
+  <p class="lead">Capture screenshots, annotate them clearly and share them in seconds – with shapes, arrows, text, callouts, numbers, blur, magnifier, stamps and much more.</p>
+  <div class="meta">
+    <span class="pill">F1 opens this help</span>
+    <span class="pill">Shift+F1 jumps to the current tool</span>
+    <span class="pill">Ctrl+F1 shows all keyboard shortcuts</span>
+  </div>
+</section>
+
+<h2 id="intro">Welcome</h2>
+<p>GodSaveTheScreen is a screenshot tool for Windows. It runs quietly in the notification area of the taskbar, captures an area of the screen with a keyboard shortcut and opens the result in an editor. There you place objects – frames, arrows, text, markers – <em>on top of</em> the image. The image itself never changes: every object can be moved, changed or deleted until the very end.</p>
+<p>This guide follows the path of a screenshot: from <a href="#capture">capturing</a> through <a href="#editor">editing</a> in the editor with its <a href="#tools">tools</a> to <a href="#output">saving and sharing</a>. The chapters <a href="#settings">Settings</a>, <a href="#shortcuts">Keyboard shortcuts</a> and <a href="#faq">Tips and troubleshooting</a> are for reference.</p>
+
+<h3 id="intro-workflow">The workflow in three steps</h3>
+<div class="flow">
+  <div class="step"><h4>Capture</h4><p>Press the shortcut (default <kbd>Ctrl+Shift+1</kbd>), drag an area – done.</p></div>
+  <div class="step"><h4>Annotate</h4><p>Point out what matters in the editor with arrows, text, numbers or blur.</p></div>
+  <div class="step"><h4>Share</h4><p>Copy, save as an image, drag into another app or keep as a project.</p></div>
+</div>
+<div class="box tip"><p><span class="label">Help everywhere:</span> <kbd>F1</kbd> opens this guide. <kbd>Shift+F1</kbd> jumps straight to the section about the current tool, the selected objects or the open settings page.</p></div>
+
+<!-- ===================================================================== -->
+<h2 id="getting-started">Getting started</h2>
+
+<h3 id="install">Installation and portable mode</h3>
+<p>GodSaveTheScreen needs no installation. The program is a single file <span class="path">GodSaveTheScreen.exe</span> that already contains the .NET runtime. This guide sits next to it as <span class="path">GodSaveTheScreen-Help.html</span> (English) and <span class="path">GodSaveTheScreen-Hilfe.html</span> (German).</p>
+<ol class="steps">
+  <li>Extract the ZIP archive into any folder.</li>
+  <li>Start <span class="path">GodSaveTheScreen.exe</span>.</li>
+  <li>If Windows shows “Windows protected your PC”, click <span class="ui">More info → Run anyway</span> (the EXE is not signed).</li>
+</ol>
+<p>By default, settings are stored in <span class="path">%APPDATA%\GodSaveTheScreen</span>, logs and automatic backups in <span class="path">%LOCALAPPDATA%\GodSaveTheScreen</span>.</p>
+<div class="box note"><p><span class="label">Portable mode:</span> place an empty file <span class="path">portable.txt</span> next to the EXE. GodSaveTheScreen then keeps all data in the <span class="path">data</span> folder beside it – handy for USB sticks.</p></div>
+
+<h3 id="tray">The program in the notification area</h3>
+<p>After starting, GodSaveTheScreen keeps running in the notification area of the taskbar (bottom right, next to the clock), even when all windows are closed. On the very first start a welcome window explains the most important shortcuts.</p>
+<ul>
+  <li><b>Left-click</b> the icon to start a capture (default: rectangle; configurable under <a href="#settings-general">General</a>).</li>
+  <li><b>Right-click</b> opens the menu: capture modes, <span class="ui">With timer</span>, <span class="ui">Open image…</span>, <span class="ui">Recent files</span>, <span class="ui">Start window</span>, <span class="ui">Settings</span>, <span class="ui">Help</span> and <span class="ui">Exit</span>.</li>
+</ul>
+<p>Recently used files also appear in the program's jump list on the taskbar.</p>
+
+<h3 id="start-window">The start window</h3>
+<p>The start window is the classic entry point for mouse users. It appears when the program starts (unless <a href="#settings-general">“Start minimized to the tray”</a> is on) and can be opened at any time from the tray menu.</p>
+<figure class="shot"><img src="images/start-window.png" alt="Start window with the buttons New, Mode, Open, From clipboard, Settings, Keyboard shortcuts and Help"><figcaption>The start window</figcaption></figure>
+<div class="table-wrap"><table>
+  <tr><th>Element</th><th>Function</th></tr>
+  <tr><td><span class="ui">New</span> + mode</td><td>Starts a capture in the selected mode: rectangle, window, freeform, full screen (current monitor) or full screen (all monitors).</td></tr>
+  <tr><td><span class="ui">Open</span></td><td>Opens images or projects (<span class="path">.gsts</span>) in the editor.</td></tr>
+  <tr><td><span class="ui">From clipboard</span></td><td>Opens the image on the clipboard in the editor (also <kbd>Ctrl+V</kbd>).</td></tr>
+  <tr><td><span class="ui">Settings</span></td><td>Opens the <a href="#settings">settings</a>.</td></tr>
+  <tr><td>Keyboard icon</td><td>Overview of all keyboard shortcuts (<kbd>Ctrl+F1</kbd>).</td></tr>
+  <tr><td>Question mark</td><td>This help (<kbd>F1</kbd>).</td></tr>
+  <tr><td><span class="ui">Timer</span></td><td>Delays the next capture (see <a href="#capture-timer">Timer</a>).</td></tr>
+  <tr><td><span class="ui">Recent files</span></td><td>List with thumbnails; double-click or <kbd>Enter</kbd> opens, <kbd>Del</kbd> removes an entry. The list appears once files have been opened or saved.</td></tr>
+</table></div>
+<p>You can also drag image files onto the start window to open them in the editor.</p>
+
+<h3 id="quickstart">Your first capture in one minute</h3>
+<ol class="steps">
+  <li>Press <kbd>Ctrl+Shift+1</kbd>. The screen freezes and dims.</li>
+  <li>Hold the left mouse button, drag the desired area and release.</li>
+  <li>The editor opens with the capture. Press <kbd>A</kbd> and drag an arrow, press <kbd>T</kbd> to type some text.</li>
+  <li><kbd>Ctrl+C</kbd> copies the finished image – paste it into an email or chat. Or press <kbd>Ctrl+S</kbd> to save.</li>
+</ol>
+
+<!-- ===================================================================== -->
+<h2 id="capture">Capturing</h2>
+<p>Start a capture with a global shortcut, the tray icon, the start window or <span class="ui">New</span> in the editor. As soon as the capture begins, GodSaveTheScreen freezes the screen – menus and tooltips stay visible while you select the area. GodSaveTheScreen's own windows do not appear in captures.</p>
+
+<h3 id="capture-modes">Capture modes</h3>
+<div class="table-wrap"><table>
+  <tr><th>Mode</th><th>Default shortcut</th><th>How it works</th></tr>
+  <tr><td><b>Rectangle</b></td><td><kbd>Ctrl+Shift+1</kbd></td><td>Drag a rectangular area with the mouse button held down.</td></tr>
+  <tr><td><b>Window</b></td><td><kbd>Ctrl+Shift+2</kbd></td><td>The window under the mouse pointer is highlighted; a click captures it. Dragging selects a free area instead.</td></tr>
+  <tr><td><b>Freeform</b></td><td><kbd>Ctrl+Shift+3</kbd></td><td>Hold the mouse button and draw any shape around the area (lasso). Outside the shape the image becomes transparent.</td></tr>
+  <tr><td><b>Full screen</b></td><td><kbd>Ctrl+Shift+4</kbd></td><td>Immediately captures the monitor the mouse pointer is on. The start window additionally offers “Full screen (all monitors)”.</td></tr>
+</table></div>
+
+<h3 id="capture-overlay">Selecting the area</h3>
+<p>While you select, a dimmed layer covers all monitors. The selected area appears bright and its size is shown in pixels. A magnifier at the mouse pointer helps with pixel-precise placement (can be turned off under <a href="#settings-capture">Capture</a>).</p>
+<figure class="center">
+<svg viewBox="0 0 640 300" width="640" role="img" aria-label="Diagram of area selection: dimmed screen, bright selection frame with size label and magnifier" style="max-width:100%;height:auto;border-radius:10px;border:1px solid var(--line)">
+  <rect width="640" height="300" fill="#5b6475"/>
+  <rect x="30" y="30" width="250" height="150" rx="6" fill="#7d879a"/><rect x="330" y="60" width="270" height="200" rx="6" fill="#7d879a"/>
+  <rect width="640" height="300" fill="#000" opacity=".45"/>
+  <rect x="160" y="80" width="260" height="140" fill="#dfe6f2"/>
+  <rect x="160" y="80" width="260" height="140" fill="none" stroke="#3a96dd" stroke-width="2"/>
+  <rect x="172" y="96" width="120" height="10" rx="3" fill="#9aa8bf"/><rect x="172" y="114" width="200" height="8" rx="3" fill="#b9c3d4"/><rect x="172" y="130" width="170" height="8" rx="3" fill="#b9c3d4"/>
+  <rect x="160" y="226" width="92" height="22" rx="4" fill="#1f1f1f"/><text x="206" y="242" fill="#fff" font-family="Segoe UI, sans-serif" font-size="13" text-anchor="middle">260 × 140</text>
+  <rect x="436" y="96" width="78" height="78" fill="#dfe6f2" stroke="#fff" stroke-width="2"/><rect x="471" y="131" width="8" height="8" fill="none" stroke="#c42b1c" stroke-width="1.5"/>
+  <path d="M420 220 l0 18 l5 -5 l4 9 l4 -2 l-4 -9 l7 0 z" fill="#fff" stroke="#000" stroke-width="1"/>
+</svg>
+<figcaption>Diagram: dimmed screen, bright selection with its size, magnifier at the mouse pointer</figcaption>
+</figure>
+<div class="table-wrap"><table class="keys">
+  <tr><th>Key</th><th>Effect</th></tr>
+  <tr><td><kbd>Esc</kbd></td><td>Cancel the capture</td></tr>
+  <tr><td><kbd>Enter</kbd></td><td>Accept the current area</td></tr>
+  <tr><td><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd></td><td>Move the selection by 1 pixel, with <kbd>Shift</kbd> by 10 pixels</td></tr>
+</table></div>
+
+<h3 id="capture-timer">Timer</h3>
+<p>The timer delays the capture – for example to open a menu first. In the start window choose a delay under <span class="ui">Timer</span> or <span class="ui">Custom…</span> with any number of seconds. The tray menu offers <span class="ui">With timer</span>. A countdown shows the remaining time; optionally a sound plays during the last three seconds. Set the default timer for shortcuts and the tray under <a href="#settings-capture">Capture</a>.</p>
+
+<h3 id="capture-hotkeys">Shortcuts and the Print Screen key</h3>
+<p>The global shortcuts work in every program. Change them under <a href="#settings-hotkeys">Settings → Hotkeys</a>. If a combination is already used by Windows or another program, it is shown there.</p>
+<div class="box note"><p><span class="label">Print Screen key:</span> on Windows 11 the <kbd>PrtSc</kbd> key normally opens the Snipping Tool. To assign it to GodSaveTheScreen, first turn off “Use the Print screen button to open screen capture” in Windows under <span class="ui">Settings → Accessibility → Keyboard</span>.</p></div>
+
+<h3 id="capture-after">What happens after a capture</h3>
+<p>After every capture GodSaveTheScreen performs the steps configured under <a href="#settings-postcapture">After capture</a> – in this order:</p>
+<ol class="steps">
+  <li><b>Copy to the clipboard</b> – the image can be pasted right away.</li>
+  <li><b>Save automatically</b> – into a fixed folder with a file name pattern; a notification shows where (click opens the folder).</li>
+  <li><b>Open in the editor</b> – for annotating (default).</li>
+</ol>
+
+<!-- ===================================================================== -->
+<h2 id="editor">The editor</h2>
+<p>In the editor you annotate the capture. Every capture and every opened file gets its own editor window. Everything you add is an independent <b>object</b> on top of the image – the original image is never changed.</p>
+
+<h3 id="editor-layout">Window layout</h3>
+<figure class="shot"><img src="images/editor-overview.png" alt="Editor window with numbered areas: command bar, tool bar, canvas, properties panel, status bar"><figcaption>The editor with an annotated capture</figcaption></figure>
+<ol class="legend">
+  <li><b>Command bar</b> – New, Open, Save, Export, Copy, Paste, Undo, Ruler and on the right Help, Keyboard shortcuts, Drag image out, Show/hide properties panel (<a href="#editor-toolbar">details</a>).</li>
+  <li><b>Tool bar</b> – all <a href="#tools">tools</a>; each has a single-letter shortcut.</li>
+  <li><b>Canvas</b> – the image with all objects (<a href="#editor-canvas">zoom and pan</a>).</li>
+  <li><b>Properties panel</b> – settings of the tool or the selection, and the <a href="#layers">layers</a>.</li>
+  <li><b>Status bar</b> – image size, pointer position in pixels and zoom.</li>
+</ol>
+
+<h3 id="editor-toolbar">Command bar</h3>
+<figure class="shot"><img src="images/editor-toolbar.png" alt="Command bar of the editor"></figure>
+<div class="table-wrap"><table>
+  <tr><th>Button</th><th>Function</th></tr>
+  <tr><td><span class="ui">New</span></td><td>Menu: new capture (rectangle, window, freeform, full screen) or <span class="ui">From clipboard</span>.</td></tr>
+  <tr><td><span class="ui">Open</span> ▾</td><td>Open a file (<kbd>Ctrl+O</kbd>); the arrow shows recent files.</td></tr>
+  <tr><td><span class="ui">Save</span></td><td>Saves (<kbd>Ctrl+S</kbd>); next to it <span class="ui">Save as…</span> (<kbd>Ctrl+Shift+S</kbd>) – see <a href="#save">Saving</a>.</td></tr>
+  <tr><td>Export</td><td>Export the result as an image file without changing the project state (<a href="#export">Export</a>).</td></tr>
+  <tr><td>Save options</td><td>Format, quality and background for transparent areas (<a href="#export">details</a>).</td></tr>
+  <tr><td>Copy / Paste</td><td>Copy or paste the image (<a href="#clipboard">Clipboard</a>).</td></tr>
+  <tr><td>Undo / Redo</td><td><kbd>Ctrl+Z</kbd> / <kbd>Ctrl+Y</kbd></td></tr>
+  <tr><td>Ruler</td><td>Shows the <a href="#ruler">ruler</a> (<kbd>Ctrl+R</kbd>).</td></tr>
+  <tr><td>Help</td><td>This guide (<kbd>F1</kbd>).</td></tr>
+  <tr><td>Keyboard shortcuts</td><td>Overview of all shortcuts with a search box (<kbd>Ctrl+F1</kbd>).</td></tr>
+  <tr><td>Drag handle</td><td>Drag the finished image into another program with the mouse (<a href="#drag-drop">drag and drop</a>).</td></tr>
+  <tr><td>Properties panel</td><td>Shows or hides the right side panel.</td></tr>
+</table></div>
+
+<h3 id="editor-canvas">Canvas, zoom and panning</h3>
+<ul>
+  <li><b>Zoom:</b> <kbd>Ctrl</kbd> + mouse wheel (the point under the pointer stays put), <kbd>Ctrl++</kbd> / <kbd>Ctrl+-</kbd>, or the zoom box in the status bar.</li>
+  <li><b>Fit</b> (<kbd>Ctrl+0</kbd>) shows the whole image, <b>100 %</b> (<kbd>Ctrl+1</kbd>) the actual size.</li>
+  <li><b>Pan:</b> hold the <kbd>Space</kbd> bar and drag – or drag with the middle mouse button.</li>
+  <li><b>Beyond the edge:</b> if objects extend beyond the image, the canvas grows with them. The extra area is shown as a checkerboard and is transparent in a saved PNG (JPG/BMP: white).</li>
+</ul>
+
+<h3 id="ruler">Ruler</h3>
+<p>The virtual ruler (<kbd>Ctrl+R</kbd>) helps to draw straight lines with the pen and highlighter: start a stroke close to the ruler's edge and it snaps to the edge.</p>
+<ul>
+  <li>Move the ruler: click on it and drag.</li>
+  <li>Rotate: mouse wheel over the ruler (1°), with <kbd>Shift</kbd> 15°, with <kbd>Ctrl</kbd> 0.1°.</li>
+  <li>Right-click the ruler: set an angle directly or hide the ruler.</li>
+</ul>
+
+<h3 id="properties">Properties panel</h3>
+<div class="split">
+<div>
+<p>The settings are on the right of the editor. What they show depends on what is active:</p>
+<ul>
+  <li><b>A drawing tool, nothing selected:</b> heading <span class="ui">Defaults: …</span>. The values apply to all new objects of this tool and are kept across restarts.</li>
+  <li><b>Objects selected:</b> the values apply to the selection. Changes also become the tool's new defaults.</li>
+</ul>
+<p>Settings are grouped in <b>cards</b> such as <span class="ui">Appearance</span>, <span class="ui">Font</span>, <span class="ui">Outline</span>, <span class="ui">Shadow</span>. Click a card's header to expand or collapse it; collapsed, the header shows a summary (colour, width). The expanded state is remembered and applies to all tools.</p>
+<p>Effects such as <span class="ui">Outline</span>, <span class="ui">Shadow</span>, <span class="ui">Background</span> and <span class="ui">Glow</span> have an <b>on/off switch</b> in the header. Switching on restores the values used last.</p>
+<p>Change number fields by typing, with the small arrows, <kbd>↑</kbd>/<kbd>↓</kbd>, <kbd>PageUp</kbd>/<kbd>PageDown</kbd> or the mouse wheel (when the field has focus).</p>
+</div>
+<figure class="shot"><img src="images/properties-panel.png" alt="Properties panel of the rectangle tool with cards"><figcaption>Rectangle defaults</figcaption></figure>
+</div>
+
+<h3 id="presets">Presets and defaults</h3>
+<p>At the end of the properties panel you find the tool's <b>presets</b> – saved combinations of all settings, e.g. “red warning frame” or “yellow note”.</p>
+<ul>
+  <li><b>Save:</b> disk icon – saves the current settings under a name (same name = overwrite, after asking).</li>
+  <li><b>Apply:</b> click a preset – without a selection it becomes the tool's default, with a selection it is applied to the selected objects.</li>
+  <li><b>Rename</b> and <b>Delete</b> with the buttons next to it. Text comes with built-in presets (Label, Warning, Note, Hint) that can be restored.</li>
+</ul>
+<p><span class="ui">Restore defaults</span> (visible only when nothing is selected) resets all settings of the tool to the built-in values. Presets are kept.</p>
+
+<h3 id="colors">Colours and colour picker</h3>
+<p>Click a colour field to open the colour selection with a colour area, hex value (<span class="path">#RRGGBB</span> or with opacity <span class="path">#AARRGGBB</span>), palette and recently used colours. <span class="ui">None</span> makes the colour transparent (e.g. a rectangle without fill).</p>
+<p>With the <b>colour picker</b> (“Pick colour from image”) click a spot in the image to take exactly that colour. <kbd>Esc</kbd> cancels.</p>
+
+<h3 id="objects">Editing objects</h3>
+<p>With the <a href="#tool-select">select tool</a> (<kbd>V</kbd>) you select, move and change existing objects. The most important actions:</p>
+<div class="table-wrap"><table>
+  <tr><th>Action</th><th>How</th></tr>
+  <tr><td>Select</td><td>Click the object; several with <kbd>Shift</kbd> or <kbd>Ctrl</kbd> + click or by dragging a frame; <kbd>Ctrl+A</kbd> selects all.</td></tr>
+  <tr><td>Next / previous</td><td><kbd>Tab</kbd> / <kbd>Shift+Tab</kbd> (focus on the canvas)</td></tr>
+  <tr><td>Move</td><td>Drag; <kbd>arrow keys</kbd> by 1 px, with <kbd>Shift</kbd> by 10 px.</td></tr>
+  <tr><td>Resize</td><td>Drag the handles (<kbd>Shift</kbd> = keep aspect ratio); <kbd>Alt+arrow keys</kbd> by 1 px (with <kbd>Shift</kbd> 10 px).</td></tr>
+  <tr><td>Rotate</td><td>Round handle above the selection (<kbd>Shift</kbd> = 15° steps) or <kbd>[</kbd> / <kbd>]</kbd>; in the panel under <span class="ui">Rotation</span>.</td></tr>
+  <tr><td>Edit text</td><td>Double-click text, callout or stamp; finish with <kbd>Ctrl+Enter</kbd>, <kbd>Esc</kbd> or a click outside.</td></tr>
+  <tr><td>Duplicate</td><td><kbd>Ctrl+D</kbd></td></tr>
+  <tr><td>Delete</td><td><kbd>Del</kbd></td></tr>
+  <tr><td>Order</td><td><kbd>Ctrl+]</kbd> bring forward, <kbd>Ctrl+[</kbd> send backward, with <kbd>Shift</kbd> to front/back.</td></tr>
+  <tr><td>Context menu</td><td>Right-click: Cut, Copy, Paste, Paste as image object, Insert image…, Duplicate, Delete, Order, Lock.</td></tr>
+  <tr><td>Lock</td><td>Locked objects cannot be moved by accident (context menu or lock in the <a href="#layers">layers</a>).</td></tr>
+</table></div>
+<p>You can also copy objects between two editor windows with <kbd>Ctrl+C</kbd> and <kbd>Ctrl+V</kbd>.</p>
+
+<h3 id="layers">Layers</h3>
+<div class="split">
+<div>
+<p>The <span class="ui">Layers</span> tab in the properties panel lists all objects – the frontmost at the top. The list is linked to the canvas: a click selects the object.</p>
+<ul>
+  <li><b>Eye</b> – hide and show an object (hidden objects are not part of the saved image either).</li>
+  <li><b>Lock</b> – lock or unlock an object.</li>
+  <li><b>Drag</b> – changes the order (front/back).</li>
+  <li><b>Double-click</b> the name – rename.</li>
+</ul>
+<p>Objects outside a <a href="#tool-crop">crop</a> are marked in the list; they are not visible in the result.</p>
+</div>
+<figure class="shot"><img src="images/layers.png" alt="Layer list with several objects"><figcaption>Layer list</figcaption></figure>
+</div>
+
+<h3 id="undo">Undo and redo</h3>
+<p>Every change – including cropping and removing image areas – can be undone with <kbd>Ctrl+Z</kbd> and redone with <kbd>Ctrl+Y</kbd> (or <kbd>Ctrl+Shift+Z</kbd>). Several quick changes to the same value are merged into one step.</p>
+
+<!-- ===================================================================== -->
+<h2 id="tools">Tools</h2>
+<p>Choose a tool in the tool bar on the left or with its key. <kbd>Shift+F1</kbd> opens the help right at the current tool. When dragging, almost everywhere <kbd>Shift</kbd> keeps proportions (square, circle, 15° angle) and <kbd>Alt</kbd> draws from the centre.</p>
+<div class="table-wrap"><table>
+  <tr><th></th><th>Tool</th><th>Key</th><th>Used for</th></tr>
+  <tr class="group-row"><td colspan="4">Selecting</td></tr>
+  <tr><td><img class="icon" src="images/icon-select.png" alt=""></td><td><a href="#tool-select">Select</a></td><td><kbd>V</kbd></td><td>Select, move, change objects</td></tr>
+  <tr class="group-row"><td colspan="4">Shapes and lines</td></tr>
+  <tr><td><img class="icon" src="images/icon-rectangle.png" alt=""></td><td><a href="#tool-rectangle">Rectangle</a></td><td><kbd>R</kbd></td><td>Frames, areas, rounded corners</td></tr>
+  <tr><td><img class="icon" src="images/icon-ellipse.png" alt=""></td><td><a href="#tool-ellipse">Ellipse</a></td><td><kbd>E</kbd></td><td>Circling things</td></tr>
+  <tr><td><img class="icon" src="images/icon-line.png" alt=""></td><td><a href="#tool-line">Line</a></td><td><kbd>L</kbd></td><td>Straight lines</td></tr>
+  <tr><td><img class="icon" src="images/icon-arrow.png" alt=""></td><td><a href="#tool-arrow">Arrow</a></td><td><kbd>A</kbd></td><td>Pointing at something</td></tr>
+  <tr><td><img class="icon" src="images/icon-triangle.png" alt=""></td><td><a href="#tool-triangle">Triangle</a></td><td><kbd>G</kbd></td><td>Warning and direction signs</td></tr>
+  <tr><td><img class="icon" src="images/icon-polygon.png" alt=""></td><td><a href="#tool-polygon">Polygon</a></td><td><kbd>P</kbd></td><td>Any polygon</td></tr>
+  <tr class="group-row"><td colspan="4">Labelling</td></tr>
+  <tr><td><img class="icon" src="images/icon-text.png" alt=""></td><td><a href="#tool-text">Text</a></td><td><kbd>T</kbd></td><td>Labels</td></tr>
+  <tr><td><img class="icon" src="images/icon-marker.png" alt=""></td><td><a href="#tool-marker">Numbered marker</a></td><td><kbd>M</kbd></td><td>Steps 1, 2, 3 …</td></tr>
+  <tr><td><img class="icon" src="images/icon-callout.png" alt=""></td><td><a href="#tool-callout">Callout</a></td><td><kbd>K</kbd></td><td>Text with a tail</td></tr>
+  <tr><td><img class="icon" src="images/icon-stamp.png" alt=""></td><td><a href="#tool-stamp">Stamp</a></td><td><kbd>S</kbd></td><td>“APPROVED”, “DRAFT” …</td></tr>
+  <tr><td><img class="icon" src="images/icon-emoji.png" alt=""></td><td><a href="#tool-emoji">Emoji</a></td><td><kbd>J</kbd></td><td>Colour emojis</td></tr>
+  <tr><td><img class="icon" src="images/icon-image.png" alt=""></td><td><a href="#tool-image">Image</a></td><td><kbd>I</kbd></td><td>Logos, icons, more images</td></tr>
+  <tr class="group-row"><td colspan="4">Freehand</td></tr>
+  <tr><td><img class="icon" src="images/icon-pen.png" alt=""></td><td><a href="#tool-pen">Pen</a></td><td><kbd>B</kbd></td><td>Freehand drawing</td></tr>
+  <tr><td><img class="icon" src="images/icon-highlighter.png" alt=""></td><td><a href="#tool-highlighter">Highlighter</a></td><td><kbd>H</kbd></td><td>Highlighting text</td></tr>
+  <tr><td><img class="icon" src="images/icon-eraser.png" alt=""></td><td><a href="#tool-eraser">Eraser</a></td><td><kbd>X</kbd></td><td>Removing strokes</td></tr>
+  <tr class="group-row"><td colspan="4">Hiding and emphasising</td></tr>
+  <tr><td><img class="icon" src="images/icon-blur.png" alt=""></td><td><a href="#tool-blur">Blur / pixelate / redact</a></td><td><kbd>U</kbd></td><td>Making confidential data unreadable</td></tr>
+  <tr><td><img class="icon" src="images/icon-magnifier.png" alt=""></td><td><a href="#tool-magnifier">Magnifier</a></td><td><kbd>Z</kbd></td><td>Enlarging details</td></tr>
+  <tr class="group-row"><td colspan="4">Editing the image</td></tr>
+  <tr><td><img class="icon" src="images/icon-area-select.png" alt=""></td><td><a href="#tool-area-select">Select and remove area</a></td><td><kbd>W</kbd></td><td>Making parts of the screenshot transparent</td></tr>
+  <tr><td><img class="icon" src="images/icon-background-eraser.png" alt=""></td><td><a href="#tool-background-eraser">Background eraser</a></td><td><kbd>D</kbd></td><td>Painting transparency</td></tr>
+  <tr><td><img class="icon" src="images/icon-crop.png" alt=""></td><td><a href="#tool-crop">Crop</a></td><td><kbd>C</kbd></td><td>Choosing the visible area</td></tr>
+</table></div>
+
+<h3 id="tool-select"><img class="icon" src="images/icon-select.png" alt="">Select <kbd>V</kbd></h3>
+<p>The select tool is the standard tool for working with existing objects. All actions – selecting, moving, resizing, rotating, ordering – are described in <a href="#objects">Editing objects</a>. Some objects have extra handles:</p>
+<ul>
+  <li><b>Callout:</b> round handle at the tail – drag the tail freely.</li>
+  <li><b>Magnifier:</b> source and magnified view can be moved separately.</li>
+  <li><b>Polygon:</b> every corner is a handle; double-click an edge to add a point.</li>
+  <li><b>Arrow/line:</b> handles at start and end (<kbd>Shift</kbd> snaps to 15°).</li>
+</ul>
+<p>With objects selected, the properties panel shows their values. <kbd>Shift+F1</kbd> opens the help for the type of the selected objects.</p>
+
+<h3 id="tools-shapes">Shapes</h3>
+<div class="split">
+<div>
+<p>Drag shapes with the mouse button held down. <kbd>Shift</kbd> creates a square or circle, <kbd>Alt</kbd> draws from the centre.</p>
+<p>Common settings in the <span class="ui">Appearance</span> card:</p>
+<ul>
+  <li><b>Line colour</b> and <b>fill colour</b> (<span class="ui">None</span> = frame only)</li>
+  <li><b>Line width</b> and <b>line style</b> (solid, dashed, dotted, dash-dot)</li>
+  <li><b>Opacity</b> of the whole object</li>
+  <li><b>Shadow</b> with colour, size (offset to the bottom right) and blur</li>
+  <li><b>Rotation</b> (for selected objects)</li>
+</ul>
+</div>
+<figure class="shot"><img src="images/panel-rectangle.png" alt="Rectangle properties"><figcaption>Rectangle: all cards expanded</figcaption></figure>
+</div>
+<h4 id="tool-rectangle"><img class="icon" src="images/icon-rectangle.png" alt="">Rectangle <kbd>R</kbd></h4>
+<p>For frames around important spots or semi-transparent areas. Additionally: <b>corner radius</b> for rounded corners.</p>
+<h4 id="tool-ellipse"><img class="icon" src="images/icon-ellipse.png" alt="">Ellipse <kbd>E</kbd></h4>
+<p>For circling things. With <kbd>Shift</kbd> you get a circle.</p>
+<h4 id="tool-triangle"><img class="icon" src="images/icon-triangle.png" alt="">Triangle <kbd>G</kbd></h4>
+<p>Isosceles triangle in the dragged frame – rotatable for direction signs.</p>
+<h4 id="tool-polygon"><img class="icon" src="images/icon-polygon.png" alt="">Polygon <kbd>P</kbd></h4>
+<ol class="steps">
+  <li>Click once for every corner (<kbd>Shift</kbd> snaps the angle to 15°).</li>
+  <li><kbd>Backspace</kbd> removes the last point.</li>
+  <li>Double-click or <kbd>Enter</kbd> closes the polygon, <kbd>Esc</kbd> cancels.</li>
+</ol>
+<p>Later you move individual corners with the select tool; double-clicking an edge adds a point.</p>
+
+<h3 id="tools-lines">Lines and arrows</h3>
+<div class="split">
+<div>
+<p>Drag lines and arrows from the start to the end point. <kbd>Shift</kbd> snaps the angle to 15° steps, <kbd>Alt</kbd> draws from the centre.</p>
+<ul>
+  <li><b>Start</b> and <b>end</b>: none, arrow, open arrow, circle or square – independently for both ends.</li>
+  <li><b>Line colour</b>, <b>line width</b>, <b>line style</b>, <b>opacity</b></li>
+  <li><b>Outline</b> with colour, width and blur – a border around line and arrowheads so they stay readable on any background.</li>
+  <li><b>Shadow</b></li>
+</ul>
+</div>
+<figure class="shot"><img src="images/panel-arrow.png" alt="Arrow properties"><figcaption>Arrow</figcaption></figure>
+</div>
+<h4 id="tool-line"><img class="icon" src="images/icon-line.png" alt="">Line <kbd>L</kbd></h4>
+<p>Straight line without heads (heads can be added later).</p>
+<h4 id="tool-arrow"><img class="icon" src="images/icon-arrow.png" alt="">Arrow <kbd>A</kbd></h4>
+<p>Line with an arrowhead at the end. Line and arrow have separate defaults.</p>
+
+<h3 id="tool-text"><img class="icon" src="images/icon-text.png" alt="">Text <kbd>T</kbd></h3>
+<div class="split">
+<div>
+<ul>
+  <li>A <b>click</b> places text that grows with every line.</li>
+  <li><b>Dragging</b> creates a text box with a fixed width and automatic word wrap.</li>
+  <li>Type directly on the canvas; <kbd>Enter</kbd> starts a new line, <kbd>Ctrl+Enter</kbd> or <kbd>Esc</kbd> finishes.</li>
+  <li>Double-click existing text to edit it.</li>
+</ul>
+<p>Settings:</p>
+<ul>
+  <li><b>Font</b>: family, typeface, size, bold, italic, underline, strikethrough, alignment</li>
+  <li><b>Text colour</b></li>
+  <li><b>Outline</b> with colour, width and soft edge (<span class="ui">Outline blur</span>)</li>
+  <li><b>Background</b> with colour and padding – like a label</li>
+  <li><b>Shadow</b>, <b>opacity</b>, <b>rotation</b></li>
+</ul>
+<p>Built-in <a href="#presets">presets</a>: Label, Warning, Note and Hint.</p>
+</div>
+<figure class="shot"><img src="images/panel-text.png" alt="Text tool properties"><figcaption>Text</figcaption></figure>
+</div>
+
+<h3 id="tool-callout"><img class="icon" src="images/icon-callout.png" alt="">Callout <kbd>K</kbd></h3>
+<div class="split">
+<div>
+<ol class="steps">
+  <li>Drag the frame of the bubble (a simple click creates a bubble of default size).</li>
+  <li>Type the text – it is wrapped and centred; if it doesn't fit, the bubble grows downwards. <kbd>Ctrl+Enter</kbd> or <kbd>Esc</kbd> finishes.</li>
+  <li>With the <a href="#tool-select">select tool</a> drag the round handle at the tail to the target. The tail automatically moves to the matching side of the bubble.</li>
+</ol>
+<p>Settings:</p>
+<ul>
+  <li><b>Shape &amp; tail</b>: rounded rectangle (with corner radius), ellipse or thought bubble; tail width, <span class="ui">Curved tail</span> and <span class="ui">Bend the other way</span>; rotation</li>
+  <li><b>Font</b> as for text</li>
+  <li><b>Colours</b>: text colour, background, padding</li>
+  <li><b>Glow</b>: coloured border around bubble and tail, with width and blur</li>
+  <li><b>Shadow</b>, <b>opacity</b>, presets</li>
+</ul>
+<p>Corner handles only resize the bubble (the font stays, the text is re-wrapped). When moved, the tail moves along.</p>
+</div>
+<figure class="shot"><img src="images/panel-callout.png" alt="Callout properties"><figcaption>Callout</figcaption></figure>
+</div>
+
+<h3 id="tool-stamp"><img class="icon" src="images/icon-stamp.png" alt="">Stamp <kbd>S</kbd></h3>
+<div class="split">
+<div>
+<p>A stamp is a single-colour frame with text that looks like a real rubber stamp – ideal for “APPROVED”, “DRAFT” or “CONFIDENTIAL”.</p>
+<ol class="steps">
+  <li>Click on the canvas – the stamp appears with its text selected.</li>
+  <li>Type your own text (multiple lines possible) or pick one from <span class="ui">Quick text</span> in the panel.</li>
+  <li><kbd>Ctrl+Enter</kbd> or <kbd>Esc</kbd> finishes.</li>
+</ol>
+<ul>
+  <li><b>Colour</b> and <b>frame</b>: rectangle, rounded, double frame, oval; frame thickness</li>
+  <li><b>Stamp look</b>: frayed edges, gaps, speckles, scratches; <span class="ui">New pattern</span> creates a different pattern</li>
+  <li><b>Tilt</b> (default −8°), font with bold/italic/underline/strikethrough</li>
+  <li><b>Ink look</b>: the colour is multiplied with the image as if real ink was pressed on</li>
+  <li><b>Opacity</b></li>
+</ul>
+<p>A stamp adapts to the length of its text. Dragging a corner handle scales frame and font together. The text stamped last becomes the default text.</p>
+</div>
+<figure class="shot"><img src="images/panel-stamp.png" alt="Stamp properties"><figcaption>Stamp</figcaption></figure>
+</div>
+
+<h3 id="tool-marker"><img class="icon" src="images/icon-marker.png" alt="">Numbered marker <kbd>M</kbd></h3>
+<div class="split">
+<div>
+<p>Markers number steps: every click places the next free number. <b>Dragging</b> additionally creates a tail pointing at the target.</p>
+<ul>
+  <li><b>Shape</b>: circle, square, rounded square; <b>size</b></li>
+  <li><b>Fill colour</b>, <b>number colour</b>, <b>outline colour</b></li>
+  <li><b>First number</b> for new markers</li>
+  <li><b>Renumber</b> by layer order or by creation order – useful after markers were deleted</li>
+  <li><b>Shadow</b></li>
+</ul>
+</div>
+<figure class="shot"><img src="images/panel-marker.png" alt="Marker properties"><figcaption>Marker</figcaption></figure>
+</div>
+
+<h3 id="tools-freehand">Freehand</h3>
+<h4 id="tool-pen"><img class="icon" src="images/icon-pen.png" alt="">Pen <kbd>B</kbd></h4>
+<div class="split">
+<div>
+<p>Draw with the mouse button held down or with a graphics pen. Every stroke becomes its own object.</p>
+<ul>
+  <li><b>Colour</b>, <b>line width</b>, <b>opacity</b></li>
+  <li><b>Smoothing</b> – calms shaky strokes</li>
+  <li><b>Pen pressure changes width</b> – for graphics tablets</li>
+</ul>
+<p>With the <a href="#ruler">ruler</a> shown you get straight strokes.</p>
+</div>
+<figure class="shot"><img src="images/panel-pen.png" alt="Pen properties"><figcaption>Pen</figcaption></figure>
+</div>
+<h4 id="tool-highlighter"><img class="icon" src="images/icon-highlighter.png" alt="">Highlighter <kbd>H</kbd></h4>
+<p>Like the pen, but wide and semi-transparent – for highlighting text. The option <span class="ui">Draw highlighter behind other objects</span> places all highlighter strokes of the document below the other objects.</p>
+<h4 id="tool-eraser"><img class="icon" src="images/icon-eraser.png" alt="">Eraser <kbd>X</kbd></h4>
+<p>Drag over strokes to remove them; on release all marked strokes are deleted (one undo step). With <span class="ui">Erase all objects, not only strokes</span> the eraser removes every object it touches.</p>
+<div class="box note"><p>The eraser removes <em>objects</em>. To make parts of the screenshot itself transparent, use the <a href="#tool-background-eraser">background eraser</a>.</p></div>
+
+<h3 id="tool-blur"><img class="icon" src="images/icon-blur.png" alt="">Blur / pixelate / redact <kbd>U</kbd></h3>
+<div class="split">
+<div>
+<p>Make names, email addresses or passwords unreadable: drag an area (<kbd>Shift</kbd> = square). The area stays an object that can be moved or resized.</p>
+<ul>
+  <li><b>Mode</b>: pixelate, blur or redact (solid, with a colour)</li>
+  <li><b>Strength / block size</b> in pixels</li>
+  <li><b>Shape</b>: rectangle or ellipse; <b>soft edge</b></li>
+</ul>
+</div>
+<figure class="shot"><img src="images/panel-blur.png" alt="Blur properties"><figcaption>Blur</figcaption></figure>
+</div>
+<div class="box warn"><p><span class="label">Security:</span> a light blur can sometimes be reversed. Use <b>Redact</b> for sensitive data. Also always share the <a href="#export">exported image</a>, never the project file: the project contains the unchanged original.</p></div>
+
+<h3 id="tool-magnifier"><img class="icon" src="images/icon-magnifier.png" alt="">Magnifier <kbd>Z</kbd></h3>
+<div class="split">
+<div>
+<p>The magnifier shows a part of the image enlarged at another place. Drag the <b>source area</b>; the magnified view appears next to it. With the select tool you move source and magnifier independently.</p>
+<ul>
+  <li><b>Zoom</b>, <b>shape</b> (circle or rectangle), <b>border</b></li>
+  <li><b>Show connector</b> – lines between source and magnifier</li>
+  <li><b>Show source frame</b></li>
+  <li><b>Magnify base image only</b> – without the objects on top</li>
+  <li><b>Smooth scaling</b> – off: pixels stay crisp</li>
+</ul>
+</div>
+<figure class="shot"><img src="images/panel-magnifier.png" alt="Magnifier properties"><figcaption>Magnifier</figcaption></figure>
+</div>
+
+<h3 id="tool-emoji"><img class="icon" src="images/icon-emoji.png" alt="">Emoji <kbd>J</kbd></h3>
+<div class="split">
+<div>
+<p>Insert colour emojis – all Windows emojis except country flags.</p>
+<ol class="steps">
+  <li>Search for an emoji in the panel (English or German) or pick one via categories, <span class="ui">Recently used</span> and <span class="ui">Favorites</span>. Choose the <span class="ui">skin tone</span> above.</li>
+  <li>Click on the canvas (default size) or drag an area (<kbd>Shift</kbd> = free, <kbd>Alt</kbd> = from the centre). Double-click or <kbd>Enter</kbd> in the picker inserts it in the middle of the image.</li>
+</ol>
+<p>With an emoji selected, a click in the picker replaces it. Emojis can be rotated (<kbd>[</kbd> / <kbd>]</kbd>), flipped (<kbd>Shift+H</kbd> / <kbd>Shift+V</kbd>) and given opacity and shadow. Right-click an emoji in the picker to add it to or remove it from the favorites.</p>
+</div>
+<figure class="shot"><img src="images/panel-emoji.png" alt="Emoji picker in the properties panel"><figcaption>Emoji picker</figcaption></figure>
+</div>
+
+<h3 id="tool-image"><img class="icon" src="images/icon-image.png" alt="">Image <kbd>I</kbd></h3>
+<div class="split">
+<div>
+<p>Insert more images as objects – logos, icons, photos or SVG graphics.</p>
+<ul>
+  <li>A <b>click</b> opens the file selection and places the image at its original size (at most 80 % of the screenshot).</li>
+  <li><b>Dragging an area</b> fits the image proportionally into the area.</li>
+  <li><b>Dragging an image file onto the canvas</b> inserts it at that spot.</li>
+  <li><kbd>Ctrl+Shift+V</kbd> inserts an image or a copied image file from the clipboard as an object.</li>
+  <li><span class="ui">Insert image from file…</span> in the panel or in the context menu.</li>
+</ul>
+<p>Animated GIFs and multi-page TIFFs ask which frame to use. SVG graphics stay sharp at every zoom level.</p>
+<p>Settings: <b>size</b> with <span class="ui">Keep aspect ratio</span>, <span class="ui">Original size</span>, <span class="ui">Original ratio</span>; <b>rotation</b>, <b>flip</b>, <b>outline</b> (follows the non-transparent parts of the image), <b>shadow</b> and <b>opacity</b>.</p>
+</div>
+<figure class="shot"><img src="images/panel-image.png" alt="Image tool properties"><figcaption>Image</figcaption></figure>
+</div>
+<div class="box note"><p>For security reasons, SVG graphics do not load external files or internet addresses; such content appears grey.</p></div>
+
+<h3 id="tools-remove">Removing image areas (cut-out)</h3>
+<p>These two tools make parts of the <em>screenshot</em> transparent – for example to cut out a window or remove a distracting background. Objects on top are not affected. The change is not permanent: <span class="ui">Restore whole screenshot</span> brings everything back. Transparent areas are see-through in a PNG; JPG and BMP fill them with white (or the background from the <a href="#export">save options</a>).</p>
+<h4 id="tool-area-select"><img class="icon" src="images/icon-area-select.png" alt="">Select and remove area <kbd>W</kbd></h4>
+<div class="split">
+<div>
+<ol class="steps">
+  <li>Choose the <b>selection shape</b>: rectangle, ellipse, freehand (lasso) or magic wand (selects connected similar colours, with <span class="ui">Colour tolerance</span>).</li>
+  <li>Drag or click. <kbd>Shift</kbd> adds to the selection, <kbd>Alt</kbd> subtracts.</li>
+  <li><kbd>Del</kbd> or <span class="ui">Remove area</span> makes the area transparent – optionally with a <span class="ui">soft edge</span>.</li>
+</ol>
+<p>More commands: <span class="ui">Invert selection</span> (<kbd>Ctrl+Shift+I</kbd>) – handy to remove everything <em>except</em> the selected area –, <span class="ui">Select all</span>, <span class="ui">Deselect</span>, <span class="ui">Crop to visible area</span>.</p>
+<p>The area selection itself is not an object; it is cleared when you switch tools.</p>
+</div>
+<figure class="shot"><img src="images/panel-area-select.png" alt="Area selection properties"><figcaption>Area selection</figcaption></figure>
+</div>
+<h4 id="tool-background-eraser"><img class="icon" src="images/icon-background-eraser.png" alt="">Background eraser <kbd>D</kbd></h4>
+<div class="split">
+<div>
+<p>Paint over the screenshot to make those spots transparent. Hold <kbd>Alt</kbd> to paint them back.</p>
+<ul>
+  <li><b>Size</b> of the brush (also <kbd>[</kbd> / <kbd>]</kbd>)</li>
+  <li><b>Hardness</b> – soft or hard brush edge</li>
+</ul>
+</div>
+<figure class="shot"><img src="images/panel-background-eraser.png" alt="Background eraser properties"><figcaption>Background eraser</figcaption></figure>
+</div>
+
+<h3 id="tool-crop"><img class="icon" src="images/icon-crop.png" alt="">Crop <kbd>C</kbd></h3>
+<p>In crop mode you define the visible part of the image. Cropping is not permanent: the whole image is kept and you can enlarge the area again later.</p>
+<figure class="shot"><img src="images/crop-mode.png" alt="Editor in crop mode with the crop panel on the right"><figcaption>Crop mode</figcaption></figure>
+<ul>
+  <li><b>Drag the handles</b> to resize, <b>drag inside</b> to move the frame, <b>drag outside</b> to draw a new area.</li>
+  <li><kbd>Shift</kbd> keeps the aspect ratio while dragging, <kbd>Alt</kbd> turns off snapping to edges, <kbd>arrow keys</kbd> move by 1 px.</li>
+  <li><b>Aspect ratio</b>: free, original, 1:1, 4:3, 3:2, 16:9, 9:16 or custom.</li>
+  <li>Enter <b>position</b> and <b>size</b> exactly in pixels.</li>
+  <li><b>Shortcuts</b>: <span class="ui">Crop to objects</span> (only the area with objects) and <span class="ui">Remove empty border</span> (cut off a single-colour border).</li>
+  <li><span class="ui">Apply</span> or <kbd>Enter</kbd> ends the mode, <span class="ui">Cancel</span> or <kbd>Esc</kbd> discards the change, <span class="ui">Reset</span> selects the whole image again.</li>
+</ul>
+
+<!-- ===================================================================== -->
+<h2 id="output">Saving and sharing</h2>
+<p>There are several ways to use the result – depending on whether you want to share the image right away, store it as a file or keep editing it later.</p>
+<div class="cards">
+  <a class="card" href="#clipboard"><strong>📋 Clipboard</strong><span>Paste quickly into email, chat or a document</span></a>
+  <a class="card" href="#export"><strong>🖼️ Image file</strong><span>PNG, JPEG, BMP, GIF, TIFF or JPEG XR</span></a>
+  <a class="card" href="#projects"><strong>🗂️ Project (.gsts)</strong><span>All objects stay editable</span></a>
+  <a class="card" href="#drag-drop"><strong>🖱️ Drag and drop</strong><span>Drag the image straight into another app</span></a>
+</div>
+
+<h3 id="save">Saving</h3>
+<p><kbd>Ctrl+S</kbd> saves to where the document came from: an opened project as a project again, an opened image file as an image again. For a new capture a dialog asks for location and file type – the project format is offered first. <kbd>Ctrl+Shift+S</kbd> (<span class="ui">Save as…</span>) always asks.</p>
+<p>When you close an editor with unsaved changes, GodSaveTheScreen asks: <span class="ui">Save</span>, <span class="ui">Save as project</span>, <span class="ui">Don't save</span> or <span class="ui">Cancel</span>.</p>
+
+<h3 id="export">Export and save options</h3>
+<p><span class="ui">Export…</span> writes the result as an image file without making the document refer to that file – ideal when you keep working on the project. The image contains all visible objects and the crop.</p>
+<p>The <b>save options</b> (slider icon in the command bar) define:</p>
+<ul>
+  <li><b>Format</b>: PNG, JPEG, BMP, GIF, TIFF or JPEG XR</li>
+  <li><b>Quality</b> (JPEG, JPEG XR), <b>Interlaced</b> (PNG), <b>Compression</b> (TIFF), <b>Lossless</b> (JPEG XR)</li>
+  <li><b>Background for transparent areas</b> for formats without transparency</li>
+</ul>
+<p>You can open every image format that Windows knows.</p>
+
+<h3 id="clipboard">Clipboard</h3>
+<div class="table-wrap"><table class="keys">
+  <tr><th>Key</th><th>Effect</th></tr>
+  <tr><td><kbd>Ctrl+C</kbd></td><td>With a selection: copy the selected objects (to paste them in an editor). Without: copy the finished image.</td></tr>
+  <tr><td><kbd>Ctrl+Shift+C</kbd></td><td>Always copy the finished image.</td></tr>
+  <tr><td><kbd>Ctrl+X</kbd></td><td>Cut the selected objects.</td></tr>
+  <tr><td><kbd>Ctrl+V</kbd></td><td>Paste copied objects; if the clipboard contains an image, it opens in a new editor window.</td></tr>
+  <tr><td><kbd>Ctrl+Shift+V</kbd></td><td>Insert the clipboard image as an <a href="#tool-image">image object</a> into the current image.</td></tr>
+</table></div>
+<p>The image is copied with transparency (PNG) and additionally in the classic Windows format so that every program can paste it.</p>
+
+<h3 id="drag-drop">Drag and drop</h3>
+<ul>
+  <li><b>Out:</b> drag the drag handle on the right of the command bar into another program (email, chat, Explorer) – the finished image is handed over.</li>
+  <li><b>In:</b> dragging image files onto the canvas inserts them as <a href="#tool-image">image objects</a>. With <kbd>Ctrl</kbd> held down, outside the canvas or for project files a new editor window opens instead.</li>
+</ul>
+
+<h3 id="projects">Projects (.gsts)</h3>
+<p>A project stores the original image, the crop, removed areas and all objects in one file. When you open it again, everything is still editable – ideal for guides you want to update.</p>
+<div class="box warn"><p>Because the project contains the unchanged original, blurred or redacted areas remain readable inside it. Always share an <a href="#export">exported image</a> with others.</p></div>
+
+<h3 id="recent">Recent files</h3>
+<p>The last 15 opened or saved files are in the start window, the tray menu, the editor under the arrow next to <span class="ui">Open</span> and the jump list on the taskbar. Files that no longer exist are greyed out and can be removed; <span class="ui">Clear list</span> deletes all entries.</p>
+
+<h3 id="backup">Automatic backup</h3>
+<p>Unsaved work is backed up regularly in the background. If GodSaveTheScreen ends unexpectedly, it offers to recover the documents on the next start. Save recovered documents afterwards.</p>
+
+<!-- ===================================================================== -->
+<h2 id="settings">Settings</h2>
+<p>Open the settings from the start window or the tray menu. Changes take effect immediately. The <span class="ui">Help</span> button at the bottom left or <kbd>Shift+F1</kbd> jumps to the description of the current page.</p>
+
+<h3 id="settings-general">General</h3>
+<figure class="shot"><img src="images/settings-general.png" alt="General settings page"></figure>
+<ul>
+  <li><b>Language</b>: system default, German or English (takes effect after a restart). The help opens in the selected language.</li>
+  <li><b>Theme</b>: system default, light or dark.</li>
+  <li><b>Tray icon click</b>: which capture mode starts, open the start window, or do nothing.</li>
+  <li><b>Start with Windows</b> and <b>Start minimized to the tray</b> (without the start window).</li>
+</ul>
+
+<h3 id="settings-capture">Capture</h3>
+<figure class="shot"><img src="images/settings-capture.png" alt="Capture settings page"></figure>
+<ul>
+  <li><b>Default capture mode</b> and <b>default timer</b> (for shortcuts and the tray).</li>
+  <li><b>Window capture source</b>: <span class="ui">Snapshot (what was visible)</span> or <span class="ui">Window content (includes covered parts)</span>.</li>
+  <li><b>Capture the mouse cursor</b>.</li>
+  <li><b>Make rounded window corners transparent</b> (Windows 11).</li>
+  <li><b>Smooth edges of freeform captures</b>.</li>
+  <li><b>Exclude own windows from captures</b>.</li>
+  <li><b>Show magnifier in the selection overlay</b>.</li>
+  <li><b>Play a sound during the last 3 seconds</b> (timer).</li>
+</ul>
+
+<h3 id="settings-postcapture">After capture</h3>
+<figure class="shot"><img src="images/settings-postcapture.png" alt="After capture settings page"></figure>
+<ul>
+  <li><b>Open in the editor</b>, <b>Copy to the clipboard</b> and <b>Save automatically</b> – each can be turned on or off.</li>
+  <li><b>Target folder</b> and <b>format</b> for automatic saving.</li>
+  <li><b>File name pattern</b> with placeholders:
+    <div class="table-wrap"><table>
+      <tr><th>Placeholder</th><th>Meaning</th></tr>
+      <tr><td><span class="path">{date:yyyy-MM-dd}</span></td><td>Date (any format)</td></tr>
+      <tr><td><span class="path">{time:HH-mm-ss}</span></td><td>Time</td></tr>
+      <tr><td><span class="path">{mode}</span></td><td>Capture mode</td></tr>
+      <tr><td><span class="path">{window}</span></td><td>Title of the captured window</td></tr>
+      <tr><td><span class="path">{counter:000}</span></td><td>Running number</td></tr>
+    </table></div>
+    <span class="ui">Reset</span> restores the default pattern <span class="path">Screenshot {date:yyyy-MM-dd} {time:HH-mm-ss}</span>.</li>
+</ul>
+
+<h3 id="settings-hotkeys">Hotkeys</h3>
+<figure class="shot"><img src="images/settings-hotkeys.png" alt="Hotkeys settings page"></figure>
+<p>Click a field and press the desired key combination; <kbd>Del</kbd> clears the hotkey. Next to every field you see whether the hotkey is active or already used by Windows or another program. For the Print Screen key there is a direct link to the matching Windows setting (see <a href="#capture-hotkeys">Print Screen key</a>).</p>
+
+<h3 id="settings-about">About</h3>
+<figure class="shot"><img src="images/settings-about.png" alt="About settings page"></figure>
+<p>Shows the program version, opens the <b>settings folder</b> and the <b>log folder</b>, and lists the <b>third-party components</b> used, with their licences.</p>
+
+<!-- ===================================================================== -->
+<h2 id="shortcuts">Keyboard shortcuts</h2>
+<p>The complete list – with your own global shortcuts and a search box – is available at any time in the program with <kbd>Ctrl+F1</kbd>.</p>
+<figure class="shot center"><img src="images/shortcuts-window.png" alt="Keyboard shortcuts window"><figcaption>The “Keyboard shortcuts” window</figcaption></figure>
+
+<h3 id="shortcuts-general">Help and capture</h3>
+<div class="table-wrap"><table class="keys">
+  <tr><td><kbd>F1</kbd></td><td>Open this help</td></tr>
+  <tr><td><kbd>Shift+F1</kbd></td><td>Help for the current tool, the selection or the settings page</td></tr>
+  <tr><td><kbd>Ctrl+F1</kbd></td><td>Show all keyboard shortcuts</td></tr>
+  <tr><td><kbd>Ctrl+Shift+1</kbd> … <kbd>4</kbd></td><td>Capture rectangle / window / freeform / full screen (default, changeable)</td></tr>
+</table></div>
+
+<h3 id="shortcuts-editor">In the editor</h3>
+<div class="table-wrap"><table class="keys">
+  <tr class="group-row"><td colspan="2">File</td></tr>
+  <tr><td><kbd>Ctrl+O</kbd></td><td>Open</td></tr>
+  <tr><td><kbd>Ctrl+S</kbd> / <kbd>Ctrl+Shift+S</kbd></td><td>Save / Save as</td></tr>
+  <tr><td><kbd>Ctrl+V</kbd> / <kbd>Ctrl+Shift+V</kbd></td><td>Paste / Paste image as object</td></tr>
+  <tr class="group-row"><td colspan="2">Edit</td></tr>
+  <tr><td><kbd>Ctrl+Z</kbd> / <kbd>Ctrl+Y</kbd></td><td>Undo / Redo</td></tr>
+  <tr><td><kbd>Ctrl+C</kbd> / <kbd>Ctrl+Shift+C</kbd></td><td>Copy (selection or image) / Copy image</td></tr>
+  <tr><td><kbd>Ctrl+X</kbd> / <kbd>Ctrl+D</kbd> / <kbd>Del</kbd></td><td>Cut / Duplicate / Delete</td></tr>
+  <tr><td><kbd>Ctrl+A</kbd></td><td>Select all</td></tr>
+  <tr><td><kbd>Ctrl+]</kbd> / <kbd>Ctrl+[</kbd></td><td>Bring forward / send backward (with <kbd>Shift</kbd>: to front / back)</td></tr>
+  <tr class="group-row"><td colspan="2">View</td></tr>
+  <tr><td><kbd>Ctrl++</kbd> / <kbd>Ctrl+-</kbd></td><td>Zoom in / out (also <kbd>Ctrl</kbd> + mouse wheel)</td></tr>
+  <tr><td><kbd>Ctrl+0</kbd> / <kbd>Ctrl+1</kbd></td><td>Fit / 100 %</td></tr>
+  <tr><td><kbd>Space</kbd> + drag</td><td>Pan the view</td></tr>
+  <tr><td><kbd>Ctrl+R</kbd></td><td>Ruler on/off</td></tr>
+  <tr class="group-row"><td colspan="2">Objects</td></tr>
+  <tr><td><kbd>Tab</kbd> / <kbd>Shift+Tab</kbd></td><td>Next / previous object</td></tr>
+  <tr><td><kbd>Arrow keys</kbd></td><td>Move by 1 px (with <kbd>Shift</kbd> 10 px)</td></tr>
+  <tr><td><kbd>Alt+arrow keys</kbd></td><td>Resize by 1 px (with <kbd>Shift</kbd> 10 px)</td></tr>
+  <tr><td><kbd>[</kbd> / <kbd>]</kbd></td><td>Rotate by 15°</td></tr>
+  <tr><td><kbd>Shift+H</kbd> / <kbd>Shift+V</kbd></td><td>Flip emoji or image horizontally / vertically</td></tr>
+  <tr class="group-row"><td colspan="2">Removing areas and cropping</td></tr>
+  <tr><td><kbd>Shift</kbd> / <kbd>Alt</kbd></td><td>Add to / subtract from the area selection</td></tr>
+  <tr><td><kbd>Del</kbd> / <kbd>Ctrl+Shift+I</kbd></td><td>Remove area / invert selection</td></tr>
+  <tr><td><kbd>Alt</kbd> / <kbd>[</kbd> <kbd>]</kbd></td><td>Background eraser: restore / size</td></tr>
+  <tr><td><kbd>Enter</kbd> / <kbd>Esc</kbd></td><td>Apply / cancel crop</td></tr>
+</table></div>
+<p>The tool keys are listed in the <a href="#tools">tool overview</a>.</p>
+
+<!-- ===================================================================== -->
+<h2 id="faq">Tips and troubleshooting</h2>
+
+<h3 id="faq-hotkey">A shortcut does not work</h3>
+<p>The combination is probably already used by Windows or another program. Under <a href="#settings-hotkeys">Settings → Hotkeys</a> you see the status of every shortcut and can choose a different combination. While the screen is locked, shortcuts deliberately do nothing.</p>
+
+<h3 id="faq-print">The Print Screen key opens the Snipping Tool</h3>
+<p>In Windows under <span class="ui">Settings → Accessibility → Keyboard</span> turn off “Use the Print screen button to open screen capture”, then assign the key under <a href="#settings-hotkeys">Hotkeys</a>.</p>
+
+<h3 id="faq-sensitive">Removing confidential data safely</h3>
+<p>Use <a href="#tool-blur">Redact</a> instead of a light blur and share only <a href="#export">exported images</a>, never project files.</p>
+
+<h3 id="faq-large">Very large images</h3>
+<p>Before opening very large images (more than 100 million pixels) GodSaveTheScreen asks for confirmation, because editing them needs a lot of memory.</p>
+
+<h3 id="faq-help">The help does not open</h3>
+<p>The help files <span class="path">GodSaveTheScreen-Help.html</span> and <span class="path">GodSaveTheScreen-Hilfe.html</span> must be in the same folder as <span class="path">GodSaveTheScreen.exe</span>. They open in your default browser.</p>
+
+<h3 id="faq-logs">Reporting problems</h3>
+<p>The logs help with problems. Open the log folder under <a href="#settings-about">Settings → About</a>.</p>
+
+<footer>GodSaveTheScreen {{VERSION}} · User Guide · <a href="#intro">Back to top</a></footer>
+</div>
+</main>
+</div>
+<script src="../help.js"></script>
+</body>
+</html>

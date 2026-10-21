@@ -179,18 +179,34 @@ public partial class EditorWindow : FluentWindow
 
     private void OnShortcutsClick(object sender, RoutedEventArgs e) => _shell.ShowShortcuts(_viewModel.Tools);
 
+    private void OnHelpClick(object sender, RoutedEventArgs e) => _shell.ShowHelp();
+
+    /// <summary>Abschnitt für Umschalt+F1: Ebenenliste (Fokus darin), sonst ausgewählte Objekte bzw. aktives Werkzeug.</summary>
+    private string ContextHelpTopic()
+    {
+        if (Keyboard.FocusedElement is DependencyObject focused && IsInside<Controls.LayersPanel>(focused))
+        {
+            return HelpTopics.Layers;
+        }
+
+        var selection = _viewModel.Context.Selection.Items;
+        return (_viewModel.ActiveTool is SelectTool && selection.Count > 0 ? HelpTopics.ForSelection(selection) : null)
+            ?? HelpTopics.ForTool(_viewModel.ActiveTool.Id);
+    }
+
     // ---- Tastatur ----
 
     /// <summary>Eingabefelder und die Emoji-Auswahl (Pfeiltasten, Enter, Tippen gehören dem Raster) bekommen die Tasten selbst.</summary>
     private static bool IsTyping =>
         Keyboard.FocusedElement is TextBoxBase or System.Windows.Controls.PasswordBox or ComboBox { IsEditable: true }
-        || (Keyboard.FocusedElement is DependencyObject focused && IsInsideEmojiPicker(focused));
+        || (Keyboard.FocusedElement is DependencyObject focused && IsInside<Controls.EmojiPicker>(focused));
 
-    private static bool IsInsideEmojiPicker(DependencyObject element)
+    private static bool IsInside<T>(DependencyObject element)
+        where T : DependencyObject
     {
         for (var current = element; current is not null; current = current is System.Windows.Media.Visual or System.Windows.Media.Media3D.Visual3D ? System.Windows.Media.VisualTreeHelper.GetParent(current) : LogicalTreeHelper.GetParent(current))
         {
-            if (current is Controls.EmojiPicker)
+            if (current is T)
             {
                 return true;
             }
@@ -219,7 +235,15 @@ public partial class EditorWindow : FluentWindow
             Canvas.RefreshCursor();
         }
 
-        if (key == Key.F1 || (ctrl && key == Key.OemQuestion))
+        // F1 = Hilfe, Umschalt+F1 = Hilfe zum aktuellen Werkzeug/Objekt, Strg+F1 (oder Strg+?) = Tastenkürzel.
+        if (key == Key.F1 && !ctrl)
+        {
+            _shell.ShowHelp(shift ? ContextHelpTopic() : null);
+            e.Handled = true;
+            return;
+        }
+
+        if (ctrl && key is Key.F1 or Key.OemQuestion)
         {
             _shell.ShowShortcuts(_viewModel.Tools);
             e.Handled = true;

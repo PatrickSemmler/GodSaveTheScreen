@@ -52,6 +52,9 @@ public interface IAppShell
     /// <summary>Zeigt die Übersicht der Tastenkürzel; mit <paramref name="tools"/> auch die Werkzeugkürzel des Editors.</summary>
     void ShowShortcuts(GodSaveTheScreen.App.Editor.Tools.ToolRegistry? tools = null);
 
+    /// <summary>Öffnet die Benutzeranleitung, optional am Abschnitt <paramref name="topic"/> (<see cref="HelpTopics"/>).</summary>
+    void ShowHelp(string? topic = null);
+
     /// <summary>Beendet die Anwendung; fragt bei ungespeicherten Editoren nach.</summary>
     void ExitApplication();
 }

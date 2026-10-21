@@ -30,4 +30,5 @@
   <ItemGroup>
     <Resource Include="Assets\**\*" />
   </ItemGroup>
+  <Import Project="..\..\build\HelpBundle.targets" />
 </Project>
