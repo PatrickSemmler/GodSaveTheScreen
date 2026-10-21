@@ -55,6 +55,7 @@ public sealed class StampToolState
             FontWeight = style.FontWeight,
             FontStyle = style.FontStyle,
             FontStretch = style.FontStretch,
+            Decorations = style.Decorations,
             FontSize = Math.Clamp(style.FontSize, StampAnnotation.MinFontSize, StampAnnotation.MaxFontSize),
             Color = style.Color,
             FrameShape = style.FrameShape,

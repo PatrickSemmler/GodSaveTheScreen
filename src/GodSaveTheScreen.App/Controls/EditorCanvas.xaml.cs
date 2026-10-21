@@ -496,6 +496,7 @@ public partial class EditorCanvas : UserControl
                 _ => FontStyles.Normal,
             },
             FontStretch = FontStretch.FromOpenTypeStretch(Math.Clamp(stamp.FontStretch, 1, 9)),
+            TextDecorations = ToTextDecorations(stamp.Decorations),
             Foreground = color,
             CaretBrush = color,
             SelectionBrush = Brushes.DodgerBlue,
@@ -525,6 +526,27 @@ public partial class EditorCanvas : UserControl
         System.Windows.Controls.Canvas.SetLeft(editor, stamp.Center.X);
         System.Windows.Controls.Canvas.SetTop(editor, stamp.Center.Y);
         return editor;
+    }
+
+    private static TextDecorationCollection? ToTextDecorations(TextDecorationKind kind)
+    {
+        if (kind == TextDecorationKind.None)
+        {
+            return null;
+        }
+
+        var result = new TextDecorationCollection();
+        if (kind.HasFlag(TextDecorationKind.Underline))
+        {
+            result.Add(TextDecorations.Underline[0]);
+        }
+
+        if (kind.HasFlag(TextDecorationKind.Strikethrough))
+        {
+            result.Add(TextDecorations.Strikethrough[0]);
+        }
+
+        return result;
     }
 
     private void ShowTextEditor(TextBox editor, bool selectAll)

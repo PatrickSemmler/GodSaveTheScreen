@@ -141,6 +141,7 @@ public sealed class StampTests
         original.InkBlend = true;
         original.Opacity = 0.7;
         original.FrameShape = StampFrameShape.DoubleLine;
+        original.Decorations = TextDecorationKind.Underline | TextDecorationKind.Strikethrough;
 
         var json = AnnotationSerializer.Serialize([original]);
         var restored = AnnotationSerializer.Deserialize(json).ShouldHaveSingleItem().ShouldBeOfType<StampAnnotation>();
@@ -158,6 +159,16 @@ public sealed class StampTests
         restored.Opacity.ShouldBe(0.7);
         restored.FrameShape.ShouldBe(StampFrameShape.DoubleLine);
         restored.FrameThickness.ShouldBe(5);
+        restored.Decorations.ShouldBe(TextDecorationKind.Underline | TextDecorationKind.Strikethrough);
+    }
+
+    [Fact]
+    public void Standardschrift_IstBahnschriftFett()
+    {
+        new StampAnnotation().FontFamilyName.ShouldBe("Bahnschrift");
+        new StampAnnotation().FontWeight.ShouldBe(700);
+        new StampStyle().FontFamilyName.ShouldBe("Bahnschrift");
+        new StampStyle().FontWeight.ShouldBe(700);
     }
 
     [Fact]

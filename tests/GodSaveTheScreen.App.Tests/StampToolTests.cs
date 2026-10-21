@@ -195,6 +195,48 @@ public sealed class StampToolTests
     }
 
     [StaFact]
+    public void Panel_SchriftauszeichnungenSchaltenUndWirkenAufDieGroesse()
+    {
+        var h = new EditorHarness();
+        var stamp = AddStamp(h);
+        stamp.FontWeight.ShouldBe(700);
+        h.Context.Selection.Set(stamp);
+        var panel = h.ViewModel.StampProperties;
+        panel.IsBold.ShouldBeTrue();
+
+        panel.IsBold = false;
+        panel.IsItalic = true;
+        panel.IsUnderline = true;
+        panel.IsStrikethrough = true;
+
+        stamp.FontWeight.ShouldBe(400);
+        stamp.FontStyle.ShouldBe(FontStyleKind.Italic);
+        stamp.Decorations.ShouldBe(TextDecorationKind.Underline | TextDecorationKind.Strikethrough);
+        panel.IsUnderline.ShouldBeTrue();
+        h.Settings.Current.StampDefaults.Decorations.ShouldBe(TextDecorationKind.Underline | TextDecorationKind.Strikethrough);
+
+        panel.IsUnderline = false;
+        stamp.Decorations.ShouldBe(TextDecorationKind.Strikethrough);
+
+        // Änderungen derselben Eigenschaft im 1,5-s-Fenster sind ein Undo-Schritt.
+        h.Document.Undo.Undo();
+        stamp.Decorations.ShouldBe(TextDecorationKind.None);
+    }
+
+    [StaFact]
+    public void Renderer_UnterstreichungFaerbtUnterhalbDesTextes()
+    {
+        var plain = new StampAnnotation { Text = "OK", FontSize = 40, FrameThickness = 0, Wear = 0 };
+        var underlined = new StampAnnotation { Text = "OK", FontSize = 40, FrameThickness = 0, Wear = 0, Decorations = TextDecorationKind.Underline };
+
+        double a = StampRenderer.RasterizeCoverage(plain, 2).Coverage.Sum();
+        double b = StampRenderer.RasterizeCoverage(underlined, 2).Coverage.Sum();
+
+        b.ShouldBeGreaterThan(a * 1.1);
+        underlined.Rect.Height.ShouldBeGreaterThan(plain.Rect.Height);
+    }
+
+    [StaFact]
     public void Panel_MitAuswahl_AendertStempelMitUndo()
     {
         var h = new EditorHarness();

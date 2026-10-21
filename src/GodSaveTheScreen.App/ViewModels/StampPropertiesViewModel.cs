@@ -161,6 +161,36 @@ public sealed partial class StampPropertiesViewModel : ObservableObject, IDispos
         }
     }
 
+    public bool IsBold
+    {
+        get => (FontWeight ?? 400) >= 600;
+        set => FontWeight = value ? 700 : 400;
+    }
+
+    public bool IsItalic
+    {
+        get => (FontStyle ?? FontStyleKind.Normal) != FontStyleKind.Normal;
+        set => FontStyle = value ? FontStyleKind.Italic : FontStyleKind.Normal;
+    }
+
+    public TextDecorationKind? Decorations
+    {
+        get => TryGet(s => s.Decorations, s => s.Decorations, out var v) ? v : null;
+        set => SetNullable(nameof(Decorations), value, s => s.Decorations, (s, v) => s.Decorations = v, (s, v) => s with { Decorations = v });
+    }
+
+    public bool IsUnderline
+    {
+        get => (Decorations ?? TextDecorationKind.None).HasFlag(TextDecorationKind.Underline);
+        set => Decorations = Toggle(Decorations ?? TextDecorationKind.None, TextDecorationKind.Underline, value);
+    }
+
+    public bool IsStrikethrough
+    {
+        get => (Decorations ?? TextDecorationKind.None).HasFlag(TextDecorationKind.Strikethrough);
+        set => Decorations = Toggle(Decorations ?? TextDecorationKind.None, TextDecorationKind.Strikethrough, value);
+    }
+
     /// <summary>Schriftgröße; Rahmen und Abstände wachsen mit.</summary>
     public double? FontSize
     {
@@ -326,6 +356,9 @@ public sealed partial class StampPropertiesViewModel : ObservableObject, IDispos
 
         Refresh();
     }
+
+    private static TextDecorationKind Toggle(TextDecorationKind current, TextDecorationKind flag, bool on) =>
+        on ? current | flag : current & ~flag;
 
     private void OnStateChanged(object? sender, EventArgs e) => Refresh();
 

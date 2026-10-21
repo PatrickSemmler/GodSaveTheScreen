@@ -22,6 +22,12 @@ public static class StampRenderer
     /// <summary>Kleinste Rasterdichte, damit gedrehte Stempel im Export (Maßstab 1) nicht weich werden.</summary>
     private const double MinRasterScale = 2;
 
+    /// <summary>Stärke von Unter- und Durchstreichung als Anteil der Schriftgröße.</summary>
+    private const double DecorationThickness = 0.075;
+
+    /// <summary>Abstand der Unterstreichung unter der Grundlinie als Anteil der Schriftgröße.</summary>
+    private const double DecorationOffset = 0.06;
+
     private static readonly ConditionalWeakTable<StampAnnotation, CacheEntry> Cache = new();
 
     /// <summary>Tintenfläche des Textes (für <see cref="StampAnnotation.TextSize"/>).</summary>
@@ -51,7 +57,32 @@ public static class StampRenderer
             TextAlignment = TextAlignment.Center,
         };
         formatted.MaxTextWidth = Math.Max(1, formatted.WidthIncludingTrailingWhitespace);
+        // Kräftiger als die Linien der Schrift, damit sie den Stempel-Look überstehen.
+        var decorations = new TextDecorationCollection();
+        if (annotation.Decorations.HasFlag(TextDecorationKind.Underline))
+        {
+            decorations.Add(StampDecoration(TextDecorationLocation.Underline, DecorationOffset, brush));
+        }
+
+        if (annotation.Decorations.HasFlag(TextDecorationKind.Strikethrough))
+        {
+            decorations.Add(StampDecoration(TextDecorationLocation.Strikethrough, 0, brush));
+        }
+
+        if (decorations.Count > 0)
+        {
+            formatted.SetTextDecorations(decorations);
+        }
+
         return formatted;
+    }
+
+    /// <summary>Linie in Schriftfarbe, Stärke und Versatz in Anteilen der Schriftgröße.</summary>
+    private static TextDecoration StampDecoration(TextDecorationLocation location, double offset, Brush brush)
+    {
+        var decoration = new TextDecoration(location, new Pen(brush, DecorationThickness), offset, TextDecorationUnit.FontRenderingEmSize, TextDecorationUnit.FontRenderingEmSize);
+        decoration.Freeze();
+        return decoration;
     }
 
     /// <summary>Zeichnet den Stempel (Deckkraft setzt der Aufrufer).</summary>
@@ -459,11 +490,11 @@ public static class StampRenderer
     }
 
     private readonly record struct MaskKey(
-        string Text, string Font, int Weight, FontStyleKind Style, int Stretch, double FontSize,
+        string Text, string Font, int Weight, FontStyleKind Style, int Stretch, TextDecorationKind Decorations, double FontSize,
         StampFrameShape Shape, double FrameThickness, double Wear, int Seed, double Scale, int MaxPixels)
     {
         public static MaskKey Of(StampAnnotation a, double scale, int maxPixels) => new(
-            a.Text, a.FontFamilyName, a.FontWeight, a.FontStyle, a.FontStretch, a.FontSize,
+            a.Text, a.FontFamilyName, a.FontWeight, a.FontStyle, a.FontStretch, a.Decorations, a.FontSize,
             a.FrameShape, a.FrameThickness, a.Wear, a.Seed, scale, maxPixels);
     }
 

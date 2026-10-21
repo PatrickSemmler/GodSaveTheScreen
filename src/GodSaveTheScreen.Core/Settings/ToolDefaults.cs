@@ -76,15 +76,17 @@ public sealed record StampStyle
     /// <summary>Text des nächsten Stempels; leer = lokalisierter Standardtext der Oberfläche.</summary>
     public string Text { get; init; } = string.Empty;
 
-    public string FontFamilyName { get; init; } = "Arial Black";
+    public string FontFamilyName { get; init; } = StampAnnotation.DefaultFontFamily;
 
-    public int FontWeight { get; init; } = 900;
+    public int FontWeight { get; init; } = StampAnnotation.DefaultFontWeight;
 
     public FontStyleKind FontStyle { get; init; }
 
     public int FontStretch { get; init; } = 5;
 
     public double FontSize { get; init; } = 40;
+
+    public TextDecorationKind Decorations { get; init; }
 
     public ArgbColor Color { get; init; } = ArgbColor.FromRgb(0xC6, 0x28, 0x28);
 

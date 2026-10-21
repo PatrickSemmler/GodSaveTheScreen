@@ -42,6 +42,14 @@ public sealed partial class StampAnnotation : Annotation, IRotatableAnnotation, 
     public const double MaxFrameThickness = 200;
     public const double MaxWear = 100;
 
+    /// <summary>
+    /// Standardschrift: Bahnschrift gehört zu jedem Windows 10/11, wirkt im fetten Schnitt wie ein Behördenstempel (DIN-artig)
+    /// und bleibt auch mit starker Abnutzung lesbar.
+    /// </summary>
+    public const string DefaultFontFamily = "Bahnschrift";
+
+    public const int DefaultFontWeight = 700;
+
     private SizeD? _textSize;
     private double _rotation;
 
@@ -62,12 +70,12 @@ public sealed partial class StampAnnotation : Annotation, IRotatableAnnotation, 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Bounds))]
     [NotifyPropertyChangedFor(nameof(Rect))]
-    private string _fontFamilyName = "Arial Black";
+    private string _fontFamilyName = DefaultFontFamily;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Bounds))]
     [NotifyPropertyChangedFor(nameof(Rect))]
-    private int _fontWeight = 900;
+    private int _fontWeight = DefaultFontWeight;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(Bounds))]
@@ -78,6 +86,12 @@ public sealed partial class StampAnnotation : Annotation, IRotatableAnnotation, 
     [NotifyPropertyChangedFor(nameof(Bounds))]
     [NotifyPropertyChangedFor(nameof(Rect))]
     private int _fontStretch = TextAnnotation.NormalStretch;
+
+    /// <summary>Unterstrichen / durchgestrichen.</summary>
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(Bounds))]
+    [NotifyPropertyChangedFor(nameof(Rect))]
+    private TextDecorationKind _decorations;
 
     /// <summary>Schriftgröße in Bildpixeln; bestimmt auch Innenabstand und Eckenradius.</summary>
     [ObservableProperty]
@@ -209,7 +223,7 @@ public sealed partial class StampAnnotation : Annotation, IRotatableAnnotation, 
     {
         // Messung vor den Benachrichtigungen verwerfen, damit Beobachter frische Größen lesen.
         if (e.PropertyName is nameof(Text) or nameof(FontFamilyName) or nameof(FontWeight) or nameof(FontStyle)
-            or nameof(FontStretch) or nameof(FontSize))
+            or nameof(FontStretch) or nameof(FontSize) or nameof(Decorations))
         {
             _textSize = null;
         }
