@@ -51,10 +51,10 @@ Produktreife: vollständige Lokalisierung, Barrierefreiheit, Performance-Optimie
 - [x] `build/release.ps1`: Tests ausführen → Publish → ZIP `GodSaveTheScreen-<Version>-win-x64.zip` mit EXE, `README.txt`, `LICENSE`, `THIRD-PARTY-NOTICES.txt`, leere `portable.txt` als **optional** beschriebene Datei (nicht enthalten → Daten in `%APPDATA%`) – Tests → Publish → ZIP (+ SHA256); ohne `LICENSE` im Repository warnt das Skript
 - [x] `THIRD-PARTY-NOTICES.txt` aus den NuGet-Lizenzen generieren – `build/generate-notices.ps1`
 - [ ] Optional: GitHub-Actions-Workflow (Build + Test + Artefakt), sobald ein Remote existiert – kein Remote vorhanden
-- [x] Hinweis zu SmartScreen bei unsignierter EXE in README; Code-Signing als Folgepunkt – `build/README.txt` und `README.md`
+- [x] Hinweis zu SmartScreen bei unsignierter EXE in README; Code-Signing als Folgepunkt – `build/README.txt` und `README.md` (`README.de.md`)
 
 ### 5. Dokumentation
-- [x] `README.md` (Funktionen, Screenshots, Tastenkürzel, Portable-Modus, Build-Anleitung) – Screenshots fehlen noch
+- [x] `README.md` (Funktionen, Screenshots, Tastenkürzel, Portable-Modus, Build-Anleitung) – Screenshots ergänzt 22.10.2026, englisch (`README.md`) und deutsch (`README.de.md`)
 - [x] `docs/agent/architecture.md` final verifizieren (Skill `agent-architecture-doc`, Update-Modus) – gegen den Code abgeglichen (M0–M11)
 - [x] `CHANGELOG.md`
 

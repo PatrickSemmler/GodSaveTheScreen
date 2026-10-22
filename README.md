@@ -1,110 +1,154 @@
 # GodSaveTheScreen
 
-Screenshot- und Annotationstool für Windows (.NET 10, WPF). Es läuft im Infobereich der Taskleiste, nimmt Bildschirmbereiche per Hotkey auf und öffnet das Ergebnis in einem Editor, in dem nicht-destruktive Objekte (Formen, Text, Freihand, Unschärfe, Nummern, Lupe …) über das Bild gelegt werden.
+**English** · [Deutsch](README.de.md)
 
-> Screenshots werden mit dem ersten veröffentlichten Release ergänzt.
+A screenshot and annotation tool for Windows (.NET 10, WPF). It lives in the notification area, captures parts of the screen with a hotkey and opens the result in an editor. Shapes, text, arrows, callouts, stamps, blur and more are placed over the image as objects, so everything stays editable – even after reopening a saved project.
 
-## Funktionen
+![Editor with numbered markers, callout, stamp, arrow and blurred email address](docs/help/en/images/editor-overview.png)
 
-**Aufnahme**
-- Rechteck, Fenster (mit Fenstererkennung), Freiform (Lasso), Vollbild (aktueller Monitor oder alle Monitore)
-- Frei einstellbarer Timer, mehrere Monitore mit unterschiedlicher Skalierung
-- Globale Hotkeys, Tray-Symbol, Startfenster, Windows-Sprungliste
-- Nach der Aufnahme optional: in die Zwischenablage kopieren, automatisch speichern, Editor öffnen
+## Download
 
-**Editor**
-- Formen (Rechteck, Ellipse, Linie, Pfeil, Dreieck, Polygon), Text, nummerierte Marker, Stift, Textmarker, Radierer, virtuelles Lineal
-- Eigene Vorlagen für jedes Zeichenwerkzeug (speichern, anwenden, umbenennen, löschen); jedes Werkzeug merkt sich seine zuletzt gewählte Konfiguration
-- Unschärfe (Weichzeichnen, Verpixeln, Schwärzen) und Lupe
-- Farbige Emojis (alle Windows-Emojis außer Länderflaggen) mit Suche auf Deutsch und Englisch, Kategorien, „Zuletzt verwendet“, Favoriten und Hauttönen; frei skalier-, dreh- und spiegelbar, mit Deckkraft
-- Alle Objekte bleiben bearbeitbar: Auswahl, Griffe, Ebenenliste, Z-Reihenfolge, Sperren, Undo/Redo
-- Zuschneiden wie im Snipping Tool (nicht-destruktiv, später wieder erweiterbar), Seitenverhältnisse, Pixel-Eingabe, Einrasten, „Auf Objekte zuschneiden“, „Leeren Rand entfernen“
-- Zoom und Verschieben, Bild per Drag & Drop ein- und ausgeben
-- Speichern als PNG, JPEG, BMP, GIF, TIFF und JPEG XR; Laden aller von Windows (WIC) unterstützten Formate
+Get the latest version from the [Releases](../../releases) page. Each release is available for `win-x64` and `win-arm64`:
 
-**Projekte (`.gsts`)**
-- Originalbild, Zuschnitt und alle Objekte in einer ZIP-Datei – Bearbeitung nach dem Schließen fortsetzen
-- Zuletzt verwendete Dateien in Startfenster, Tray, Editor und Sprungliste
-- Automatische Sicherung ungespeicherter Arbeit und Wiederherstellung nach einem Absturz
-
-**Bedienung**
-- Deutsch und Englisch, Hell/Dunkel/Hochkontrast
-- Alle Funktionen per Tastatur erreichbar; `Strg+F1` zeigt alle Tastenkürzel
-- Ausführliche Benutzeranleitung auf Deutsch und Englisch (HTML neben der EXE): `F1` öffnet sie, `Umschalt+F1` springt zum Abschnitt des aktuellen Werkzeugs bzw. der Einstellungsseite
-
-## Tastenkürzel (Auszug)
-
-| Taste | Funktion |
+| File | Use |
 |---|---|
-| `Strg+Umschalt+1` … `4` | Aufnahme: Rechteck / Fenster / Freiform / Vollbild (Standard, änderbar) |
-| `V` `R` `E` `L` `A` `G` `P` | Auswahl, Rechteck, Ellipse, Linie, Pfeil, Dreieck, Polygon |
-| `T` `M` `B` `H` `X` `U` `Z` `C` `J` | Text, Marker, Stift, Textmarker, Radierer, Unschärfe, Lupe, Zuschneiden, Emoji |
-| `Strg+Z` / `Strg+Y` | Rückgängig / Wiederholen |
-| `Strg+C` / `Strg+Umschalt+C` | Auswahl bzw. Bild kopieren / Bild immer kopieren |
-| `Strg+S` / `Strg+Umschalt+S` | Speichern / Speichern unter (Projekt oder Bild) |
-| `Tab` / `Umschalt+Tab` | nächstes / vorheriges Objekt auswählen |
-| `[` / `]` | ausgewähltes Emoji um 15° drehen (`Umschalt` am Drehgriff rastet ein); `Umschalt+H` / `Umschalt+V` spiegeln |
-| Pfeiltasten (+`Umschalt`) | Auswahl um 1 px (10 px) verschieben, mit `Alt` Größe ändern |
-| `F1` / `Umschalt+F1` | Hilfe / Hilfe zum aktuellen Werkzeug |
-| `Strg+F1` | Alle Tastenkürzel |
+| `GodSaveTheScreen-<version>-<platform>-Setup.exe` | Setup with a choice between “Just for me” (no admin rights) and “All users”, install folder and Start menu shortcut |
+| `GodSaveTheScreen-<version>-<platform>.msi` | For software deployment (GPO, Intune, SCCM); German/English selected automatically |
+| `GodSaveTheScreen-<version>-<platform>.zip` | Portable, no installation required |
 
-## Installation und Portable-Modus
+Requirements: Windows 10 (version 2004) or later. The .NET runtime is included.
 
-Das Release gibt es je Plattform (`win-x64`, `win-arm64`) in drei Formen:
+## Features
 
-| Datei | Zweck |
+### Capture
+
+![Start window](docs/help/en/images/start-window.png)
+
+- Rectangle, window (with window detection), freeform (lasso), full screen (current monitor or all monitors)
+- Adjustable timer; multiple monitors with different scaling
+- Global hotkeys, tray icon, start window, Windows jump list
+- After capturing, optionally: copy to clipboard, save automatically, open the editor
+
+### Editor
+
+- **Shapes:** rectangle, ellipse, line, arrow, triangle, polygon – with outline, dashes, arrow heads, shadow and rotation
+- **Text and callouts:** text with outline (also soft), background and shadow; speech, oval and thought bubbles with a freely draggable tail, which can be curved and rotated
+- **Stamps:** “APPROVED”, “DRAFT” and your own texts, with a realistic worn stamp look, tilt and ink effect
+- **Numbered markers**, pen, highlighter, eraser, virtual ruler
+- **Blur** (blur, pixelate, black out) and **magnifier**
+- **Colour emojis** (all Windows emojis except flags) with search in English and German, categories, favourites and skin tones
+- **Images as objects:** insert any WIC format or SVG via tool, drag & drop or `Ctrl+Shift+V`, with rotation, mirroring, outline and shadow
+- **Remove parts of the image:** make areas transparent using rectangle, ellipse, lasso or magic wand selection, or with the background eraser – non-destructive and restorable at any time
+- **The canvas grows** when objects extend beyond the edge of the image; the extra area is exported as transparent
+- All objects stay editable: selection, handles, layer list, z-order, locking, undo/redo
+- Presets for every drawing tool; each tool remembers its last settings, with “Restore defaults” available
+
+<table>
+  <tr>
+    <td><img src="docs/help/en/images/panel-callout.png" alt="Callout properties" width="260"></td>
+    <td><img src="docs/help/en/images/panel-stamp.png" alt="Stamp properties" width="260"></td>
+    <td><img src="docs/help/en/images/panel-emoji.png" alt="Emoji picker" width="260"></td>
+  </tr>
+  <tr>
+    <td align="center">Callout</td>
+    <td align="center">Stamp</td>
+    <td align="center">Emoji</td>
+  </tr>
+</table>
+
+### Cropping and export
+
+![Crop mode](docs/help/en/images/crop-mode.png)
+
+- Cropping like in the Snipping Tool: non-destructive and expandable again later, with aspect ratios, pixel input, snapping, “Crop to objects” and “Remove empty border”
+- Zoom and pan; drag images into and out of the editor
+- Save as PNG, JPEG, BMP, GIF, TIFF and JPEG XR; open every format supported by Windows (WIC)
+
+### Projects (`.gsts`)
+
+- Original image, crop, mask and all objects in a single ZIP file – continue editing after closing
+- Recently used files in the start window, tray, editor and jump list
+- Automatic backup of unsaved work and recovery after a crash
+
+### Usability
+
+![Settings](docs/help/en/images/settings-capture.png)
+
+- English and German, light/dark/high contrast
+- Every function can be reached by keyboard; `Ctrl+F1` shows all shortcuts
+- Detailed user guide in English and German (HTML next to the EXE): `F1` opens it, `Shift+F1` jumps to the section for the current tool or settings page
+
+## Keyboard shortcuts (selection)
+
+| Key | Function |
 |---|---|
-| `GodSaveTheScreen-<Version>-<Plattform>-Setup.exe` | Setup mit Wahl „Nur für mich“ (ohne Adminrechte, `%LOCALAPPDATA%\Programs`) oder „Für alle Benutzer“ (`Program Files`), Zielordner, Startmenü-Verknüpfung (abwählbar), Dateizuordnung `.gsts` |
-| `GodSaveTheScreen-<Version>-<Plattform>.msi` | Für Softwareverteilung (GPO, Intune, SCCM); Deutsch/Englisch automatisch |
-| `GodSaveTheScreen-<Version>-<Plattform>.zip` | Portabel, ohne Installation |
+| `Ctrl+Shift+1` … `4` | Capture: rectangle / window / freeform / full screen (default, configurable) |
+| `V` `R` `E` `L` `A` `G` `P` | Select, rectangle, ellipse, line, arrow, triangle, polygon |
+| `T` `K` `S` `M` `J` `I` | Text, callout, stamp, marker, emoji, image |
+| `B` `H` `X` `U` `Z` `C` | Pen, highlighter, eraser, blur, magnifier, crop |
+| `W` / `D` | Select area and remove / background eraser |
+| `Ctrl+Z` / `Ctrl+Y` | Undo / redo |
+| `Ctrl+C` / `Ctrl+Shift+C` | Copy selection or image / always copy image |
+| `Ctrl+V` / `Ctrl+Shift+V` | Paste / insert image as object |
+| `Ctrl+S` / `Ctrl+Shift+S` | Save / save as (project or image) |
+| `[` / `]` | Rotate the selected object |
+| Arrow keys (+`Shift`) | Move the selection by 1 px (10 px); with `Alt`, resize |
+| `F1` / `Shift+F1` | Help / help for the current tool |
+| `Ctrl+F1` | All keyboard shortcuts |
 
-Stille Installation:
+## Installation details
+
+Silent installation:
 
 ```powershell
-msiexec /i GodSaveTheScreen-1.10.0.0-win-x64.msi /qn ALLUSERS=1   # für alle Benutzer (Admin)
-msiexec /i GodSaveTheScreen-1.10.0.0-win-x64.msi /qn              # nur aktueller Benutzer
-GodSaveTheScreen-1.10.0.0-win-x64-Setup.exe /quiet InstallScope=PerMachine
+msiexec /i GodSaveTheScreen-1.10.1.0-win-x64.msi /qn ALLUSERS=1   # all users (admin)
+msiexec /i GodSaveTheScreen-1.10.1.0-win-x64.msi /qn              # current user only
+GodSaveTheScreen-1.10.1.0-win-x64-Setup.exe /quiet InstallScope=PerMachine
 ```
 
-MSI-Properties: `ALLUSERS=1` (für alle Benutzer), `MSIINSTALLPERUSER=1` (nur Benutzer, Standard), `INSTALLFOLDER`, `STARTMENUSHORTCUT=0` (keine Startmenü-Verknüpfung). Die Setup-EXE kennt `InstallScope=PerMachine|PerUser`, `InstallFolder=<Ordner>` und `StartMenuShortcut=0`; ohne Angabe übernehmen Updates Ordner und Startmenü-Wahl der vorhandenen Installation; Burns eigene Schalter `/permachine`/`/peruser` wirken nicht, weil die Standardoberfläche die Installationsart selbst vorgibt. Updates ersetzen eine Installation derselben Art; ein Wechsel zwischen „Benutzer“ und „alle Benutzer“ ergibt zwei Installationen. „Mit Windows starten“ stellt jeder Benutzer in der App ein, nicht das Setup.
+- MSI properties: `ALLUSERS=1` (all users), `MSIINSTALLPERUSER=1` (current user, default), `INSTALLFOLDER`, `STARTMENUSHORTCUT=0`
+- Setup EXE: `InstallScope=PerMachine|PerUser`, `InstallFolder=<folder>`, `StartMenuShortcut=0`. Burn's own `/permachine` and `/peruser` switches have no effect.
+- Updates replace an installation of the same kind and keep its folder and Start menu choice. Switching between “current user” and “all users” results in two installations.
+- “Start with Windows” is set by each user in the app, not by the setup.
 
-ZIP (einzelne EXE, enthält die .NET-Laufzeit):
+**Portable (ZIP):** unzip and run `GodSaveTheScreen.exe`; keep the user guide HTML files in the same folder. Settings are stored in `%APPDATA%\GodSaveTheScreen`, and logs and backups in `%LOCALAPPDATA%\GodSaveTheScreen`. If you put an empty `portable.txt` next to the EXE, all data is stored in a `data` folder beside it (e.g. for USB sticks).
 
-1. ZIP entpacken und `GodSaveTheScreen.exe` starten. Die Benutzeranleitung (`GodSaveTheScreen-Hilfe.html` / `GodSaveTheScreen-Help.html`) muss im selben Ordner bleiben.
-2. Standardmäßig liegen Einstellungen in `%APPDATA%\GodSaveTheScreen`, Logs und Sicherungen in `%LOCALAPPDATA%\GodSaveTheScreen`.
-3. **Portabler Modus:** eine leere Datei `portable.txt` neben die EXE legen – dann liegen alle Daten im Ordner `data` daneben (z. B. für USB-Sticks).
+**SmartScreen:** the EXE and installers are not signed yet, so Windows may show “Windows protected your PC” on first start. Choose *More info → Run anyway*.
 
-Die EXE ist nicht signiert. Beim ersten Start zeigt Windows SmartScreen deshalb unter Umständen „Der Computer wurde durch Windows geschützt“: *Weitere Informationen → Trotzdem ausführen*. Code-Signing ist ein möglicher Folgepunkt.
+**Print Screen key:** on Windows 11 the key may be taken by the system (*Settings → Accessibility → Keyboard → “Use the Print screen key to open screen capture”*). Turn that option off before assigning the key in GodSaveTheScreen.
 
-Die Taste `Druck` kann unter Windows 11 vom System belegt sein (*Einstellungen → Barrierefreiheit → Tastatur → „Schaltfläche ‚Druck‘ zum Öffnen der Bildschirmaufnahme verwenden“*). Erst nach dem Ausschalten lässt sie sich in den Einstellungen von GodSaveTheScreen einem Aufnahmemodus zuweisen.
+## Building from source
 
-## Aus dem Quelltext bauen
-
-Voraussetzung: [.NET 10 SDK](https://dotnet.microsoft.com/download), Windows 10 (2004) oder neuer.
+Requirements: [.NET 10 SDK](https://dotnet.microsoft.com/download), Windows 10 (2004) or later.
 
 ```powershell
-dotnet build GodSaveTheScreen.slnx          # Bauen (Warnungen sind Fehler)
-dotnet test                                 # Tests (xUnit v3)
+dotnet build GodSaveTheScreen.slnx                     # build (warnings are errors)
 dotnet run --project src/GodSaveTheScreen.App
-.\build\release.ps1                         # Tests + je Plattform Publish, ZIP, MSI, Setup-EXE in dist\
-.\build\release.ps1 -Runtime win-x64 -SkipInstaller   # nur x64, nur ZIP
+.\build\release.ps1                                    # tests + publish, ZIP, MSI and Setup EXE per platform into dist\
+.\build\release.ps1 -Runtime win-x64 -SkipInstaller    # x64 ZIP only
 ```
 
-Hinweise:
-- Läuft die App, sperrt sie die DLLs in `bin\`: für parallele Builds `-p:ArtifactsPath=C:/Temp/gsts` verwenden.
-- WPF ist nicht trimmbar, das Release wird deshalb ohne `PublishTrimmed` veröffentlicht.
-- Die Versionsnummer steht in `Directory.Build.props`; der Git-Hash wird automatisch an die `InformationalVersion` gehängt.
-- Installer: WiX Toolset 7 (MSI `installer/GodSaveTheScreen.Msi`, Setup-EXE `installer/GodSaveTheScreen.Setup`), gebaut von `build\build-installer.ps1` (von `release.ps1` aufgerufen). WiX 7 verlangt die Annahme seiner OSMF-EULA; sie steht als `<AcceptEula>wix7</AcceptEula>` in den Projekten (Wartungsgebühr erst ab 10.000 US-$ Jahresumsatz mit dem Projekt). Die Projekte gehören nicht zur Solution.
-- Die Lizenzhinweise der NuGet-Pakete erzeugt `build\generate-notices.ps1` (`THIRD-PARTY-NOTICES.txt`); nach Paketänderungen neu erzeugen, die Lizenzseite übernimmt sie beim nächsten Build.
+Tests (xUnit v3): `dotnet test` currently runs no tests in this solution. Run the test executables from the build output instead:
 
-## Dokumentation
+```powershell
+dotnet build -p:ArtifactsPath=C:/Temp/gsts-art
+C:/Temp/gsts-art/bin/GodSaveTheScreen.Core.Tests/debug/GodSaveTheScreen.Core.Tests.exe
+C:/Temp/gsts-art/bin/GodSaveTheScreen.App.Tests/debug/GodSaveTheScreen.App.Tests.exe
+```
 
-- Benutzeranleitung: Quellen in [docs/help](docs/help/) (`de/index.html`, `en/index.html`, gemeinsames `help.css`/`help.js`); der Build bettet CSS, Skript und Bilder ein und legt die fertigen HTML-Dateien neben die EXE. Bildschirmfotos neu erzeugen: `pwsh build/generate-help-screenshots.ps1`
-- Lizenzseite: Quellen in [docs/license](docs/license/); der Build setzt [LICENSE](LICENSE), die Lizenztexte aus `docs/license/texts` und `THIRD-PARTY-NOTICES.txt` ein (`GodSaveTheScreen-Lizenz.html`/`-License.html` neben der EXE, aufrufbar unter Einstellungen → Info)
-- [Umsetzungsplan](docs/Umsetzungsplan.md) und [Meilensteine](docs/meilensteine/)
-- [Architektur für Agenten](docs/agent/architecture.md)
-- [Änderungen](CHANGELOG.md)
+Notes:
+- While the app is running it locks the DLLs in `bin\`. For parallel builds, use `-p:ArtifactsPath=…`.
+- The version is set in `Directory.Build.props` (four parts, `Major.Minor.Patch.Fix`); the Git hash is appended to the `InformationalVersion`.
+- The installers are built with WiX Toolset 7 (`installer/`) by `build\build-installer.ps1`. WiX 7 requires accepting its OSMF EULA (`<AcceptEula>wix7</AcceptEula>` in the projects).
+- `build\generate-notices.ps1` regenerates `THIRD-PARTY-NOTICES.txt` after package changes; `pwsh build/generate-help-screenshots.ps1` regenerates the user guide screenshots.
 
-## Lizenz
+## Documentation
 
-GodSaveTheScreen ist freie Software unter der [Apache License 2.0](LICENSE) – Copyright © 2026 Patrick Semmler. Nutzung, Weitergabe, Änderungen und Forks sind erlaubt; bitte dabei `LICENSE` und [NOTICE](NOTICE) mitgeben, geänderte Dateien kennzeichnen und für Forks einen eigenen Namen verwenden. Die Lizenzen der verwendeten Komponenten stehen in [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt).
+- User guide: sources in [docs/help](docs/help/) (bundled into a single HTML file per language at build time)
+- [Architecture notes for AI agents](docs/agent/architecture.md) – the project is developed with the help of Claude Code; see also [CLAUDE.md](CLAUDE.md)
+- [Changelog](CHANGELOG.md)
+- Internal planning documents (German): [implementation plan](docs/Umsetzungsplan.md), [milestones](docs/meilensteine/)
+
+## License
+
+GodSaveTheScreen is free software under the [Apache License 2.0](LICENSE) – Copyright © 2026 Patrick Semmler. You may use, redistribute, modify and fork it. Please include `LICENSE` and [NOTICE](NOTICE), mark modified files, and use a different name for forks. The licenses of the components used are listed in [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt).

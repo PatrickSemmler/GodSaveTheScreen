@@ -232,3 +232,12 @@ Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `doc
 - **Was wurde gemacht**: Setup-EXE: Optionsseite mit je einem Zielordner-Feld (mit „Durchsuchen“) für „Nur für mich“ und „Für alle Benutzer“ sowie Kontrollkästchen „Verknüpfung im Startmenü erstellen“; still `InstallFolder=…`, `StartMenuShortcut=0`. MSI: neuer Dialog „Zielordner“ nach der Installationsart (Ändern…, Pfadprüfung, Startmenü-Kontrollkästchen); still `INSTALLFOLDER=…`, `STARTMENUSHORTCUT=0`. Updates übernehmen ohne Angabe Ordner und Startmenü-Wahl der vorhandenen Installation (MSI und Setup-EXE lesen `Software\GodSaveTheScreen\Installer`)
 - **Warum**: Nutzerwunsch
 - **Seiteneffekte / Hinweise**: Ein selbst gewählter Ordner im MSI-Dialog bleibt beim Zurückgehen erhalten, solange die Installationsart gleich bleibt. Die Setup-EXE übergibt beide Ordner (`PERUSERFOLDER`/`PERMACHINEFOLDER`), das MSI nimmt den passenden. Getestet (pro Benutzer): MSI still mit Ordner/ohne Startmenü und Update mit zweitem Build (Wahl bleibt, `STARTMENUSHORTCUT=1` stellt Verknüpfung her), Setup-EXE still (Ordner mit Leerzeichen, Update übernimmt Wahl, Standardinstallation), Setup-EXE- und MSI-Oberfläche per UI Automation durchgeklickt (Ordner ändern, Häkchen entfernen, Zurück/Weiter, Vorbelegung beim Update), Deinstallation ohne Rückstände. Offen: pro Computer (UAC). App-Tests nicht neu ausgeführt (keine Code-Änderung an der App)
+
+### README auf Englisch und Deutsch mit Screenshots – 22.10.2026
+- **Kategorie**: Dokumentation
+- **Verbesserungsliste-ID**: – (Nutzerwunsch, Vorbereitung der Veröffentlichung auf GitHub)
+- **Version**: 1.10.1.0 (unverändert, keine Code-Änderung)
+- **Geänderte Dateien**: `README.md` (jetzt Englisch), `README.de.md` (neu), `docs/meilensteine/M11-Feinschliff-Release.md`
+- **Was wurde gemacht**: README in zwei Sprachen mit Sprachumschalter, Download-Abschnitt (Link auf GitHub-Releases), Bildschirmfotos aus `docs/help/{en,de}/images` (Editor, Startfenster, Panels Sprechblase/Stempel/Emoji, Zuschneiden, Einstellungen). Funktionsliste um Sprechblase, Stempel, Bilder als Objekte, Bildbereiche entfernen, wachsende Zeichenfläche, Drehung, Schatten/Kontur ergänzt; Tastenkürzel um K, S, I, W, D und `Strg+Umschalt+V`; Testaufruf über die Test-EXE statt `dotnet test`
+- **Warum**: Nutzerwunsch
+- **Seiteneffekte / Hinweise**: README nutzt dieselben Bilder wie die Hilfe – nach `generate-help-screenshots.ps1` sind sie automatisch aktuell. Der Releases-Link ist relativ (`../../releases`) und funktioniert nur auf GitHub
