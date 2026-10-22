@@ -18,6 +18,10 @@
     <PackageVersion Include="Serilog.Sinks.File" Version="7.0.0" />
     <PackageVersion Include="xunit.v3" Version="4.0.2" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="4.0.1" />
+    <!-- Installer (installer/*.wixproj); Version passend zum WixToolset.Sdk im Projekt-SDK-Attribut -->
+    <PackageVersion Include="WixToolset.UI.wixext" Version="7.0.0" />
+    <PackageVersion Include="WixToolset.Util.wixext" Version="7.0.0" />
+    <PackageVersion Include="WixToolset.BootstrapperApplications.wixext" Version="7.0.0" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.11.0" />
     <PackageVersion Include="Xunit.StaFact" Version="4.0.24" />
     <PackageVersion Include="NSubstitute" Version="6.2.0" />

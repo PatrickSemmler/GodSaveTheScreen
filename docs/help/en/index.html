@@ -53,7 +53,9 @@
 <h2 id="getting-started">Getting started</h2>
 
 <h3 id="install">Installation and portable mode</h3>
-<p>GodSaveTheScreen needs no installation. The program is a single file <span class="path">GodSaveTheScreen.exe</span> that already contains the .NET runtime. This guide sits next to it as <span class="path">GodSaveTheScreen-Help.html</span> (English) and <span class="path">GodSaveTheScreen-Hilfe.html</span> (German).</p>
+<p>GodSaveTheScreen comes with a setup or as a ZIP archive. The program is a single file <span class="path">GodSaveTheScreen.exe</span> that already contains the .NET runtime. This guide sits next to it as <span class="path">GodSaveTheScreen-Help.html</span> (English) and <span class="path">GodSaveTheScreen-Hilfe.html</span> (German).</p>
+<p><strong>With the setup:</strong> run <span class="path">GodSaveTheScreen-…-Setup.exe</span> and choose <span class="ui">Install</span>. Under <span class="ui">Options</span> you decide whether GodSaveTheScreen is installed <span class="ui">Just for me</span> (no administrator rights, into <span class="path">%LOCALAPPDATA%\Programs</span>) or <span class="ui">For all users of this computer</span> (into “Program Files”). Turn on “Start with Windows” afterwards in the <a href="#settings-general">settings</a>. The setup adds a Start menu shortcut and associates project files (<span class="path">.gsts</span>) with the editor. Uninstall via <span class="ui">Settings → Apps</span>; your settings and backups are kept. For software deployment in companies there is also an MSI package (see <a href="#faq-deploy">Deployment in companies</a>).</p>
+<p><strong>As a ZIP (no installation):</strong></p>
 <ol class="steps">
   <li>Extract the ZIP archive into any folder.</li>
   <li>Start <span class="path">GodSaveTheScreen.exe</span>.</li>
@@ -709,6 +711,15 @@
 
 <h3 id="faq-help">The help does not open</h3>
 <p>The help files <span class="path">GodSaveTheScreen-Help.html</span> and <span class="path">GodSaveTheScreen-Hilfe.html</span> must be in the same folder as <span class="path">GodSaveTheScreen.exe</span>. They open in your default browser.</p>
+
+<h3 id="faq-deploy">Deployment in companies</h3>
+<p>For Group Policy, Intune or SCCM there is <span class="path">GodSaveTheScreen-…-x64.msi</span> (or <span class="path">-arm64.msi</span>). Without parameters it installs only for the user running it; set <span class="path">ALLUSERS=1</span> to install for all users. Windows picks the language (English/German) automatically.</p>
+<ul>
+  <li>For all users, silently: <span class="path">msiexec /i GodSaveTheScreen-…-x64.msi /qn ALLUSERS=1</span></li>
+  <li>Different folder: <span class="path">INSTALLFOLDER="D:\Tools\GodSaveTheScreen"</span></li>
+  <li>Setup EXE silently: <span class="path">GodSaveTheScreen-…-Setup.exe /quiet InstallScope=PerMachine</span> (<span class="path">/?</span> lists all switches)</li>
+</ul>
+<p>Newer versions automatically replace an existing installation of the same kind (for the user or for all users); the users’ settings are kept.</p>
 
 <h3 id="faq-logs">Reporting problems</h3>
 <p>The logs help with problems. Open the log folder under <a href="#settings-about">Settings → About</a>.</p>

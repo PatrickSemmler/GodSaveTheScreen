@@ -482,3 +482,8 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Release-Ausgabe (ZIP, MSI, Setup-EXE; build/release.ps1)
+dist/
+# Projektordner des MSI (sonst von *.msi erfasst, Git ignoriert hier Gross-/Kleinschreibung)
+!/installer/GodSaveTheScreen.Msi/

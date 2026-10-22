@@ -1,0 +1,23 @@
+<!-- Setup-EXE (WiX-7-Burn-Bundle) um das mehrsprachige MSI. Wahl "nur für mich" / "für alle Benutzer" (configurable-scope bundle).
+     Aufruf über build/build-installer.ps1: -p:MsiPath=<zusammengeführtes MSI> -p:LicenseRtf=<aus LICENSE erzeugt> -p:LogoPng=<aus app.ico erzeugt>. -->
+<Project Sdk="WixToolset.Sdk/7.0.0">
+  <PropertyGroup>
+    <!-- Annahme der OSMF-EULA von WiX 7 (Entscheidung des Projektinhabers, 21.10.2026). -->
+    <AcceptEula>wix7</AcceptEula>
+    <OutputType>Bundle</OutputType>
+    <OutputName>GodSaveTheScreen-Setup</OutputName>
+    <!-- Die Theme-.wxl gehören zu WixStdBA (Payloads), nicht zur Bundle-Lokalisierung. -->
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
+    <Platform Condition="'$(Platform)' == ''">x64</Platform>
+    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\'))</RepoRoot>
+    <DefineConstants>ProductVersion=$(Version);MsiPath=$(MsiPath);LicenseRtf=$(LicenseRtf);LogoPng=$(LogoPng);RepoRoot=$(RepoRoot)</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="WixToolset.BootstrapperApplications.wixext" />
+  </ItemGroup>
+  <Target Name="CheckInputs" BeforeTargets="Build">
+    <Error Condition="'$(MsiPath)' == '' Or !Exists('$(MsiPath)')" Text="MsiPath fehlt oder existiert nicht: '$(MsiPath)'. Bitte build/build-installer.ps1 verwenden." />
+    <Error Condition="'$(LicenseRtf)' == '' Or !Exists('$(LicenseRtf)')" Text="LicenseRtf fehlt oder existiert nicht: '$(LicenseRtf)'." />
+    <Error Condition="'$(LogoPng)' == '' Or !Exists('$(LogoPng)')" Text="LogoPng fehlt oder existiert nicht: '$(LogoPng)'." />
+  </Target>
+</Project>

@@ -1,0 +1,24 @@
+<!-- MSI (WiX 7) für Installation pro Benutzer oder pro Computer ("Single Package Authoring", Package/@Scope=perUserOrMachine).
+     Erwartet die veröffentlichte App in $(PublishDir); Aufruf über build/build-installer.ps1 (dort werden die beiden Kulturen
+     zu einem mehrsprachigen MSI zusammengeführt). -->
+<Project Sdk="WixToolset.Sdk/7.0.0">
+  <PropertyGroup>
+    <!-- Annahme der OSMF-EULA von WiX 7 (Entscheidung des Projektinhabers, 21.10.2026). -->
+    <AcceptEula>wix7</AcceptEula>
+    <OutputName>GodSaveTheScreen</OutputName>
+    <Cultures>en-US;de-DE</Cultures>
+    <Platform Condition="'$(Platform)' == ''">x64</Platform>
+    <RepoRoot>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\'))</RepoRoot>
+    <PublishDir Condition="'$(PublishDir)' == ''">$(RepoRoot)artifacts\publish\win-$(Platform.ToLowerInvariant())\</PublishDir>
+    <!-- ICE57: Fehlalarm bei Paketen pro Benutzer oder Computer (HKMU); ICE61: gleiche Versionen werden bewusst ersetzt (4. Stelle). -->
+    <SuppressIces>ICE57;ICE61</SuppressIces>
+    <!-- Ein ProductCode für beide Sprachen eines Builds: die eingebettete Sprachumwandlung darf ihn nicht ändern, sonst erkennt die
+         Setup-EXE das installierte MSI nicht. build-installer.ps1 übergibt je Build einen neuen. -->
+    <ProductCode Condition="'$(ProductCode)' == ''">$([System.Guid]::NewGuid().ToString('B').ToUpperInvariant())</ProductCode>
+    <DefineConstants>ProductVersion=$(Version);ProductCode=$(ProductCode);BannerBmp=$(BannerBmp);DialogBmp=$(DialogBmp);PublishDir=$(PublishDir);RepoRoot=$(RepoRoot)</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="WixToolset.UI.wixext" />
+    <PackageReference Include="WixToolset.Util.wixext" />
+  </ItemGroup>
+</Project>

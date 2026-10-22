@@ -1,0 +1,112 @@
+<!--
+  GodSaveTheScreen als MSI. Installation pro Benutzer (Standard, ohne Adminrechte) oder pro Computer.
+
+  Öffentliche Properties (z. B. msiexec /i GodSaveTheScreen.msi /qn ALLUSERS=1):
+    ALLUSERS=1          Installation für alle Benutzer nach "Program Files" (Adminrechte nötig)
+    MSIINSTALLPERUSER=1 Installation nur für den aktuellen Benutzer nach %LOCALAPPDATA%\Programs (Standard)
+    INSTALLFOLDER       abweichender Installationsordner
+  "Mit Windows starten" legt jeder Benutzer in der App fest (AutostartService), nicht das Setup.
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+  <Package Name="GodSaveTheScreen"
+           Manufacturer="Patrick Semmler"
+           Version="$(ProductVersion)"
+           ProductCode="$(ProductCode)"
+           UpgradeCode="CB9CB35C-CF48-46D0-9998-A0590678AE8D"
+           Language="!(loc.ProductLanguage)"
+           Scope="perUserOrMachine">
+    <SummaryInformation Description="!(loc.PackageDescription)" />
+
+    <!-- Die 4. Versionsstelle (Bugfix) ignoriert Windows Installer beim Vergleich; deshalb gleiche Versionen ersetzen. -->
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="!(loc.DowngradeError)" />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <Icon Id="AppIcon" SourceFile="$(RepoRoot)src\GodSaveTheScreen.App\Assets\app.ico" />
+    <Property Id="ARPPRODUCTICON" Value="AppIcon" />
+    <Property Id="ARPNOMODIFY" Value="1" />
+
+    <!-- Vorhandene Installation pro Computer: Auswahl im Dialog darauf vorbelegen. -->
+    <Property Id="GSTS_MACHINE_INSTALLFOLDER">
+      <RegistrySearch Root="HKLM" Key="Software\GodSaveTheScreen\Installer" Name="InstallFolder" Type="raw" />
+    </Property>
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="INSTALLFOLDER" Name="GodSaveTheScreen" />
+    </StandardDirectory>
+
+    <ComponentGroup Id="AppFiles" Directory="INSTALLFOLDER">
+      <Component>
+        <File Id="AppExe" Source="$(PublishDir)GodSaveTheScreen.exe" KeyPath="yes" />
+      </Component>
+      <Component>
+        <File Source="$(PublishDir)GodSaveTheScreen-Hilfe.html" KeyPath="yes" />
+      </Component>
+      <Component>
+        <File Source="$(PublishDir)GodSaveTheScreen-Help.html" KeyPath="yes" />
+      </Component>
+      <Component>
+        <File Source="$(PublishDir)GodSaveTheScreen-Lizenz.html" KeyPath="yes" />
+      </Component>
+      <Component>
+        <File Source="$(PublishDir)GodSaveTheScreen-License.html" KeyPath="yes" />
+      </Component>
+      <!-- Apache-2.0 §4: Lizenz und NOTICE liegen jeder Weitergabe bei. -->
+      <Component>
+        <File Source="$(RepoRoot)LICENSE" KeyPath="yes" />
+      </Component>
+      <Component>
+        <File Source="$(RepoRoot)NOTICE" KeyPath="yes" />
+      </Component>
+      <Component>
+        <File Source="$(RepoRoot)THIRD-PARTY-NOTICES.txt" KeyPath="yes" />
+      </Component>
+
+      <!-- Installationsort für spätere Updates; App Paths, damit "GodSaveTheScreen" über Win+R und aus dem Setup startet. -->
+      <Component Id="InstallerRegistry">
+        <RegistryValue Root="HKMU" Key="Software\GodSaveTheScreen\Installer" Name="InstallFolder" Type="string" Value="[INSTALLFOLDER]" KeyPath="yes" />
+        <RegistryValue Root="HKMU" Key="Software\GodSaveTheScreen\Installer" Name="Version" Type="string" Value="$(ProductVersion)" />
+        <RegistryValue Root="HKMU" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\GodSaveTheScreen.exe" Type="string" Value="[INSTALLFOLDER]GodSaveTheScreen.exe" />
+        <RegistryValue Root="HKMU" Key="Software\Microsoft\Windows\CurrentVersion\App Paths\GodSaveTheScreen.exe" Name="Path" Type="string" Value="[INSTALLFOLDER]" />
+      </Component>
+
+      <!-- Projektdateien (.gsts) mit dem Editor öffnen. -->
+      <Component Id="FileAssociation">
+        <RegistryValue Root="HKMU" Key="Software\Classes\.gsts" Type="string" Value="GodSaveTheScreen.Project" KeyPath="yes" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\.gsts\OpenWithProgids" Name="GodSaveTheScreen.Project" Type="string" Value="" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\GodSaveTheScreen.Project" Type="string" Value="!(loc.ProjectFileType)" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\GodSaveTheScreen.Project\DefaultIcon" Type="string" Value="&quot;[INSTALLFOLDER]GodSaveTheScreen.exe&quot;,0" />
+        <RegistryValue Root="HKMU" Key="Software\Classes\GodSaveTheScreen.Project\shell\open\command" Type="string" Value="&quot;[INSTALLFOLDER]GodSaveTheScreen.exe&quot; &quot;%1&quot;" />
+      </Component>
+    </ComponentGroup>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Component Id="StartMenuShortcut">
+        <Shortcut Id="AppShortcut" Name="GodSaveTheScreen" Description="!(loc.ShortcutDescription)" Target="[INSTALLFOLDER]GodSaveTheScreen.exe" WorkingDirectory="INSTALLFOLDER" />
+        <RegistryValue Root="HKMU" Key="Software\GodSaveTheScreen\Installer" Name="StartMenuShortcut" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </StandardDirectory>
+
+    <Feature Id="Main" Title="GodSaveTheScreen" Level="1">
+      <ComponentGroupRef Id="AppFiles" />
+      <ComponentRef Id="StartMenuShortcut" />
+    </Feature>
+
+    <!-- Den von der App selbst gesetzten Autostart-Eintrag (HKCU) beim Deinstallieren mit entfernen, aber nicht beim Update. -->
+    <SetProperty Id="RemoveUserAutostart" Before="RemoveUserAutostart" Sequence="execute"
+                 Value="&quot;[System64Folder]reg.exe&quot; delete HKCU\Software\Microsoft\Windows\CurrentVersion\Run /v GodSaveTheScreen /f" />
+    <CustomAction Id="RemoveUserAutostart" BinaryRef="Wix4UtilCA_$(sys.BUILDARCHSHORT)" DllEntry="WixQuietExec"
+                  Execute="deferred" Impersonate="yes" Return="ignore" />
+    <InstallExecuteSequence>
+      <Custom Action="RemoveUserAutostart" Before="RemoveRegistryValues" Condition="REMOVE ~= &quot;ALL&quot; AND NOT UPGRADINGPRODUCTCODE" />
+    </InstallExecuteSequence>
+
+    <!-- Am Ende der Installation mit Oberfläche: Programm starten (läuft im Benutzerkontext, nicht erhöht). -->
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="!(loc.LaunchApp)" />
+    <Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOX" Value="1" />
+    <Property Id="WixShellExecTarget" Value="[#AppExe]" />
+    <CustomAction Id="LaunchApplication" BinaryRef="Wix4UtilCA_$(sys.BUILDARCHSHORT)" DllEntry="WixShellExec" Impersonate="yes" />
+
+    <UIRef Id="GstsUI" />
+  </Package>
+</Wix>

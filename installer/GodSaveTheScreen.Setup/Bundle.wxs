@@ -1,0 +1,39 @@
+<!--
+  Setup-EXE um das MSI. Mit Oberfläche: Lizenz, "Optionen" (nur für mich / für alle Benutzer), Starten.
+
+  Still (z. B. für Softwareverteilung):
+    GodSaveTheScreen-…-Setup.exe /quiet                              nur für den aktuellen Benutzer
+    GodSaveTheScreen-…-Setup.exe /quiet InstallScope=PerMachine      für alle Benutzer (Adminrechte nötig)
+  /permachine und /peruser von Burn wirken hier nicht: WixStdBA gibt die Installationsart immer selbst vor (WixStdBAScope).
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal">
+  <Bundle Name="GodSaveTheScreen"
+          Manufacturer="Patrick Semmler"
+          Version="$(ProductVersion)"
+          UpgradeCode="15FDA912-43D3-47A7-93C6-6A983E6481F2"
+          IconSourceFile="$(RepoRoot)src\GodSaveTheScreen.App\Assets\app.ico"
+          Copyright="Copyright © 2026 Patrick Semmler"
+          DisableModify="button">
+    <BootstrapperApplication>
+      <bal:WixStandardBootstrapperApplication Theme="rtfLicense"
+                                              ThemeFile="Theme.xml"
+                                              LocalizationFile="Theme.en-US.wxl"
+                                              LicenseFile="$(LicenseRtf)"
+                                              LogoFile="$(LogoPng)"
+                                              ShowVersion="yes" />
+      <Payload Name="1031\thm.wxl" SourceFile="Theme.de-DE.wxl" />
+    </BootstrapperApplication>
+
+    <!-- Installationsart von der Kommandozeile (InstallScope=PerMachine) übernehmen; Suchen laufen nach dem Start von WixStdBA. -->
+    <Variable Name="InstallScope" Type="string" Value="" bal:Overridable="yes" />
+    <SetVariable Id="ScopeFromCommandLine" Variable="WixStdBAScope" Type="string" Value="PerMachine" Condition="InstallScope ~= &quot;PerMachine&quot;" />
+
+    <!-- "Starten" auf der Erfolgsseite: über den App-Paths-Eintrag des MSI, gilt für beide Installationsarten. -->
+    <Variable Name="LaunchTarget" Type="string" Value="GodSaveTheScreen.exe" />
+
+    <Chain>
+      <MsiPackage Id="GodSaveTheScreen" SourceFile="$(MsiPath)" />
+    </Chain>
+  </Bundle>
+</Wix>

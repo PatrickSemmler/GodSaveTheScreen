@@ -50,7 +50,25 @@ Screenshot- und Annotationstool für Windows (.NET 10, WPF). Es läuft im Infobe
 
 ## Installation und Portable-Modus
 
-Es gibt keinen Installer. Das Release ist ein ZIP mit einer einzelnen EXE (enthält die .NET-Laufzeit, keine Installation nötig):
+Das Release gibt es je Plattform (`win-x64`, `win-arm64`) in drei Formen:
+
+| Datei | Zweck |
+|---|---|
+| `GodSaveTheScreen-<Version>-<Plattform>-Setup.exe` | Setup mit Wahl „Nur für mich“ (ohne Adminrechte, `%LOCALAPPDATA%\Programs`) oder „Für alle Benutzer“ (`Program Files`), Startmenü, Dateizuordnung `.gsts` |
+| `GodSaveTheScreen-<Version>-<Plattform>.msi` | Für Softwareverteilung (GPO, Intune, SCCM); Deutsch/Englisch automatisch |
+| `GodSaveTheScreen-<Version>-<Plattform>.zip` | Portabel, ohne Installation |
+
+Stille Installation:
+
+```powershell
+msiexec /i GodSaveTheScreen-1.10.0.0-win-x64.msi /qn ALLUSERS=1   # für alle Benutzer (Admin)
+msiexec /i GodSaveTheScreen-1.10.0.0-win-x64.msi /qn              # nur aktueller Benutzer
+GodSaveTheScreen-1.10.0.0-win-x64-Setup.exe /quiet InstallScope=PerMachine
+```
+
+MSI-Properties: `ALLUSERS=1` (für alle Benutzer), `MSIINSTALLPERUSER=1` (nur Benutzer, Standard), `INSTALLFOLDER`. Die Setup-EXE kennt `InstallScope=PerMachine|PerUser`; Burns eigene Schalter `/permachine`/`/peruser` wirken nicht, weil die Standardoberfläche die Installationsart selbst vorgibt. Updates ersetzen eine Installation derselben Art; ein Wechsel zwischen „Benutzer“ und „alle Benutzer“ ergibt zwei Installationen. „Mit Windows starten“ stellt jeder Benutzer in der App ein, nicht das Setup.
+
+ZIP (einzelne EXE, enthält die .NET-Laufzeit):
 
 1. ZIP entpacken und `GodSaveTheScreen.exe` starten. Die Benutzeranleitung (`GodSaveTheScreen-Hilfe.html` / `GodSaveTheScreen-Help.html`) muss im selben Ordner bleiben.
 2. Standardmäßig liegen Einstellungen in `%APPDATA%\GodSaveTheScreen`, Logs und Sicherungen in `%LOCALAPPDATA%\GodSaveTheScreen`.
@@ -68,13 +86,15 @@ Voraussetzung: [.NET 10 SDK](https://dotnet.microsoft.com/download), Windows 10 
 dotnet build GodSaveTheScreen.slnx          # Bauen (Warnungen sind Fehler)
 dotnet test                                 # Tests (xUnit v3)
 dotnet run --project src/GodSaveTheScreen.App
-.\build\release.ps1                         # Tests + Publish + ZIP in artifacts\release
+.\build\release.ps1                         # Tests + je Plattform Publish, ZIP, MSI, Setup-EXE in dist\
+.\build\release.ps1 -Runtime win-x64 -SkipInstaller   # nur x64, nur ZIP
 ```
 
 Hinweise:
 - Läuft die App, sperrt sie die DLLs in `bin\`: für parallele Builds `-p:ArtifactsPath=C:/Temp/gsts` verwenden.
 - WPF ist nicht trimmbar, das Release wird deshalb ohne `PublishTrimmed` veröffentlicht.
 - Die Versionsnummer steht in `Directory.Build.props`; der Git-Hash wird automatisch an die `InformationalVersion` gehängt.
+- Installer: WiX Toolset 7 (MSI `installer/GodSaveTheScreen.Msi`, Setup-EXE `installer/GodSaveTheScreen.Setup`), gebaut von `build\build-installer.ps1` (von `release.ps1` aufgerufen). WiX 7 verlangt die Annahme seiner OSMF-EULA; sie steht als `<AcceptEula>wix7</AcceptEula>` in den Projekten (Wartungsgebühr erst ab 10.000 US-$ Jahresumsatz mit dem Projekt). Die Projekte gehören nicht zur Solution.
 - Die Lizenzhinweise der NuGet-Pakete erzeugt `build\generate-notices.ps1` (`THIRD-PARTY-NOTICES.txt`); nach Paketänderungen neu erzeugen, die Lizenzseite übernimmt sie beim nächsten Build.
 
 ## Dokumentation

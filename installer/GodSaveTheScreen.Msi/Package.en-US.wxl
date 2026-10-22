@@ -1,0 +1,15 @@
+<WixLocalization Culture="en-US" Codepage="1252" xmlns="http://wixtoolset.org/schemas/v4/wxl">
+  <String Id="ProductLanguage" Value="1033" />
+  <String Id="PackageDescription" Value="GodSaveTheScreen – screenshot and annotation tool" />
+  <String Id="DowngradeError" Value="A newer version of [ProductName] is already installed." />
+  <String Id="ProjectFileType" Value="GodSaveTheScreen project" />
+  <String Id="ShortcutDescription" Value="Capture and annotate screenshots" />
+  <String Id="LaunchApp" Value="Launch GodSaveTheScreen" />
+  <String Id="ScopeDlgTitle" Value="[ProductName] Setup" />
+  <String Id="ScopeDlgHeading" Value="{\WixUI_Font_Title}Installation scope" />
+  <String Id="ScopeDlgDescription" Value="Who should [ProductName] be installed for?" />
+  <String Id="ScopePerUser" Value="Just for &amp;me" />
+  <String Id="ScopePerUserDescription" Value="Installs into your user profile (%LOCALAPPDATA%\Programs). No administrator rights required." />
+  <String Id="ScopePerMachine" Value="For &amp;all users of this computer" />
+  <String Id="ScopePerMachineDescription" Value="Installs into &quot;Program Files&quot;. Requires administrator rights." />
+</WixLocalization>

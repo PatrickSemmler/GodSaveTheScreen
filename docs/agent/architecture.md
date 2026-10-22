@@ -1,7 +1,10 @@
 # GodSaveTheScreen – Agent Architecture
-Verified against working tree on top of commit d8621a0 (Benutzeranleitung uncommitted) on 2026-10-21
+Verified against working tree on top of commit e7168c5 (Installer uncommitted) on 2026-10-21
 - STATUS: M0–M13 umgesetzt (offene manuelle Prüfungen: `docs/meilensteine/M11-Feinschliff-Release.md`; M13: Narrator-Test offen). Nach Commit Kopfzeile auf Commit-Hash setzen.
 - Ist-Stand: `Core` (Settings inkl. `ShapeDefaultsMap`/`TextStyle`/`MarkerStyle`, `IAppPaths` inkl. Autosave-/Recent-Pfad, Geometrie inkl. JSON-Konverter, `PixelBuffer`, `ImageDocument` mit `Annotations` + `Undo` + `CropRect`/`ProjectPath`/`DocumentId`, `Imaging/CropGeometry`, `Annotations/` = Modell (Formen, Text, Marker, Strich, Unschärfe, Lupe) + `AnnotationSerializer`, `Undo/` inkl. `CropAction`, `Project/` = `ProjectSerializer`/`ProjectContent`/`IProjectMigration`, `IProjectService`, `RecentFilesService`, Service-Interfaces), `Capture`, `Rendering` (`AnnotationRenderer` partial inkl. `AnnotationOrdering`, `RegionEffectProcessor`/`EffectCache`, `TextLayout`, `LineLayout`, `DocumentExporter`, `ImageCodecService`, `ProjectService`), `App` (`Hosting/`, `Services/` inkl. `EditorService`/`AutoBackupService`/`JumpListService`/`SessionState`/`FirstRunHint`, `Capture/`, `Editor/` = Kontext/`CropState`/Werkzeuge/Schriften, `Controls/`, `Views/`, `ViewModels/`, `Localization/`, `Resources/`)
+
+## Index
+- `docs/agent/installer.md`: lesen bei Änderungen an Installer, Release-Skripten oder Dateien neben der EXE
 
 ## Overview
 - Zweck: Screenshot-Tool (Tray + Hotkeys) mit nicht-destruktivem Annotations-Editor
@@ -15,6 +18,7 @@ Verified against working tree on top of commit d8621a0 (Benutzeranleitung uncomm
 | `src/GodSaveTheScreen.Capture` | Monitore, Fenster, Bildschirmabbild (CsWin32) | `Core` |
 | `src/GodSaveTheScreen.Rendering` | `AnnotationRenderer`, Textlayout, Export, Codecs (WPF), `EmojiRasterizer`/`EmojiCache` (Vortice.Direct2D1), Bildobjekte `ImageImport`/`ImageAssetCache`/`SvgRasterizer` (Svg.Skia + SkiaSharp, native DLLs im Single-File-Bundle) | `Core` |
 | `src/GodSaveTheScreen.App` | Views, ViewModels, Werkzeuge, Overlay, Tray, Hotkeys, DI-Root | `Core`, `Capture`, `Rendering` |
+| `installer/` (WiX 7, nicht in der Solution) | MSI + Setup-EXE | veröffentlichte App |
 | `tests/GodSaveTheScreen.Core.Tests` | Modell-/Undo-/Serializer-Tests | `Core` |
 | `tests/GodSaveTheScreen.App.Tests` | ViewModels, Werkzeuge, Rendering (`[StaFact]`) | alle `src` |
 - Verboten: `Core` -> WPF-Typen (`System.Windows.*`), `Capture` <-> `Rendering`, ViewModels -> Win32/P/Invoke direkt
@@ -44,7 +48,7 @@ Verified against working tree on top of commit d8621a0 (Benutzeranleitung uncomm
 - Benutzeranleitung: `F1` (alle Fenster, Hilfe-Schaltflächen in Start/Editor/Einstellungen, Tray-Menü) -> `IAppShell.ShowHelp(topic)` -> `HelpService` (`Services/HelpService.cs`): `HelpFiles.Resolve` wählt `GodSaveTheScreen-Hilfe.html`/`-Help.html` in `AppContext.BaseDirectory` nach `CurrentUICulture` (Fallback andere Sprache), öffnet per Shell im Standardbrowser; `Umschalt+F1` übergibt eine Abschnitts-ID aus `HelpTopics` (Editor: Ebenenliste mit Fokus -> `layers`, Auswahlwerkzeug mit Auswahl eines Typs -> `ForSelection`, sonst `ForTool(ActiveTool.Id)` = `tool-<id>`, Pipette -> `colors`; Einstellungen: aktuelle Seite `settings-*`; Startfenster `start-window`; Kürzelfenster `shortcuts`)
 - Lizenz: Apache-2.0 (`LICENSE` unverändert, Rechteinhaber in `NOTICE` und `<Copyright>` in `Directory.Build.props`). Einstellungen -> Info -> `SettingsViewModel.ShowLicenseCommand` -> `IHelpService.ShowLicense()` öffnet `GodSaveTheScreen-Lizenz.html`/`-License.html` (`HelpFiles.ResolveLicense`, gleiche Sprachwahl wie die Hilfe)
 - Tastenkürzel-Übersicht: `Strg+F1` (Editor und Startfenster; im Editor auch `Strg+?`) -> `IAppShell.ShowShortcuts` -> `ShortcutsWindow` mit `ShortcutCatalog` (Werkzeuge aus `ToolRegistry`, feste Befehlsliste `EditorCommands`, globale Hotkeys aus den Einstellungen); `FirstRunHint` zeigt einmalig (`AppSettings.FirstRunHintShown`) nach dem Start Hotkeys/Tray/Druck-Taste; `HotkeyService` ignoriert Hotkeys bei gesperrter/getrennter Sitzung (`ISessionState`)
-- Release: `build/release.ps1` (Tests -> `dotnet publish -p:PublishProfile=win-x64` -> ZIP in `artifacts/release`), Version (vierstellig, Erhöhungsregel in `CLAUDE.md`) in `Directory.Build.props`, Git-Hash über `Directory.Build.targets` (`SourceRevisionId`), `THIRD-PARTY-NOTICES.txt` aus `build/generate-notices.ps1`; ZIP enthält zusätzlich `LICENSE`, `NOTICE` und die Lizenzseiten
+- Release: `build/release.ps1` (Tests -> je Runtime `dotnet publish -p:PublishProfile=<rid>` -> ZIP, MSI, Setup-EXE in `dist/`; Installer siehe `docs/agent/installer.md`), Version (vierstellig, Erhöhungsregel in `CLAUDE.md`) in `Directory.Build.props`, Git-Hash über `Directory.Build.targets` (`SourceRevisionId`), `THIRD-PARTY-NOTICES.txt` aus `build/generate-notices.ps1`; ZIP enthält zusätzlich `LICENSE`, `NOTICE` und die Lizenzseiten
 - Sicherung/Wiederherstellung: `AutoBackupService` (60 s + 10 s nach Änderung) schreibt `{DocumentId}.gsts` nach `IAppPaths.AutosaveDirectory` (Schnappschuss auf UI-Thread, Schreiben im Hintergrund), löscht beim Speichern/Schließen; `RecoverAsync` beim Start. `RecentFilesService` (`recent.json`, max. 15) speist Startfenster, Tray-Untermenü, Editor-Menü „Öffnen ▾“ und `JumpListService`
 
 ## Conventions
@@ -141,4 +145,4 @@ Verified against working tree on top of commit d8621a0 (Benutzeranleitung uncomm
 - Einzeltest: `dotnet test --project tests/GodSaveTheScreen.Core.Tests --filter-class "*UndoManagerTests"`
 - Start: `dotnet run --project src/GodSaveTheScreen.App`
 - Hilfe-Bildschirmfotos: `pwsh build/generate-help-screenshots.ps1` (danach normal bauen)
-- Release: `.\build\release.ps1` (oder `dotnet publish src/GodSaveTheScreen.App -p:PublishProfile=win-x64`, Ausgabe in `artifacts/publish/win-x64`)
+- Release: `.\build\release.ps1` (Ausgabe `dist/`; nur App: `dotnet publish src/GodSaveTheScreen.App -p:PublishProfile=win-x64` -> `artifacts/publish/win-x64`)

@@ -1,0 +1,91 @@
+<!--
+  Oberfläche des MSI: Willkommen -> Installationsart -> Bereit -> Fortschritt -> Fertig (mit "Programm starten").
+  Ohne Ordnerauswahl: Windows Installer löst ProgramFiles64Folder vor den Dialogen auf; der Ordner wird deshalb beim Wechsel
+  der Installationsart hier neu gesetzt (pro Benutzer %LOCALAPPDATA%\Programs, pro Computer %ProgramW6432%).
+  Pro Computer aus einer nicht erhöhten Sitzung fragt Windows beim Installieren per UAC nach.
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Fragment>
+    <Property Id="GSTS_SCOPE" Value="PerUser" />
+    <SetProperty Id="GSTS_SCOPE" Value="PerMachine" After="AppSearch" Sequence="ui"
+                 Condition="GSTS_MACHINE_INSTALLFOLDER OR ALLUSERS = 1" />
+
+    <UI Id="GstsUI">
+      <TextStyle Id="WixUI_Font_Normal" FaceName="Segoe UI" Size="8" />
+      <TextStyle Id="WixUI_Font_Bigger" FaceName="Segoe UI" Size="12" />
+      <TextStyle Id="WixUI_Font_Title" FaceName="Segoe UI" Size="9" Bold="yes" />
+      <Property Id="DefaultUIFont" Value="WixUI_Font_Normal" />
+
+      <DialogRef Id="ErrorDlg" />
+      <DialogRef Id="FatalError" />
+      <DialogRef Id="FilesInUse" />
+      <DialogRef Id="MsiRMFilesInUse" />
+      <DialogRef Id="PrepareDlg" />
+      <DialogRef Id="ProgressDlg" />
+      <DialogRef Id="ResumeDlg" />
+      <DialogRef Id="UserExit" />
+      <DialogRef Id="WelcomeDlg" />
+      <DialogRef Id="VerifyReadyDlg" />
+      <DialogRef Id="MaintenanceWelcomeDlg" />
+      <DialogRef Id="MaintenanceTypeDlg" />
+      <DialogRef Id="ExitDialog" />
+
+      <Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication" Order="1"
+               Condition="WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 AND NOT Installed" />
+      <Publish Dialog="ExitDialog" Control="Finish" Event="EndDialog" Value="Return" Order="999" />
+
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="GstsScopeDlg" Condition="NOT Installed" />
+      <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Condition="Installed AND PATCH" />
+
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="GstsScopeDlg" Order="1" Condition="NOT Installed" />
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2" Condition="Installed AND NOT PATCH" />
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2" Condition="Installed AND PATCH" />
+
+      <Publish Dialog="MaintenanceWelcomeDlg" Control="Next" Event="NewDialog" Value="MaintenanceTypeDlg" />
+      <Publish Dialog="MaintenanceTypeDlg" Control="RepairButton" Event="NewDialog" Value="VerifyReadyDlg" />
+      <Publish Dialog="MaintenanceTypeDlg" Control="RemoveButton" Event="NewDialog" Value="VerifyReadyDlg" />
+      <Publish Dialog="MaintenanceTypeDlg" Control="Back" Event="NewDialog" Value="MaintenanceWelcomeDlg" />
+
+      <Dialog Id="GstsScopeDlg" Width="370" Height="270" Title="!(loc.ScopeDlgTitle)">
+        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.InstallScopeDlgBannerBitmap)" />
+        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+        <Control Id="Title" Type="Text" X="15" Y="6" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ScopeDlgHeading)" />
+        <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.ScopeDlgDescription)" />
+
+        <Control Id="Scope" Type="RadioButtonGroup" X="20" Y="55" Width="330" Height="110" Property="GSTS_SCOPE">
+          <RadioButtonGroup Property="GSTS_SCOPE">
+            <RadioButton Value="PerUser" X="0" Y="0" Width="320" Height="16" Text="!(loc.ScopePerUser)" />
+            <RadioButton Value="PerMachine" X="0" Y="55" Width="320" Height="16" Text="!(loc.ScopePerMachine)" />
+          </RadioButtonGroup>
+        </Control>
+        <Control Id="PerUserText" Type="Text" X="38" Y="73" Width="310" Height="30" NoPrefix="yes" Text="!(loc.ScopePerUserDescription)" />
+        <Control Id="PerMachineText" Type="Text" X="38" Y="128" Width="310" Height="30" NoPrefix="yes" Text="!(loc.ScopePerMachineDescription)" />
+
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)">
+          <Publish Event="NewDialog" Value="WelcomeDlg" />
+        </Control>
+        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)">
+          <Publish Property="ALLUSERS" Value="2" Order="1" />
+          <Publish Property="MSIINSTALLPERUSER" Value="1" Order="2" Condition="GSTS_SCOPE = &quot;PerUser&quot;" />
+          <Publish Property="MSIINSTALLPERUSER" Value="{}" Order="3" Condition="GSTS_SCOPE = &quot;PerMachine&quot;" />
+          <Publish Property="INSTALLFOLDER" Value="[LocalAppDataFolder]Programs\GodSaveTheScreen\" Order="4" Condition="GSTS_SCOPE = &quot;PerUser&quot;" />
+          <Publish Property="INSTALLFOLDER" Value="[%ProgramW6432]\GodSaveTheScreen\" Order="5" Condition="GSTS_SCOPE = &quot;PerMachine&quot;" />
+          <Publish Event="SetTargetPath" Value="INSTALLFOLDER" Order="6" />
+          <Publish Event="NewDialog" Value="VerifyReadyDlg" Order="7" />
+        </Control>
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+          <Publish Event="SpawnDialog" Value="CancelDlg" />
+        </Control>
+      </Dialog>
+    </UI>
+
+    <UIRef Id="WixUI_Common" />
+
+    <!-- Bilder mit dem App-Symbol (erzeugt von build-installer.ps1); ohne sie bleiben die WiX-Standardbilder. -->
+    <?if $(BannerBmp) != "" ?>
+    <WixVariable Id="WixUIBannerBmp" Value="$(BannerBmp)" />
+    <WixVariable Id="WixUIDialogBmp" Value="$(DialogBmp)" />
+    <?endif?>
+  </Fragment>
+</Wix>
