@@ -14,6 +14,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="WixToolset.BootstrapperApplications.wixext" />
+    <PackageReference Include="WixToolset.Util.wixext" />
   </ItemGroup>
   <Target Name="CheckInputs" BeforeTargets="Build">
     <Error Condition="'$(MsiPath)' == '' Or !Exists('$(MsiPath)')" Text="MsiPath fehlt oder existiert nicht: '$(MsiPath)'. Bitte build/build-installer.ps1 verwenden." />

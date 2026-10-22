@@ -54,7 +54,7 @@
 
 <h3 id="install">Installation und portabler Modus</h3>
 <p>GodSaveTheScreen gibt es mit Setup oder als ZIP-Archiv. Das Programm besteht aus einer einzigen Datei <span class="path">GodSaveTheScreen.exe</span>, die die .NET-Laufzeit bereits enthält. Diese Anleitung liegt als <span class="path">GodSaveTheScreen-Hilfe.html</span> (Deutsch) bzw. <span class="path">GodSaveTheScreen-Help.html</span> (Englisch) daneben.</p>
-<p><strong>Mit Setup:</strong> <span class="path">GodSaveTheScreen-…-Setup.exe</span> starten und <span class="ui">Installieren</span> wählen. Unter <span class="ui">Optionen</span> legen Sie fest, ob GodSaveTheScreen <span class="ui">Nur für mich</span> (ohne Administratorrechte, nach <span class="path">%LOCALAPPDATA%\Programs</span>) oder <span class="ui">Für alle Benutzer dieses Computers</span> (nach „Programme“) installiert wird. „Mit Windows starten“ stellen Sie danach in den <a href="#settings-general">Einstellungen</a> ein. Das Setup legt eine Verknüpfung im Startmenü an und verknüpft Projektdateien (<span class="path">.gsts</span>) mit dem Editor. Deinstallieren über <span class="ui">Einstellungen → Apps</span>; Ihre Einstellungen und Sicherungen bleiben dabei erhalten. Für die Softwareverteilung in Firmen gibt es zusätzlich ein MSI-Paket (siehe <a href="#faq-deploy">Verteilung in Firmen</a>).</p>
+<p><strong>Mit Setup:</strong> <span class="path">GodSaveTheScreen-…-Setup.exe</span> starten und <span class="ui">Installieren</span> wählen. Unter <span class="ui">Optionen</span> legen Sie fest, ob GodSaveTheScreen <span class="ui">Nur für mich</span> (ohne Administratorrechte, nach <span class="path">%LOCALAPPDATA%\Programs</span>) oder <span class="ui">Für alle Benutzer dieses Computers</span> (nach „Programme“) installiert wird, in welchen Ordner (<span class="ui">Durchsuchen</span>) und ob eine Verknüpfung im Startmenü entsteht. Bei Updates sind Ordner und Startmenü-Wahl der vorhandenen Installation vorbelegt. „Mit Windows starten“ stellen Sie danach in den <a href="#settings-general">Einstellungen</a> ein. Das Setup verknüpft Projektdateien (<span class="path">.gsts</span>) mit dem Editor. Deinstallieren über <span class="ui">Einstellungen → Apps</span>; Ihre Einstellungen und Sicherungen bleiben dabei erhalten. Für die Softwareverteilung in Firmen gibt es zusätzlich ein MSI-Paket (siehe <a href="#faq-deploy">Verteilung in Firmen</a>).</p>
 <p><strong>Als ZIP (ohne Installation):</strong></p>
 <ol class="steps">
   <li>ZIP-Archiv in einen beliebigen Ordner entpacken.</li>
@@ -716,10 +716,10 @@
 <p>Für Gruppenrichtlinien, Intune oder SCCM gibt es <span class="path">GodSaveTheScreen-…-x64.msi</span> (bzw. <span class="path">-arm64.msi</span>). Es installiert ohne Angabe nur für den ausführenden Benutzer; für alle Benutzer <span class="path">ALLUSERS=1</span> setzen. Die Sprache (Deutsch/Englisch) wählt Windows automatisch.</p>
 <ul>
   <li>Für alle Benutzer, still: <span class="path">msiexec /i GodSaveTheScreen-…-x64.msi /qn ALLUSERS=1</span></li>
-  <li>Anderer Ordner: <span class="path">INSTALLFOLDER="D:\Tools\GodSaveTheScreen"</span></li>
-  <li>Setup-EXE still: <span class="path">GodSaveTheScreen-…-Setup.exe /quiet InstallScope=PerMachine</span> (<span class="path">/?</span> zeigt alle Schalter)</li>
+  <li>Anderer Ordner: <span class="path">INSTALLFOLDER="D:\Tools\GodSaveTheScreen"</span>; ohne Startmenü-Verknüpfung: <span class="path">STARTMENUSHORTCUT=0</span></li>
+  <li>Setup-EXE still: <span class="path">GodSaveTheScreen-…-Setup.exe /quiet InstallScope=PerMachine</span>, dazu <span class="path">InstallFolder="D:ToolsGodSaveTheScreen"</span> und <span class="path">StartMenuShortcut=0</span> (<span class="path">/?</span> zeigt alle Schalter)</li>
 </ul>
-<p>Neuere Versionen ersetzen eine vorhandene Installation derselben Art (für den Benutzer bzw. für alle) automatisch; die Einstellungen der Benutzer bleiben erhalten.</p>
+<p>Neuere Versionen ersetzen eine vorhandene Installation derselben Art (für den Benutzer bzw. für alle) automatisch und behalten ohne Angabe deren Ordner und Startmenü-Wahl; die Einstellungen der Benutzer bleiben erhalten.</p>
 
 <h3 id="faq-logs">Fehler melden</h3>
 <p>Bei Problemen helfen die Protokolle weiter. Den Protokollordner öffnen Sie unter <a href="#settings-about">Einstellungen → Info</a>.</p>

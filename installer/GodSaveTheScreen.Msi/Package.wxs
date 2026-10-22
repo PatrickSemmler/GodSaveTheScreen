@@ -4,7 +4,9 @@
   Öffentliche Properties (z. B. msiexec /i GodSaveTheScreen.msi /qn ALLUSERS=1):
     ALLUSERS=1          Installation für alle Benutzer nach "Program Files" (Adminrechte nötig)
     MSIINSTALLPERUSER=1 Installation nur für den aktuellen Benutzer nach %LOCALAPPDATA%\Programs (Standard)
-    INSTALLFOLDER       abweichender Installationsordner
+    INSTALLFOLDER       abweichender Installationsordner (Standard bei Updates: bisheriger Ordner derselben Installationsart)
+    STARTMENUSHORTCUT=0 keine Verknüpfung im Startmenü (Standard 1; bei Updates bleibt die bisherige Wahl erhalten)
+    PERUSERFOLDER, PERMACHINEFOLDER  Ordner je Installationsart, von der Setup-EXE übergeben; INSTALLFOLDER hat Vorrang
   "Mit Windows starten" legt jeder Benutzer in der App fest (AutostartService), nicht das Setup.
 -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
@@ -26,10 +28,40 @@
     <Property Id="ARPPRODUCTICON" Value="AppIcon" />
     <Property Id="ARPNOMODIFY" Value="1" />
 
-    <!-- Vorhandene Installation pro Computer: Auswahl im Dialog darauf vorbelegen. -->
+    <!-- Vorhandene Installation: Installationsart, Ordner und Startmenü-Wahl darauf vorbelegen. -->
     <Property Id="GSTS_MACHINE_INSTALLFOLDER">
       <RegistrySearch Root="HKLM" Key="Software\GodSaveTheScreen\Installer" Name="InstallFolder" Type="raw" />
     </Property>
+    <Property Id="GSTS_MACHINE_STARTMENU">
+      <RegistrySearch Root="HKLM" Key="Software\GodSaveTheScreen\Installer" Name="StartMenuShortcut" Type="raw" />
+    </Property>
+    <Property Id="GSTS_USER_INSTALLFOLDER">
+      <RegistrySearch Root="HKCU" Key="Software\GodSaveTheScreen\Installer" Name="InstallFolder" Type="raw" />
+    </Property>
+    <Property Id="GSTS_USER_STARTMENU">
+      <RegistrySearch Root="HKCU" Key="Software\GodSaveTheScreen\Installer" Name="StartMenuShortcut" Type="raw" />
+    </Property>
+
+    <Property Id="STARTMENUSHORTCUT" Secure="yes" />
+    <Property Id="PERUSERFOLDER" Secure="yes" />
+    <Property Id="PERMACHINEFOLDER" Secure="yes" />
+
+    <!-- Startmenü ohne Angabe: bisherige Wahl (Installation ohne Wert StartMenuShortcut = abgewählt), sonst 1. -->
+    <SetProperty Action="SetStartMenuFromPrevious" Id="STARTMENUSHORTCUT" Value="0" After="AppSearch" Sequence="both"
+                 Condition="NOT Installed AND STARTMENUSHORTCUT = &quot;&quot; AND ((GSTS_USER_INSTALLFOLDER AND NOT GSTS_USER_STARTMENU) OR (GSTS_MACHINE_INSTALLFOLDER AND NOT GSTS_MACHINE_STARTMENU))" />
+    <SetProperty Action="SetStartMenuDefault" Id="STARTMENUSHORTCUT" Value="1" After="SetStartMenuFromPrevious" Sequence="both"
+                 Condition="NOT Installed AND STARTMENUSHORTCUT = &quot;&quot;" />
+
+    <!-- Ordner ohne Oberfläche (still, Setup-EXE): Vorgabe der Setup-EXE, sonst bisheriger Ordner derselben Installationsart,
+         sonst der Standard von Windows Installer. Mit Oberfläche setzt der Dialog INSTALLFOLDER, dann greift keine dieser Aktionen. -->
+    <SetProperty Action="SetFolderPerUser" Id="INSTALLFOLDER" Value="[PERUSERFOLDER]" Before="CostInitialize" Sequence="execute"
+                 Condition="NOT Installed AND NOT INSTALLFOLDER AND PERUSERFOLDER AND (NOT ALLUSERS OR (ALLUSERS = 2 AND MSIINSTALLPERUSER = 1))" />
+    <SetProperty Action="SetFolderPerMachine" Id="INSTALLFOLDER" Value="[PERMACHINEFOLDER]" After="SetFolderPerUser" Sequence="execute"
+                 Condition="NOT Installed AND NOT INSTALLFOLDER AND PERMACHINEFOLDER AND (ALLUSERS = 1 OR (ALLUSERS = 2 AND NOT MSIINSTALLPERUSER))" />
+    <SetProperty Action="SetFolderPreviousUser" Id="INSTALLFOLDER" Value="[GSTS_USER_INSTALLFOLDER]" After="SetFolderPerMachine" Sequence="execute"
+                 Condition="NOT Installed AND NOT INSTALLFOLDER AND GSTS_USER_INSTALLFOLDER AND (NOT ALLUSERS OR (ALLUSERS = 2 AND MSIINSTALLPERUSER = 1))" />
+    <SetProperty Action="SetFolderPreviousMachine" Id="INSTALLFOLDER" Value="[GSTS_MACHINE_INSTALLFOLDER]" After="SetFolderPreviousUser" Sequence="execute"
+                 Condition="NOT Installed AND NOT INSTALLFOLDER AND GSTS_MACHINE_INSTALLFOLDER AND (ALLUSERS = 1 OR (ALLUSERS = 2 AND NOT MSIINSTALLPERUSER))" />
 
     <StandardDirectory Id="ProgramFiles64Folder">
       <Directory Id="INSTALLFOLDER" Name="GodSaveTheScreen" />
@@ -81,7 +113,7 @@
     </ComponentGroup>
 
     <StandardDirectory Id="ProgramMenuFolder">
-      <Component Id="StartMenuShortcut">
+      <Component Id="StartMenuShortcut" Condition="STARTMENUSHORTCUT = 1">
         <Shortcut Id="AppShortcut" Name="GodSaveTheScreen" Description="!(loc.ShortcutDescription)" Target="[INSTALLFOLDER]GodSaveTheScreen.exe" WorkingDirectory="INSTALLFOLDER" />
         <RegistryValue Root="HKMU" Key="Software\GodSaveTheScreen\Installer" Name="StartMenuShortcut" Type="integer" Value="1" KeyPath="yes" />
       </Component>

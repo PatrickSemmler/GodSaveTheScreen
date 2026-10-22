@@ -5,6 +5,7 @@
   <String Id="ProjectFileType" Value="GodSaveTheScreen project" />
   <String Id="ShortcutDescription" Value="Capture and annotate screenshots" />
   <String Id="LaunchApp" Value="Launch GodSaveTheScreen" />
+  <String Id="StartMenuShortcutCheckbox" Value="Create a &amp;Start menu shortcut" />
   <String Id="ScopeDlgTitle" Value="[ProductName] Setup" />
   <String Id="ScopeDlgHeading" Value="{\WixUI_Font_Title}Installation scope" />
   <String Id="ScopeDlgDescription" Value="Who should [ProductName] be installed for?" />

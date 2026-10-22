@@ -1,13 +1,16 @@
 <!--
-  Setup-EXE um das MSI. Mit Oberfläche: Lizenz, "Optionen" (nur für mich / für alle Benutzer), Starten.
+  Setup-EXE um das MSI. Mit Oberfläche: Lizenz, "Optionen" (nur für mich / für alle Benutzer, Zielordner, Startmenü), Starten.
 
   Still (z. B. für Softwareverteilung):
     GodSaveTheScreen-…-Setup.exe /quiet                              nur für den aktuellen Benutzer
     GodSaveTheScreen-…-Setup.exe /quiet InstallScope=PerMachine      für alle Benutzer (Adminrechte nötig)
+    zusätzlich InstallFolder="D:\Tools\GodSaveTheScreen"             abweichender Zielordner
+    zusätzlich StartMenuShortcut=0                                   keine Verknüpfung im Startmenü
   /permachine und /peruser von Burn wirken hier nicht: WixStdBA gibt die Installationsart immer selbst vor (WixStdBAScope).
 -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
-     xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal">
+     xmlns:bal="http://wixtoolset.org/schemas/v4/wxs/bal"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
   <Bundle Name="GodSaveTheScreen"
           Manufacturer="Patrick Semmler"
           Version="$(ProductVersion)"
@@ -32,8 +35,33 @@
     <!-- "Starten" auf der Erfolgsseite: über den App-Paths-Eintrag des MSI, gilt für beide Installationsarten. -->
     <Variable Name="LaunchTarget" Type="string" Value="GodSaveTheScreen.exe" />
 
+    <!-- Zielordner je Installationsart (Optionsseite); vorbelegt mit dem Ordner einer vorhandenen Installation dieser Art.
+         Das MSI nimmt den Ordner, der zur tatsächlichen Installationsart passt. -->
+    <Variable Name="InstallFolder" Type="string" Value="" bal:Overridable="yes" />
+    <Variable Name="InstallFolderPerUser" Type="formatted" Value="[LocalAppDataFolder]Programs\GodSaveTheScreen" />
+    <Variable Name="InstallFolderPerMachine" Type="formatted" Value="[ProgramFiles64Folder]GodSaveTheScreen" />
+    <!-- Startmenü: 1/0 von der Kommandozeile, sonst bisherige Wahl (Installation ohne Wert StartMenuShortcut = abgewählt), sonst 1. -->
+    <Variable Name="StartMenuShortcut" Type="string" Value="" bal:Overridable="yes" />
+
+    <util:RegistrySearch Id="FindPrevUserFolder" Root="HKCU" Key="Software\GodSaveTheScreen\Installer" Value="InstallFolder" Result="value" Variable="PrevUserFolder" />
+    <util:RegistrySearch Id="FindPrevUserShortcut" After="FindPrevUserFolder" Root="HKCU" Key="Software\GodSaveTheScreen\Installer" Value="StartMenuShortcut" Result="exists" Variable="PrevUserShortcut" />
+    <util:RegistrySearch Id="FindPrevMachineFolder" After="FindPrevUserShortcut" Root="HKLM" Key="Software\GodSaveTheScreen\Installer" Value="InstallFolder" Result="value" Bitness="always64" Variable="PrevMachineFolder" />
+    <util:RegistrySearch Id="FindPrevMachineShortcut" After="FindPrevMachineFolder" Root="HKLM" Key="Software\GodSaveTheScreen\Installer" Value="StartMenuShortcut" Result="exists" Bitness="always64" Variable="PrevMachineShortcut" />
+
+    <SetVariable Id="PerUserFolderFromPrev" After="FindPrevMachineShortcut" Variable="InstallFolderPerUser" Type="formatted" Value="[PrevUserFolder]" Condition="PrevUserFolder" />
+    <SetVariable Id="PerMachineFolderFromPrev" After="PerUserFolderFromPrev" Variable="InstallFolderPerMachine" Type="formatted" Value="[PrevMachineFolder]" Condition="PrevMachineFolder" />
+    <SetVariable Id="PerUserFolderFromCommandLine" After="PerMachineFolderFromPrev" Variable="InstallFolderPerUser" Type="formatted" Value="[InstallFolder]" Condition="InstallFolder" />
+    <SetVariable Id="PerMachineFolderFromCommandLine" After="PerUserFolderFromCommandLine" Variable="InstallFolderPerMachine" Type="formatted" Value="[InstallFolder]" Condition="InstallFolder" />
+    <SetVariable Id="StartMenuFromPrev" After="PerMachineFolderFromCommandLine" Variable="StartMenuShortcut" Type="numeric" Value="0"
+                 Condition="NOT (StartMenuShortcut = &quot;0&quot; OR StartMenuShortcut = &quot;1&quot;) AND ((PrevUserFolder AND NOT PrevUserShortcut) OR (PrevMachineFolder AND NOT PrevMachineShortcut))" />
+    <SetVariable Id="StartMenuDefault" After="StartMenuFromPrev" Variable="StartMenuShortcut" Type="numeric" Value="1" Condition="NOT (StartMenuShortcut = &quot;0&quot; OR StartMenuShortcut = &quot;1&quot;)" />
+
     <Chain>
-      <MsiPackage Id="GodSaveTheScreen" SourceFile="$(MsiPath)" />
+      <MsiPackage Id="GodSaveTheScreen" SourceFile="$(MsiPath)">
+        <MsiProperty Name="PERUSERFOLDER" Value="[InstallFolderPerUser]" />
+        <MsiProperty Name="PERMACHINEFOLDER" Value="[InstallFolderPerMachine]" />
+        <MsiProperty Name="STARTMENUSHORTCUT" Value="[StartMenuShortcut]" />
+      </MsiPackage>
     </Chain>
   </Bundle>
 </Wix>

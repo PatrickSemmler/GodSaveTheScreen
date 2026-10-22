@@ -1,7 +1,8 @@
 <!--
-  Oberfläche des MSI: Willkommen -> Installationsart -> Bereit -> Fortschritt -> Fertig (mit "Programm starten").
-  Ohne Ordnerauswahl: Windows Installer löst ProgramFiles64Folder vor den Dialogen auf; der Ordner wird deshalb beim Wechsel
-  der Installationsart hier neu gesetzt (pro Benutzer %LOCALAPPDATA%\Programs, pro Computer %ProgramW6432%).
+  Oberfläche des MSI: Willkommen -> Installationsart -> Zielordner/Startmenü -> Bereit -> Fortschritt -> Fertig (mit "Programm starten").
+  Windows Installer löst ProgramFiles64Folder vor den Dialogen auf; der Ordner wird deshalb beim Wechsel der Installationsart
+  hier neu vorbelegt (bisheriger Ordner dieser Art, sonst pro Benutzer %LOCALAPPDATA%\Programs, pro Computer %ProgramW6432%).
+  Ein selbst gewählter Ordner bleibt erhalten, solange die Installationsart gleich bleibt (GSTS_FOLDER_SCOPE).
   Pro Computer aus einer nicht erhöhten Sitzung fragt Windows beim Installieren per UAC nach.
 -->
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
@@ -9,6 +10,13 @@
     <Property Id="GSTS_SCOPE" Value="PerUser" />
     <SetProperty Id="GSTS_SCOPE" Value="PerMachine" After="AppSearch" Sequence="ui"
                  Condition="GSTS_MACHINE_INSTALLFOLDER OR ALLUSERS = 1" />
+    <!-- INSTALLFOLDER auf der Kommandozeile: nicht beim ersten "Weiter" überschreiben. -->
+    <SetProperty Id="GSTS_FOLDER_SCOPE" Value="[GSTS_SCOPE]" After="SetGSTS_SCOPE" Sequence="ui" Condition="INSTALLFOLDER" />
+    <!-- Kontrollkästchen im Ordnerdialog (leer = abgewählt); beim "Weiter" nach STARTMENUSHORTCUT 1/0 übertragen. -->
+    <SetProperty Id="GSTS_STARTMENU_UI" Value="1" After="SetStartMenuDefault" Sequence="ui" Condition="STARTMENUSHORTCUT = 1" />
+    <Property Id="_BrowseProperty" Value="INSTALLFOLDER" />
+    <!-- Name der Property, die WixUIValidatePath prüft. -->
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
 
     <UI Id="GstsUI">
       <TextStyle Id="WixUI_Font_Normal" FaceName="Segoe UI" Size="8" />
@@ -37,7 +45,13 @@
       <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="GstsScopeDlg" Condition="NOT Installed" />
       <Publish Dialog="WelcomeDlg" Control="Next" Event="NewDialog" Value="VerifyReadyDlg" Condition="Installed AND PATCH" />
 
-      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="GstsScopeDlg" Order="1" Condition="NOT Installed" />
+      <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="GstsFolderDlg" Order="1" Condition="NOT Installed" />
+
+      <!-- Ordnerauswahl wie in WixUI_InstallDir: Pfad prüfen, ungültige Pfade melden. -->
+      <DialogRef Id="BrowseDlg" />
+      <DialogRef Id="InvalidDirDlg" />
+      <Publish Dialog="BrowseDlg" Control="OK" Event="DoAction" Value="WixUIValidatePath_$(sys.BUILDARCHSHORT)" Order="3" />
+      <Publish Dialog="BrowseDlg" Control="OK" Event="SpawnDialog" Value="InvalidDirDlg" Order="4" Condition="WIXUI_INSTALLDIR_VALID &lt;&gt; &quot;1&quot;" />
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="MaintenanceTypeDlg" Order="2" Condition="Installed AND NOT PATCH" />
       <Publish Dialog="VerifyReadyDlg" Control="Back" Event="NewDialog" Value="WelcomeDlg" Order="2" Condition="Installed AND PATCH" />
 
@@ -69,10 +83,49 @@
           <Publish Property="ALLUSERS" Value="2" Order="1" />
           <Publish Property="MSIINSTALLPERUSER" Value="1" Order="2" Condition="GSTS_SCOPE = &quot;PerUser&quot;" />
           <Publish Property="MSIINSTALLPERUSER" Value="{}" Order="3" Condition="GSTS_SCOPE = &quot;PerMachine&quot;" />
-          <Publish Property="INSTALLFOLDER" Value="[LocalAppDataFolder]Programs\GodSaveTheScreen\" Order="4" Condition="GSTS_SCOPE = &quot;PerUser&quot;" />
-          <Publish Property="INSTALLFOLDER" Value="[%ProgramW6432]\GodSaveTheScreen\" Order="5" Condition="GSTS_SCOPE = &quot;PerMachine&quot;" />
-          <Publish Event="SetTargetPath" Value="INSTALLFOLDER" Order="6" />
-          <Publish Event="NewDialog" Value="VerifyReadyDlg" Order="7" />
+          <Publish Property="INSTALLFOLDER" Value="[LocalAppDataFolder]Programs\GodSaveTheScreen\" Order="4"
+                   Condition="GSTS_SCOPE = &quot;PerUser&quot; AND GSTS_FOLDER_SCOPE &lt;&gt; GSTS_SCOPE AND NOT GSTS_USER_INSTALLFOLDER" />
+          <Publish Property="INSTALLFOLDER" Value="[GSTS_USER_INSTALLFOLDER]" Order="5"
+                   Condition="GSTS_SCOPE = &quot;PerUser&quot; AND GSTS_FOLDER_SCOPE &lt;&gt; GSTS_SCOPE AND GSTS_USER_INSTALLFOLDER" />
+          <Publish Property="INSTALLFOLDER" Value="[%ProgramW6432]\GodSaveTheScreen\" Order="6"
+                   Condition="GSTS_SCOPE = &quot;PerMachine&quot; AND GSTS_FOLDER_SCOPE &lt;&gt; GSTS_SCOPE AND NOT GSTS_MACHINE_INSTALLFOLDER" />
+          <Publish Property="INSTALLFOLDER" Value="[GSTS_MACHINE_INSTALLFOLDER]" Order="7"
+                   Condition="GSTS_SCOPE = &quot;PerMachine&quot; AND GSTS_FOLDER_SCOPE &lt;&gt; GSTS_SCOPE AND GSTS_MACHINE_INSTALLFOLDER" />
+          <Publish Event="SetTargetPath" Value="INSTALLFOLDER" Order="8" />
+          <Publish Property="GSTS_FOLDER_SCOPE" Value="[GSTS_SCOPE]" Order="9" />
+          <Publish Event="NewDialog" Value="GstsFolderDlg" Order="10" />
+        </Control>
+        <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+          <Publish Event="SpawnDialog" Value="CancelDlg" />
+        </Control>
+      </Dialog>
+
+      <!-- Wie InstallDirDlg von WixUI (gleiche Texte), zusätzlich mit der Startmenü-Verknüpfung. -->
+      <Dialog Id="GstsFolderDlg" Width="370" Height="270" Title="!(loc.ScopeDlgTitle)">
+        <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.InstallDirDlgBannerBitmap)" />
+        <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+        <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+        <Control Id="Title" Type="Text" X="15" Y="6" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgTitle)" />
+        <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgDescription)" />
+
+        <Control Id="FolderLabel" Type="Text" X="20" Y="60" Width="290" Height="30" NoPrefix="yes" Text="!(loc.InstallDirDlgFolderLabel)" />
+        <Control Id="Folder" Type="PathEdit" X="20" Y="100" Width="320" Height="18" Property="INSTALLFOLDER" />
+        <Control Id="ChangeFolder" Type="PushButton" X="20" Y="120" Width="56" Height="17" Text="!(loc.InstallDirDlgChange)">
+          <Publish Property="_BrowseProperty" Value="INSTALLFOLDER" Order="1" />
+          <Publish Event="SpawnDialog" Value="BrowseDlg" Order="2" />
+        </Control>
+        <Control Id="StartMenu" Type="CheckBox" X="20" Y="160" Width="330" Height="17" Property="GSTS_STARTMENU_UI" CheckBoxValue="1" Text="!(loc.StartMenuShortcutCheckbox)" />
+
+        <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)">
+          <Publish Event="NewDialog" Value="GstsScopeDlg" />
+        </Control>
+        <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)">
+          <Publish Event="SetTargetPath" Value="INSTALLFOLDER" Order="1" />
+          <Publish Event="DoAction" Value="WixUIValidatePath_$(sys.BUILDARCHSHORT)" Order="3" />
+          <Publish Event="SpawnDialog" Value="InvalidDirDlg" Order="4" Condition="WIXUI_INSTALLDIR_VALID &lt;&gt; &quot;1&quot;" />
+          <Publish Property="STARTMENUSHORTCUT" Value="1" Order="5" Condition="GSTS_STARTMENU_UI = 1" />
+          <Publish Property="STARTMENUSHORTCUT" Value="0" Order="6" Condition="NOT GSTS_STARTMENU_UI" />
+          <Publish Event="NewDialog" Value="VerifyReadyDlg" Order="7" Condition="WIXUI_INSTALLDIR_VALID = &quot;1&quot;" />
         </Control>
         <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
           <Publish Event="SpawnDialog" Value="CancelDlg" />

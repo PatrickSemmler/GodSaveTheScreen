@@ -54,7 +54,7 @@ Das Release gibt es je Plattform (`win-x64`, `win-arm64`) in drei Formen:
 
 | Datei | Zweck |
 |---|---|
-| `GodSaveTheScreen-<Version>-<Plattform>-Setup.exe` | Setup mit Wahl „Nur für mich“ (ohne Adminrechte, `%LOCALAPPDATA%\Programs`) oder „Für alle Benutzer“ (`Program Files`), Startmenü, Dateizuordnung `.gsts` |
+| `GodSaveTheScreen-<Version>-<Plattform>-Setup.exe` | Setup mit Wahl „Nur für mich“ (ohne Adminrechte, `%LOCALAPPDATA%\Programs`) oder „Für alle Benutzer“ (`Program Files`), Zielordner, Startmenü-Verknüpfung (abwählbar), Dateizuordnung `.gsts` |
 | `GodSaveTheScreen-<Version>-<Plattform>.msi` | Für Softwareverteilung (GPO, Intune, SCCM); Deutsch/Englisch automatisch |
 | `GodSaveTheScreen-<Version>-<Plattform>.zip` | Portabel, ohne Installation |
 
@@ -66,7 +66,7 @@ msiexec /i GodSaveTheScreen-1.10.0.0-win-x64.msi /qn              # nur aktuelle
 GodSaveTheScreen-1.10.0.0-win-x64-Setup.exe /quiet InstallScope=PerMachine
 ```
 
-MSI-Properties: `ALLUSERS=1` (für alle Benutzer), `MSIINSTALLPERUSER=1` (nur Benutzer, Standard), `INSTALLFOLDER`. Die Setup-EXE kennt `InstallScope=PerMachine|PerUser`; Burns eigene Schalter `/permachine`/`/peruser` wirken nicht, weil die Standardoberfläche die Installationsart selbst vorgibt. Updates ersetzen eine Installation derselben Art; ein Wechsel zwischen „Benutzer“ und „alle Benutzer“ ergibt zwei Installationen. „Mit Windows starten“ stellt jeder Benutzer in der App ein, nicht das Setup.
+MSI-Properties: `ALLUSERS=1` (für alle Benutzer), `MSIINSTALLPERUSER=1` (nur Benutzer, Standard), `INSTALLFOLDER`, `STARTMENUSHORTCUT=0` (keine Startmenü-Verknüpfung). Die Setup-EXE kennt `InstallScope=PerMachine|PerUser`, `InstallFolder=<Ordner>` und `StartMenuShortcut=0`; ohne Angabe übernehmen Updates Ordner und Startmenü-Wahl der vorhandenen Installation; Burns eigene Schalter `/permachine`/`/peruser` wirken nicht, weil die Standardoberfläche die Installationsart selbst vorgibt. Updates ersetzen eine Installation derselben Art; ein Wechsel zwischen „Benutzer“ und „alle Benutzer“ ergibt zwei Installationen. „Mit Windows starten“ stellt jeder Benutzer in der App ein, nicht das Setup.
 
 ZIP (einzelne EXE, enthält die .NET-Laufzeit):
 

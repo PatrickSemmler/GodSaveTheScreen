@@ -1,5 +1,5 @@
 # GodSaveTheScreen – Installer (Agent)
-Verified against working tree on top of commit e7168c5 (Installer uncommitted) on 2026-10-21
+Verified against working tree on top of commit edb77c8 on 2026-10-22
 
 ## Overview
 - WiX Toolset 7 (`WixToolset.Sdk/7.0.0` im SDK-Attribut, Extensions in `Directory.Packages.props`); beide Projekte NICHT in `GodSaveTheScreen.slnx`
@@ -15,15 +15,17 @@ Verified against working tree on top of commit e7168c5 (Installer uncommitted) o
 
 ## Conventions
 - MSI `Scope="perUserOrMachine"`: Standard pro Benutzer (`%LOCALAPPDATA%\Programs\GodSaveTheScreen`), `ALLUSERS=1` = pro Computer; Registry immer `Root="HKMU"` (folgt der Installationsart)
-- Öffentliche MSI-Properties: `ALLUSERS`, `MSIINSTALLPERUSER`, `INSTALLFOLDER`; Bundle-Variable (`bal:Overridable`): `InstallScope=PerMachine|PerUser`
-- Registry des MSI: `Software\GodSaveTheScreen\Installer` (`InstallFolder`, `Version`), App Paths `GodSaveTheScreen.exe`, `.gsts` -> ProgId `GodSaveTheScreen.Project`
+- Öffentliche MSI-Properties: `ALLUSERS`, `MSIINSTALLPERUSER`, `INSTALLFOLDER`, `STARTMENUSHORTCUT` (1/0, Komponenten-Bedingung der Verknüpfung), `PERUSERFOLDER`/`PERMACHINEFOLDER` (von der Setup-EXE; MSI wählt den zur Installationsart passenden, `INSTALLFOLDER` hat Vorrang); Bundle-Variablen (`bal:Overridable`): `InstallScope=PerMachine|PerUser`, `InstallFolder`, `StartMenuShortcut`
+- Vorbelegung bei Updates: Registry `InstallFolder`/`StartMenuShortcut` (HKCU und HKLM) wird im MSI (AppSearch + `SetProperty`) und im Bundle (`util:RegistrySearch` + `SetVariable`) gelesen; fehlt `StartMenuShortcut` bei vorhandenem `InstallFolder`, war die Verknüpfung abgewählt
+- Registry des MSI: `Software\GodSaveTheScreen\Installer` (`InstallFolder`, `Version`, `StartMenuShortcut` nur mit Verknüpfung), App Paths `GodSaveTheScreen.exe`, `.gsts` -> ProgId `GodSaveTheScreen.Project`
 - Neue Dateien neben der EXE: eigene `Component` in `Package.wxs` ergänzen (keine Harvesting-Automatik)
 - Neue UI-Texte in beiden `.wxl` je Projekt (IDs müssen übereinstimmen)
 
 ## Decisions
 - WiX 7 statt 6: nur v7 kann Bundles mit wählbarer Installationsart (configurable-scope bundle). EULA per `<AcceptEula>wix7</AcceptEula>` in beiden `.wixproj` (Entscheidung des Projektinhabers)
 - Ein mehrsprachiges MSI: Basis en-US, de-DE als eingebettete Transform `1031` in `_Storages`, Summary-Template `<Plattform>;1033,1031`; Windows Installer wählt nach UI-Sprache
-- Eigener Scope-Dialog statt `WixUI_Advanced` (laut WiX-Quelltext experimentell, Benutzerordner `%LOCALAPPDATA%\Apps`); kein Ordner-Dialog
+- Eigener Scope-Dialog statt `WixUI_Advanced` (laut WiX-Quelltext experimentell, Benutzerordner `%LOCALAPPDATA%\Apps`), danach eigener `GstsFolderDlg` (Layout/Texte von `InstallDirDlg`, `BrowseDlg`, `WixUIValidatePath`) mit Kontrollkästchen Startmenü (UI-Property `GSTS_STARTMENU_UI` -> beim „Weiter“ `STARTMENUSHORTCUT` 1/0)
+- Setup-EXE: je Installationsart ein eigenes Ordnerfeld auf der Optionsseite, weil ein Feld beim Wechsel der Installationsart nicht umbelegt wird; das Bundle gibt beide Ordner ans MSI
 - `MajorUpgrade AllowSameVersionUpgrades="yes"`: Windows Installer ignoriert die 4. Versionsstelle (Bugfix-Releases) -> ICE61 unterdrückt
 - `LaunchTarget="GodSaveTheScreen.exe"` (über App Paths), weil der Installationsordner im Bundle von der Laufzeitwahl abhängt
 
@@ -36,6 +38,9 @@ Verified against working tree on top of commit e7168c5 (Installer uncommitted) o
 - COM-Aufrufe (WindowsInstaller.Installer) in PowerShell: Argumente aus Cmdlets sind `PSObject` -> auspacken (`Invoke-Com`), sonst `DISP_E_TYPEMISMATCH`; alle COM-Objekte freigeben, sonst ist das MSI für den Bundle-Build gesperrt
 - Lange Ausgabepfade (Scratchpad) lassen `wix.exe` mit WIX0216 (0x57) scheitern -> kurze Pfade verwenden
 - Kein Autostart im Setup (Nutzerentscheidung): „Mit Windows starten“ nur über die App (`AutostartService`, HKCU); das MSI entfernt diesen Wert beim Deinstallieren (CA `RemoveUserAutostart`, nicht beim Update)
+- Burn: `Var = ""` ist bei leerer String-Variable falsch -> „nicht gesetzt“ als `NOT (Var = "0" OR Var = "1")` prüfen
+- MSI-Checkbox setzt ihre Property bei abgewählt auf leer; leer bedeutet bei `STARTMENUSHORTCUT` „Vorgabe“ (`SetProperty` setzt 1), daher eigene UI-Property
+- Update-Tests mit demselben MSI sind Wartungsmodus (gleicher ProductCode, `Installed` gesetzt) -> für Update-Tests zweimal bauen
 - Wechsel Benutzer <-> alle Benutzer bei Updates ergibt zwei Installationen (FindRelatedProducts sucht nur im eigenen Kontext)
 
 ## Commands

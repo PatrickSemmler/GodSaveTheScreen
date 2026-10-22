@@ -8,7 +8,7 @@
   <String Id="ConfirmCancelMessage" Value="Möchten Sie den Vorgang wirklich abbrechen?" />
   <String Id="ExecuteUpgradeRelatedBundleMessage" Value="Vorherige Version" />
   <String Id="HelpHeader" Value="Setup-Hilfe" />
-  <String Id="HelpText" Value="/install | /repair | /uninstall | /layout [Ordner] - installiert, repariert, deinstalliert oder&#xA;   legt eine vollständige lokale Kopie des Setups im Ordner an. Standard ist Installieren.&#xA;&#xA;/passive | /quiet - minimale Oberfläche ohne Rückfragen bzw. keine Oberfläche und&#xA;   keine Rückfragen. Standardmäßig werden Oberfläche und alle Rückfragen angezeigt.&#xA;&#xA;InstallScope=PerMachine - für alle Benutzer installieren (Administratorrechte nötig).&#xA;   Standard: nur für den aktuellen Benutzer.&#xA;&#xA;/norestart   - keinen Neustart durchführen. Standardmäßig wird vor einem Neustart gefragt.&#xA;/log log.txt - Protokoll in diese Datei schreiben. Standardmäßig wird es in %TEMP% angelegt." />
+  <String Id="HelpText" Value="/install | /repair | /uninstall | /layout [Ordner] - installiert, repariert, deinstalliert oder&#xA;   legt eine vollständige lokale Kopie des Setups im Ordner an. Standard ist Installieren.&#xA;&#xA;/passive | /quiet - minimale Oberfläche ohne Rückfragen bzw. keine Oberfläche und&#xA;   keine Rückfragen. Standardmäßig werden Oberfläche und alle Rückfragen angezeigt.&#xA;&#xA;InstallScope=PerMachine - für alle Benutzer installieren (Administratorrechte nötig).&#xA;   Standard: nur für den aktuellen Benutzer.&#xA;InstallFolder=Ordner - abweichender Zielordner.&#xA;StartMenuShortcut=0 - keine Verknüpfung im Startmenü.&#xA;&#xA;/norestart   - keinen Neustart durchführen. Standardmäßig wird vor einem Neustart gefragt.&#xA;/log log.txt - Protokoll in diese Datei schreiben. Standardmäßig wird es in %TEMP% angelegt." />
   <String Id="HelpCloseButton" Value="&amp;Schließen" />
   <String Id="InstallOptionsButton" Value="&amp;Optionen" />
   <String Id="InstallInstallButton" Value="&amp;Installieren" />
@@ -62,6 +62,8 @@
   <String Id="InstallLicenseLabel" Value="[WixBundleName] ist freie Software unter der Apache License 2.0:" />
   <String Id="InstallScopePerUserHint" Value="Installation nur für Sie. Ändern unter „Optionen“." />
   <String Id="InstallScopePerMachineHint" Value="Installation für alle Benutzer. Ändern unter „Optionen“." />
-  <String Id="OptionsPerUserScopeDescription" Value="In Ihr Benutzerprofil (%LOCALAPPDATA%\Programs), keine Administratorrechte nötig." />
-  <String Id="OptionsPerMachineScopeDescription" Value="Nach „Programme“, erfordert Administratorrechte." />
+  <String Id="OptionsPerUserScopeDescription" Value="Keine Administratorrechte nötig. Zielordner:" />
+  <String Id="OptionsPerMachineScopeDescription" Value="Erfordert Administratorrechte. Zielordner:" />
+  <String Id="OptionsBrowseButton" Value="&amp;Durchsuchen" />
+  <String Id="OptionsStartMenuShortcutCheckbox" Value="&amp;Verknüpfung im Startmenü erstellen" />
 </WixLocalization>

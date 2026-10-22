@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Abgeleitet vom RtfTheme von WixStdBA (WiX 7, MS-RL). Änderungen: Lizenz nur zur Information (Apache-2.0, keine Zustimmung nötig),
-     Optionsseite ohne Ordnerauswahl, nur mit der Installationsart. -->
+     Optionsseite mit Installationsart, einem Zielordner je Installationsart und der Startmenü-Verknüpfung. -->
 <Theme xmlns="http://wixtoolset.org/schemas/v4/thmutil">
     <Font Id="0" Height="-12" Weight="500" Foreground="windowtext" Background="window">Segoe UI</Font>
     <Font Id="1" Height="-24" Weight="500" Foreground="windowtext">Segoe UI</Font>
@@ -45,11 +45,23 @@
         <Page Name="Options">
             <Label X="11" Y="80" Width="-11" Height="30" FontId="2" DisablePrefix="yes">#(loc.OptionsHeader)</Label>
             <RadioButtons Name="WixStdBAScope">
-                <RadioButton X="11" Y="121" Height="20" Width="-11" Value="PerUser" EnableCondition="WixBundleAuthoredScope = 2 OR WixBundleAuthoredScope = 3" HideWhenDisabled="yes" FontId="3">#(loc.OptionsPerUserScopeText)</RadioButton>
-                <RadioButton X="11" Y="171" Height="20" Width="-11" Value="PerMachine" EnableCondition="WixBundleAuthoredScope = 2 OR WixBundleAuthoredScope = 3" HideWhenDisabled="yes" FontId="3">#(loc.OptionsPerMachineScopeText)</RadioButton>
+                <RadioButton X="11" Y="114" Height="20" Width="-11" Value="PerUser" EnableCondition="WixBundleAuthoredScope = 2 OR WixBundleAuthoredScope = 3" HideWhenDisabled="yes" FontId="3">#(loc.OptionsPerUserScopeText)</RadioButton>
+                <RadioButton X="11" Y="190" Height="20" Width="-11" Value="PerMachine" EnableCondition="WixBundleAuthoredScope = 2 OR WixBundleAuthoredScope = 3" HideWhenDisabled="yes" FontId="3">#(loc.OptionsPerMachineScopeText)</RadioButton>
             </RadioButtons>
-            <Label X="29" Y="141" Width="-11" Height="28" FontId="4" DisablePrefix="yes">#(loc.OptionsPerUserScopeDescription)</Label>
-            <Label X="29" Y="191" Width="-11" Height="28" FontId="4" DisablePrefix="yes">#(loc.OptionsPerMachineScopeDescription)</Label>
+            <!-- Je Installationsart ein Ordner (Bundle-Variablen InstallFolderPerUser/-PerMachine -> MSI PERUSERFOLDER/PERMACHINEFOLDER). -->
+            <Label X="29" Y="134" Width="-11" Height="17" FontId="4" DisablePrefix="yes">#(loc.OptionsPerUserScopeDescription)</Label>
+            <Editbox Name="InstallFolderPerUser" X="29" Y="154" Width="-91" Height="21" TabStop="yes" FontId="3" FileSystemAutoComplete="yes" />
+            <Button Name="BrowsePerUserButton" X="-11" Y="153" Width="75" Height="23" TabStop="yes" FontId="3">
+                <Text>#(loc.OptionsBrowseButton)</Text>
+                <BrowseDirectoryAction VariableName="InstallFolderPerUser" />
+            </Button>
+            <Label X="29" Y="210" Width="-11" Height="17" FontId="4" DisablePrefix="yes">#(loc.OptionsPerMachineScopeDescription)</Label>
+            <Editbox Name="InstallFolderPerMachine" X="29" Y="230" Width="-91" Height="21" TabStop="yes" FontId="3" FileSystemAutoComplete="yes" />
+            <Button Name="BrowsePerMachineButton" X="-11" Y="229" Width="75" Height="23" TabStop="yes" FontId="3">
+                <Text>#(loc.OptionsBrowseButton)</Text>
+                <BrowseDirectoryAction VariableName="InstallFolderPerMachine" />
+            </Button>
+            <Checkbox Name="StartMenuShortcut" X="11" Y="268" Width="-11" Height="20" TabStop="yes" FontId="3">#(loc.OptionsStartMenuShortcutCheckbox)</Checkbox>
             <Button Name="OptionsOkButton" X="-91" Y="-11" Width="75" Height="23" TabStop="yes" FontId="0">
                 <Text>#(loc.OptionsOkButton)</Text>
                 <ChangePageAction Page="Install" />
