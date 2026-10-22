@@ -1,1 +1,0 @@
-﻿& dotnet publish src/GodSaveTheScreen.App -p:PublishProfile=win-x64
