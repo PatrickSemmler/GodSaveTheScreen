@@ -487,3 +487,7 @@ $RECYCLE.BIN/
 dist/
 # Projektordner des MSI (sonst von *.msi erfasst, Git ignoriert hier Gross-/Kleinschreibung)
 !/installer/GodSaveTheScreen.Msi/
+
+# Lokale Arbeitsdateien, nicht im Repository
+/Verbesserungsliste.html
+/publish.ps1
