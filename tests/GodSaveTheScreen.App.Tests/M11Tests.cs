@@ -555,6 +555,18 @@ public sealed class ReleaseConfigurationTests
     }
 
     [Fact]
+    public void InfoSeite_KenntEntwicklerUndProjektseite()
+    {
+        var metadata = typeof(GodSaveTheScreen.App.ViewModels.SettingsViewModel).Assembly
+            .GetCustomAttributes(typeof(System.Reflection.AssemblyMetadataAttribute), false)
+            .OfType<System.Reflection.AssemblyMetadataAttribute>()
+            .ToDictionary(a => a.Key, a => a.Value);
+
+        metadata["Authors"].ShouldBe("Patrick Semmler");
+        metadata["RepositoryUrl"].ShouldBe("https://github.com/PatrickSemmler/GodSaveTheScreen");
+    }
+
+    [Fact]
     public void PublishProfil_EntsprichtDerVorgabe()
     {
         var profile = XDocument.Parse(Read("src", "GodSaveTheScreen.App", "Properties", "PublishProfiles", "win-x64.pubxml"));

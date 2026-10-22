@@ -15,7 +15,18 @@
         <Run Text="{l:Loc App_Name}" FontWeight="SemiBold" />
         <Run Text="{Binding Version, Mode=OneWay}" />
       </TextBlock>
+      <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+        <TextBlock Text="{l:Loc Settings_DevelopedBy}" />
+        <TextBlock Text="{Binding Author, Mode=OneWay}" Margin="4,0,0,0" />
+      </StackPanel>
       <TextBlock Text="{Binding Copyright, Mode=OneWay}" Margin="0,2,0,0" />
+      <TextBlock Style="{StaticResource Label}" Text="{l:Loc Settings_ProjectPage}" />
+      <TextBlock TextWrapping="Wrap">
+        <Hyperlink Command="{Binding OpenRepositoryCommand}" ToolTip="{Binding RepositoryUrl, Mode=OneWay}"
+                   AutomationProperties.Name="{l:Loc Settings_ProjectPage}">
+          <Run Text="{Binding RepositoryUrl, Mode=OneWay}" />
+        </Hyperlink>
+      </TextBlock>
       <TextBlock Style="{StaticResource Label}" Text="{l:Loc Settings_DataFolder}" />
       <Grid>
         <Grid.ColumnDefinitions>

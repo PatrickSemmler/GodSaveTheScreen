@@ -5,6 +5,7 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 ## [Unveröffentlicht]
 
 ### Neu
+- **Info-Seite (1.10.2.0):** Einstellungen → Info zeigt den Entwickler und einen Link zur Projektseite auf GitHub (https://github.com/PatrickSemmler/GodSaveTheScreen) mit Quellcode, Releases und Fehlermeldungen.
 - **Setup: Zielordner und Startmenü (1.10.1.0):** Setup-EXE (unter „Optionen“) und MSI lassen den Zielordner wählen (je Installationsart, mit „Durchsuchen“) und die Startmenü-Verknüpfung abwählen. Still: `InstallFolder=…`/`StartMenuShortcut=0` (Setup-EXE) bzw. `INSTALLFOLDER=…`/`STARTMENUSHORTCUT=0` (MSI). Updates übernehmen ohne Angabe Ordner und Startmenü-Wahl der vorhandenen Installation.
 - **Setup und MSI (1.10.0.0):** Neben dem ZIP gibt es je Plattform (x64, ARM64) eine Setup-EXE und ein MSI-Paket, beide auf Deutsch und Englisch. Installation „Nur für mich“ (ohne Administratorrechte) oder „Für alle Benutzer“, Startmenü-Verknüpfung, Dateizuordnung `.gsts` und Eintrag unter „Apps“. Für die Softwareverteilung still installierbar (`msiexec /i … /qn ALLUSERS=1` bzw. `…-Setup.exe /quiet InstallScope=PerMachine`). Neuere Versionen ersetzen die vorhandene Installation. „Mit Windows starten“ bleibt eine Einstellung der App. Release-Dateien liegen jetzt in `dist\`.
 - **Lizenz (1.9.0.0):** GodSaveTheScreen steht unter der Apache License 2.0 (Dateien `LICENSE` und `NOTICE`). Die Lizenzseite (`GodSaveTheScreen-Lizenz.html`/`-License.html` neben der EXE, Einstellungen → Info → „Lizenz und Drittanbieter-Lizenzen anzeigen“) enthält eine Kurzfassung, Hinweise für Forks, den Lizenztext und alle Drittanbieter-Komponenten mit ihren Lizenzen.
@@ -24,6 +25,7 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 Erste Version mit vollem Funktionsumfang (Meilensteine M0–M11).
 
 ### Neu
+- **Info-Seite (1.10.2.0):** Einstellungen → Info zeigt den Entwickler und einen Link zur Projektseite auf GitHub (https://github.com/PatrickSemmler/GodSaveTheScreen) mit Quellcode, Releases und Fehlermeldungen.
 - **Aufnahme:** Rechteck, Fenster, Freiform, Vollbild (aktueller Monitor / alle Monitore), Timer, globale Hotkeys, Tray-Symbol, Startfenster (M1–M3).
 - **Editor:** Bilder laden und speichern (PNG, JPEG, BMP, GIF, TIFF, JPEG XR), Zwischenablage, Zoom/Pan, Drag & Drop (M4).
 - **Objekte:** Formen, Text, nummerierte Marker, Stift, Textmarker, Radierer, Lineal, Unschärfe/Verpixeln/Schwärzen, Lupe – alle bearbeitbar, mit Undo/Redo, Ebenenliste und Z-Reihenfolge (M5–M8).

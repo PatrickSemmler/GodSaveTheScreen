@@ -323,6 +323,17 @@ public sealed partial class SettingsViewModel : ObservableObject
         typeof(SettingsViewModel).Assembly.GetCustomAttributes(typeof(System.Reflection.AssemblyCopyrightAttribute), false)
             is [System.Reflection.AssemblyCopyrightAttribute { Copyright: { Length: > 0 } text }, ..] ? text : string.Empty;
 
+    /// <summary>Entwickler aus <c>Directory.Build.props</c> (<c>&lt;Authors&gt;</c>).</summary>
+    public string Author { get; } = AssemblyMetadata("Authors");
+
+    /// <summary>Projektseite auf GitHub aus <c>Directory.Build.props</c> (<c>&lt;RepositoryUrl&gt;</c>).</summary>
+    public string RepositoryUrl { get; } = AssemblyMetadata("RepositoryUrl");
+
+    private static string AssemblyMetadata(string key) =>
+        typeof(SettingsViewModel).Assembly.GetCustomAttributes(typeof(System.Reflection.AssemblyMetadataAttribute), false)
+            .OfType<System.Reflection.AssemblyMetadataAttribute>()
+            .FirstOrDefault(a => a.Key == key)?.Value ?? string.Empty;
+
     /// <summary>Hotkeys während einer Aufnahme im Recorder ausschalten, damit die Kombination nicht auslöst.</summary>
     public void SuspendHotkeys() => _hotkeys.SuspendHotkeys();
 
@@ -353,6 +364,13 @@ public sealed partial class SettingsViewModel : ObservableObject
 
     [RelayCommand]
     private void ShowLicense() => _help.ShowLicense();
+
+    [RelayCommand]
+    private void OpenRepository()
+    {
+        if (Uri.TryCreate(RepositoryUrl, UriKind.Absolute, out var uri) && uri.Scheme == Uri.UriSchemeHttps)
+            Shell(uri.AbsoluteUri);
+    }
 
     [RelayCommand]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822", Justification = "Wird von RelayCommand als Instanzmethode benötigt")]

@@ -92,6 +92,8 @@
   <data name="Settings_DataFolder" xml:space="preserve"><value>Einstellungsordner</value></data>
   <data name="Settings_LogFolder" xml:space="preserve"><value>Protokollordner</value></data>
   <data name="Settings_Open" xml:space="preserve"><value>Öffnen</value></data>
+  <data name="Settings_DevelopedBy" xml:space="preserve"><value>Entwickelt von</value></data>
+  <data name="Settings_ProjectPage" xml:space="preserve"><value>Projektseite (Quellcode, Releases, Fehlermeldungen)</value></data>
   <data name="Settings_Licenses" xml:space="preserve"><value>Lizenz</value></data>
   <data name="Settings_LicenseInfo" xml:space="preserve"><value>GodSaveTheScreen ist freie Software unter der Apache License 2.0. Nutzung, Weitergabe, Änderungen und eigene Versionen (Forks) sind erlaubt. Die Lizenzseite enthält den Lizenztext und die Lizenzen aller Drittanbieter-Komponenten.</value></data>
   <data name="Settings_ShowLicense" xml:space="preserve"><value>Lizenz und Drittanbieter-Lizenzen anzeigen</value></data>

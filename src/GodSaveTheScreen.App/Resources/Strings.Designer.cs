@@ -183,7 +183,11 @@ public static class Strings
 
     public static string Settings_Open => ResourceManager.GetString("Settings_Open", Culture) ?? "Settings_Open";
 
-    public static string Settings_Licenses => ResourceManager.GetString("Settings_Licenses", Culture) ?? "Settings_Licenses";
+    public static string Settings_DevelopedBy => ResourceManager.GetString("Settings_DevelopedBy", Culture) ?? "Settings_DevelopedBy";
+
+    public static string Settings_ProjectPage => ResourceManager.GetString("Settings_ProjectPage", Culture) ?? "Settings_ProjectPage";
+
+    public static string Settings_Licenses =>ResourceManager.GetString("Settings_Licenses", Culture) ?? "Settings_Licenses";
 
     public static string Settings_LicenseInfo => ResourceManager.GetString("Settings_LicenseInfo", Culture) ?? "Settings_LicenseInfo";
 

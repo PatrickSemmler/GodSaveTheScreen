@@ -242,3 +242,12 @@ Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `doc
 - **Was wurde gemacht**: README in zwei Sprachen mit Sprachumschalter, Download-Abschnitt (Link auf GitHub-Releases), Bildschirmfotos aus `docs/help/{en,de}/images` (Editor, Startfenster, Panels Sprechblase/Stempel/Emoji, Zuschneiden, Einstellungen). Funktionsliste um Sprechblase, Stempel, Bilder als Objekte, Bildbereiche entfernen, wachsende Zeichenfläche, Drehung, Schatten/Kontur ergänzt; Tastenkürzel um K, S, I, W, D und `Strg+Umschalt+V`; Testaufruf über die Test-EXE statt `dotnet test`
 - **Warum**: Nutzerwunsch
 - **Seiteneffekte / Hinweise**: README nutzt dieselben Bilder wie die Hilfe – nach `generate-help-screenshots.ps1` sind sie automatisch aktuell. Der Releases-Link ist relativ (`../../releases`) und funktioniert nur auf GitHub
+
+### Info-Seite: Entwickler und Link zur Projektseite – 22.10.2026
+- **Kategorie**: Funktionserweiterung
+- **Verbesserungsliste-ID**: – (Nutzerwunsch)
+- **Version**: 1.10.2.0
+- **Geänderte Dateien**: `Directory.Build.props`, `src/GodSaveTheScreen.App/Views/Settings/AboutPage.xaml`, `ViewModels/SettingsViewModel.cs`, `Resources/Strings*.resx`, `Strings.Designer.cs`, `tests/GodSaveTheScreen.App.Tests/M11Tests.cs`, `docs/help/{de,en}/index.html`, `docs/help/{de,en}/images/settings-about.png`, `CHANGELOG.md`, `docs/agent/architecture.md`
+- **Was wurde gemacht**: Einstellungen → Info zeigt „Entwickelt von Patrick Semmler“ und unter „Projektseite (Quellcode, Releases, Fehlermeldungen)“ einen Link auf https://github.com/PatrickSemmler/GodSaveTheScreen. Name und URL stehen als `<Authors>`/`<RepositoryUrl>` in `Directory.Build.props` und gelangen per `AssemblyMetadata` in die Assembly. Hilfe (Abschnitt Info, Problembehebung) und Bildschirmfoto der Info-Seite aktualisiert
+- **Warum**: Nutzerwunsch vor der Veröffentlichung auf GitHub; ersetzt das Release v1.10.1.0, das diese Angaben noch nicht hatte
+- **Seiteneffekte / Hinweise**: Der Link öffnet sich nur bei `https`-URLs (Schutz gegen versehentlich andere Ziele). Beim Erzeugen der Hilfe-Bildschirmfotos ändern sich auch `crop-mode`, `editor-overview` und `panel-emoji` geringfügig (nicht deterministisch); diese wurden zurückgesetzt

@@ -5,12 +5,19 @@
     <LangVersion>latest</LangVersion>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
-    <Version>1.10.1.0</Version>
+    <Version>1.10.2.0</Version>
     <Company>GodSaveTheScreen</Company>
     <Product>GodSaveTheScreen</Product>
     <Authors>Patrick Semmler</Authors>
     <Copyright>Copyright © 2026 Patrick Semmler</Copyright>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/PatrickSemmler/GodSaveTheScreen</RepositoryUrl>
+    <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
     <NeutralLanguage>en</NeutralLanguage>
   </PropertyGroup>
+  <!-- Für die Info-Seite der Einstellungen (SettingsViewModel liest AssemblyMetadata) -->
+  <ItemGroup>
+    <AssemblyMetadata Include="Authors" Value="$(Authors)" />
+    <AssemblyMetadata Include="RepositoryUrl" Value="$(RepositoryUrl)" />
+  </ItemGroup>
 </Project>
