@@ -2,7 +2,8 @@
 
 Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `docs/Umsetzungsplan.md`, Meilensteine: `docs/meilensteine/`.
 
-- Sprache für Doku, Commits und UI-Texte: Deutsch (UI zusätzlich Englisch über `.resx`)
+- Sprache für Doku und UI-Texte: Deutsch (UI zusätzlich Englisch über `.resx`)
+- Commit-Nachrichten auf Englisch, Präfix nach Art der Änderung: `Feature:`, `Fix:`, `Docs:`, `Chore:` (ältere Commits sind deutsch)
 - Arbeit erfolgt meilensteinweise; vor Beginn das jeweilige Meilenstein-Dokument lesen und Checkboxen beim Abschluss abhaken
 
 ## Versionierung
