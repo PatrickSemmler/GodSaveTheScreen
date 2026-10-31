@@ -11,6 +11,8 @@ public sealed unsafe class WindowEnumerator : IWindowEnumerator
 {
     private const int MinimumSize = 16;
     private const int ToolWindowStyle = 0x80;
+    private const int TransparentStyle = 0x20;
+    private const int LayeredStyle = 0x80000;
 
     private readonly IMonitorService _monitors;
 
@@ -56,7 +58,7 @@ public sealed unsafe class WindowEnumerator : IWindowEnumerator
 
         var title = GetTitle(hwnd);
         var exStyle = PInvoke.GetWindowLong(hwnd, WINDOW_LONG_PTR_INDEX.GWL_EXSTYLE);
-        if (title.Length == 0 && (exStyle & ToolWindowStyle) != 0)
+        if ((title.Length == 0 && (exStyle & ToolWindowStyle) != 0) || IsClickThroughOverlay(exStyle))
         {
             return null;
         }
@@ -74,6 +76,12 @@ public sealed unsafe class WindowEnumerator : IWindowEnumerator
 
         return new WindowInfo((nint)hwnd.Value, title, GetProcessName(processId), bounds, maximized, zIndex);
     }
+
+    /// <summary>
+    /// Durchklickbare Überlagerungen (<c>WS_EX_LAYERED</c> + <c>WS_EX_TRANSPARENT</c>, z. B. Bildschirmmarkierungen, Spielleisten,
+    /// Aufnahmerahmen anderer Programme) sind keine Ziele: Windows selbst trifft sie bei der Mausauswahl nicht.
+    /// </summary>
+    public static bool IsClickThroughOverlay(int exStyle) => (exStyle & (LayeredStyle | TransparentStyle)) == (LayeredStyle | TransparentStyle);
 
     private static bool IsCloaked(HWND hwnd)
     {

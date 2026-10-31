@@ -188,12 +188,12 @@ Erkenntnisse:
 
 ## Abnahmekriterien
 
-- [ ] Lange Seite in Edge und Chrome wird ohne Eingriff und ohne sichtbare Naht aufgenommen – Chrome ✓ (31.10.2026, 31 Bilder, 16.384 px, keine Naht erkennbar), Edge offen
+- [ ] Lange Seite in Edge und Chrome wird ohne Eingriff und ohne sichtbare Naht aufgenommen – Chrome ✓ (31.10.2026, 31 Bilder, 16.384 px, keine Naht erkennbar; im laufenden Programm per Hotkey: Aufnahme vom Mittelteil bis Seitenende 1352 × 8520 px, 24 Abschnittstrenner mit konstant 342 px Abstand, Fußzeile einmal), Edge offen
 - [x] Feststehende Kopfzeile erscheint im Ergebnis genau einmal
 - [ ] Programm ohne Scroll-Reaktion lässt sich im manuellen Modus aufnehmen – automatisiert mit Attrappen geprüft, im echten Programm offen
 - [x] Das Limit stoppt sauber mit Hinweis; das Bild öffnet im Editor ohne Fehler
 - [ ] `Esc` beendet jederzeit, Mauszeiger und ausgeblendete Fenster sind danach wiederhergestellt – mit Attrappen geprüft (Zeiger/Fenster-Wiederherstellung), `Esc`-Taste im echten Ablauf offen
-- [ ] Ergebnis läuft durch die normale Kette (Zwischenablage, Speichern, Editor) – Koordinator-Test mit Attrappen ✓, Durchlauf im laufenden Programm (Hotkey → Editor) offen
+- [x] Ergebnis läuft durch die normale Kette (Zwischenablage, Speichern, Editor) – Koordinator-Test mit Attrappen ✓; im laufenden Programm (31.10.2026, portable Kopie 1.14.0.1): Hotkey → Fensterauswahl → Aufnahme → Hinweis → Editor („Unbenannt“) und Autospeichern ✓; Zwischenablage nicht geprüft
 
 ## Umsetzungsstand (31.10.2026, Version 1.14.0.0)
 
@@ -208,3 +208,5 @@ Umgesetzt wie geplant, mit diesen Abweichungen und Ergänzungen:
 Tests: Core 516 (davon `ScrollStitcherTests` 26: alle Versätze 1 … Höhe − 12, Kopf/Fuß, Seitenleiste, Bildlaufleiste, einfarbige Abschnitte, sich wiederholende Zeilen, Rauschen ±4, kleine Animation, `NoOverlap`, Limit, Zurückscrollen, Bruchteil-Scrollen, Rechenzeit bei Full HD), App 769 (Sitzung, Treiberauswahl, Koordinator, Smoke-Test von Leiste und Rahmen samt Ausschluss von der Aufnahme, 16.384-px-Dokument im Editor).
 
 Noch offen: Testmatrix der übrigen Programme, Bildfolgen mit Prüfsummen, Skalierung 125/150 %, Mehrmonitor (negative Koordinaten, gemischte Skalierung), Fenster mit Adminrechten, Windows-Einstellung „Inaktive Fenster beim Daraufzeigen scrollen“ aus, Testkatalog (siehe oben).
+
+Durchlauf in der laufenden Anwendung (31.10.2026, portable Kopie 1.14.0.1 mit eigenem Datenordner, Chrome mit der Testseite): Hotkey `Strg+Umschalt+6`, Fenster anklicken, automatische Aufnahme (UI-Automation 40 px je Einheit bzw. Mausrad 100 px je Einheit), Ende am Seitenende (`EndOfContent`) und am Limit (Hinweis „Höchstlänge von 16384 px“), „Zuerst zum Anfang scrollen“, Übergabe an den Editor, Autospeichern. **Fund:** Ein vollflächiges, durchklickbares Fenster eines anderen Programms (Bildschirmüberlagerung der Claude-App) wurde vom Fenstermodus als Treffer genommen, die Aufnahme lief auf dem ganzen Bildschirm; behoben in 1.14.0.1 (`WindowEnumerator.IsClickThroughOverlay`). Nicht geprüft: `Esc`/`Eingabe` im echten Ablauf (die Testumgebung darf Chrome keine Tasten senden), manueller Modus in einem echten Programm, Zwischenablage.
