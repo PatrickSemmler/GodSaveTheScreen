@@ -93,6 +93,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         CalloutProperties = new CalloutPropertiesViewModel(context, () => ActiveTool);
         ImageProperties = new ImagePropertiesViewModel(context, () => ActiveTool, () => InsertImage());
         ShadowProperties = new ShadowPropertiesViewModel(context, () => ActiveTool);
+        FrameProperties = new FramePropertiesViewModel(context, () => ActiveTool);
         RotationProperties = new RotationPropertiesViewModel(context);
         MaskTools = new MaskToolsViewModel(context, () => ActiveTool, tools.Tools.OfType<BackgroundEraserTool>().FirstOrDefault());
         EmojiPicker = new EmojiPickerViewModel(context);
@@ -151,6 +152,9 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     /// <summary>Schatten der Auswahl bzw. Vorgaben des aktiven Werkzeugs.</summary>
     public ShadowPropertiesViewModel ShadowProperties { get; }
 
+    /// <summary>Rahmen und Kanteneffekte des ganzen Bildes (Rahmen-Werkzeug).</summary>
+    public FramePropertiesViewModel FrameProperties { get; }
+
     public RotationPropertiesViewModel RotationProperties { get; }
 
     /// <summary>Emoji-Auswahl mit Suche, Kategorien und Hautton.</summary>
@@ -171,8 +175,11 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     public bool AreToolsEnabled => !IsCropping;
 
-    /// <summary>Angezeigter Bildbereich: der Zuschnitt bzw. die erweiterte Zeichenfläche, im Zuschnittmodus das gesamte Originalbild.</summary>
-    public PixelRect ViewRect => IsCropping ? Document.BaseImage.Bounds : Document.EffectiveBounds;
+    /// <summary>
+    /// Angezeigter Bildbereich: das Ergebnisbild (Zuschnitt bzw. erweiterte Zeichenfläche plus Rahmen und Schatten),
+    /// im Zuschnittmodus das gesamte Originalbild.
+    /// </summary>
+    public PixelRect ViewRect => IsCropping ? Document.BaseImage.Bounds : Document.OutputBounds;
 
     /// <summary>Seitenleiste sichtbar (im Zuschnittmodus immer, wegen der Zuschnitt-Einstellungen).</summary>
     public bool IsSidebarVisible => IsPanelOpen || IsCropping;
@@ -202,6 +209,11 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
                 return string.Format(CultureInfo.CurrentUICulture, Strings.Props_Objects, items.Count);
             }
 
+            if (ActiveTool is FrameTool)
+            {
+                return ActiveTool.DisplayName;
+            }
+
             return ActiveTool.HasStyleDefaults
                 ? string.Format(CultureInfo.CurrentUICulture, Strings.Props_DefaultsFor, ActiveTool.DisplayName)
                 : MaskTools.IsApplicable ? ActiveTool.DisplayName : string.Empty;
@@ -210,10 +222,11 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     /// <summary>Im Eigenschaftenbereich gibt es etwas zu bearbeiten.</summary>
     public bool HasPanelContent =>
-        Properties.IsApplicable || TextProperties.IsApplicable || MarkerProperties.IsApplicable || ToolOptions.IsApplicable || EmojiProperties.IsApplicable || StampProperties.IsApplicable || CalloutProperties.IsApplicable || ImageProperties.IsApplicable || ShadowProperties.IsApplicable || RotationProperties.IsApplicable || MaskTools.IsApplicable || Properties.ShowOpacity || Presets.IsApplicable;
+        Properties.IsApplicable || TextProperties.IsApplicable || MarkerProperties.IsApplicable || ToolOptions.IsApplicable || EmojiProperties.IsApplicable || StampProperties.IsApplicable || CalloutProperties.IsApplicable || ImageProperties.IsApplicable || FrameProperties.IsApplicable || ShadowProperties.IsApplicable || RotationProperties.IsApplicable || MaskTools.IsApplicable || Properties.ShowOpacity || Presets.IsApplicable;
 
     /// <summary>Das Panel zeigt die Einstellungen des aktiven Werkzeugs (keine Auswahl) und sie lassen sich zurücksetzen.</summary>
-    public bool CanResetToolDefaults => Context.Selection.Items.Count == 0 && ToolDefaultsReset.Supports(ActiveTool);
+    public bool CanResetToolDefaults =>
+        Context.Selection.Items.Count == 0 && ToolDefaultsReset.Supports(ActiveTool) && !(ActiveTool is FrameTool && Document.Frame is not null);
 
     public IReadOnlyList<ZoomChoice> ZoomChoices { get; }
 
@@ -271,7 +284,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     {
         get
         {
-            var size = IsCropping ? Context.Crop.Rect : Document.EffectiveBounds;
+            var size = IsCropping ? Context.Crop.Rect : Document.OutputBounds;
             return string.Format(CultureInfo.CurrentUICulture, Strings.Editor_ImageSize, size.Width, size.Height);
         }
     }
@@ -404,6 +417,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         StampProperties.Refresh();
         CalloutProperties.Refresh();
         ImageProperties.Refresh();
+        FrameProperties.Refresh();
         ShadowProperties.Refresh();
         RotationProperties.Refresh();
         MaskTools.Refresh();
@@ -1027,10 +1041,14 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         {
             OnPropertyChanged(nameof(WindowTitle));
         }
-        else if (e.PropertyName is nameof(ImageDocument.EffectiveBounds))
+        else if (e.PropertyName is nameof(ImageDocument.OutputBounds))
         {
             OnPropertyChanged(nameof(ViewRect));
             OnPropertyChanged(nameof(ImageSizeText));
+        }
+        else if (e.PropertyName is nameof(ImageDocument.Frame))
+        {
+            OnPropertyChanged(nameof(CanResetToolDefaults));
         }
     }
 
@@ -1075,6 +1093,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         StampProperties.Dispose();
         CalloutProperties.Dispose();
         ImageProperties.Dispose();
+        FrameProperties.Dispose();
         ShadowProperties.Dispose();
         RotationProperties.Dispose();
         MaskTools.Dispose();
@@ -1086,6 +1105,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         _recents.Changed -= OnRecentsChanged;
         EffectCache.Shared.RemoveImage(BaseImageIdentity.Get(Document.BaseImage));
         EffectCache.Shared.RemoveImage(BaseImageIdentity.Get(Document.MaskedImage));
+        EffectCache.Shared.RemoveImage(BaseImageIdentity.Get(Document.EffectiveImage));
         Layers.Dispose();
         Context.Dispose();
     }

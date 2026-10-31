@@ -1,6 +1,7 @@
 using GodSaveTheScreen.Core.Annotations;
 using GodSaveTheScreen.Core.Capture;
 using GodSaveTheScreen.Core.Emoji;
+using GodSaveTheScreen.Core.Imaging;
 
 namespace GodSaveTheScreen.Core.Settings;
 
@@ -182,6 +183,12 @@ public sealed record AppSettings
     /// <summary>Letzte Konfiguration des Bild-Werkzeugs (Schatten, Kontur, Deckkraft neuer Bilder).</summary>
     public ImageStyle ImageDefaults { get; init; } = new();
 
+    /// <summary>
+    /// Zuletzt genutzte Werte des Rahmen-Werkzeugs je Effekt (auch wenn der Effekt gerade aus ist); das Einschalten
+    /// eines Effekts stellt sie wieder her. Ein neutraler Wert bedeutet „noch nie genutzt“ (eingebauter Standard).
+    /// </summary>
+    public FrameStyle FrameDefaults { get; init; } = new();
+
     /// <summary>Zuletzt verwendete Emojis (Sequenz), neueste zuerst, höchstens <see cref="MaxRecentEmojis"/>.</summary>
     public StringList EmojiRecent { get; init; } = [];
 
@@ -262,6 +269,7 @@ public sealed record AppSettings
             },
             CalloutDefaults = callout.Normalized(),
             ImageDefaults = (ImageDefaults ?? new ImageStyle()).Normalized(),
+            FrameDefaults = (FrameDefaults ?? new FrameStyle()).Clamped(),
             EmojiRecent = EmojiRecent ?? [],
             EmojiFavorites = EmojiFavorites ?? [],
             RecentColors = RecentColors ?? [],

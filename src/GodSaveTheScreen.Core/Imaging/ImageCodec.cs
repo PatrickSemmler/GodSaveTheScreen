@@ -47,7 +47,11 @@ public interface IImageCodecService
 /// <summary>Rendert das Dokument (Basisbild + sichtbare Annotationen) in einen Pixelpuffer.</summary>
 public interface IDocumentExporter
 {
+    /// <summary>Das fertige Ergebnisbild: <see cref="RenderContent"/> plus Rahmen und Kanteneffekte (<see cref="ImageDocument.Frame"/>).</summary>
     PixelBuffer Render(ImageDocument document);
+
+    /// <summary>Nur der Inhalt über <see cref="ImageDocument.EffectiveBounds"/> (Basisbild, ggf. in Grau, mit Objekten) ohne Rahmen.</summary>
+    PixelBuffer RenderContent(ImageDocument document);
 
     /// <summary>Nur die angegebenen Objekte (zugeschnitten auf deren Ausdehnung) auf transparentem Grund.</summary>
     PixelBuffer? RenderObjects(IReadOnlyList<Annotation> annotations);

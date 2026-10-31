@@ -67,6 +67,33 @@ public sealed partial class ImageDocument : ObservableObject
         }
     }
 
+    private PixelBuffer? _grayImage;
+    private int _grayVersion = -1;
+
+    /// <summary>
+    /// <see cref="MaskedImage"/>, bei Graustufen-Rahmen (<see cref="FrameStyle.Grayscale"/>) in Grau; sonst derselbe Puffer.
+    /// Grundlage für Anzeige, Export, Unschärfe und Lupe. <see cref="MaskedImage"/> bleibt farbig (Zauberstab, Rand-Erkennung).
+    /// </summary>
+    public PixelBuffer EffectiveImage
+    {
+        get
+        {
+            var masked = MaskedImage;
+            if (Frame is not { Grayscale: true })
+            {
+                return masked;
+            }
+
+            if (_grayImage is null || _grayVersion != Mask.Version)
+            {
+                _grayImage = masked.ToGrayscale();
+                _grayVersion = Mask.Version;
+            }
+
+            return _grayImage;
+        }
+    }
+
     public double DpiX { get; }
 
     public double DpiY { get; }
@@ -83,10 +110,32 @@ public sealed partial class ImageDocument : ObservableObject
     /// <summary>Nicht-destruktiver Zuschnitt in Pixeln des Basisbilds; <c>null</c> = kein Zuschnitt. Nur über <c>CropAction</c> ändern.</summary>
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(EffectiveBounds))]
+    [NotifyPropertyChangedFor(nameof(OutputBounds))]
     private PixelRect? _cropRect;
 
     /// <summary>Sichtbarer Bereich: der Zuschnitt oder die (ggf. um überstehende Objekte erweiterte) Zeichenfläche.</summary>
     public PixelRect EffectiveBounds => CropRect ?? CanvasBounds;
+
+    private FrameStyle? _frame;
+
+    /// <summary>
+    /// Rahmen und Kanteneffekte des ganzen Bildes; <c>null</c> = keine. Nur über <c>PropertyChangeAction</c> ändern.
+    /// Sind alle Effekte aus, wird der Wert zu <c>null</c> normalisiert, damit das Dokument wie ohne Rahmen arbeitet.
+    /// </summary>
+    public FrameStyle? Frame
+    {
+        get => _frame;
+        set
+        {
+            if (SetProperty(ref _frame, value?.Normalized()))
+            {
+                OnPropertyChanged(nameof(OutputBounds));
+            }
+        }
+    }
+
+    /// <summary>Ergebnisbild: <see cref="EffectiveBounds"/> plus Rand und Schatten des Rahmens (Bildkoordinaten).</summary>
+    public PixelRect OutputBounds => FrameLayout.Compute(EffectiveBounds, Frame).Output;
 
     private PixelRect _canvasBounds;
 
@@ -102,6 +151,7 @@ public sealed partial class ImageDocument : ObservableObject
             if (SetProperty(ref _canvasBounds, value) && CropRect is null)
             {
                 OnPropertyChanged(nameof(EffectiveBounds));
+                OnPropertyChanged(nameof(OutputBounds));
             }
         }
     }

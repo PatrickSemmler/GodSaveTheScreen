@@ -54,6 +54,7 @@ public sealed class ProjectService : IProjectService
             DpiY = document.DpiY,
             CropRect = document.CropRect,
             HighlightersBehind = document.HighlightersBehind,
+            Frame = document.Frame,
             Metadata = document.Metadata,
             Annotations = [.. document.Annotations.Select(a => a.Snapshot())],
             BasePng = basePng,
@@ -131,6 +132,7 @@ public sealed class ProjectService : IProjectService
             CreatedAt = content.CreatedAt,
             CropRect = content.CropRect,
             HighlightersBehind = content.HighlightersBehind,
+            Frame = content.Frame,
             Metadata = content.Metadata,
             ProjectPath = path,
         };

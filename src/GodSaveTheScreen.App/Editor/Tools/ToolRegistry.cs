@@ -30,7 +30,7 @@ public sealed class PipetteTool : ToolBase
 
     public Action? Cancelled { get; set; }
 
-    public override void Activate() => _rendered = Context.Exporter.Render(Context.Document);
+    public override void Activate() => _rendered = Context.Exporter.RenderContent(Context.Document);
 
     public override void Deactivate() => _rendered = null;
 
@@ -41,7 +41,7 @@ public sealed class PipetteTool : ToolBase
             return;
         }
 
-        // Das gerenderte Bild enthält nur den Zuschnitt; Positionen sind in Originalkoordinaten.
+        // Das gerenderte Bild enthält nur den Inhalt (Zuschnitt, ohne Rahmen); Positionen sind in Originalkoordinaten.
         var origin = Context.Document.EffectiveBounds;
         var color = Sample(_rendered, new PointD(args.Position.X - origin.X, args.Position.Y - origin.Y));
         Picked?.Invoke(color);
@@ -109,6 +109,7 @@ public sealed class ToolRegistry
         new StampTool(context),
         new CalloutTool(context),
         new ImageTool(context),
+        new FrameTool(context),
         new CropTool(context),
         new PipetteTool(context),
     ]);

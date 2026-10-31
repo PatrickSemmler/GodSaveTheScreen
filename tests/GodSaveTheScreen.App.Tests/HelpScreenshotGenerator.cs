@@ -43,13 +43,13 @@ public sealed class HelpScreenshotGenerator
     [
         RectangleTool.ToolId, ArrowTool.ToolId, TextTool.ToolId, CalloutTool.ToolId, StampTool.ToolId, MarkerTool.ToolId,
         PenTool.ToolId, HighlighterTool.ToolId, EraserTool.ToolId, BlurTool.ToolId, MagnifierTool.ToolId, EmojiTool.ToolId,
-        ImageTool.ToolId, AreaSelectTool.ToolId, BackgroundEraserTool.ToolId,
+        ImageTool.ToolId, AreaSelectTool.ToolId, BackgroundEraserTool.ToolId, FrameTool.ToolId,
     ];
 
     private static readonly string[] SectionKeys =
     [
         "Style", "Font", "Colors", "Drawing", "Effect", "Geometry", "Magnifier", "MaskBrush", "MaskSelection", "Numbering",
-        "StampQuickText", "CalloutShape",
+        "StampQuickText", "CalloutShape", "FrameBorder", "FrameShadow", "FrameCorners", "FrameTorn", "FrameVignette", "FrameGrayscale",
     ];
 
     [StaFact]
@@ -170,8 +170,18 @@ public sealed class HelpScreenshotGenerator
             foreach (var id in PanelTools)
             {
                 h.ViewModel.Activate(h.Tools.Find(id)!);
+                if (id == FrameTool.ToolId)
+                {
+                    // Das Rahmen-Panel zeigt mit einer Vorlage geöffnete Karten mit Werten.
+                    h.Context.Frame.Set(FramePresets.BuiltIn[2].Frame, "Vorlage");
+                }
+
                 Settle(window);
                 SavePanel(window, directory, "panel-" + id);
+                if (id == FrameTool.ToolId)
+                {
+                    h.Context.Frame.Set(null, "Entfernen", FrameToolState.RemoveKey);
+                }
             }
 
             Annotate(h, texts);

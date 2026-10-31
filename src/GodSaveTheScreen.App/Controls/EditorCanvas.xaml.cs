@@ -38,6 +38,9 @@ public partial class EditorCanvas : UserControl
     private ImageDocument? _document;
     private WriteableBitmap? _display;
     private int _contextMaskVersion;
+    private bool _contextGray;
+    private SoftLayer? _frameShadow;
+    private bool _shadowUpdateQueued;
 
     public EditorCanvas() => InitializeComponent();
 
@@ -67,9 +70,12 @@ public partial class EditorCanvas : UserControl
         }
 
         var p = e.GetPosition(Surface);
-        var view = _viewModel.ViewRect;
+        var view = PlacementRect();
         return new PointD(Math.Clamp(p.X, view.X, view.Right), Math.Clamp(p.Y, view.Y, view.Bottom));
     }
+
+    /// <summary>Bereich, in dem neue Objekte landen dürfen: der Inhalt (nicht Rand und Schatten des Rahmens).</summary>
+    private PixelRect PlacementRect() => _viewModel!.IsCropping ? _viewModel.ViewRect : _viewModel.Document.EffectiveBounds;
 
     public void Initialize(EditorViewModel viewModel)
     {
@@ -91,9 +97,10 @@ public partial class EditorCanvas : UserControl
         Surface.Height = document.BaseImage.Height;
         SurfaceHost.Background = CreateCheckerBrush();
 
-        // Unschärfe und Lupe sehen das Basisbild ohne die entfernten Bereiche.
-        var masked = document.MaskedImage;
+        // Unschärfe und Lupe sehen das Basisbild ohne die entfernten Bereiche (und in Graustufen, wenn der Rahmen es verlangt).
+        var masked = document.EffectiveImage;
         _contextMaskVersion = document.Mask.Version;
+        _contextGray = document.Frame?.Grayscale == true;
         var renderContext = new RenderContext
         {
             BaseImage = masked.ToBitmapSource(),
@@ -110,6 +117,7 @@ public partial class EditorCanvas : UserControl
         ApplyViewRect();
         ApplyZoom();
         UpdateCursor();
+        ScheduleShadowUpdate();
     }
 
     /// <summary>Anzeige des Basisbilds: beschreibbare Bitmap, die Maskenänderungen (auch während des Radierens) bereichsweise übernimmt.</summary>
@@ -147,27 +155,123 @@ public partial class EditorCanvas : UserControl
 
         var buffer = new byte[region.Width * region.Height * PixelBuffer.BytesPerPixel];
         _document.Mask.CopyMasked(_document.BaseImage, buffer, region);
+        if (_document.Frame?.Grayscale == true)
+        {
+            Grayscale.Apply(buffer);
+        }
+
         _display.WritePixels(new Int32Rect(region.X, region.Y, region.Width, region.Height), buffer, region.Width * PixelBuffer.BytesPerPixel, 0);
     }
 
-    /// <summary>Nach einer übernommenen Maskenänderung bekommen Unschärfe und Lupe das neue maskierte Basisbild.</summary>
+    /// <summary>
+    /// Nach jedem abgeschlossenen Undo-Schritt: Rahmen neu zeichnen (Schatten verzögert); bei geänderter Maske oder
+    /// Graustufen bekommen Anzeige, Unschärfe und Lupe das neue Basisbild.
+    /// </summary>
     private void OnUndoChanged(object? sender, EventArgs e)
     {
-        if (_document is null || _document.Mask.Version == _contextMaskVersion)
+        if (_document is null)
         {
             return;
         }
 
-        var previous = Annotations.BasePixels;
-        var masked = _document.MaskedImage;
-        _contextMaskVersion = _document.Mask.Version;
-        var source = masked.ToBitmapSource();
-        Annotations.SetBaseImage(source, masked);
-        Interaction.RenderContext = Interaction.RenderContext with { BaseImage = source, BasePixels = masked };
-        if (previous is not null && !ReferenceEquals(previous, masked) && !ReferenceEquals(previous, _document.BaseImage))
+        var gray = _document.Frame?.Grayscale == true;
+        if (_document.Mask.Version != _contextMaskVersion || gray != _contextGray)
         {
-            EffectCache.Shared.RemoveImage(BaseImageIdentity.Get(previous));
+            var grayChanged = gray != _contextGray;
+            var previous = Annotations.BasePixels;
+            var effective = _document.EffectiveImage;
+            _contextMaskVersion = _document.Mask.Version;
+            _contextGray = gray;
+            if (grayChanged)
+            {
+                UpdateDisplay(_document.Mask.Bounds);
+            }
+
+            var source = effective.ToBitmapSource();
+            Annotations.SetBaseImage(source, effective);
+            Interaction.RenderContext = Interaction.RenderContext with { BaseImage = source, BasePixels = effective };
+            if (previous is not null && !ReferenceEquals(previous, effective) && !ReferenceEquals(previous, _document.BaseImage))
+            {
+                EffectCache.Shared.RemoveImage(BaseImageIdentity.Get(previous));
+            }
         }
+
+        ApplyFrameLayers();
+        if (_document.Frame is { HasShadow: true } || _frameShadow is not null)
+        {
+            ScheduleShadowUpdate();
+        }
+    }
+
+    /// <summary>Berechnet den Schatten des Rahmens neu, gebündelt nach dem Verarbeiten der laufenden Eingaben.</summary>
+    private void ScheduleShadowUpdate()
+    {
+        if (_shadowUpdateQueued)
+        {
+            return;
+        }
+
+        _shadowUpdateQueued = true;
+        Dispatcher.BeginInvoke(System.Windows.Threading.DispatcherPriority.Background, () =>
+        {
+            _shadowUpdateQueued = false;
+            if (_document is null || _viewModel is null)
+            {
+                return;
+            }
+
+            _frameShadow = ComputeShadow();
+            ApplyFrameLayers();
+        });
+    }
+
+    private SoftLayer? ComputeShadow()
+    {
+        if (_document is not { Frame: { HasShadow: true } frame } || _viewModel is null)
+        {
+            return null;
+        }
+
+        var layout = FrameLayout.Compute(_document.EffectiveBounds, frame);
+        var content = _viewModel.Context.Exporter.RenderContent(_document);
+        return FrameRenderer.CreateShadow(content.ToBitmapSource(), layout, frame, 1, FrameRenderer.PreviewShadowPixels);
+    }
+
+    /// <summary>Setzt Rand/Schatten, Vignette und den Clip des Inhalts nach dem aktuellen Rahmen; im Zuschnittmodus sind sie aus.</summary>
+    private void ApplyFrameLayers()
+    {
+        if (_document is null || _viewModel is null)
+        {
+            return;
+        }
+
+        var frame = _viewModel.IsCropping ? null : _document.Frame;
+        var view = _viewModel.ViewRect;
+        FrameBack.Width = view.Width;
+        FrameBack.Height = view.Height;
+        var layout = FrameLayout.Compute(_document.EffectiveBounds, frame);
+        if (frame is null)
+        {
+            FrameBack.Clear();
+            FrameOver.Set(layout, null);
+            BaseImage.Clip = null;
+            Annotations.Clip = null;
+            return;
+        }
+
+        // Mit Zuschnitt schneidet der Clip auf den Inhalt ab, denn die Fläche reicht dann bis an den Rahmen.
+        var clip = FrameRenderer.CreateContentClip(layout, frame);
+        if (clip is null && _document.CropRect is not null)
+        {
+            var content = layout.Content;
+            clip = new RectangleGeometry(new Rect(content.X, content.Y, content.Width, content.Height));
+            clip.Freeze();
+        }
+
+        BaseImage.Clip = clip;
+        Annotations.Clip = clip;
+        FrameOver.Set(layout, frame);
+        FrameBack.Set(layout, frame, frame.HasShadow ? _frameShadow : null, new PointD(view.X, view.Y));
     }
 
     /// <summary>
@@ -185,10 +289,11 @@ public partial class EditorCanvas : UserControl
         Frame.Width = view.Width;
         Frame.Height = view.Height;
         // Ohne Zuschnitt nicht abschneiden: Objekte, die gerade über den Rand gezogen werden, bleiben sichtbar,
-        // bis die Fläche beim Loslassen mitwächst.
-        Frame.ClipToBounds = _viewModel.IsCropping || _viewModel.Document.CropRect is not null;
+        // bis die Fläche beim Loslassen mitwächst. Mit Rahmen übernimmt der Clip der Ebenen das Abschneiden.
+        Frame.ClipToBounds = _viewModel.IsCropping || (_viewModel.Document.CropRect is not null && _viewModel.Document.Frame is null);
         System.Windows.Controls.Canvas.SetLeft(Surface, -view.X);
         System.Windows.Controls.Canvas.SetTop(Surface, -view.Y);
+        ApplyFrameLayers();
     }
 
     /// <summary>Wächst/schrumpft die Fläche links oder oben, bleibt das Bild trotzdem an seiner Stelle im Fenster.</summary>
@@ -226,6 +331,8 @@ public partial class EditorCanvas : UserControl
 
         Annotations.Detach();
         Interaction.Detach();
+        FrameBack.Clear();
+        _frameShadow = null;
         BaseImage.Source = null;
         SurfaceHost.Background = null;
     }
@@ -877,7 +984,7 @@ public partial class EditorCanvas : UserControl
     /// <summary>Mitte des sichtbaren Bildausschnitts in Bildpixeln.</summary>
     private PointD VisibleCenter()
     {
-        var view = _viewModel!.ViewRect;
+        var view = PlacementRect();
         var viewportCenter = new Point(Scroller.ViewportWidth / 2, Scroller.ViewportHeight / 2);
         var point = Scroller.TranslatePoint(viewportCenter, Surface);
         return new PointD(Math.Clamp(point.X, view.X, view.Right), Math.Clamp(point.Y, view.Y, view.Bottom));

@@ -16,6 +16,7 @@ public enum PresetKind
     Magnifier,
     Callout,
     Image,
+    Frame,
 }
 
 /// <summary>
@@ -34,6 +35,7 @@ public static class PresetStyles
         MagnifierTool.ToolId => PresetKind.Magnifier,
         CalloutTool.ToolId => PresetKind.Callout,
         ImageTool.ToolId => PresetKind.Image,
+        FrameTool.ToolId => PresetKind.Frame,
         _ => null,
     };
 
@@ -58,6 +60,12 @@ public static class PresetStyles
     /// <summary>Werkzeug, dessen Vorlagen das Panel zeigt: ohne Auswahl das aktive Werkzeug, sonst das der (einheitlichen) Auswahl.</summary>
     public static string? Resolve(IReadOnlyList<Annotation> selection, ToolBase? active)
     {
+        if (active is FrameTool)
+        {
+            // Der Rahmen gehört dem Dokument, nicht den Objekten: Vorlagen gelten unabhängig von der Auswahl.
+            return FrameTool.ToolId;
+        }
+
         if (selection.Count == 0)
         {
             return active is not null && KindOf(active.Id) is not null ? active.Id : null;
@@ -97,6 +105,8 @@ public static class PresetStyles
                 return new ToolPreset { Name = name, Callout = CaptureCallout(context.Callout.Style, selection.OfType<CalloutAnnotation>().ToList()) };
             case PresetKind.Image:
                 return new ToolPreset { Name = name, Image = CaptureImage(context.Image.Style, selection.OfType<ImageAnnotation>().ToList()) };
+            case PresetKind.Frame:
+                return new ToolPreset { Name = name, Frame = context.Document.Frame ?? new Core.Imaging.FrameStyle() };
             default:
                 throw new ArgumentException("Werkzeug ohne Vorlagen.", nameof(toolId));
         }
@@ -119,6 +129,13 @@ public static class PresetStyles
     /// <summary>Wendet die Vorlage an. Gibt die Anzahl geänderter Objekte zurück (0 bei Anwendung auf die Standardwerte).</summary>
     public static int Apply(EditorContext context, string toolId, ToolPreset preset)
     {
+        if (KindOf(toolId) == PresetKind.Frame)
+        {
+            // Eine Rahmenvorlage ersetzt den ganzen Rahmen des Dokuments (ein Undo-Schritt).
+            context.Frame.Set(preset.Frame ?? new Core.Imaging.FrameStyle(), preset.Name, FrameToolState.PresetKey);
+            return 0;
+        }
+
         var selection = context.Selection.Items;
         if (selection.Count == 0)
         {

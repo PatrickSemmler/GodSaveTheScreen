@@ -572,4 +572,32 @@ Tipp: In den Einstellungen können Sie die Taste Druck einem Aufnahmemodus zuwei
 {0}</value></data>
   <data name="Shortcut_ContextHelp" xml:space="preserve"><value>Hilfe zum aktuellen Werkzeug bzw. Objekt</value></data>
   <data name="Shortcut_ShowShortcuts" xml:space="preserve"><value>Tastenkürzel anzeigen</value></data>
+  <data name="Tool_Frame" xml:space="preserve"><value>Rahmen (F)</value></data>
+  <data name="Frame_Hint" xml:space="preserve"><value>Rahmen und Effekte für das ganze Bild. Jede Änderung wirkt sofort und lässt sich rückgängig machen.</value></data>
+  <data name="Frame_Border" xml:space="preserve"><value>Rand</value></data>
+  <data name="Frame_PerSide" xml:space="preserve"><value>Seiten einzeln einstellen</value></data>
+  <data name="Frame_BorderTornNote" xml:space="preserve"><value>Bei abgerissener Kante hat der Rand überall die gleiche Breite.</value></data>
+  <data name="Frame_Left" xml:space="preserve"><value>Links</value></data>
+  <data name="Frame_Top" xml:space="preserve"><value>Oben</value></data>
+  <data name="Frame_Right" xml:space="preserve"><value>Rechts</value></data>
+  <data name="Frame_Bottom" xml:space="preserve"><value>Unten</value></data>
+  <data name="Frame_Corners" xml:space="preserve"><value>Abgerundete Ecken</value></data>
+  <data name="Frame_Radius" xml:space="preserve"><value>Radius</value></data>
+  <data name="Frame_TornEdge" xml:space="preserve"><value>Abgerissene Kante</value></data>
+  <data name="Frame_TornSides" xml:space="preserve"><value>Seiten</value></data>
+  <data name="Frame_TornDepth" xml:space="preserve"><value>Tiefe</value></data>
+  <data name="Frame_TornTooth" xml:space="preserve"><value>Zackenbreite</value></data>
+  <data name="Frame_Reroll" xml:space="preserve"><value>Neu würfeln</value></data>
+  <data name="Frame_Vignette" xml:space="preserve"><value>Vignette</value></data>
+  <data name="Frame_VignetteStrength" xml:space="preserve"><value>Stärke</value></data>
+  <data name="Frame_VignetteSize" xml:space="preserve"><value>Ausdehnung</value></data>
+  <data name="Frame_Grayscale" xml:space="preserve"><value>Graustufen</value></data>
+  <data name="Frame_GrayscaleHint" xml:space="preserve"><value>Nur der Screenshot wird grau, Objekte bleiben farbig.</value></data>
+  <data name="Frame_Remove" xml:space="preserve"><value>Rahmen entfernen</value></data>
+  <data name="Frame_Preset_Shadow" xml:space="preserve"><value>Dezenter Schatten</value></data>
+  <data name="Frame_Preset_Border" xml:space="preserve"><value>Einfacher Rand</value></data>
+  <data name="Frame_Preset_Polaroid" xml:space="preserve"><value>Polaroid</value></data>
+  <data name="Frame_Preset_Torn" xml:space="preserve"><value>Abgerissen unten</value></data>
+  <data name="Frame_Preset_Vignette" xml:space="preserve"><value>Vignette</value></data>
+  <data name="Preset_BuiltInName" xml:space="preserve"><value>Dieser Name gehört zu einer eingebauten Vorlage. Bitte einen anderen Namen wählen.</value></data>
 </root>

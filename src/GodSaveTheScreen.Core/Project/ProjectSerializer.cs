@@ -58,6 +58,9 @@ public sealed record ProjectContent
 
     public bool HighlightersBehind { get; init; } = true;
 
+    /// <summary>Rahmen und Kanteneffekte des ganzen Bildes; <c>null</c> = keine.</summary>
+    public FrameStyle? Frame { get; init; }
+
     public DocumentMetadata Metadata { get; init; } = new();
 
     public IReadOnlyList<Annotation> Annotations { get; init; } = [];
@@ -192,6 +195,12 @@ public static class ProjectSerializer
             },
         };
 
+        // Nur schreiben, wenn gesetzt: Projekte ohne Rahmen bleiben unverändert (ältere Versionen ignorieren das Feld).
+        if (content.Frame is { } frame)
+        {
+            document["frame"] = JsonSerializer.SerializeToNode(frame, Options);
+        }
+
         // Bilddateien der Bildobjekte stehen nicht im JSON, sondern als eigene Einträge (je Hash einmal).
         IReadOnlyCollection<ImageAsset> assets;
         using (var scope = ImageAssetScope.ForWriting())
@@ -282,6 +291,19 @@ public static class ProjectSerializer
                 crop = clamped.IsEmpty || clamped == new PixelRect(0, 0, width, height) ? null : clamped;
             }
 
+            FrameStyle? frame = null;
+            if (document["frame"] is { } frameNode)
+            {
+                try
+                {
+                    frame = frameNode.Deserialize<FrameStyle>(Options)?.Normalized();
+                }
+                catch (Exception ex) when (ex is JsonException or NotSupportedException or InvalidOperationException or FormatException)
+                {
+                    warnings.Add($"Der Rahmen wurde ignoriert: {ex.Message}");
+                }
+            }
+
             var metadata = new DocumentMetadata(
                 document["metadata"]?["captureMode"]?.GetValue<string>(),
                 document["metadata"]?["windowTitle"]?.GetValue<string>());
@@ -322,6 +344,7 @@ public static class ProjectSerializer
                 DpiY = document["dpiY"]?.GetValue<double>() ?? 96,
                 CropRect = crop,
                 HighlightersBehind = document["highlightersBehind"]?.GetValue<bool>() ?? true,
+                Frame = frame,
                 Metadata = metadata,
                 Annotations = annotations,
                 BasePng = baseBytes,

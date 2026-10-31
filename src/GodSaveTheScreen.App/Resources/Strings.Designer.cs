@@ -1114,4 +1114,60 @@ public static class Strings
     public static string Shortcut_ContextHelp => ResourceManager.GetString("Shortcut_ContextHelp", Culture) ?? "Shortcut_ContextHelp";
 
     public static string Shortcut_ShowShortcuts => ResourceManager.GetString("Shortcut_ShowShortcuts", Culture) ?? "Shortcut_ShowShortcuts";
+
+    public static string Tool_Frame => ResourceManager.GetString("Tool_Frame", Culture) ?? "Tool_Frame";
+
+    public static string Frame_Hint => ResourceManager.GetString("Frame_Hint", Culture) ?? "Frame_Hint";
+
+    public static string Frame_Border => ResourceManager.GetString("Frame_Border", Culture) ?? "Frame_Border";
+
+    public static string Frame_PerSide => ResourceManager.GetString("Frame_PerSide", Culture) ?? "Frame_PerSide";
+
+    public static string Frame_BorderTornNote => ResourceManager.GetString("Frame_BorderTornNote", Culture) ?? "Frame_BorderTornNote";
+
+    public static string Frame_Left => ResourceManager.GetString("Frame_Left", Culture) ?? "Frame_Left";
+
+    public static string Frame_Top => ResourceManager.GetString("Frame_Top", Culture) ?? "Frame_Top";
+
+    public static string Frame_Right => ResourceManager.GetString("Frame_Right", Culture) ?? "Frame_Right";
+
+    public static string Frame_Bottom => ResourceManager.GetString("Frame_Bottom", Culture) ?? "Frame_Bottom";
+
+    public static string Frame_Corners => ResourceManager.GetString("Frame_Corners", Culture) ?? "Frame_Corners";
+
+    public static string Frame_Radius => ResourceManager.GetString("Frame_Radius", Culture) ?? "Frame_Radius";
+
+    public static string Frame_TornEdge => ResourceManager.GetString("Frame_TornEdge", Culture) ?? "Frame_TornEdge";
+
+    public static string Frame_TornSides => ResourceManager.GetString("Frame_TornSides", Culture) ?? "Frame_TornSides";
+
+    public static string Frame_TornDepth => ResourceManager.GetString("Frame_TornDepth", Culture) ?? "Frame_TornDepth";
+
+    public static string Frame_TornTooth => ResourceManager.GetString("Frame_TornTooth", Culture) ?? "Frame_TornTooth";
+
+    public static string Frame_Reroll => ResourceManager.GetString("Frame_Reroll", Culture) ?? "Frame_Reroll";
+
+    public static string Frame_Vignette => ResourceManager.GetString("Frame_Vignette", Culture) ?? "Frame_Vignette";
+
+    public static string Frame_VignetteStrength => ResourceManager.GetString("Frame_VignetteStrength", Culture) ?? "Frame_VignetteStrength";
+
+    public static string Frame_VignetteSize => ResourceManager.GetString("Frame_VignetteSize", Culture) ?? "Frame_VignetteSize";
+
+    public static string Frame_Grayscale => ResourceManager.GetString("Frame_Grayscale", Culture) ?? "Frame_Grayscale";
+
+    public static string Frame_GrayscaleHint => ResourceManager.GetString("Frame_GrayscaleHint", Culture) ?? "Frame_GrayscaleHint";
+
+    public static string Frame_Remove => ResourceManager.GetString("Frame_Remove", Culture) ?? "Frame_Remove";
+
+    public static string Frame_Preset_Shadow => ResourceManager.GetString("Frame_Preset_Shadow", Culture) ?? "Frame_Preset_Shadow";
+
+    public static string Frame_Preset_Border => ResourceManager.GetString("Frame_Preset_Border", Culture) ?? "Frame_Preset_Border";
+
+    public static string Frame_Preset_Polaroid => ResourceManager.GetString("Frame_Preset_Polaroid", Culture) ?? "Frame_Preset_Polaroid";
+
+    public static string Frame_Preset_Torn => ResourceManager.GetString("Frame_Preset_Torn", Culture) ?? "Frame_Preset_Torn";
+
+    public static string Frame_Preset_Vignette => ResourceManager.GetString("Frame_Preset_Vignette", Culture) ?? "Frame_Preset_Vignette";
+
+    public static string Preset_BuiltInName => ResourceManager.GetString("Preset_BuiltInName", Culture) ?? "Preset_BuiltInName";
 }

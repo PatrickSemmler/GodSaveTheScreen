@@ -4,6 +4,9 @@ Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1
 
 ## [Unveröffentlicht]
 
+### Neu
+- **Rahmen und Kanteneffekte (1.11.0.0):** Neues Werkzeug „Rahmen“ (`F`): Das ganze Bild bekommt mit einem Klick einen Rand (je Seite einstellbar), einen Schatten, abgerundete Ecken, eine abgerissene Kante, eine Vignette oder Graustufen. Die Effekte sind nicht-destruktiv und rückgängig machbar, wirken in Editor, Export, Zwischenablage und „Bild ziehen“ gleich und werden im Projekt gespeichert. Jeder Effekt hat einen Schalter, der beim Einschalten die zuletzt genutzten Werte wiederherstellt; dazu fest eingebaute Vorlagen (Dezenter Schatten, Einfacher Rand, Polaroid, Abgerissen unten, Vignette), eigene Vorlagen und „Rahmen entfernen“. Graustufen betreffen nur den Screenshot (Objekte bleiben farbig, Unschärfe und Lupe zeigen ihn grau). Das exportierte Bild wird um Rand und Schatten größer; transparente Stellen füllen JPG und BMP weiß. Ältere Programmversionen zeigen solche Projekte ohne Rahmen und in Farbe.
+
 ## [1.10.2.0] – 2026-10-22
 
 Erste öffentliche Version auf GitHub ([Release](https://github.com/PatrickSemmler/GodSaveTheScreen/releases/tag/v1.10.2.0)). Enthält alle Änderungen seit 1.0.0; die Versionsnummer in Klammern nennt den Stand, mit dem eine Änderung hinzukam.

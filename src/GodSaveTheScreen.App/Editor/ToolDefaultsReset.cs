@@ -63,6 +63,9 @@ public static class ToolDefaultsReset
             case ImageTool:
                 context.Image.Style = new ImageStyle();
                 break;
+            case FrameTool:
+                context.Frame.Defaults = new Core.Imaging.FrameStyle();
+                break;
             default:
                 if (tool.UsesShapeStyle)
                 {

@@ -52,6 +52,8 @@
           <MenuItem Header="{l:Loc Menu_Lock}" Command="{Binding ToggleLockSelectionCommand}" IsEnabled="{Binding HasSelection}" />
         </ContextMenu>
       </Canvas.ContextMenu>
+    <!-- Schatten und Rand des Rahmens (M14) hinter der Zeichenfläche; Größe und Lage setzt EditorCanvas -->
+    <controls:FrameBackLayer x:Name="FrameBack" Canvas.Left="0" Canvas.Top="0" />
     <Grid x:Name="Surface"
           Focusable="True"
           FocusVisualStyle="{x:Null}"
@@ -60,6 +62,7 @@
           LostMouseCapture="OnLostMouseCapture">
       <Image x:Name="BaseImage" Stretch="Fill" IsHitTestVisible="False" RenderOptions.BitmapScalingMode="HighQuality" />
       <controls:AnnotationLayer x:Name="Annotations" />
+      <controls:FrameOverLayer x:Name="FrameOver" />
       <controls:InteractionLayer x:Name="Interaction" />
       <Canvas x:Name="Overlay" />
     </Grid>

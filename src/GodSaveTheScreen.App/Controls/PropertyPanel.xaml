@@ -1188,6 +1188,190 @@
             </StackPanel>
           </StackPanel>
 
+          <!-- Rahmen und Kanteneffekte des ganzen Bildes (Rahmen-Werkzeug) -->
+          <StackPanel DataContext="{Binding FrameProperties}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
+            <TextBlock Text="{l:Loc Frame_Hint}" TextWrapping="Wrap" Opacity="0.7" Margin="0,4,0,8" />
+
+            <controls:PanelSection Header="{l:Loc Frame_Border}" SectionKey="FrameBorder" DefaultExpanded="False" HasSwitch="True"
+                                   IsOn="{Binding IsBorderOn}">
+              <controls:PanelSection.Summary>
+                <StackPanel Orientation="Horizontal">
+                  <Border Style="{StaticResource SummarySwatch}" Background="{Binding BorderColor, Converter={StaticResource ColorBrush}}" />
+                  <TextBlock Style="{StaticResource SummaryText}" Text="{Binding BorderWidth, StringFormat={}{0:0} px}" />
+                </StackPanel>
+              </controls:PanelSection.Summary>
+              <StackPanel>
+                <Grid Visibility="{Binding IsBorderUniform, Converter={StaticResource BoolToVisibility}}">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <StackPanel>
+                    <TextBlock Text="{l:Loc Field_Color}" Style="{StaticResource FieldLabel}" />
+                    <controls:ColorButton Style="{StaticResource CompactColor}" SelectedColor="{Binding BorderColor, Mode=TwoWay}" />
+                  </StackPanel>
+                  <StackPanel Grid.Column="2">
+                    <TextBlock Text="{l:Loc Field_Width}" Style="{StaticResource FieldLabel}" />
+                    <controls:SpinBox Minimum="0" Maximum="1000" SmallChange="1" LargeChange="10" Unit="px"
+                                      Value="{Binding BorderWidth}" AutomationProperties.Name="{l:Loc Frame_Border}" />
+                  </StackPanel>
+                </Grid>
+                <StackPanel Visibility="{Binding IsBorderPerSideVisible, Converter={StaticResource BoolToVisibility}}">
+                  <TextBlock Text="{l:Loc Field_Color}" Style="{StaticResource FieldLabel}" />
+                  <controls:ColorButton Style="{StaticResource CompactColor}" SelectedColor="{Binding BorderColor, Mode=TwoWay}" />
+                  <Grid>
+                    <Grid.ColumnDefinitions>
+                      <ColumnDefinition Width="*" />
+                      <ColumnDefinition Width="8" />
+                      <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                      <RowDefinition Height="Auto" />
+                      <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <StackPanel>
+                      <TextBlock Text="{l:Loc Frame_Left}" Style="{StaticResource FieldLabel}" />
+                      <controls:SpinBox Minimum="0" Maximum="1000" SmallChange="1" LargeChange="10" Unit="px"
+                                        Value="{Binding BorderLeft}" AutomationProperties.Name="{l:Loc Frame_Left}" />
+                    </StackPanel>
+                    <StackPanel Grid.Column="2">
+                      <TextBlock Text="{l:Loc Frame_Top}" Style="{StaticResource FieldLabel}" />
+                      <controls:SpinBox Minimum="0" Maximum="1000" SmallChange="1" LargeChange="10" Unit="px"
+                                        Value="{Binding BorderTop}" AutomationProperties.Name="{l:Loc Frame_Top}" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1">
+                      <TextBlock Text="{l:Loc Frame_Right}" Style="{StaticResource FieldLabel}" />
+                      <controls:SpinBox Minimum="0" Maximum="1000" SmallChange="1" LargeChange="10" Unit="px"
+                                        Value="{Binding BorderRight}" AutomationProperties.Name="{l:Loc Frame_Right}" />
+                    </StackPanel>
+                    <StackPanel Grid.Row="1" Grid.Column="2">
+                      <TextBlock Text="{l:Loc Frame_Bottom}" Style="{StaticResource FieldLabel}" />
+                      <controls:SpinBox Minimum="0" Maximum="1000" SmallChange="1" LargeChange="10" Unit="px"
+                                        Value="{Binding BorderBottom}" AutomationProperties.Name="{l:Loc Frame_Bottom}" />
+                    </StackPanel>
+                  </Grid>
+                </StackPanel>
+                <CheckBox Content="{l:Loc Frame_PerSide}" IsChecked="{Binding BorderPerSide, Mode=TwoWay}" IsEnabled="{Binding CanBorderPerSide}" Margin="0,8,0,0" />
+                <TextBlock Text="{l:Loc Frame_BorderTornNote}" TextWrapping="Wrap" Opacity="0.7" Margin="0,4,0,0"
+                           Visibility="{Binding IsBorderTornNoteVisible, Converter={StaticResource BoolToVisibility}}" />
+              </StackPanel>
+            </controls:PanelSection>
+
+            <controls:PanelSection Header="{l:Loc Section_Shadow}" SectionKey="FrameShadow" DefaultExpanded="False" HasSwitch="True"
+                                   IsOn="{Binding IsShadowOn}">
+              <controls:PanelSection.Summary>
+                <StackPanel Orientation="Horizontal">
+                  <Border Style="{StaticResource SummarySwatch}" Background="{Binding ShadowColor, Converter={StaticResource ColorBrush}}" />
+                  <TextBlock Style="{StaticResource SummaryText}" Text="{Binding ShadowSize, StringFormat={}{0:0.#} px}" />
+                </StackPanel>
+              </controls:PanelSection.Summary>
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="8" />
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="8" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel>
+                  <TextBlock Text="{l:Loc Field_Color}" Style="{StaticResource FieldLabel}" />
+                  <controls:ColorButton Style="{StaticResource CompactColor}" SelectedColor="{Binding ShadowColor, Mode=TwoWay}" />
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                  <TextBlock Text="{l:Loc Text_Size}" Style="{StaticResource FieldLabel}" />
+                  <controls:SpinBox Minimum="0" Maximum="200" SmallChange="1" LargeChange="5" Decimals="1" Unit="px"
+                                    Value="{Binding ShadowSize}" AutomationProperties.Name="{l:Loc Shadow_Size}" />
+                </StackPanel>
+                <StackPanel Grid.Column="4">
+                  <TextBlock Text="{l:Loc Field_Blur}" Style="{StaticResource FieldLabel}" />
+                  <controls:SpinBox Minimum="0" Maximum="100" SmallChange="1" LargeChange="5" Decimals="1"
+                                    Value="{Binding ShadowBlur}" AutomationProperties.Name="{l:Loc Shadow_Blur}" />
+                </StackPanel>
+              </Grid>
+            </controls:PanelSection>
+
+            <controls:PanelSection Header="{l:Loc Frame_Corners}" SectionKey="FrameCorners" DefaultExpanded="False" HasSwitch="True"
+                                   IsOn="{Binding IsCornersOn}">
+              <controls:PanelSection.Summary>
+                <TextBlock Style="{StaticResource SummaryText}" Text="{Binding CornerRadius, StringFormat={}{0:0.#} px}" />
+              </controls:PanelSection.Summary>
+              <StackPanel>
+                <TextBlock Text="{l:Loc Frame_Radius}" Style="{StaticResource FieldLabel}" />
+                <controls:SpinBox Minimum="0" Maximum="1000" SmallChange="1" LargeChange="10" Decimals="1" Unit="px"
+                                  Value="{Binding CornerRadius}" AutomationProperties.Name="{l:Loc Frame_Radius}" />
+              </StackPanel>
+            </controls:PanelSection>
+
+            <controls:PanelSection Header="{l:Loc Frame_TornEdge}" SectionKey="FrameTorn" DefaultExpanded="False" HasSwitch="True"
+                                   IsOn="{Binding IsTornOn}">
+              <controls:PanelSection.Summary>
+                <TextBlock Style="{StaticResource SummaryText}" Text="{Binding TornHeight, StringFormat={}{0:0.#} px}" />
+              </controls:PanelSection.Summary>
+              <StackPanel>
+                <TextBlock Text="{l:Loc Frame_TornSides}" Style="{StaticResource FieldLabel}" />
+                <WrapPanel>
+                  <CheckBox Content="{l:Loc Frame_Top}" IsChecked="{Binding TornTop, Mode=TwoWay}" Margin="0,0,12,0" />
+                  <CheckBox Content="{l:Loc Frame_Bottom}" IsChecked="{Binding TornBottom, Mode=TwoWay}" Margin="0,0,12,0" />
+                  <CheckBox Content="{l:Loc Frame_Left}" IsChecked="{Binding TornLeft, Mode=TwoWay}" Margin="0,0,12,0" />
+                  <CheckBox Content="{l:Loc Frame_Right}" IsChecked="{Binding TornRight, Mode=TwoWay}" />
+                </WrapPanel>
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <StackPanel>
+                    <TextBlock Text="{l:Loc Frame_TornDepth}" Style="{StaticResource FieldLabel}" />
+                    <controls:SpinBox Minimum="1" Maximum="100" SmallChange="1" LargeChange="5" Decimals="1" Unit="px"
+                                      Value="{Binding TornHeight}" AutomationProperties.Name="{l:Loc Frame_TornDepth}" />
+                  </StackPanel>
+                  <StackPanel Grid.Column="2">
+                    <TextBlock Text="{l:Loc Frame_TornTooth}" Style="{StaticResource FieldLabel}" />
+                    <controls:SpinBox Minimum="4" Maximum="300" SmallChange="1" LargeChange="10" Decimals="1" Unit="px"
+                                      Value="{Binding TornWidth}" AutomationProperties.Name="{l:Loc Frame_TornTooth}" />
+                  </StackPanel>
+                </Grid>
+                <ui:Button Content="{l:Loc Frame_Reroll}" Icon="{ui:SymbolIcon ArrowShuffle24}" Margin="0,8,0,0" HorizontalAlignment="Stretch"
+                           Command="{Binding RerollTornCommand}" />
+              </StackPanel>
+            </controls:PanelSection>
+
+            <controls:PanelSection Header="{l:Loc Frame_Vignette}" SectionKey="FrameVignette" DefaultExpanded="False" HasSwitch="True"
+                                   IsOn="{Binding IsVignetteOn}">
+              <controls:PanelSection.Summary>
+                <TextBlock Style="{StaticResource SummaryText}" Text="{Binding VignetteStrengthPercent, StringFormat={}{0:0} %}" />
+              </controls:PanelSection.Summary>
+              <StackPanel>
+                <TextBlock Text="{l:Loc Frame_VignetteStrength}" Style="{StaticResource FieldLabel}" />
+                <DockPanel>
+                  <controls:SpinBox DockPanel.Dock="Right" Style="{StaticResource SliderSpin}" Minimum="0" Maximum="100" SmallChange="1" LargeChange="10" Unit="%"
+                                    Value="{Binding VignetteStrengthPercent}" AutomationProperties.Name="{l:Loc Frame_VignetteStrength}" />
+                  <Slider Minimum="0" Maximum="100" SmallChange="1" LargeChange="10" VerticalAlignment="Center"
+                          Value="{Binding VignetteStrengthValue, Mode=TwoWay}"
+                          AutomationProperties.Name="{l:Loc Frame_VignetteStrength}" />
+                </DockPanel>
+                <TextBlock Text="{l:Loc Frame_VignetteSize}" Style="{StaticResource FieldLabel}" />
+                <DockPanel>
+                  <controls:SpinBox DockPanel.Dock="Right" Style="{StaticResource SliderSpin}" Minimum="10" Maximum="100" SmallChange="1" LargeChange="10" Unit="%"
+                                    Value="{Binding VignetteSizePercent}" AutomationProperties.Name="{l:Loc Frame_VignetteSize}" />
+                  <Slider Minimum="10" Maximum="100" SmallChange="1" LargeChange="10" VerticalAlignment="Center"
+                          Value="{Binding VignetteSizeValue, Mode=TwoWay}"
+                          AutomationProperties.Name="{l:Loc Frame_VignetteSize}" />
+                </DockPanel>
+              </StackPanel>
+            </controls:PanelSection>
+
+            <controls:PanelSection Header="{l:Loc Frame_Grayscale}" SectionKey="FrameGrayscale" DefaultExpanded="False" HasSwitch="True"
+                                   IsOn="{Binding IsGrayscale}">
+              <TextBlock Text="{l:Loc Frame_GrayscaleHint}" TextWrapping="Wrap" Opacity="0.7" />
+            </controls:PanelSection>
+
+            <ui:Button Content="{l:Loc Frame_Remove}" Icon="{ui:SymbolIcon Delete24}" Margin="0,8,0,0" HorizontalAlignment="Stretch"
+                       Command="{Binding RemoveFrameCommand}" IsEnabled="{Binding HasFrame}" />
+          </StackPanel>
+
           <!-- Drehung ausgewählter Formen, Polygone, Freihandstriche und Texte (keine Werkzeug-Vorgabe) -->
           <controls:PanelSection DataContext="{Binding RotationProperties}" Header="{l:Loc Section_Rotation}" SectionKey="Rotation" DefaultExpanded="False"
                                  Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">

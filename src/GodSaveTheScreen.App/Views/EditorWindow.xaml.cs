@@ -51,7 +51,7 @@ public partial class EditorWindow : FluentWindow
     {
         _targetMonitor = monitor;
         var scale = monitor.Scale;
-        var image = _viewModel.Document.EffectiveBounds;
+        var image = _viewModel.Document.OutputBounds;
         var maxWidth = monitor.WorkArea.Width / scale * WorkAreaFraction;
         var maxHeight = monitor.WorkArea.Height / scale * WorkAreaFraction;
         Width = Math.Clamp((image.Width / scale) + SideChrome, MinWidth, Math.Max(MinWidth, maxWidth));

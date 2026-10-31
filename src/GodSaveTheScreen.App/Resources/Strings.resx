@@ -572,4 +572,32 @@ Tip: You can assign the Print Screen key to a capture mode in the settings. On W
 {0}</value></data>
   <data name="Shortcut_ContextHelp" xml:space="preserve"><value>Help for the current tool or object</value></data>
   <data name="Shortcut_ShowShortcuts" xml:space="preserve"><value>Show keyboard shortcuts</value></data>
+  <data name="Tool_Frame" xml:space="preserve"><value>Frame (F)</value></data>
+  <data name="Frame_Hint" xml:space="preserve"><value>Frame and effects for the whole image. Every change applies immediately and can be undone.</value></data>
+  <data name="Frame_Border" xml:space="preserve"><value>Border</value></data>
+  <data name="Frame_PerSide" xml:space="preserve"><value>Set each side separately</value></data>
+  <data name="Frame_BorderTornNote" xml:space="preserve"><value>With a torn edge the border has the same width on all sides.</value></data>
+  <data name="Frame_Left" xml:space="preserve"><value>Left</value></data>
+  <data name="Frame_Top" xml:space="preserve"><value>Top</value></data>
+  <data name="Frame_Right" xml:space="preserve"><value>Right</value></data>
+  <data name="Frame_Bottom" xml:space="preserve"><value>Bottom</value></data>
+  <data name="Frame_Corners" xml:space="preserve"><value>Rounded corners</value></data>
+  <data name="Frame_Radius" xml:space="preserve"><value>Radius</value></data>
+  <data name="Frame_TornEdge" xml:space="preserve"><value>Torn edge</value></data>
+  <data name="Frame_TornSides" xml:space="preserve"><value>Sides</value></data>
+  <data name="Frame_TornDepth" xml:space="preserve"><value>Depth</value></data>
+  <data name="Frame_TornTooth" xml:space="preserve"><value>Tooth width</value></data>
+  <data name="Frame_Reroll" xml:space="preserve"><value>New pattern</value></data>
+  <data name="Frame_Vignette" xml:space="preserve"><value>Vignette</value></data>
+  <data name="Frame_VignetteStrength" xml:space="preserve"><value>Strength</value></data>
+  <data name="Frame_VignetteSize" xml:space="preserve"><value>Spread</value></data>
+  <data name="Frame_Grayscale" xml:space="preserve"><value>Grayscale</value></data>
+  <data name="Frame_GrayscaleHint" xml:space="preserve"><value>Only the screenshot turns gray; objects keep their colours.</value></data>
+  <data name="Frame_Remove" xml:space="preserve"><value>Remove frame</value></data>
+  <data name="Frame_Preset_Shadow" xml:space="preserve"><value>Subtle shadow</value></data>
+  <data name="Frame_Preset_Border" xml:space="preserve"><value>Simple border</value></data>
+  <data name="Frame_Preset_Polaroid" xml:space="preserve"><value>Polaroid</value></data>
+  <data name="Frame_Preset_Torn" xml:space="preserve"><value>Torn at the bottom</value></data>
+  <data name="Frame_Preset_Vignette" xml:space="preserve"><value>Vignette</value></data>
+  <data name="Preset_BuiltInName" xml:space="preserve"><value>This name belongs to a built-in preset. Please choose another name.</value></data>
 </root>

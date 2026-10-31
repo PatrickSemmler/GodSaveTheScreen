@@ -15,9 +15,10 @@ namespace GodSaveTheScreen.App.ViewModels;
 /// <summary>Eintrag der Vorlagenliste mit den Farben für die kleine Vorschau.</summary>
 public sealed class PresetItem
 {
-    public PresetItem(ToolPreset preset)
+    public PresetItem(ToolPreset preset, bool isBuiltIn = false)
     {
         Preset = preset;
+        IsBuiltIn = isBuiltIn;
         (var fill, var line) = Colors(preset);
         FillBrush = ToBrush(fill);
         LineBrush = ToBrush(line);
@@ -25,6 +26,9 @@ public sealed class PresetItem
     }
 
     public ToolPreset Preset { get; }
+
+    /// <summary>Mit dem Programm gelieferte Vorlage (im Code), nicht änderbar und nicht löschbar.</summary>
+    public bool IsBuiltIn { get; }
 
     public string Name => Preset.Name;
 
@@ -68,6 +72,12 @@ public sealed class PresetItem
         if (preset.Magnifier is { } magnifier)
         {
             return (ArgbColor.Transparent, magnifier.Border.Color);
+        }
+
+        if (preset.Frame is { } frame)
+        {
+            // Rahmenvorlagen: Randfarbe als Fläche, Schattenfarbe als Linie.
+            return (frame.HasBorder ? frame.BorderColor : ArgbColor.Transparent, frame.HasShadow ? frame.Shadow.Color.WithAlpha(255) : ArgbColor.FromRgb(0x80, 0x80, 0x80));
         }
 
         var shape = preset.Shape ?? new ShapeStyle();
@@ -135,7 +145,8 @@ public sealed partial class PresetListViewModel : ObservableObject, IDisposable
 
             if (_items is null || _itemsToolId != id)
             {
-                _items = [.. _context.Presets.GetPresets(id).Select(p => new PresetItem(p))];
+                IEnumerable<PresetItem> builtIn = id == FrameTool.ToolId ? FramePresets.BuiltIn.Select(p => new PresetItem(p, isBuiltIn: true)) : [];
+                _items = [.. builtIn, .. _context.Presets.GetPresets(id).Select(p => new PresetItem(p))];
                 _itemsToolId = id;
             }
 
@@ -188,6 +199,12 @@ public sealed partial class PresetListViewModel : ObservableObject, IDisposable
             return;
         }
 
+        if (id == FrameTool.ToolId && FramePresets.IsBuiltInName(name))
+        {
+            _dialogs.ShowInfo(Strings.Preset_SaveTitle, Strings.Preset_BuiltInName);
+            return;
+        }
+
         _context.Presets.Save(id, PresetStyles.Capture(_context, id, tool.BuiltInStyle, name));
         Refresh();
         SelectedItem = Items.FirstOrDefault(i => PresetNames.AreSame(i.Name, name));
@@ -196,7 +213,7 @@ public sealed partial class PresetListViewModel : ObservableObject, IDisposable
     [RelayCommand(CanExecute = nameof(HasSelectedItem))]
     private void Rename()
     {
-        if (ToolId is not { } id || SelectedItem is not { } item)
+        if (ToolId is not { } id || SelectedItem is not { IsBuiltIn: false } item)
         {
             return;
         }
@@ -214,7 +231,7 @@ public sealed partial class PresetListViewModel : ObservableObject, IDisposable
     [RelayCommand(CanExecute = nameof(HasSelectedItem))]
     private void Delete()
     {
-        if (ToolId is not { } id || SelectedItem is not { } item)
+        if (ToolId is not { } id || SelectedItem is not { IsBuiltIn: false } item)
         {
             return;
         }
@@ -239,7 +256,7 @@ public sealed partial class PresetListViewModel : ObservableObject, IDisposable
         }
     }
 
-    private bool HasSelectedItem() => SelectedItem is not null;
+    private bool HasSelectedItem() => SelectedItem is { IsBuiltIn: false };
 
     /// <summary>
     /// Fragt den Namen ab. Trifft er eine andere Vorlage (ohne Beachtung der Groß-/Kleinschreibung), folgt die

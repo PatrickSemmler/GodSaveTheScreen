@@ -135,6 +135,7 @@ public sealed class EditorContext : IDisposable
         Stamp = new StampToolState(settings);
         Callout = new CalloutToolState(settings);
         Image = new ImageToolState(settings);
+        Frame = new FrameToolState(this, settings);
         Document.HighlightersBehind = settings.Current.HighlighterBehind;
         Document.Annotations.CollectionChanged += OnAnnotationsChanged;
         Crop = new CropState(document);
@@ -157,6 +158,9 @@ public sealed class EditorContext : IDisposable
 
     /// <summary>Vorgaben neuer Bildobjekte (letzte Konfiguration, in den Einstellungen gespeichert).</summary>
     public ImageToolState Image { get; }
+
+    /// <summary>Rahmen und Kanteneffekte des Dokuments sowie die zuletzt genutzten Werte (in den Einstellungen gespeichert).</summary>
+    public FrameToolState Frame { get; }
 
     /// <summary>Wird vom Editor gesetzt: Bilddatei wählen und um den Punkt bzw. in den Bereich einfügen.</summary>
     public Action<PointD, RectD?>? ImageInsertHandler { get; set; }

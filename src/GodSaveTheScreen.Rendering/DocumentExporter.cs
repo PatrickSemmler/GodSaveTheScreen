@@ -15,16 +15,23 @@ public sealed class DocumentExporter : IDocumentExporter
     public PixelBuffer Render(ImageDocument document)
     {
         ArgumentNullException.ThrowIfNull(document);
+        var content = RenderContent(document);
+        return document.Frame is { } frame ? FrameRenderer.Compose(content, document.EffectiveBounds, frame) : content;
+    }
+
+    public PixelBuffer RenderContent(ImageDocument document)
+    {
+        ArgumentNullException.ThrowIfNull(document);
         var visible = document.Annotations.Where(a => a.IsVisible && a.Opacity > 0).ToList();
         var crop = document.EffectiveBounds;
         if (visible.Count == 0)
         {
             // Unverändertes Basisbild (ggf. zugeschnitten): exakt, ohne Vormultiplikations-Umweg.
-            return document.CropRect is null ? document.MaskedImage : document.MaskedImage.Crop(crop);
+            return document.CropRect is null ? document.EffectiveImage : document.EffectiveImage.Crop(crop);
         }
 
-        // Entfernte Bereiche sind auch für Unschärfe und Lupe transparent.
-        var baseImage = document.MaskedImage;
+        // Entfernte Bereiche sind auch für Unschärfe und Lupe transparent, Graustufen gelten ebenso.
+        var baseImage = document.EffectiveImage;
         var baseSource = baseImage.ToBitmapSource();
         var context = new RenderContext
         {

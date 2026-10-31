@@ -290,6 +290,7 @@
   <tr class="group-row"><td colspan="4">Bild bearbeiten</td></tr>
   <tr><td><img class="icon" src="images/icon-area-select.png" alt=""></td><td><a href="#tool-area-select">Bereich auswählen und entfernen</a></td><td><kbd>W</kbd></td><td>Teile des Screenshots transparent machen</td></tr>
   <tr><td><img class="icon" src="images/icon-background-eraser.png" alt=""></td><td><a href="#tool-background-eraser">Hintergrundradierer</a></td><td><kbd>D</kbd></td><td>Transparenz malen</td></tr>
+  <tr><td><img class="icon" src="images/icon-frame.png" alt=""></td><td><a href="#tool-frame">Rahmen</a></td><td><kbd>F</kbd></td><td>Rand, Schatten, Ecken, Riss, Vignette</td></tr>
   <tr><td><img class="icon" src="images/icon-crop.png" alt=""></td><td><a href="#tool-crop">Zuschneiden</a></td><td><kbd>C</kbd></td><td>Bildausschnitt festlegen</td></tr>
 </table></div>
 
@@ -535,6 +536,24 @@
 </div>
 <figure class="shot"><img src="images/panel-background-eraser.png" alt="Eigenschaften des Hintergrundradierers"><figcaption>Hintergrundradierer</figcaption></figure>
 </div>
+
+<h3 id="tool-frame"><img class="icon" src="images/icon-frame.png" alt="">Rahmen und Kanteneffekte <kbd>F</kbd></h3>
+<div class="split">
+<div>
+<p>Mit einem Klick bekommt das <em>ganze Bild</em> einen Rand, einen Schatten, abgerundete Ecken, eine abgerissene Kante, eine Vignette oder Graustufen. Die Effekte sind nicht endgültig: Sie wirken sofort auf der Zeichenfläche, lassen sich jederzeit mit <kbd>Strg+Z</kbd> zurücknehmen und werden im Projekt gespeichert. Beim Exportieren, Kopieren und Ziehen des Bildes sehen Sie dasselbe wie im Editor.</p>
+<ul>
+  <li><b>Rand</b> – Farbe und Breite, auf Wunsch je Seite getrennt (etwa für ein Polaroid mit breiter Unterkante).</li>
+  <li><b>Schatten</b> – fällt nach rechts unten und folgt dem Umriss des Bildes, auch bei runden Ecken oder entfernten Bereichen.</li>
+  <li><b>Abgerundete Ecken</b> – Radius in Bildpixeln.</li>
+  <li><b>Abgerissene Kante</b> – wählbare Seiten, Tiefe und Breite der Zacken; <span class="ui">Neu würfeln</span> erzeugt ein anderes Muster. Der Rand hat dann auf allen Seiten dieselbe Breite.</li>
+  <li><b>Vignette</b> – dunkelt die Ränder ab (Stärke und Ausdehnung), auch über den Objekten.</li>
+  <li><b>Graustufen</b> – nur der Screenshot wird grau. Objekte bleiben farbig; Unschärfe und Lupe zeigen den Screenshot ebenfalls grau.</li>
+</ul>
+<p>Jeder Effekt hat einen Schalter in der Kartenüberschrift. Wieder eingeschaltet, hat er die zuletzt benutzten Werte. Die <b>Vorlagen</b> <span class="ui">Dezenter Schatten</span>, <span class="ui">Einfacher Rand</span>, <span class="ui">Polaroid</span>, <span class="ui">Abgerissen unten</span> und <span class="ui">Vignette</span> sind fest eingebaut; eigene Looks speichern Sie wie bei den anderen Werkzeugen als Vorlage. <span class="ui">Rahmen entfernen</span> schaltet alle Effekte in einem Schritt aus.</p>
+</div>
+<figure class="shot"><img src="images/panel-frame.png" alt="Eigenschaften des Rahmen-Werkzeugs"><figcaption>Rahmen</figcaption></figure>
+</div>
+<div class="box note"><p>Rand und Schatten liegen <em>um</em> dem Bild: Das exportierte Bild wird entsprechend größer. Objekte, die Sie in diesem Bereich zeichnen, vergrößern die Zeichenfläche wie gewohnt, und der Rahmen rückt nach außen. Im Zuschnittmodus sind die Effekte ausgeblendet. JPG und BMP füllen transparente Stellen (Schatten, Ecken, Riss) weiß. Ältere Programmversionen zeigen ein Projekt mit Rahmen ohne Rahmen und in Farbe.</p></div>
 
 <h3 id="tool-crop"><img class="icon" src="images/icon-crop.png" alt="">Zuschneiden <kbd>C</kbd></h3>
 <p>Im Zuschnittmodus legen Sie den sichtbaren Bildausschnitt fest. Das Zuschneiden ist nicht endgültig: Das ganze Bild bleibt erhalten, und Sie können den Ausschnitt später wieder vergrößern.</p>

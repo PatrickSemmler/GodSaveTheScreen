@@ -290,6 +290,7 @@
   <tr class="group-row"><td colspan="4">Editing the image</td></tr>
   <tr><td><img class="icon" src="images/icon-area-select.png" alt=""></td><td><a href="#tool-area-select">Select and remove area</a></td><td><kbd>W</kbd></td><td>Making parts of the screenshot transparent</td></tr>
   <tr><td><img class="icon" src="images/icon-background-eraser.png" alt=""></td><td><a href="#tool-background-eraser">Background eraser</a></td><td><kbd>D</kbd></td><td>Painting transparency</td></tr>
+  <tr><td><img class="icon" src="images/icon-frame.png" alt=""></td><td><a href="#tool-frame">Frame</a></td><td><kbd>F</kbd></td><td>Border, shadow, corners, torn edge, vignette</td></tr>
   <tr><td><img class="icon" src="images/icon-crop.png" alt=""></td><td><a href="#tool-crop">Crop</a></td><td><kbd>C</kbd></td><td>Choosing the visible area</td></tr>
 </table></div>
 
@@ -535,6 +536,24 @@
 </div>
 <figure class="shot"><img src="images/panel-background-eraser.png" alt="Background eraser properties"><figcaption>Background eraser</figcaption></figure>
 </div>
+
+<h3 id="tool-frame"><img class="icon" src="images/icon-frame.png" alt="">Frame and edge effects <kbd>F</kbd></h3>
+<div class="split">
+<div>
+<p>With one click the <em>whole image</em> gets a border, a shadow, rounded corners, a torn edge, a vignette or grayscale. The effects are non-destructive: they show immediately on the canvas, can be undone at any time with <kbd>Ctrl+Z</kbd> and are saved in the project. When you export, copy or drag the image you get exactly what the editor shows.</p>
+<ul>
+  <li><b>Border</b> – colour and width, optionally set for each side separately (for example a Polaroid with a wide bottom edge).</li>
+  <li><b>Shadow</b> – falls to the bottom right and follows the outline of the image, including rounded corners or removed areas.</li>
+  <li><b>Rounded corners</b> – radius in image pixels.</li>
+  <li><b>Torn edge</b> – choose the sides, depth and width of the teeth; <span class="ui">New pattern</span> creates a different tear. The border then has the same width on all sides.</li>
+  <li><b>Vignette</b> – darkens the edges (strength and spread), also above the objects.</li>
+  <li><b>Grayscale</b> – only the screenshot turns gray. Objects keep their colours; blur and magnifier show the screenshot in gray as well.</li>
+</ul>
+<p>Each effect has a switch in its card header. Switched on again, it has the values you used last. The <b>presets</b> <span class="ui">Subtle shadow</span>, <span class="ui">Simple border</span>, <span class="ui">Polaroid</span>, <span class="ui">Torn at the bottom</span> and <span class="ui">Vignette</span> are built in; you can save your own looks as presets like with the other tools. <span class="ui">Remove frame</span> switches all effects off in one step.</p>
+</div>
+<figure class="shot"><img src="images/panel-frame.png" alt="Frame tool properties"><figcaption>Frame</figcaption></figure>
+</div>
+<div class="box note"><p>Border and shadow lie <em>around</em> the image: the exported image becomes larger accordingly. Objects you draw in that area enlarge the canvas as usual and the frame moves outwards. The effects are hidden in crop mode. JPG and BMP fill transparent areas (shadow, corners, tear) with white. Older program versions show a project with a frame without the frame and in colour.</p></div>
 
 <h3 id="tool-crop"><img class="icon" src="images/icon-crop.png" alt="">Crop <kbd>C</kbd></h3>
 <p>In crop mode you define the visible part of the image. Cropping is not permanent: the whole image is kept and you can enlarge the area again later.</p>

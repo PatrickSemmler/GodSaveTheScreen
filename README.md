@@ -38,6 +38,7 @@ Requirements: Windows 10 (version 2004) or later. The .NET runtime is included.
 - **Blur** (blur, pixelate, black out) and **magnifier**
 - **Colour emojis** (all Windows emojis except flags) with search in English and German, categories, favourites and skin tones
 - **Images as objects:** insert any WIC format or SVG via tool, drag & drop or `Ctrl+Shift+V`, with rotation, mirroring, outline and shadow
+- **Frame and edge effects:** border (per side), shadow, rounded corners, torn edge, vignette and grayscale for the whole image - non-destructive, with presets such as Polaroid
 - **Remove parts of the image:** make areas transparent using rectangle, ellipse, lasso or magic wand selection, or with the background eraser – non-destructive and restorable at any time
 - **The canvas grows** when objects extend beyond the edge of the image; the extra area is exported as transparent
 - All objects stay editable: selection, handles, layer list, z-order, locking, undo/redo
