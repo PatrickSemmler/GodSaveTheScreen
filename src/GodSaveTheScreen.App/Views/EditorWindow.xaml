@@ -53,6 +53,7 @@
               <MenuItem Header="{l:Loc Mode_Freeform}" Command="{Binding NewCaptureCommand}" CommandParameter="{x:Static cap:CaptureMode.Freeform}" />
               <MenuItem Header="{l:Loc Mode_Fullscreen}" Command="{Binding NewCaptureCommand}" CommandParameter="{x:Static cap:CaptureMode.FullScreen}" />
               <MenuItem Header="{l:Loc Mode_Text}" Command="{Binding NewCaptureCommand}" CommandParameter="{x:Static cap:CaptureMode.Text}" />
+              <MenuItem Header="{l:Loc Mode_Scrolling}" Command="{Binding NewCaptureCommand}" CommandParameter="{x:Static cap:CaptureMode.Scrolling}" />
               <Separator />
               <MenuItem Header="{l:Loc Editor_NewFromClipboard}" Command="{Binding NewFromClipboardCommand}" />
             </ContextMenu>

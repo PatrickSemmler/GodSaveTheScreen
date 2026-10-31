@@ -42,7 +42,7 @@ public interface IHotkeyService
 
 public sealed class HotkeyService : IHotkeyService, IHostedService
 {
-    private static readonly CaptureMode[] Modes = [CaptureMode.Rectangle, CaptureMode.Window, CaptureMode.Freeform, CaptureMode.FullScreen, CaptureMode.Text];
+    private static readonly CaptureMode[] Modes = [CaptureMode.Rectangle, CaptureMode.Window, CaptureMode.Freeform, CaptureMode.FullScreen, CaptureMode.Text, CaptureMode.Scrolling];
 
     private readonly ISettingsService _settings;
     private readonly IServiceProvider _services;

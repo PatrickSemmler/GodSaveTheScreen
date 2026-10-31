@@ -229,6 +229,15 @@ public sealed record AppSettings
     /// <summary>Hotkey „Text aufnehmen“ (Texterkennung).</summary>
     public string HotkeyText { get; init; } = "Ctrl+Shift+D5";
 
+    /// <summary>Hotkey „Scroll-Aufnahme“.</summary>
+    public string HotkeyScroll { get; init; } = "Ctrl+Shift+D6";
+
+    /// <summary>Scroll-Aufnahme: zuerst an den Anfang des Inhalts scrollen (sonst ab der aktuellen Position).</summary>
+    public bool ScrollCaptureToStart { get; init; }
+
+    /// <summary>Scroll-Aufnahme: Wartezeit in Millisekunden nach dem Stillstand für nachladende Seiten (0–2000).</summary>
+    public int ScrollExtraWaitMs { get; init; } = 150;
+
     /// <summary>Sprache der Texterkennung (BCP-47, z. B. <c>de-DE</c>); leer = automatisch (Profilsprachen von Windows).</summary>
     public string OcrLanguage { get; init; } = string.Empty;
 
@@ -287,6 +296,8 @@ public sealed record AppSettings
             AutoSaveDirectory = AutoSaveDirectory ?? string.Empty,
             OcrLanguage = OcrLanguage ?? string.Empty,
             HotkeyText = HotkeyText ?? "Ctrl+Shift+D5",
+            HotkeyScroll = HotkeyScroll ?? "Ctrl+Shift+D6",
+            ScrollExtraWaitMs = Math.Clamp(ScrollExtraWaitMs, 0, 2000),
             LastSaveDirectory = LastSaveDirectory ?? string.Empty,
         };
     }
@@ -297,6 +308,7 @@ public sealed record AppSettings
         CaptureMode.Window => HotkeyWindow,
         CaptureMode.Freeform => HotkeyFreeform,
         CaptureMode.Text => HotkeyText,
+        CaptureMode.Scrolling => HotkeyScroll,
         _ => HotkeyFullScreen,
     };
 
@@ -306,6 +318,7 @@ public sealed record AppSettings
         CaptureMode.Window => this with { HotkeyWindow = gesture },
         CaptureMode.Freeform => this with { HotkeyFreeform = gesture },
         CaptureMode.Text => this with { HotkeyText = gesture },
+        CaptureMode.Scrolling => this with { HotkeyScroll = gesture },
         _ => this with { HotkeyFullScreen = gesture },
     };
 }

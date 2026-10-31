@@ -22,6 +22,11 @@
       <ComboBox ItemsSource="{Binding OcrLanguages}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding OcrLanguage}" MinWidth="220" HorizontalAlignment="Left"
                 AutomationProperties.Name="{l:Loc Settings_OcrLanguage}" />
       <TextBlock Text="{l:Loc Settings_OcrLanguageHint}" TextWrapping="Wrap" Opacity="0.7" Margin="0,4,0,16" />
+      <TextBlock Style="{StaticResource Label}" Text="{l:Loc Settings_ScrollWait}" />
+      <ComboBox ItemsSource="{Binding ScrollWaitChoices}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding ScrollExtraWaitMs}" MinWidth="220" HorizontalAlignment="Left"
+                AutomationProperties.Name="{l:Loc Settings_ScrollWait}" />
+      <CheckBox Content="{l:Loc Settings_ScrollToStart}" IsChecked="{Binding ScrollCaptureToStart}" Margin="0,8,0,0" />
+      <TextBlock Text="{l:Loc Settings_ScrollHint}" TextWrapping="Wrap" Opacity="0.7" Margin="0,0,0,16" />
       <CheckBox Content="{l:Loc Settings_CaptureCursor}" IsChecked="{Binding CaptureCursor}" />
       <CheckBox Content="{l:Loc Settings_RoundedCorners}" IsChecked="{Binding RoundedCornersTransparent}" />
       <CheckBox Content="{l:Loc Settings_FreeformAA}" IsChecked="{Binding FreeformAntiAlias}" />

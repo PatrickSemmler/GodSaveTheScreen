@@ -108,6 +108,7 @@
   <tr><td><b>Freeform</b></td><td><kbd>Ctrl+Shift+3</kbd></td><td>Hold the mouse button and draw any shape around the area (lasso). Outside the shape the image becomes transparent.</td></tr>
   <tr><td><b>Full screen</b></td><td><kbd>Ctrl+Shift+4</kbd></td><td>Immediately captures the monitor the mouse pointer is on. The start window additionally offers “Full screen (all monitors)”.</td></tr>
   <tr><td><b>Capture text</b></td><td><kbd>Ctrl+Shift+5</kbd></td><td>Drag an area; the text in it is recognized and shown in the result window (see <a href="#ocr">Recognizing text</a>). The editor does not open.</td></tr>
+  <tr><td><b>Scrolling capture</b></td><td><kbd>Ctrl+Shift+6</kbd></td><td>Click a window or drag an area; long content is scrolled and joined into one image (see <a href="#capture-scroll">Scrolling capture</a>).</td></tr>
 </table></div>
 
 <h3 id="capture-overlay">Selecting the area</h3>
@@ -150,6 +151,26 @@
 <p>In the <b>result window</b> you can check and correct the text, <span class="ui">Copy</span> it (without a selection <kbd>Ctrl+C</kbd> copies everything), change the <span class="ui">language</span> and <span class="ui">Recognize again</span>. <span class="ui">Separate columns with tabs</span> puts tabs between columns so tables can be pasted into Excel (not every layout fits). <span class="ui">Open in editor</span> takes the captured area over as an image. <kbd>Esc</kbd> closes the window.</p>
 <div class="box note"><p><span class="label">Please check:</span> the recognition confuses similar characters, above all zero and the letter O. Very small text (under about 10 pixels high) is therefore also recognized enlarged. Very long images are recognized in overlapping strips.</p></div>
 <p><b>Languages:</b> by default the Windows profile languages apply; under <a href="#settings-capture">Settings → Capture</a> and in the result window you can pick another installed language. If no language is installed, a message with a button to the Windows language settings appears (<span class="ui">Time &amp; language → Language &amp; region</span>); language packs cannot be installed from GodSaveTheScreen.</p>
+
+<h3 id="capture-scroll">Scrolling capture</h3>
+<p>Capture long content – web pages, documents, lists – as <b>one</b> long image. Start <span class="ui">Scrolling capture</span> (default <kbd>Ctrl+Shift+6</kbd>, in the tray menu, in the start window, in <span class="ui">New</span> in the editor or with <code>--capture scroll</code>) and click the window: the largest scrollable element in it is captured, title bar and menus stay out. Alternatively drag an area.</p>
+<ol class="steps">
+  <li>The capture starts at the <b>current position</b>. With <span class="ui">Scroll to the top first</span> in the control bar (your choice is remembered) the program is scrolled to the top first.</li>
+  <li>GodSaveTheScreen tries on its own how the program can be scrolled (UI Automation, mouse wheel, window messages, keyboard), scrolls step by step, waits each time until the content is still and joins the images. The step size adapts.</li>
+  <li>If the program does not react or the images no longer overlap, the bar switches to <b>manual mode</b>: you scroll yourself and the images are joined continuously. If you scroll too fast, the bar says “Scroll more slowly”; scrolling back to the break point carries on. You can switch with <span class="ui">Automatic</span> / <span class="ui">Manual</span> at any time.</li>
+  <li><kbd>Enter</kbd> or <span class="ui">Done</span> ends the capture, <kbd>Esc</kbd> or <span class="ui">Cancel</span> discards it (after a question if more than two screens have already been captured).</li>
+</ol>
+<p>The result continues like any capture (clipboard, saving, editor). <b>Fixed headers and footers</b> appear exactly once, side bars do not disturb the joining, and a <b>scroll bar</b> at the right edge is cut off. A frame around the area and the control bar show what is captured; neither ever appears in the image. The mouse pointer is never captured (when scrolling with the mouse wheel it briefly jumps over the area and back).</p>
+<div class="box note"><p><span class="label">Limits:</span></p>
+<ul>
+  <li>The result is at most <b>16,384 pixels</b> high (less on some graphics cards). The capture then ends with a notice; the rest is missing.</li>
+  <li>Only <b>vertical</b> scrolling is supported.</li>
+  <li><b>Videos and animations</b> in the area remain visible as fragments.</li>
+  <li>Programs with <b>higher privileges</b> (started as administrator) cannot be scrolled automatically; the capture then switches to manual mode.</li>
+  <li>Pages that <b>load more content</b> while scrolling need a little time: set the extra wait under <a href="#settings-capture">Settings → Capture</a>.</li>
+  <li>Covered or minimized windows cannot be captured. The screen is not frozen: the running program is captured.</li>
+  <li>If the capture takes longer than 5 minutes it ends with the result so far. If the images stop joining in the middle, you get the result so far with a notice about the break point.</li>
+</ul></div>
 
 <h3 id="capture-after">What happens after a capture</h3>
 <p>After every capture GodSaveTheScreen performs the steps configured under <a href="#settings-postcapture">After capture</a> – in this order:</p>
@@ -650,6 +671,7 @@
 <ul>
   <li><b>Default capture mode</b> and <b>default timer</b> (for shortcuts and the tray).</li>
   <li><b>Window capture source</b>: <span class="ui">Snapshot (what was visible)</span> or <span class="ui">Window content (includes covered parts)</span>.</li>
+  <li><b>Scrolling capture</b>: <span class="ui">extra wait for content that loads late</span> (0–2 seconds) and <span class="ui">scroll to the top first</span>, see <a href="#capture-scroll">Scrolling capture</a>.</li>
   <li><b>Capture the mouse cursor</b>.</li>
   <li><b>Make rounded window corners transparent</b> (Windows 11).</li>
   <li><b>Smooth edges of freeform captures</b>.</li>
@@ -694,7 +716,7 @@
   <tr><td><kbd>F1</kbd></td><td>Open this help</td></tr>
   <tr><td><kbd>Shift+F1</kbd></td><td>Help for the current tool, the selection or the settings page</td></tr>
   <tr><td><kbd>Ctrl+F1</kbd></td><td>Show all keyboard shortcuts</td></tr>
-  <tr><td><kbd>Ctrl+Shift+1</kbd> … <kbd>5</kbd></td><td>Capture rectangle / window / freeform / full screen / text (default, changeable)</td></tr>
+  <tr><td><kbd>Ctrl+Shift+1</kbd> … <kbd>6</kbd></td><td>Capture rectangle / window / freeform / full screen / text / scrolling capture (default, changeable)</td></tr>
 </table></div>
 
 <h3 id="shortcuts-editor">In the editor</h3>

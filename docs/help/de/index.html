@@ -108,6 +108,7 @@
   <tr><td><b>Freiform</b></td><td><kbd>Strg+Umschalt+3</kbd></td><td>Mit gedrückter Maustaste eine beliebige Form um den Bereich zeichnen (Lasso). Außerhalb der Form wird das Bild transparent.</td></tr>
   <tr><td><b>Vollbild</b></td><td><kbd>Strg+Umschalt+4</kbd></td><td>Nimmt sofort den Monitor auf, auf dem sich der Mauszeiger befindet. Im Startfenster gibt es zusätzlich „Vollbild (alle Monitore)“.</td></tr>
   <tr><td><b>Text aufnehmen</b></td><td><kbd>Strg+Umschalt+5</kbd></td><td>Bereich aufziehen; der Text darin wird erkannt und im Ergebnisfenster angezeigt (siehe <a href="#ocr">Text erkennen</a>). Der Editor öffnet sich dabei nicht.</td></tr>
+  <tr><td><b>Scroll-Aufnahme</b></td><td><kbd>Strg+Umschalt+6</kbd></td><td>Fenster anklicken oder Bereich aufziehen; langer Inhalt wird gescrollt und als ein Bild zusammengesetzt (siehe <a href="#capture-scroll">Scroll-Aufnahme</a>).</td></tr>
 </table></div>
 
 <h3 id="capture-overlay">Bereich auswählen</h3>
@@ -150,6 +151,26 @@
 <p>Im <b>Ergebnisfenster</b> können Sie den Text prüfen und korrigieren, <span class="ui">Kopieren</span> (ohne Markierung kopiert <kbd>Strg+C</kbd> alles), die <span class="ui">Sprache</span> wechseln und <span class="ui">Erneut erkennen</span>. <span class="ui">Spalten mit Tabulator trennen</span> setzt Tabulatoren zwischen Spalten, damit sich Tabellen in Excel einfügen lassen (nicht jedes Layout passt). <span class="ui">Im Editor öffnen</span> übernimmt den aufgenommenen Bereich als Bild. <kbd>Esc</kbd> schließt das Fenster.</p>
 <div class="box note"><p><span class="label">Bitte prüfen:</span> Die Erkennung verwechselt ähnliche Zeichen, vor allem die Null und den Buchstaben O. Sehr kleine Schrift (unter etwa 10 Pixel Höhe) wird deshalb zusätzlich vergrößert erkannt. Sehr lange Bilder werden in überlappenden Streifen erkannt.</p></div>
 <p><b>Sprachen:</b> Standardmäßig gelten die Profilsprachen von Windows; unter <a href="#settings-capture">Einstellungen → Aufnahme</a> und im Ergebnisfenster lässt sich eine andere installierte Sprache wählen. Ist keine Sprache installiert, erscheint eine Meldung mit einer Schaltfläche zu den Windows-Spracheinstellungen (<span class="ui">Zeit und Sprache → Sprache und Region</span>); Sprachpakete lassen sich aus GodSaveTheScreen heraus nicht installieren.</p>
+
+<h3 id="capture-scroll">Scroll-Aufnahme</h3>
+<p>Lange Inhalte – Webseiten, Dokumente, Listen – nehmen Sie als <b>ein</b> langes Bild auf. Starten Sie <span class="ui">Scroll-Aufnahme</span> (Standard <kbd>Strg+Umschalt+6</kbd>, im Tray-Menü, im Startfenster, in <span class="ui">Neu</span> im Editor oder mit <code>--capture scroll</code>) und klicken Sie das Fenster an: Aufgenommen wird das größte scrollbare Element darin, Titelleiste und Menüs bleiben draußen. Alternativ ziehen Sie einen Bereich auf.</p>
+<ol class="steps">
+  <li>Die Aufnahme beginnt an der <b>aktuellen Position</b>. Mit <span class="ui">Zuerst zum Anfang scrollen</span> in der Steuerleiste (die Wahl wird gemerkt) scrollt das Programm zuerst nach oben.</li>
+  <li>GodSaveTheScreen probiert selbst, wie sich das Programm scrollen lässt (UI-Automation, Mausrad, Fensternachrichten, Tastatur), scrollt Schritt für Schritt, wartet jeweils, bis der Inhalt ruhig steht, und setzt die Bilder zusammen. Die Schrittgröße passt sich an.</li>
+  <li>Reagiert das Programm nicht oder gehen die Bilder nicht mehr ineinander über, wechselt die Leiste in den <b>manuellen Modus</b>: Sie scrollen selbst, die Bilder werden laufend zusammengesetzt. Bei zu schnellem Scrollen meldet die Leiste „Langsamer scrollen“; Zurückscrollen bis zur Bruchstelle macht weiter. Den Modus können Sie jederzeit mit <span class="ui">Automatisch</span> / <span class="ui">Manuell</span> wechseln.</li>
+  <li><kbd>Eingabe</kbd> oder <span class="ui">Fertig</span> beendet die Aufnahme, <kbd>Esc</kbd> oder <span class="ui">Abbrechen</span> verwirft sie (nach Rückfrage, wenn schon mehr als zwei Bildschirme aufgenommen wurden).</li>
+</ol>
+<p>Das Ergebnis läuft wie jede Aufnahme weiter (Zwischenablage, Speichern, Editor). <b>Feststehende Kopf- und Fußzeilen</b> erscheinen genau einmal, Seitenleisten stören das Zusammensetzen nicht, und eine <b>Bildlaufleiste</b> am rechten Rand wird abgeschnitten. Ein Rahmen um den Bereich und die Steuerleiste zeigen, was aufgenommen wird; beide erscheinen nie im Bild. Der Mauszeiger wird nie aufgenommen (beim Scrollen mit dem Mausrad springt er kurz über den Bereich und zurück).</p>
+<div class="box note"><p><span class="label">Grenzen:</span></p>
+<ul>
+  <li>Das Ergebnis ist höchstens <b>16.384 Pixel</b> hoch (bei manchen Grafikkarten weniger). Dann endet die Aufnahme mit einem Hinweis; der Rest fehlt.</li>
+  <li>Es wird nur <b>senkrecht</b> gescrollt.</li>
+  <li><b>Videos und Animationen</b> im Bereich bleiben als Bruchstücke sichtbar.</li>
+  <li>Programme mit <b>höheren Rechten</b> (als Administrator gestartet) lassen sich nicht automatisch scrollen; die Aufnahme geht dann in den manuellen Modus.</li>
+  <li>Seiten, die beim Scrollen <b>nachladen</b>, brauchen etwas Zeit: Die Zusatzwartezeit stellen Sie unter <a href="#settings-capture">Einstellungen → Aufnahme</a> ein.</li>
+  <li>Verdeckte oder minimierte Fenster lassen sich nicht aufnehmen. Der Bildschirm wird dabei nicht eingefroren: aufgenommen wird das laufende Programm.</li>
+  <li>Dauert die Aufnahme länger als 5 Minuten, endet sie mit dem bisherigen Ergebnis. Bricht die Verbindung der Bilder mittendrin ab, erhalten Sie das bisherige Ergebnis mit einem Hinweis auf die Bruchstelle.</li>
+</ul></div>
 
 <h3 id="capture-after">Was nach der Aufnahme passiert</h3>
 <p>Nach jeder Aufnahme führt GodSaveTheScreen die Schritte aus, die Sie unter <a href="#settings-postcapture">Nach der Aufnahme</a> eingestellt haben – in dieser Reihenfolge:</p>
@@ -651,6 +672,7 @@
   <li><b>Standard-Aufnahmemodus</b> und <b>Standard-Timer</b> (für Tastenkürzel und Tray).</li>
   <li><b>Quelle der Fensteraufnahme</b>: <span class="ui">Snapshot (wie sichtbar)</span> oder <span class="ui">Fensterinhalt (auch verdeckte Teile)</span>.</li>
   <li><b>Sprache der Texterkennung</b>: automatisch (Windows-Sprachen) oder eine installierte Sprache, siehe <a href="#ocr">Text erkennen</a>.</li>
+  <li><b>Scroll-Aufnahme</b>: <span class="ui">Zusatzwartezeit für nachladende Inhalte</span> (0–2 Sekunden) und <span class="ui">zuerst zum Anfang scrollen</span>, siehe <a href="#capture-scroll">Scroll-Aufnahme</a>.</li>
   <li><b>Mauszeiger aufnehmen</b>.</li>
   <li><b>Abgerundete Fensterecken transparent machen</b> (Windows 11).</li>
   <li><b>Kanten der Freiformaufnahme glätten</b>.</li>
@@ -694,7 +716,7 @@
   <tr><td><kbd>F1</kbd></td><td>Diese Hilfe öffnen</td></tr>
   <tr><td><kbd>Umschalt+F1</kbd></td><td>Hilfe zum aktuellen Werkzeug, zur Auswahl oder zur Einstellungsseite</td></tr>
   <tr><td><kbd>Strg+F1</kbd></td><td>Alle Tastenkürzel anzeigen</td></tr>
-  <tr><td><kbd>Strg+Umschalt+1</kbd> … <kbd>5</kbd></td><td>Aufnahme Rechteck / Fenster / Freiform / Vollbild / Text (Standard, änderbar)</td></tr>
+  <tr><td><kbd>Strg+Umschalt+1</kbd> … <kbd>6</kbd></td><td>Aufnahme Rechteck / Fenster / Freiform / Vollbild / Text / Scroll-Aufnahme (Standard, änderbar)</td></tr>
 </table></div>
 
 <h3 id="shortcuts-editor">Im Editor</h3>

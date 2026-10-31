@@ -53,6 +53,7 @@ public sealed class CaptureCoordinator : ICaptureLauncher
     private readonly IDialogService _dialogs;
     private readonly ILogger<CaptureCoordinator> _logger;
     private readonly IOcrResultPresenter? _ocr;
+    private readonly IScrollCaptureSession? _scroll;
     private CancellationTokenSource? _cancellation;
 
     public CaptureCoordinator(
@@ -66,7 +67,8 @@ public sealed class CaptureCoordinator : ICaptureLauncher
         ISettingsService settings,
         IDialogService dialogs,
         ILogger<CaptureCoordinator> logger,
-        IOcrResultPresenter? ocr = null)
+        IOcrResultPresenter? ocr = null,
+        IScrollCaptureSession? scroll = null)
     {
         _capture = capture;
         _monitors = monitors;
@@ -79,6 +81,7 @@ public sealed class CaptureCoordinator : ICaptureLauncher
         _dialogs = dialogs;
         _logger = logger;
         _ocr = ocr;
+        _scroll = scroll;
     }
 
     public bool IsCapturing { get; private set; }
@@ -101,6 +104,7 @@ public sealed class CaptureCoordinator : ICaptureLauncher
 
         CaptureResultContext? result = null;
         PixelBuffer? textImage = null;
+        string? notice = null;
         var hidden = _visibility.HideAll();
         try
         {
@@ -113,8 +117,8 @@ public sealed class CaptureCoordinator : ICaptureLauncher
             await Task.Delay(HideAnimationDelay, token);
 
             var currentMonitor = _monitors.GetMonitorAtCursor();
-            // „Text aufnehmen“ nimmt ohne Mauszeiger auf: er stört die Erkennung.
-            var snapshot = _capture.CaptureVirtualScreen(request.Mode != CaptureMode.Text && _settings.Current.CaptureCursor);
+            // „Text aufnehmen“ und die Scroll-Aufnahme nehmen ohne Mauszeiger auf: er stört die Erkennung bzw. wäre in jedem Teilbild zu sehen.
+            var snapshot = _capture.CaptureVirtualScreen(request.Mode is not (CaptureMode.Text or CaptureMode.Scrolling) && _settings.Current.CaptureCursor);
             _logger.LogInformation(
                 "Aufnahme {Mode}: Snapshot {Width}x{Height} bei ({Left},{Top}), {Monitors} Monitor(e), {Windows} Fenster",
                 request.Mode, snapshot.Image.Width, snapshot.Image.Height, snapshot.VirtualLeft, snapshot.VirtualTop, snapshot.Monitors.Count, snapshot.Windows.Count);
@@ -122,6 +126,10 @@ public sealed class CaptureCoordinator : ICaptureLauncher
             if (request.Mode == CaptureMode.Text)
             {
                 textImage = await CaptureTextAsync(snapshot, token);
+            }
+            else if (request.Mode == CaptureMode.Scrolling)
+            {
+                (result, notice) = await CaptureScrollingAsync(snapshot, currentMonitor, token);
             }
             else
             {
@@ -151,8 +159,45 @@ public sealed class CaptureCoordinator : ICaptureLauncher
         }
         else if (result is not null)
         {
+            if (notice is not null)
+            {
+                _dialogs.ShowInfo(Strings.Mode_Scrolling, notice);
+            }
+
             await RunActionsAsync(result);
         }
+    }
+
+    /// <summary>
+    /// Scroll-Aufnahme: Fenster oder Bereich wählen (Fenstermodus der Auswahl), danach nimmt die Sitzung scrollend auf. Das Ergebnis
+    /// läuft wie jede Aufnahme durch die Nachaufnahme-Aktionen. Der Einfrier-Snapshot dient nur der Auswahl.
+    /// </summary>
+    private async Task<(CaptureResultContext? Result, string? Notice)> CaptureScrollingAsync(
+        ScreenSnapshot snapshot, MonitorInfo monitor, CancellationToken token)
+    {
+        if (_scroll is null)
+        {
+            return (null, null);
+        }
+
+        var selection = await _selection.SelectAsync(snapshot, CaptureMode.Window, Strings.Overlay_HintScroll, token);
+        if (selection is null)
+        {
+            return (null, null);
+        }
+
+        var outcome = await _scroll.RunAsync(selection, token);
+        if (outcome is null)
+        {
+            return (null, null);
+        }
+
+        var document = new ImageDocument(outcome.Image, monitor.DpiX, monitor.DpiY)
+        {
+            IsDirty = true,
+            Metadata = new DocumentMetadata(CaptureMode.Scrolling.ToString(), selection.Window?.Title),
+        };
+        return (new CaptureResultContext(document, CaptureMode.Scrolling, selection.Window?.Title, DateTimeOffset.Now), outcome.Notice);
     }
 
     /// <summary>Bereich wählen (immer als Rechteck) und zuschneiden; <c>null</c> bei Abbruch.</summary>

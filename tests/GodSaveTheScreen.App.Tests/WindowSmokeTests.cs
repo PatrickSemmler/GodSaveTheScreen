@@ -62,6 +62,8 @@ public sealed class WindowSmokeTests
         EnsureApplication();
         StartWindowSmoke();
         EditorWindowSmoke();
+        ScrollCaptureSmoke();
+        LongDocumentSmoke();
         var dialog = new MessageDialog("Titel", "Nachricht", DialogKind.Warning, [new DialogButton("OK", 0, IsPrimary: true)]);
         dialog.Show();
         dialog.Close();
@@ -82,6 +84,50 @@ public sealed class WindowSmokeTests
                 navigation.Navigate(pageType).ShouldBeTrue(pageType.Name);
                 window.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
             }
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
+
+    /// <summary>Steuerleiste und Rahmen der Scroll-Aufnahme: XAML lädt, Ausschluss von der Aufnahme gelingt, Anzeige reagiert.</summary>
+    private static void ScrollCaptureSmoke()
+    {
+        var settings = new FakeSettings { Current = new AppSettings { ScrollCaptureToStart = true } };
+        var exclusion = new WindowExclusionService(settings, Microsoft.Extensions.Logging.Abstractions.NullLogger<WindowExclusionService>.Instance);
+        var view = new GodSaveTheScreen.App.Capture.ScrollCaptureView(new GodSaveTheScreen.App.Capture.ScrollCaptureBar(), new GodSaveTheScreen.App.Capture.ScrollCaptureFrame(), exclusion, settings);
+        try
+        {
+            var monitor = new GodSaveTheScreen.Capture.MonitorInfo(1, new GodSaveTheScreen.Core.Geometry.PixelRect(0, 0, 1920, 1080), new GodSaveTheScreen.Core.Geometry.PixelRect(0, 0, 1920, 1040), 96, 96, true, "M");
+            view.TryShow(new GodSaveTheScreen.Core.Geometry.PixelRect(100, 100, 800, 600), monitor).ShouldBeTrue();
+            view.ToStartRequested.ShouldBeTrue();
+            view.ManualMode.ShouldBeFalse();
+            view.SetStatus("Status");
+            view.SetProgress(1234, 16384);
+            view.SetPreview(new GodSaveTheScreen.Core.Imaging.PixelBuffer(10, 20));
+            view.SetManual(true);
+            view.ManualMode.ShouldBeTrue();
+            view.LockStartOption();
+            Application.Current.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+        }
+        finally
+        {
+            view.Dispose();
+        }
+    }
+
+    /// <summary>Ein Dokument mit der Höchstlänge der Scroll-Aufnahme (16.384 Pixel) öffnet und zeigt sich im Editor.</summary>
+    private static void LongDocumentSmoke()
+    {
+        var document = new GodSaveTheScreen.Core.Imaging.ImageDocument(new GodSaveTheScreen.Core.Imaging.PixelBuffer(300, GodSaveTheScreen.App.Capture.ScrollCaptureSession.MaxHeightLimit));
+        var h = new EditorHarness(document);
+        var window = new EditorWindow(h.ViewModel, Substitute.For<IEditorService>(), Substitute.For<IThemeService>(), Substitute.For<IAppShell>());
+        window.Show();
+        try
+        {
+            Idle(window);
+            h.ViewModel.ImageSizeText.ShouldContain("16384");
         }
         finally
         {

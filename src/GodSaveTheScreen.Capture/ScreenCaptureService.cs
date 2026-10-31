@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using GodSaveTheScreen.Core.Geometry;
 using GodSaveTheScreen.Core.Imaging;
 using Windows.Win32;
 using Windows.Win32.Foundation;
@@ -31,7 +32,23 @@ public sealed class ScreenCaptureService : IScreenCaptureService
 
         // Fensterliste zum selben Zeitpunkt wie das Abbild.
         var windows = _windows.GetTopLevelWindows();
+        var buffer = Grab(left, top, width, height, includeCursor);
+        return new ScreenSnapshot(buffer, left, top, _monitors.GetMonitors(), windows);
+    }
 
+    public PixelBuffer CaptureRegion(PixelRect region, bool includeCursor = false)
+    {
+        if (region.Width <= 0 || region.Height <= 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(region), "Der Bereich ist leer.");
+        }
+
+        return Grab(region.X, region.Y, region.Width, region.Height, includeCursor);
+    }
+
+    /// <summary>Kopiert ein Rechteck des virtuellen Desktops (gemeinsamer GDI-Teil von Snapshot und Bereichsaufnahme).</summary>
+    private static PixelBuffer Grab(int left, int top, int width, int height, bool includeCursor)
+    {
         var buffer = new PixelBuffer(width, height);
         var screenDc = PInvoke.GetDC(HWND.Null);
         if (screenDc.IsNull)
@@ -85,7 +102,7 @@ public sealed class ScreenCaptureService : IScreenCaptureService
             _ = PInvoke.ReleaseDC(HWND.Null, screenDc);
         }
 
-        return new ScreenSnapshot(buffer, left, top, _monitors.GetMonitors(), windows);
+        return buffer;
     }
 
     internal static unsafe void ReadPixels(HDC dc, HBITMAP bitmap, PixelBuffer buffer)

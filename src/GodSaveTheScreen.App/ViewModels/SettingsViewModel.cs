@@ -144,7 +144,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         ];
 
         Hotkeys = new ObservableCollection<HotkeyEntryViewModel>(
-            new[] { CaptureMode.Rectangle, CaptureMode.Window, CaptureMode.Freeform, CaptureMode.FullScreen, CaptureMode.Text }
+            new[] { CaptureMode.Rectangle, CaptureMode.Window, CaptureMode.Freeform, CaptureMode.FullScreen, CaptureMode.Text, CaptureMode.Scrolling }
                 .Select(mode => new HotkeyEntryViewModel(mode, CaptureModeNames.Get(mode), settings.Current.GetHotkey(mode))));
         foreach (var entry in Hotkeys)
         {
@@ -244,6 +244,25 @@ public sealed partial class SettingsViewModel : ObservableObject
         get => _settings.Current.OcrLanguage;
         set => Update(s => s with { OcrLanguage = value ?? string.Empty });
     }
+
+    /// <summary>Scroll-Aufnahme: zuerst zum Anfang des Inhalts scrollen.</summary>
+    public bool ScrollCaptureToStart
+    {
+        get => _settings.Current.ScrollCaptureToStart;
+        set => Update(s => s with { ScrollCaptureToStart = value });
+    }
+
+    /// <summary>Zusatzwartezeit der Scroll-Aufnahme in Millisekunden.</summary>
+    public int ScrollExtraWaitMs
+    {
+        get => _settings.Current.ScrollExtraWaitMs;
+        set => Update(s => s with { ScrollExtraWaitMs = Math.Clamp(value, 0, 2000) });
+    }
+
+    public IReadOnlyList<Choice<int>> ScrollWaitChoices { get; } =
+        new[] { 0, 100, 150, 300, 500, 1000, 2000 }
+            .Select(ms => new Choice<int>(string.Format(CultureInfo.CurrentUICulture, Strings.Settings_ScrollWaitFormat, ms), ms))
+            .ToList();
 
     private List<Choice<string>> BuildOcrLanguages()
     {

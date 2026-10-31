@@ -307,7 +307,7 @@ public sealed class StartViewModelTimerTests
     {
         var (vm, _) = Create();
 
-        vm.Modes.Select(m => m.Mode).Distinct().Count().ShouldBe(5);
+        vm.Modes.Select(m => m.Mode).Distinct().Count().ShouldBe(6);
     }
 }
 

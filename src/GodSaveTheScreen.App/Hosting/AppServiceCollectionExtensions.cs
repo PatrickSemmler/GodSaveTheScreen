@@ -25,6 +25,9 @@ public static class AppServiceCollectionExtensions
         services.AddSingleton<IWindowVisibilityService, WindowVisibilityService>();
         services.AddSingleton<ICountdownService, CountdownService>();
         services.AddSingleton<ISelectionService, SelectionService>();
+        services.AddSingleton<IScrollCaptureKeys, ScrollCaptureKeys>();
+        services.AddSingleton<IScrollCaptureViewFactory, ScrollCaptureViewFactory>();
+        services.AddSingleton<IScrollCaptureSession, ScrollCaptureSession>();
         services.AddSingleton<IAutostartRegistry, RunKeyAutostartRegistry>();
         services.AddSingleton<IAutostartService, AutostartService>();
         services.AddSingleton<IHelpService, HelpService>();

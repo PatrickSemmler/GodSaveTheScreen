@@ -91,6 +91,7 @@ public static class CommandLineParser
         "full" => CaptureMode.FullScreen,
         "freeform" => CaptureMode.Freeform,
         "text" => CaptureMode.Text,
+        "scroll" => CaptureMode.Scrolling,
         _ => null,
     };
 }

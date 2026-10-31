@@ -28,6 +28,7 @@ Voraussetzung: Windows 10 (Version 2004) oder neuer. Die .NET-Laufzeit ist entha
 - Frei einstellbarer Timer, mehrere Monitore mit unterschiedlicher Skalierung
 - Globale Hotkeys, Tray-Symbol, Startfenster, Windows-Sprungliste
 - Nach der Aufnahme optional: in die Zwischenablage kopieren, automatisch speichern, Editor öffnen
+- **Scroll-Aufnahme:** Lange Inhalte – Webseiten, Dokumente, Listen – werden zu einem Bild (bis 16.384 px Höhe). Das Programm wird automatisch gescrollt (UI-Automation, Mausrad, Fensternachrichten oder Tastatur, was wirkt) oder Sie scrollen selbst, und die Bilder werden laufend zusammengesetzt. Feststehende Kopf- und Fußzeilen erscheinen einmal, Seitenleisten und Bildlaufleisten stören nicht. `Strg+Umschalt+6`, Tray, Startfenster oder `--capture scroll`.
 - **Text aufnehmen (OCR):** Bereich aufziehen, und der Text darin wird lokal mit der Windows-Texterkennung erkannt und in einem Ergebnisfenster zum Prüfen, Korrigieren und Kopieren angezeigt (auch als Tabelle mit Tabulatoren); im Editor mit `Strg+Umschalt+T` für das ganze Bild oder den ausgewählten Bereich. Braucht ein installiertes Windows-Sprachpaket (Einstellungen → Zeit und Sprache → Sprache und Region); nichts verlässt den Rechner.
 
 ### Editor
@@ -85,7 +86,7 @@ Voraussetzung: Windows 10 (Version 2004) oder neuer. Die .NET-Laufzeit ist entha
 
 | Taste | Funktion |
 |---|---|
-| `Strg+Umschalt+1` … `5` | Aufnahme: Rechteck / Fenster / Freiform / Vollbild / Text (Standard, änderbar) |
+| `Strg+Umschalt+1` … `6` | Aufnahme: Rechteck / Fenster / Freiform / Vollbild / Text / Scroll-Aufnahme (Standard, änderbar) |
 | `V` `R` `E` `L` `A` `G` `P` | Auswahl, Rechteck, Ellipse, Linie, Pfeil, Dreieck, Polygon |
 | `T` `K` `S` `M` `J` `I` | Text, Sprechblase, Stempel, Marker, Emoji, Bild |
 | `B` `H` `X` `U` `Z` `C` | Stift, Textmarker, Radierer, Unschärfe, Lupe, Zuschneiden |

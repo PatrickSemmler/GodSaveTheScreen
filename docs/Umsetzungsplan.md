@@ -123,6 +123,8 @@ Abhängigkeitsrichtung: `App → Rendering → Core`, `App → Capture → Core`
 5. Ergebnis wird aus dem Snapshot ausgeschnitten → `PixelBuffer` → neues `ImageDocument`.
 6. Nachaufnahme-Aktionen gemäß Einstellungen: Editor öffnen (immer), Zwischenablage (optional), Auto-Speichern (optional).
 
+*Ausnahme Scroll-Aufnahme (M17):* Der Snapshot dient nur der Auswahl (Fenstermodus des Overlays). Aufgenommen wird danach live per `IScreenCaptureService.CaptureRegion` – das Freeze-Frame-Prinzip gilt für diesen Modus nicht, denn das Zielprogramm muss scrollen. Eigene Fenster (Rahmen, Steuerleiste) sind dabei immer von der Aufnahme ausgeschlossen.
+
 **Bearbeiten:**
 - Werkzeug (`ToolBase`) verarbeitet Mausereignisse auf dem Canvas → erzeugt/ändert Annotationen ausschließlich über `IUndoableAction`s im `UndoManager`.
 - Canvas zeigt Basisbild + `ItemsControl` mit je einem `AnnotationElement` (eigenes `FrameworkElement`, `OnRender` → `AnnotationRenderer`).
@@ -192,7 +194,7 @@ Jeder Meilenstein liefert eine lauffähige, getestete Anwendung mit abgeschlosse
 | M14 | Rahmen und Kanteneffekte | Rand, Schatten, runde Ecken, abgerissene Kante, Vignette, Graustufen für das ganze Bild, nicht-destruktiv | [M14](meilensteine/M14-Rahmen-Kanteneffekte.md) |
 | M15 | Bild verschönern | Hintergrund (Farbe, Verlauf, Bild), Innenabstand, festes Seitenverhältnis, Vorlagen | [M15](meilensteine/M15-Bild-verschoenern.md) |
 | M16 | Texterkennung | Aufnahmeart „Text aufnehmen“ und Befehl im Editor, lokal über `Windows.Media.Ocr` | [M16](meilensteine/M16-Texterkennung.md) |
-| M17 | Scroll-Capture (geplant) | Lange Inhalte vertikal aufnehmen, automatisch oder von Hand gescrollt, bis 16.384 px | [M17](meilensteine/M17-Scroll-Capture.md) |
+| M17 | Scroll-Capture | Lange Inhalte vertikal aufnehmen, automatisch oder von Hand gescrollt, bis 16.384 px | [M17](meilensteine/M17-Scroll-Capture.md) |
 
 ### 4.1 Abhängigkeiten der Meilensteine
 
@@ -240,7 +242,7 @@ M16 und M17 nach M13, unabhängig voneinander und von M14/M15 (vereinbarte Reihe
 | M14 | 6 |
 | M15 | 4 |
 | M16 | 5 |
-| M17 (geplant) | 13 |
+| M17 | 13 |
 | **Summe M14–M17** | **≈ 28** |
 
 ## 5. Bedienkonzept (Übersicht)

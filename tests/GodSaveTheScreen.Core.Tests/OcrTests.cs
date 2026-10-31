@@ -437,7 +437,8 @@ public sealed class OcrSettingsTests
     [Fact]
     public void Aufnahmemodus_TextStehtAmEnde()
     {
-        Enum.GetValues<CaptureMode>().Last().ShouldBe(CaptureMode.Text);
+        Enum.GetValues<CaptureMode>().Last().ShouldBe(CaptureMode.Scrolling);
+        ((int)CaptureMode.Text).ShouldBe(4);
         ((int)CaptureMode.Rectangle).ShouldBe(0);
         ((int)CaptureMode.Window).ShouldBe(1);
         ((int)CaptureMode.FullScreen).ShouldBe(2);

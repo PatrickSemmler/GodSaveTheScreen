@@ -12,6 +12,7 @@ public static class CaptureModeNames
         CaptureMode.Window => Strings.Mode_Window,
         CaptureMode.Freeform => Strings.Mode_Freeform,
         CaptureMode.Text => Strings.Mode_Text,
+        CaptureMode.Scrolling => Strings.Mode_Scrolling,
         _ => Strings.Mode_Fullscreen,
     };
 }

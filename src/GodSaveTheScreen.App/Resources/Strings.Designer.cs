@@ -1292,4 +1292,62 @@ public static class Strings
     public static string Settings_OcrLanguage => ResourceManager.GetString("Settings_OcrLanguage", Culture) ?? "Settings_OcrLanguage";
 
     public static string Settings_OcrLanguageHint => ResourceManager.GetString("Settings_OcrLanguageHint", Culture) ?? "Settings_OcrLanguageHint";
+
+    public static string Mode_Scrolling => ResourceManager.GetString("Mode_Scrolling", Culture) ?? "Mode_Scrolling";
+
+    public static string Overlay_HintScroll => ResourceManager.GetString("Overlay_HintScroll", Culture) ?? "Overlay_HintScroll";
+
+    public static string Scroll_Preparing => ResourceManager.GetString("Scroll_Preparing", Culture) ?? "Scroll_Preparing";
+
+    public static string Scroll_StatusAuto => ResourceManager.GetString("Scroll_StatusAuto", Culture) ?? "Scroll_StatusAuto";
+
+    public static string Scroll_StatusManual => ResourceManager.GetString("Scroll_StatusManual", Culture) ?? "Scroll_StatusManual";
+
+    public static string Scroll_StatusNoReaction => ResourceManager.GetString("Scroll_StatusNoReaction", Culture) ?? "Scroll_StatusNoReaction";
+
+    public static string Scroll_StatusStalled => ResourceManager.GetString("Scroll_StatusStalled", Culture) ?? "Scroll_StatusStalled";
+
+    public static string Scroll_StatusSlowDown => ResourceManager.GetString("Scroll_StatusSlowDown", Culture) ?? "Scroll_StatusSlowDown";
+
+    public static string Scroll_StatusPaused => ResourceManager.GetString("Scroll_StatusPaused", Culture) ?? "Scroll_StatusPaused";
+
+    public static string Scroll_Finish => ResourceManager.GetString("Scroll_Finish", Culture) ?? "Scroll_Finish";
+
+    public static string Scroll_Cancel => ResourceManager.GetString("Scroll_Cancel", Culture) ?? "Scroll_Cancel";
+
+    public static string Scroll_ModeAuto => ResourceManager.GetString("Scroll_ModeAuto", Culture) ?? "Scroll_ModeAuto";
+
+    public static string Scroll_ModeManual => ResourceManager.GetString("Scroll_ModeManual", Culture) ?? "Scroll_ModeManual";
+
+    public static string Scroll_ToStart => ResourceManager.GetString("Scroll_ToStart", Culture) ?? "Scroll_ToStart";
+
+    public static string Scroll_HeightFormat => ResourceManager.GetString("Scroll_HeightFormat", Culture) ?? "Scroll_HeightFormat";
+
+    public static string Scroll_BarName => ResourceManager.GetString("Scroll_BarName", Culture) ?? "Scroll_BarName";
+
+    public static string Scroll_PreviewName => ResourceManager.GetString("Scroll_PreviewName", Culture) ?? "Scroll_PreviewName";
+
+    public static string Scroll_DiscardTitle => ResourceManager.GetString("Scroll_DiscardTitle", Culture) ?? "Scroll_DiscardTitle";
+
+    public static string Scroll_DiscardMessage => ResourceManager.GetString("Scroll_DiscardMessage", Culture) ?? "Scroll_DiscardMessage";
+
+    public static string Scroll_NoticeLimit => ResourceManager.GetString("Scroll_NoticeLimit", Culture) ?? "Scroll_NoticeLimit";
+
+    public static string Scroll_NoticePartial => ResourceManager.GetString("Scroll_NoticePartial", Culture) ?? "Scroll_NoticePartial";
+
+    public static string Scroll_NoticeTimeout => ResourceManager.GetString("Scroll_NoticeTimeout", Culture) ?? "Scroll_NoticeTimeout";
+
+    public static string Scroll_NoticeFixed => ResourceManager.GetString("Scroll_NoticeFixed", Culture) ?? "Scroll_NoticeFixed";
+
+    public static string Scroll_ErrorExclude => ResourceManager.GetString("Scroll_ErrorExclude", Culture) ?? "Scroll_ErrorExclude";
+
+    public static string Scroll_ErrorRegion => ResourceManager.GetString("Scroll_ErrorRegion", Culture) ?? "Scroll_ErrorRegion";
+
+    public static string Settings_ScrollToStart => ResourceManager.GetString("Settings_ScrollToStart", Culture) ?? "Settings_ScrollToStart";
+
+    public static string Settings_ScrollWait => ResourceManager.GetString("Settings_ScrollWait", Culture) ?? "Settings_ScrollWait";
+
+    public static string Settings_ScrollWaitFormat => ResourceManager.GetString("Settings_ScrollWaitFormat", Culture) ?? "Settings_ScrollWaitFormat";
+
+    public static string Settings_ScrollHint => ResourceManager.GetString("Settings_ScrollHint", Culture) ?? "Settings_ScrollHint";
 }

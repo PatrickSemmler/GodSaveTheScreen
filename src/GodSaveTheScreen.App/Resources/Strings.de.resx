@@ -661,4 +661,33 @@ Tipp: In den Einstellungen können Sie die Taste Druck einem Aufnahmemodus zuwei
   <data name="Shortcut_RecognizeText" xml:space="preserve"><value>Text erkennen</value></data>
   <data name="Settings_OcrLanguage" xml:space="preserve"><value>Sprache der Texterkennung</value></data>
   <data name="Settings_OcrLanguageHint" xml:space="preserve"><value>Es können nur installierte Windows-Sprachpakete verwendet werden. Weitere fügen Sie in den Windows-Einstellungen hinzu. Die Sprache lässt sich auch im Ergebnisfenster ändern.</value></data>
+  <data name="Mode_Scrolling" xml:space="preserve"><value>Scroll-Aufnahme</value></data>
+  <data name="Overlay_HintScroll" xml:space="preserve"><value>Fenster anklicken oder den Bereich aufziehen, der gescrollt werden soll · Esc zum Abbrechen</value></data>
+  <data name="Scroll_Preparing" xml:space="preserve"><value>Scrollmethode wird geprüft …</value></data>
+  <data name="Scroll_StatusAuto" xml:space="preserve"><value>Scrollt automatisch …</value></data>
+  <data name="Scroll_StatusManual" xml:space="preserve"><value>Scrollen Sie jetzt selbst. Die Bilder werden laufend zusammengesetzt. Eingabe beendet, Esc bricht ab.</value></data>
+  <data name="Scroll_StatusNoReaction" xml:space="preserve"><value>Das Programm reagiert nicht auf automatisches Scrollen (läuft es mit Administratorrechten?). Bitte scrollen Sie selbst.</value></data>
+  <data name="Scroll_StatusStalled" xml:space="preserve"><value>Beim automatischen Scrollen ging die Überlappung verloren. Bitte scrollen Sie langsam selbst weiter.</value></data>
+  <data name="Scroll_StatusSlowDown" xml:space="preserve"><value>Langsamer scrollen – keine Überlappung zum letzten Bild.</value></data>
+  <data name="Scroll_StatusPaused" xml:space="preserve"><value>Pausiert: Bringen Sie das Fenster wieder nach vorn.</value></data>
+  <data name="Scroll_Finish" xml:space="preserve"><value>Fertig</value></data>
+  <data name="Scroll_Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="Scroll_ModeAuto" xml:space="preserve"><value>Automatisch</value></data>
+  <data name="Scroll_ModeManual" xml:space="preserve"><value>Manuell</value></data>
+  <data name="Scroll_ToStart" xml:space="preserve"><value>Zuerst zum Anfang scrollen</value></data>
+  <data name="Scroll_HeightFormat" xml:space="preserve"><value>{0} / {1} px</value></data>
+  <data name="Scroll_BarName" xml:space="preserve"><value>Steuerung der Scroll-Aufnahme</value></data>
+  <data name="Scroll_PreviewName" xml:space="preserve"><value>Vorschau der bisherigen Aufnahme</value></data>
+  <data name="Scroll_DiscardTitle" xml:space="preserve"><value>Aufnahme abbrechen</value></data>
+  <data name="Scroll_DiscardMessage" xml:space="preserve"><value>Die bisher aufgenommenen {0} px verwerfen?</value></data>
+  <data name="Scroll_NoticeLimit" xml:space="preserve"><value>Die Aufnahme wurde bei der Höchstlänge von {0} px beendet. Der Rest des Inhalts fehlt.</value></data>
+  <data name="Scroll_NoticePartial" xml:space="preserve"><value>Die Aufnahme ist unvollständig: Nach etwa {0} px ließen sich die Bilder nicht mehr verbinden. Der Inhalt danach fehlt.</value></data>
+  <data name="Scroll_NoticeTimeout" xml:space="preserve"><value>Das Zeitlimit von 5 Minuten wurde erreicht. Das Ergebnis enthält alles bis dahin Aufgenommene.</value></data>
+  <data name="Scroll_NoticeFixed" xml:space="preserve"><value>Eine feststehende Kopf- oder Fußzeile wurde nicht sicher erkannt. Prüfen Sie die Nähte im Ergebnis.</value></data>
+  <data name="Scroll_ErrorExclude" xml:space="preserve"><value>Die Steuerleiste lässt sich nicht von der Aufnahme ausschließen. Die Scroll-Aufnahme wurde abgebrochen.</value></data>
+  <data name="Scroll_ErrorRegion" xml:space="preserve"><value>Der gewählte Bereich ist zu klein zum Scrollen.</value></data>
+  <data name="Settings_ScrollToStart" xml:space="preserve"><value>Scroll-Aufnahme: zuerst zum Anfang scrollen</value></data>
+  <data name="Settings_ScrollWait" xml:space="preserve"><value>Scroll-Aufnahme: Zusatzwartezeit für nachladende Inhalte</value></data>
+  <data name="Settings_ScrollWaitFormat" xml:space="preserve"><value>{0} ms</value></data>
+  <data name="Settings_ScrollHint" xml:space="preserve"><value>Programme mit höheren Rechten und manche Anwendungen lassen sich nicht automatisch scrollen; die Aufnahme wechselt dann zum manuellen Scrollen.</value></data>
 </root>

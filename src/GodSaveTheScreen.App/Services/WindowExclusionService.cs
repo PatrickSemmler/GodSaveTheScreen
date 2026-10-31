@@ -16,6 +16,12 @@ public interface IWindowExclusionService
 
     /// <summary>Wendet die Einstellung auf das Fenster an (sobald es ein Handle hat) und hält es aktuell.</summary>
     void Register(Window window);
+
+    /// <summary>
+    /// Schließt das Fenster immer von Aufnahmen aus, unabhängig von der Einstellung (Steuerleiste und Rahmen der Scroll-Aufnahme
+    /// würden sonst in jedem Teilbild landen). <c>false</c>, wenn das Betriebssystem das nicht kann oder der Aufruf fehlschlägt.
+    /// </summary>
+    bool RegisterAlwaysExcluded(Window window);
 }
 
 public sealed class WindowExclusionService : IWindowExclusionService
@@ -25,6 +31,7 @@ public sealed class WindowExclusionService : IWindowExclusionService
     private readonly ISettingsService _settings;
     private readonly ILogger<WindowExclusionService> _logger;
     private readonly List<WeakReference<Window>> _windows = [];
+    private readonly System.Runtime.CompilerServices.ConditionalWeakTable<Window, object> _always = new();
 
     public WindowExclusionService(ISettingsService settings, ILogger<WindowExclusionService> logger)
     {
@@ -46,6 +53,19 @@ public sealed class WindowExclusionService : IWindowExclusionService
         }
     }
 
+    public bool RegisterAlwaysExcluded(Window window)
+    {
+        ArgumentNullException.ThrowIfNull(window);
+        if (!IsSupported)
+        {
+            return false;
+        }
+
+        _always.AddOrUpdate(window, new object());
+        _ = new WindowInteropHelper(window).EnsureHandle();
+        return Apply(window);
+    }
+
     private void ReapplyAll()
     {
         _windows.RemoveAll(w => !w.TryGetTarget(out _));
@@ -58,25 +78,28 @@ public sealed class WindowExclusionService : IWindowExclusionService
         }
     }
 
-    private void Apply(Window window)
+    private bool Apply(Window window)
     {
         if (!IsSupported)
         {
-            return;
+            return false;
         }
 
         var handle = new WindowInteropHelper(window).Handle;
         if (handle == 0)
         {
-            return;
+            return false;
         }
 
-        var affinity = _settings.Current.ExcludeOwnWindows
+        var affinity = _settings.Current.ExcludeOwnWindows || _always.TryGetValue(window, out _)
             ? WINDOW_DISPLAY_AFFINITY.WDA_EXCLUDEFROMCAPTURE
             : WINDOW_DISPLAY_AFFINITY.WDA_NONE;
         if (!PInvoke.SetWindowDisplayAffinity(new HWND(handle), affinity))
         {
             _logger.LogWarning("SetWindowDisplayAffinity fehlgeschlagen für {Window}", window.GetType().Name);
+            return false;
         }
+
+        return true;
     }
 }

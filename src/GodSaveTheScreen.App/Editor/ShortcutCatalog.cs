@@ -79,6 +79,7 @@ public static class ShortcutCatalog
             (CaptureMode.Freeform, "Mode_Freeform"),
             (CaptureMode.FullScreen, "Mode_Fullscreen"),
             (CaptureMode.Text, "Mode_Text"),
+            (CaptureMode.Scrolling, "Mode_Scrolling"),
         })
         {
             if (HotkeyGesture.TryParse(settings.GetHotkey(mode)) is { } gesture)

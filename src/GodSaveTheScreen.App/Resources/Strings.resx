@@ -661,4 +661,33 @@ Tip: You can assign the Print Screen key to a capture mode in the settings. On W
   <data name="Shortcut_RecognizeText" xml:space="preserve"><value>Recognize text</value></data>
   <data name="Settings_OcrLanguage" xml:space="preserve"><value>Text recognition language</value></data>
   <data name="Settings_OcrLanguageHint" xml:space="preserve"><value>Only installed Windows language packs can be used. Add more in the Windows settings. The language can also be changed in the result window.</value></data>
+  <data name="Mode_Scrolling" xml:space="preserve"><value>Scrolling capture</value></data>
+  <data name="Overlay_HintScroll" xml:space="preserve"><value>Click a window or drag the area to scroll · Esc to cancel</value></data>
+  <data name="Scroll_Preparing" xml:space="preserve"><value>Checking how to scroll…</value></data>
+  <data name="Scroll_StatusAuto" xml:space="preserve"><value>Scrolling automatically…</value></data>
+  <data name="Scroll_StatusManual" xml:space="preserve"><value>Scroll yourself now. The images are joined as you scroll. Enter finishes, Esc cancels.</value></data>
+  <data name="Scroll_StatusNoReaction" xml:space="preserve"><value>The program does not react to automatic scrolling (does it run as administrator?). Please scroll yourself.</value></data>
+  <data name="Scroll_StatusStalled" xml:space="preserve"><value>Automatic scrolling lost the overlap. Please continue by scrolling slowly yourself.</value></data>
+  <data name="Scroll_StatusSlowDown" xml:space="preserve"><value>Scroll more slowly – no overlap with the last image.</value></data>
+  <data name="Scroll_StatusPaused" xml:space="preserve"><value>Paused: bring the window to the front again.</value></data>
+  <data name="Scroll_Finish" xml:space="preserve"><value>Done</value></data>
+  <data name="Scroll_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Scroll_ModeAuto" xml:space="preserve"><value>Automatic</value></data>
+  <data name="Scroll_ModeManual" xml:space="preserve"><value>Manual</value></data>
+  <data name="Scroll_ToStart" xml:space="preserve"><value>Scroll to the top first</value></data>
+  <data name="Scroll_HeightFormat" xml:space="preserve"><value>{0} / {1} px</value></data>
+  <data name="Scroll_BarName" xml:space="preserve"><value>Scrolling capture controls</value></data>
+  <data name="Scroll_PreviewName" xml:space="preserve"><value>Preview of the capture so far</value></data>
+  <data name="Scroll_DiscardTitle" xml:space="preserve"><value>Cancel capture</value></data>
+  <data name="Scroll_DiscardMessage" xml:space="preserve"><value>Discard the {0} px captured so far?</value></data>
+  <data name="Scroll_NoticeLimit" xml:space="preserve"><value>The capture was stopped at the maximum length of {0} px. The rest of the content is missing.</value></data>
+  <data name="Scroll_NoticePartial" xml:space="preserve"><value>The capture is incomplete: after about {0} px the images could not be joined any more. Content after that point is missing.</value></data>
+  <data name="Scroll_NoticeTimeout" xml:space="preserve"><value>The time limit of 5 minutes was reached. The result contains everything captured until then.</value></data>
+  <data name="Scroll_NoticeFixed" xml:space="preserve"><value>A fixed header or footer was not detected reliably. Check the seams in the result.</value></data>
+  <data name="Scroll_ErrorExclude" xml:space="preserve"><value>The control bar cannot be excluded from the capture, so the scrolling capture was cancelled.</value></data>
+  <data name="Scroll_ErrorRegion" xml:space="preserve"><value>The selected area is too small to scroll.</value></data>
+  <data name="Settings_ScrollToStart" xml:space="preserve"><value>Scrolling capture: scroll to the top first</value></data>
+  <data name="Settings_ScrollWait" xml:space="preserve"><value>Scrolling capture: extra wait for content that loads late</value></data>
+  <data name="Settings_ScrollWaitFormat" xml:space="preserve"><value>{0} ms</value></data>
+  <data name="Settings_ScrollHint" xml:space="preserve"><value>Programs running with higher privileges and some apps cannot be scrolled automatically; the capture then switches to manual scrolling.</value></data>
 </root>

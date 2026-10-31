@@ -9,4 +9,7 @@ public enum CaptureMode
 
     /// <summary>Text aus einem Bereich erkennen (Ergebnisfenster statt Editor); steht am Ende, damit gespeicherte Werte gültig bleiben.</summary>
     Text,
+
+    /// <summary>Scroll-Aufnahme: langer Inhalt als ein Bild; steht am Ende, damit gespeicherte Werte gültig bleiben.</summary>
+    Scrolling,
 }

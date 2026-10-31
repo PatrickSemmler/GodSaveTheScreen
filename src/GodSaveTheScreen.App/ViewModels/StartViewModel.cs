@@ -57,6 +57,7 @@ public sealed partial class StartViewModel : ObservableObject
             new CaptureModeOption(Strings.Mode_FullscreenMonitor, CaptureMode.FullScreen, FullScreenScope.CurrentMonitor),
             new CaptureModeOption(Strings.Mode_FullscreenAll, CaptureMode.FullScreen, FullScreenScope.AllMonitors),
             new CaptureModeOption(Strings.Mode_Text, CaptureMode.Text, FullScreenScope.CurrentMonitor),
+            new CaptureModeOption(Strings.Mode_Scrolling, CaptureMode.Scrolling, FullScreenScope.CurrentMonitor),
         ];
         TimerOptions =
         [

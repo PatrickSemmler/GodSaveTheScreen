@@ -250,7 +250,7 @@ public sealed class ShortcutCatalogTests
 
         var entries = ShortcutCatalog.Build(null, settings);
 
-        entries.Where(e => e.Category == Strings.Shortcuts_Capture).Select(e => e.Name).ShouldBe([Strings.Mode_Rectangle, Strings.Mode_Freeform, Strings.Mode_Fullscreen, Strings.Mode_Text]);
+        entries.Where(e => e.Category == Strings.Shortcuts_Capture).Select(e => e.Name).ShouldBe([Strings.Mode_Rectangle, Strings.Mode_Freeform, Strings.Mode_Fullscreen, Strings.Mode_Text, Strings.Mode_Scrolling]);
         entries.First(e => e.Category == Strings.Shortcuts_Capture).Keys.ShouldContain("Alt");
     }
 
