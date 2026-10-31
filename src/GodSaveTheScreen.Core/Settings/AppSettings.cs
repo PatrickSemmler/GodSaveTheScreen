@@ -226,6 +226,12 @@ public sealed record AppSettings
 
     public string HotkeyFullScreen { get; init; } = "Ctrl+Shift+D4";
 
+    /// <summary>Hotkey „Text aufnehmen“ (Texterkennung).</summary>
+    public string HotkeyText { get; init; } = "Ctrl+Shift+D5";
+
+    /// <summary>Sprache der Texterkennung (BCP-47, z. B. <c>de-DE</c>); leer = automatisch (Profilsprachen von Windows).</summary>
+    public string OcrLanguage { get; init; } = string.Empty;
+
     /// <summary>
     /// Ersetzt Werte, die beim Lesen einer älteren Datei als <c>null</c> ankommen (der JSON-Deserialisierer
     /// übernimmt die Standardwerte fehlender Felder nicht in jedem Fall), durch Standardwerte.
@@ -279,6 +285,8 @@ public sealed record AppSettings
             MarkerDefaults = marker with { Stroke = marker.Stroke ?? new StrokeStyle(ArgbColor.White, 2), FontFamilyName = marker.FontFamilyName ?? "Segoe UI", Shadow = marker.Shadow ?? ShadowStyle.None },
             FileNamePattern = FileNamePattern ?? DefaultFileNamePattern,
             AutoSaveDirectory = AutoSaveDirectory ?? string.Empty,
+            OcrLanguage = OcrLanguage ?? string.Empty,
+            HotkeyText = HotkeyText ?? "Ctrl+Shift+D5",
             LastSaveDirectory = LastSaveDirectory ?? string.Empty,
         };
     }
@@ -288,6 +296,7 @@ public sealed record AppSettings
         CaptureMode.Rectangle => HotkeyRectangle,
         CaptureMode.Window => HotkeyWindow,
         CaptureMode.Freeform => HotkeyFreeform,
+        CaptureMode.Text => HotkeyText,
         _ => HotkeyFullScreen,
     };
 
@@ -296,6 +305,7 @@ public sealed record AppSettings
         CaptureMode.Rectangle => this with { HotkeyRectangle = gesture },
         CaptureMode.Window => this with { HotkeyWindow = gesture },
         CaptureMode.Freeform => this with { HotkeyFreeform = gesture },
+        CaptureMode.Text => this with { HotkeyText = gesture },
         _ => this with { HotkeyFullScreen = gesture },
     };
 }

@@ -65,6 +65,9 @@ public interface IClipboardService
 {
     void SetImage(PixelBuffer image);
 
+    /// <summary>Legt reinen Text in die Zwischenablage (mit Wiederholung bei gesperrter Zwischenablage).</summary>
+    void SetText(string text);
+
     /// <summary>Bild aus <c>PNG</c>/<c>CF_DIB</c>/Dateiliste; <c>null</c>, wenn keines vorhanden ist.</summary>
     PixelBuffer? GetImage();
 

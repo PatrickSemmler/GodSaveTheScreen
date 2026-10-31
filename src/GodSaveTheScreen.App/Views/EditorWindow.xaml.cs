@@ -315,6 +315,9 @@ public partial class EditorWindow : FluentWindow
             case Key.X:
                 vm.CutCommand.Execute(null);
                 return true;
+            case Key.T when shift:
+                vm.RecognizeTextCommand.Execute(null);
+                return true;
             case Key.D:
                 vm.DuplicateCommand.Execute(null);
                 return true;

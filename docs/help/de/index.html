@@ -107,6 +107,7 @@
   <tr><td><b>Fenster</b></td><td><kbd>Strg+Umschalt+2</kbd></td><td>Das Fenster unter dem Mauszeiger wird hervorgehoben; ein Klick nimmt es auf. Ziehen wählt stattdessen einen freien Bereich.</td></tr>
   <tr><td><b>Freiform</b></td><td><kbd>Strg+Umschalt+3</kbd></td><td>Mit gedrückter Maustaste eine beliebige Form um den Bereich zeichnen (Lasso). Außerhalb der Form wird das Bild transparent.</td></tr>
   <tr><td><b>Vollbild</b></td><td><kbd>Strg+Umschalt+4</kbd></td><td>Nimmt sofort den Monitor auf, auf dem sich der Mauszeiger befindet. Im Startfenster gibt es zusätzlich „Vollbild (alle Monitore)“.</td></tr>
+  <tr><td><b>Text aufnehmen</b></td><td><kbd>Strg+Umschalt+5</kbd></td><td>Bereich aufziehen; der Text darin wird erkannt und im Ergebnisfenster angezeigt (siehe <a href="#ocr">Text erkennen</a>). Der Editor öffnet sich dabei nicht.</td></tr>
 </table></div>
 
 <h3 id="capture-overlay">Bereich auswählen</h3>
@@ -138,6 +139,17 @@
 <h3 id="capture-hotkeys">Tastenkürzel und Druck-Taste</h3>
 <p>Die globalen Tastenkürzel funktionieren in jedem Programm. Sie lassen sich unter <a href="#settings-hotkeys">Einstellungen → Tastenkürzel</a> ändern. Ist eine Kombination bereits von Windows oder einem anderen Programm belegt, wird das dort angezeigt.</p>
 <div class="box note"><p><span class="label">Druck-Taste:</span> Unter Windows 11 öffnet die Taste <kbd>Druck</kbd> normalerweise das Snipping Tool. Um sie GodSaveTheScreen zuzuweisen, schalten Sie zuerst in Windows unter <span class="ui">Einstellungen → Barrierefreiheit → Tastatur</span> die Option „Druck-Taste zum Öffnen der Bildschirmaufnahme verwenden“ aus.</p></div>
+
+<h3 id="ocr">Text erkennen (OCR)</h3>
+<p>GodSaveTheScreen liest den Text aus einem Bildschirmbereich oder einem geöffneten Bild – ganz lokal mit der Texterkennung von Windows, ohne Internet und ohne Zusatzprogramm. Es gibt zwei Wege:</p>
+<ul>
+  <li><b>Text aufnehmen</b> (Standard <kbd>Strg+Umschalt+5</kbd>, im Tray-Menü, im Startfenster, in <span class="ui">Neu</span> im Editor oder mit <code>--capture text</code>): Bereich aufziehen, und das Ergebnisfenster zeigt den Text. Der Editor geht dabei nicht auf, der Mauszeiger wird nicht aufgenommen, und die Schritte nach der Aufnahme (Kopieren, Speichern) entfallen.</li>
+  <li><b>Im Editor</b>: <span class="ui">Text erkennen</span> in der Befehlsleiste, im Kontextmenü oder mit <kbd>Strg+Umschalt+T</kbd>. Erkannt wird das sichtbare Ergebnis ohne Rahmen – Textobjekte zählen mit, durch Unschärfe verdeckter Text nicht. Mit einer Auswahl aus dem Werkzeug <span class="ui">Bereich auswählen</span> (<kbd>W</kbd>) wird nur dieser Bereich erkannt.</li>
+</ul>
+<figure class="shot center"><img src="images/ocr-window.png" alt="Ergebnisfenster der Texterkennung mit Vorschau und erkanntem Text"><figcaption>Das Ergebnisfenster</figcaption></figure>
+<p>Im <b>Ergebnisfenster</b> können Sie den Text prüfen und korrigieren, <span class="ui">Kopieren</span> (ohne Markierung kopiert <kbd>Strg+C</kbd> alles), die <span class="ui">Sprache</span> wechseln und <span class="ui">Erneut erkennen</span>. <span class="ui">Spalten mit Tabulator trennen</span> setzt Tabulatoren zwischen Spalten, damit sich Tabellen in Excel einfügen lassen (nicht jedes Layout passt). <span class="ui">Im Editor öffnen</span> übernimmt den aufgenommenen Bereich als Bild. <kbd>Esc</kbd> schließt das Fenster.</p>
+<div class="box note"><p><span class="label">Bitte prüfen:</span> Die Erkennung verwechselt ähnliche Zeichen, vor allem die Null und den Buchstaben O. Sehr kleine Schrift (unter etwa 10 Pixel Höhe) wird deshalb zusätzlich vergrößert erkannt. Sehr lange Bilder werden in überlappenden Streifen erkannt.</p></div>
+<p><b>Sprachen:</b> Standardmäßig gelten die Profilsprachen von Windows; unter <a href="#settings-capture">Einstellungen → Aufnahme</a> und im Ergebnisfenster lässt sich eine andere installierte Sprache wählen. Ist keine Sprache installiert, erscheint eine Meldung mit einer Schaltfläche zu den Windows-Spracheinstellungen (<span class="ui">Zeit und Sprache → Sprache und Region</span>); Sprachpakete lassen sich aus GodSaveTheScreen heraus nicht installieren.</p>
 
 <h3 id="capture-after">Was nach der Aufnahme passiert</h3>
 <p>Nach jeder Aufnahme führt GodSaveTheScreen die Schritte aus, die Sie unter <a href="#settings-postcapture">Nach der Aufnahme</a> eingestellt haben – in dieser Reihenfolge:</p>
@@ -638,6 +650,7 @@
 <ul>
   <li><b>Standard-Aufnahmemodus</b> und <b>Standard-Timer</b> (für Tastenkürzel und Tray).</li>
   <li><b>Quelle der Fensteraufnahme</b>: <span class="ui">Snapshot (wie sichtbar)</span> oder <span class="ui">Fensterinhalt (auch verdeckte Teile)</span>.</li>
+  <li><b>Sprache der Texterkennung</b>: automatisch (Windows-Sprachen) oder eine installierte Sprache, siehe <a href="#ocr">Text erkennen</a>.</li>
   <li><b>Mauszeiger aufnehmen</b>.</li>
   <li><b>Abgerundete Fensterecken transparent machen</b> (Windows 11).</li>
   <li><b>Kanten der Freiformaufnahme glätten</b>.</li>
@@ -681,7 +694,7 @@
   <tr><td><kbd>F1</kbd></td><td>Diese Hilfe öffnen</td></tr>
   <tr><td><kbd>Umschalt+F1</kbd></td><td>Hilfe zum aktuellen Werkzeug, zur Auswahl oder zur Einstellungsseite</td></tr>
   <tr><td><kbd>Strg+F1</kbd></td><td>Alle Tastenkürzel anzeigen</td></tr>
-  <tr><td><kbd>Strg+Umschalt+1</kbd> … <kbd>4</kbd></td><td>Aufnahme Rechteck / Fenster / Freiform / Vollbild (Standard, änderbar)</td></tr>
+  <tr><td><kbd>Strg+Umschalt+1</kbd> … <kbd>5</kbd></td><td>Aufnahme Rechteck / Fenster / Freiform / Vollbild / Text (Standard, änderbar)</td></tr>
 </table></div>
 
 <h3 id="shortcuts-editor">Im Editor</h3>
@@ -695,6 +708,7 @@
   <tr><td><kbd>Strg+C</kbd> / <kbd>Strg+Umschalt+C</kbd></td><td>Kopieren (Auswahl oder Bild) / Bild kopieren</td></tr>
   <tr><td><kbd>Strg+X</kbd> / <kbd>Strg+D</kbd> / <kbd>Entf</kbd></td><td>Ausschneiden / Duplizieren / Löschen</td></tr>
   <tr><td><kbd>Strg+A</kbd></td><td>Alles auswählen</td></tr>
+  <tr><td><kbd>Strg+Umschalt+T</kbd></td><td>Text im Bild oder im ausgewählten Bereich erkennen</td></tr>
   <tr><td><kbd>Strg+]</kbd> / <kbd>Strg+[</kbd></td><td>Eine Ebene nach vorn / hinten (mit <kbd>Umschalt</kbd>: ganz)</td></tr>
   <tr class="group-row"><td colspan="2">Ansicht</td></tr>
   <tr><td><kbd>Strg++</kbd> / <kbd>Strg+-</kbd></td><td>Vergrößern / Verkleinern (auch <kbd>Strg</kbd> + Mausrad)</td></tr>

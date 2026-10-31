@@ -107,6 +107,7 @@
   <tr><td><b>Window</b></td><td><kbd>Ctrl+Shift+2</kbd></td><td>The window under the mouse pointer is highlighted; a click captures it. Dragging selects a free area instead.</td></tr>
   <tr><td><b>Freeform</b></td><td><kbd>Ctrl+Shift+3</kbd></td><td>Hold the mouse button and draw any shape around the area (lasso). Outside the shape the image becomes transparent.</td></tr>
   <tr><td><b>Full screen</b></td><td><kbd>Ctrl+Shift+4</kbd></td><td>Immediately captures the monitor the mouse pointer is on. The start window additionally offers “Full screen (all monitors)”.</td></tr>
+  <tr><td><b>Capture text</b></td><td><kbd>Ctrl+Shift+5</kbd></td><td>Drag an area; the text in it is recognized and shown in the result window (see <a href="#ocr">Recognizing text</a>). The editor does not open.</td></tr>
 </table></div>
 
 <h3 id="capture-overlay">Selecting the area</h3>
@@ -138,6 +139,17 @@
 <h3 id="capture-hotkeys">Shortcuts and the Print Screen key</h3>
 <p>The global shortcuts work in every program. Change them under <a href="#settings-hotkeys">Settings → Hotkeys</a>. If a combination is already used by Windows or another program, it is shown there.</p>
 <div class="box note"><p><span class="label">Print Screen key:</span> on Windows 11 the <kbd>PrtSc</kbd> key normally opens the Snipping Tool. To assign it to GodSaveTheScreen, first turn off “Use the Print screen button to open screen capture” in Windows under <span class="ui">Settings → Accessibility → Keyboard</span>.</p></div>
+
+<h3 id="ocr">Recognizing text (OCR)</h3>
+<p>GodSaveTheScreen reads the text from a screen area or an open image – entirely locally with the text recognition of Windows, without internet and without any extra program. There are two ways:</p>
+<ul>
+  <li><b>Capture text</b> (default <kbd>Ctrl+Shift+5</kbd>, in the tray menu, in the start window, in <span class="ui">New</span> in the editor or with <code>--capture text</code>): drag an area and the result window shows the text. The editor does not open, the mouse pointer is not captured, and the steps after a capture (copy, save) are skipped.</li>
+  <li><b>In the editor</b>: <span class="ui">Recognize text</span> in the command bar, in the context menu or with <kbd>Ctrl+Shift+T</kbd>. The visible result without the frame is recognized – text objects count, text hidden by blur does not. With a selection from the <span class="ui">Select and remove area</span> tool (<kbd>W</kbd>) only that area is recognized.</li>
+</ul>
+<figure class="shot center"><img src="images/ocr-window.png" alt="Result window of the text recognition with preview and recognized text"><figcaption>The result window</figcaption></figure>
+<p>In the <b>result window</b> you can check and correct the text, <span class="ui">Copy</span> it (without a selection <kbd>Ctrl+C</kbd> copies everything), change the <span class="ui">language</span> and <span class="ui">Recognize again</span>. <span class="ui">Separate columns with tabs</span> puts tabs between columns so tables can be pasted into Excel (not every layout fits). <span class="ui">Open in editor</span> takes the captured area over as an image. <kbd>Esc</kbd> closes the window.</p>
+<div class="box note"><p><span class="label">Please check:</span> the recognition confuses similar characters, above all zero and the letter O. Very small text (under about 10 pixels high) is therefore also recognized enlarged. Very long images are recognized in overlapping strips.</p></div>
+<p><b>Languages:</b> by default the Windows profile languages apply; under <a href="#settings-capture">Settings → Capture</a> and in the result window you can pick another installed language. If no language is installed, a message with a button to the Windows language settings appears (<span class="ui">Time &amp; language → Language &amp; region</span>); language packs cannot be installed from GodSaveTheScreen.</p>
 
 <h3 id="capture-after">What happens after a capture</h3>
 <p>After every capture GodSaveTheScreen performs the steps configured under <a href="#settings-postcapture">After capture</a> – in this order:</p>
@@ -643,6 +655,7 @@
   <li><b>Smooth edges of freeform captures</b>.</li>
   <li><b>Exclude own windows from captures</b>.</li>
   <li><b>Show magnifier in the selection overlay</b>.</li>
+  <li><b>Text recognition language</b>: automatic (Windows languages) or an installed language, see <a href="#ocr">Recognizing text</a>.</li>
   <li><b>Play a sound during the last 3 seconds</b> (timer).</li>
 </ul>
 
@@ -681,7 +694,7 @@
   <tr><td><kbd>F1</kbd></td><td>Open this help</td></tr>
   <tr><td><kbd>Shift+F1</kbd></td><td>Help for the current tool, the selection or the settings page</td></tr>
   <tr><td><kbd>Ctrl+F1</kbd></td><td>Show all keyboard shortcuts</td></tr>
-  <tr><td><kbd>Ctrl+Shift+1</kbd> … <kbd>4</kbd></td><td>Capture rectangle / window / freeform / full screen (default, changeable)</td></tr>
+  <tr><td><kbd>Ctrl+Shift+1</kbd> … <kbd>5</kbd></td><td>Capture rectangle / window / freeform / full screen / text (default, changeable)</td></tr>
 </table></div>
 
 <h3 id="shortcuts-editor">In the editor</h3>
@@ -695,6 +708,7 @@
   <tr><td><kbd>Ctrl+C</kbd> / <kbd>Ctrl+Shift+C</kbd></td><td>Copy (selection or image) / Copy image</td></tr>
   <tr><td><kbd>Ctrl+X</kbd> / <kbd>Ctrl+D</kbd> / <kbd>Del</kbd></td><td>Cut / Duplicate / Delete</td></tr>
   <tr><td><kbd>Ctrl+A</kbd></td><td>Select all</td></tr>
+  <tr><td><kbd>Ctrl+Shift+T</kbd></td><td>Recognize text in the image or in the selected area</td></tr>
   <tr><td><kbd>Ctrl+]</kbd> / <kbd>Ctrl+[</kbd></td><td>Bring forward / send backward (with <kbd>Shift</kbd>: to front / back)</td></tr>
   <tr class="group-row"><td colspan="2">View</td></tr>
   <tr><td><kbd>Ctrl++</kbd> / <kbd>Ctrl+-</kbd></td><td>Zoom in / out (also <kbd>Ctrl</kbd> + mouse wheel)</td></tr>

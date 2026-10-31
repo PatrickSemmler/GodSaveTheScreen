@@ -52,6 +52,7 @@ public sealed class CaptureCoordinator : ICaptureLauncher
     private readonly ISettingsService _settings;
     private readonly IDialogService _dialogs;
     private readonly ILogger<CaptureCoordinator> _logger;
+    private readonly IOcrResultPresenter? _ocr;
     private CancellationTokenSource? _cancellation;
 
     public CaptureCoordinator(
@@ -64,7 +65,8 @@ public sealed class CaptureCoordinator : ICaptureLauncher
         IEnumerable<IPostCaptureAction> actions,
         ISettingsService settings,
         IDialogService dialogs,
-        ILogger<CaptureCoordinator> logger)
+        ILogger<CaptureCoordinator> logger,
+        IOcrResultPresenter? ocr = null)
     {
         _capture = capture;
         _monitors = monitors;
@@ -76,6 +78,7 @@ public sealed class CaptureCoordinator : ICaptureLauncher
         _settings = settings;
         _dialogs = dialogs;
         _logger = logger;
+        _ocr = ocr;
     }
 
     public bool IsCapturing { get; private set; }
@@ -97,6 +100,7 @@ public sealed class CaptureCoordinator : ICaptureLauncher
         var token = cancellation.Token;
 
         CaptureResultContext? result = null;
+        PixelBuffer? textImage = null;
         var hidden = _visibility.HideAll();
         try
         {
@@ -109,12 +113,20 @@ public sealed class CaptureCoordinator : ICaptureLauncher
             await Task.Delay(HideAnimationDelay, token);
 
             var currentMonitor = _monitors.GetMonitorAtCursor();
-            var snapshot = _capture.CaptureVirtualScreen(_settings.Current.CaptureCursor);
+            // „Text aufnehmen“ nimmt ohne Mauszeiger auf: er stört die Erkennung.
+            var snapshot = _capture.CaptureVirtualScreen(request.Mode != CaptureMode.Text && _settings.Current.CaptureCursor);
             _logger.LogInformation(
                 "Aufnahme {Mode}: Snapshot {Width}x{Height} bei ({Left},{Top}), {Monitors} Monitor(e), {Windows} Fenster",
                 request.Mode, snapshot.Image.Width, snapshot.Image.Height, snapshot.VirtualLeft, snapshot.VirtualTop, snapshot.Monitors.Count, snapshot.Windows.Count);
 
-            result = await CaptureAsync(request, snapshot, currentMonitor, token);
+            if (request.Mode == CaptureMode.Text)
+            {
+                textImage = await CaptureTextAsync(snapshot, token);
+            }
+            else
+            {
+                result = await CaptureAsync(request, snapshot, currentMonitor, token);
+            }
         }
         catch (OperationCanceledException)
         {
@@ -132,9 +144,45 @@ public sealed class CaptureCoordinator : ICaptureLauncher
             IsCapturing = false;
         }
 
-        if (result is not null)
+        if (textImage is not null)
+        {
+            // Erst nach dem Einblenden der Fenster: das Ergebnisfenster soll sichtbar bleiben. Die Kette der Nachaufnahme-Aktionen entfällt.
+            ShowText(textImage);
+        }
+        else if (result is not null)
         {
             await RunActionsAsync(result);
+        }
+    }
+
+    /// <summary>Bereich wählen (immer als Rechteck) und zuschneiden; <c>null</c> bei Abbruch.</summary>
+    private async Task<PixelBuffer?> CaptureTextAsync(ScreenSnapshot snapshot, CancellationToken token)
+    {
+        var selection = await _selection.SelectAsync(snapshot, CaptureMode.Rectangle, Strings.Overlay_HintText, token);
+        if (selection is null)
+        {
+            return null;
+        }
+
+        var image = snapshot.Crop(selection.Bounds);
+        return image is { Width: > 0, Height: > 0 } ? image : null;
+    }
+
+    private void ShowText(PixelBuffer image)
+    {
+        if (_ocr is null)
+        {
+            return;
+        }
+
+        try
+        {
+            _ocr.Show(image);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Ergebnisfenster der Texterkennung konnte nicht geöffnet werden");
+            _dialogs.ShowError(Strings.Error_Title, string.Format(CultureInfo.CurrentUICulture, Strings.Error_CaptureFailed, ex.Message));
         }
     }
 

@@ -40,14 +40,14 @@ GodSaveTheScreen ist ein Screenshot- und Bildannotationswerkzeug für Windows. E
 - Videoaufnahme / GIF-Aufnahme
 - Moderne Speicherformate außerhalb von WPF (WebP, AVIF, HEIC) – **Laden** funktioniert trotzdem, sofern der passende WIC-Codec in Windows installiert ist (z. B. „WebP-Bilderweiterungen“).
 - Installer, Auto-Update, Store-Paket
-- Cloud-Upload, OCR, Teilen-Dialoge
+- Cloud-Upload, Teilen-Dialoge (die lokale Texterkennung gibt es seit M16, siehe [M16](meilensteine/M16-Texterkennung.md))
 - Rotation einzelner Objekte außer Emojis (seit M13 gibt es `IRotatableAnnotation`, `RotationMath` und Drehgriff in der Auswahl – bisher nur `EmojiAnnotation` ist drehbar; weitere Typen können die Schnittstelle übernehmen)
 
 ## 2. Technologie-Stack
 
 | Thema | Entscheidung |
 |---|---|
-| Runtime | .NET 10 (LTS), `net10.0-windows` für UI-/Win32-Projekte, `net10.0` für den Kern |
+| Runtime | .NET 10 (LTS), `net10.0-windows` für UI-/Win32-Projekte, `net10.0` für den Kern; `net10.0-windows10.0.19041.0` für `App`, `Ocr` und `App.Tests` (Windows-SDK-Projektion für `Windows.Media.Ocr`, ab M16) |
 | UI | WPF, MVVM, Fluent-Design über **WPF-UI** (lepoco) mit Hell/Dunkel/System-Theme |
 | Plattform | Windows 10 21H2+ / Windows 11, x64 (arm64 optional als zusätzliches Publish-Profil) |
 | DPI | Per-Monitor-V2 (`app.manifest`), alle Bildkoordinaten in physischen Pixeln |
@@ -90,7 +90,8 @@ GodSaveTheScreen/
 │  ├─ GodSaveTheScreen.Core/      # net10.0 – Dokumentmodell, Annotationen, Undo, Serialisierung, Einstellungen, Service-Interfaces
 │  ├─ GodSaveTheScreen.Capture/   # net10.0-windows – Monitore, Fenster, Bildschirmaufnahme (Win32 via CsWin32)
 │  ├─ GodSaveTheScreen.Rendering/ # net10.0-windows (UseWPF) – Zeichnen der Annotationen, Effekte, Export/Encoder
-│  └─ GodSaveTheScreen.App/       # WinExe (UseWPF) – Views, ViewModels, Tray, Hotkeys, Overlay, DI-Root
+│  ├─ GodSaveTheScreen.Ocr/       # net10.0-windows10.0.19041.0 – Texterkennung über Windows.Media.Ocr (ab M16)
+│  └─ GodSaveTheScreen.App/       # WinExe (UseWPF, net10.0-windows10.0.19041.0) – Views, ViewModels, Tray, Hotkeys, Overlay, DI-Root
 ├─ tests/
 │  ├─ GodSaveTheScreen.Core.Tests/
 │  └─ GodSaveTheScreen.App.Tests/ # ViewModels + Rendering (STA)
@@ -100,13 +101,14 @@ GodSaveTheScreen/
    └─ agent/architecture.md       # kompakte Architekturdoku für KI-Agenten
 ```
 
-Abhängigkeitsrichtung: `App → Rendering → Core`, `App → Capture → Core`. `Core` kennt weder WPF noch Win32. `Capture` und `Rendering` kennen sich nicht.
+Abhängigkeitsrichtung: `App → Rendering → Core`, `App → Capture → Core`, `App → Ocr → Core`. `Core` kennt weder WPF noch Win32. `Capture`, `Rendering` und `Ocr` kennen sich nicht.
 
 ### 3.2 Schichten und Verantwortungen
 
 | Projekt | Inhalt | Wichtige Typen (geplant) |
 |---|---|---|
 | Core | Geometrie-Primitive (`PointD`, `RectD`, `SizeD`, `ArgbColor`), `PixelBuffer` (BGRA32), `ImageDocument`, Annotation-Hierarchie, `UndoManager`, Projekt-Serialisierung, `AppSettings`, Dateinamensmuster, Interfaces (`IClipboardService`, `IDialogService`, `ISettingsService`, `IImageCodecService` …) | `ImageDocument`, `Annotation`, `IUndoableAction`, `UndoManager`, `ProjectSerializer` |
+| Ocr (ab M16) | `WindowsOcrService` (`IOcrService`): Windows.Media.Ocr, Streifen für lange Bilder, Skalierung bei kleiner Schrift, Sprachwahl; Schnittstelle und Ergebnis-Typen (`OcrResult`, `OcrLine`, `OcrWord`), `OcrTextBuilder`, `OcrTiling`, `OcrImagePrep` liegen im Core | `WindowsOcrService`, `IOcrService` |
 | Capture | Monitor-Enumeration (physische Pixel, DPI), Bildschirmabbild via GDI `BitBlt` (`CAPTUREBLT`), Fenster-Enumeration in Z-Order mit DWM-Rahmen, `PrintWindow`, Ausschluss eigener Fenster | `IScreenCaptureService`, `MonitorInfo`, `WindowInfo`, `ScreenSnapshot` |
 | Rendering | `AnnotationRenderer` (eine Zeichenroutine für Anzeige **und** Export), Effekte (Weichzeichnen, Verpixeln) auf `PixelBuffer`, `DocumentExporter` (Flatten → `BitmapSource`), Encoder-Optionen, Konvertierung `PixelBuffer ↔ BitmapSource` | `AnnotationRenderer`, `RegionEffectProcessor`, `DocumentExporter`, `ImageCodecService` |
 | App | Generic Host, Views (XAML), ViewModels, Overlay-Fenster für Auswahl, Editor-Fenster mit Canvas/Werkzeugen, Tray, Hotkeys, Einstellungen, Lokalisierung, Implementierung der Service-Interfaces | `App`, `TrayService`, `HotkeyService`, `CaptureCoordinator`, `EditorViewModel`, `ToolBase`-Ableitungen |
@@ -189,7 +191,7 @@ Jeder Meilenstein liefert eine lauffähige, getestete Anwendung mit abgeschlosse
 | M13 | Farbige Emojis | Emoji-Werkzeug mit Suche (DE/EN), Kategorien, Zuletzt/Favoriten, Hauttönen; farbiges Rendering über DirectWrite; Drehen, Spiegeln, proportionales Skalieren | [M13](meilensteine/M13-Emojis.md) |
 | M14 | Rahmen und Kanteneffekte | Rand, Schatten, runde Ecken, abgerissene Kante, Vignette, Graustufen für das ganze Bild, nicht-destruktiv | [M14](meilensteine/M14-Rahmen-Kanteneffekte.md) |
 | M15 | Bild verschönern | Hintergrund (Farbe, Verlauf, Bild), Innenabstand, festes Seitenverhältnis, Vorlagen | [M15](meilensteine/M15-Bild-verschoenern.md) |
-| M16 | Texterkennung (geplant) | Aufnahmeart „Text aufnehmen“ und Befehl im Editor, lokal über `Windows.Media.Ocr` | [M16](meilensteine/M16-Texterkennung.md) |
+| M16 | Texterkennung | Aufnahmeart „Text aufnehmen“ und Befehl im Editor, lokal über `Windows.Media.Ocr` | [M16](meilensteine/M16-Texterkennung.md) |
 | M17 | Scroll-Capture (geplant) | Lange Inhalte vertikal aufnehmen, automatisch oder von Hand gescrollt, bis 16.384 px | [M17](meilensteine/M17-Scroll-Capture.md) |
 
 ### 4.1 Abhängigkeiten der Meilensteine
@@ -237,7 +239,7 @@ M16 und M17 nach M13, unabhängig voneinander und von M14/M15 (vereinbarte Reihe
 | **Summe M0–M13** | **≈ 51** |
 | M14 | 6 |
 | M15 | 4 |
-| M16 (geplant) | 5 |
+| M16 | 5 |
 | M17 (geplant) | 13 |
 | **Summe M14–M17** | **≈ 28** |
 

@@ -33,7 +33,7 @@ public static class CommandLineParser
                 case "--capture":
                     if (!enumerator.MoveNext())
                     {
-                        errors.Add("--capture erwartet einen Wert (rect|window|full|freeform).");
+                        errors.Add("--capture erwartet einen Wert (rect|window|full|freeform|text).");
                         break;
                     }
 
@@ -90,6 +90,7 @@ public static class CommandLineParser
         "window" => CaptureMode.Window,
         "full" => CaptureMode.FullScreen,
         "freeform" => CaptureMode.Freeform,
+        "text" => CaptureMode.Text,
         _ => null,
     };
 }

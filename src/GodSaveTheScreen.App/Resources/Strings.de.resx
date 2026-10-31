@@ -632,4 +632,33 @@ Tipp: In den Einstellungen können Sie die Taste Druck einem Aufnahmemodus zuwei
   <data name="Frame_Preset_Social" xml:space="preserve"><value>Social 1:1</value></data>
   <data name="Frame_Preset_Slide" xml:space="preserve"><value>Folie 16:9</value></data>
   <data name="Field_Height" xml:space="preserve"><value>Höhe</value></data>
+  <data name="Mode_Text" xml:space="preserve"><value>Text aufnehmen</value></data>
+  <data name="Overlay_HintText" xml:space="preserve"><value>Bereich mit dem Text aufziehen · Esc zum Abbrechen</value></data>
+  <data name="Ocr_Title" xml:space="preserve"><value>Erkannter Text</value></data>
+  <data name="Ocr_Language" xml:space="preserve"><value>Sprache</value></data>
+  <data name="Ocr_LanguageAuto" xml:space="preserve"><value>Automatisch (Windows-Sprachen)</value></data>
+  <data name="Ocr_Columns" xml:space="preserve"><value>Spalten mit Tabulator trennen</value></data>
+  <data name="Ocr_ColumnsTip" xml:space="preserve"><value>Setzt zwischen Spalten Tabulatoren, damit sich eine Tabelle in Excel einfügen lässt. Passt nicht auf jedes Layout. Beim Umschalten wird der Text neu aufgebaut, eigene Änderungen gehen verloren.</value></data>
+  <data name="Ocr_Again" xml:space="preserve"><value>Erneut erkennen</value></data>
+  <data name="Ocr_Copy" xml:space="preserve"><value>Kopieren</value></data>
+  <data name="Ocr_CopyTip" xml:space="preserve"><value>Text kopieren (Strg+C ohne Markierung kopiert alles)</value></data>
+  <data name="Ocr_OpenInEditor" xml:space="preserve"><value>Im Editor öffnen</value></data>
+  <data name="Ocr_Cancel" xml:space="preserve"><value>Abbrechen</value></data>
+  <data name="Ocr_Working" xml:space="preserve"><value>Text wird erkannt…</value></data>
+  <data name="Ocr_Check" xml:space="preserve"><value>Erkannten Text prüfen: Ähnliche Zeichen wie O und 0 werden leicht verwechselt.</value></data>
+  <data name="Ocr_Empty" xml:space="preserve"><value>Es wurde kein Text erkannt. Versuchen Sie eine andere Sprache oder einen größeren Ausschnitt.</value></data>
+  <data name="Ocr_NoLanguage" xml:space="preserve"><value>Es ist keine Sprache für die Texterkennung installiert. Fügen Sie in den Windows-Einstellungen (Zeit und Sprache, Sprache und Region) ein Sprachpaket hinzu und erkennen Sie dann erneut.</value></data>
+  <data name="Ocr_OpenSettings" xml:space="preserve"><value>Windows-Spracheinstellungen öffnen</value></data>
+  <data name="Ocr_Failed" xml:space="preserve"><value>Die Texterkennung ist fehlgeschlagen: {0}</value></data>
+  <data name="Ocr_Cancelled" xml:space="preserve"><value>Erkennung abgebrochen.</value></data>
+  <data name="Ocr_Copied" xml:space="preserve"><value>In die Zwischenablage kopiert.</value></data>
+  <data name="Ocr_Statistics" xml:space="preserve"><value>{0} Zeichen, {1} Zeilen</value></data>
+  <data name="Ocr_PreviewName" xml:space="preserve"><value>Vorschau des aufgenommenen Bereichs</value></data>
+  <data name="Ocr_TextName" xml:space="preserve"><value>Erkannter Text (bearbeitbar)</value></data>
+  <data name="Editor_RecognizeText" xml:space="preserve"><value>Text erkennen</value></data>
+  <data name="Editor_RecognizeTextTip" xml:space="preserve"><value>Text im Bild oder im ausgewählten Bereich erkennen (Strg+Umschalt+T)</value></data>
+  <data name="Menu_RecognizeText" xml:space="preserve"><value>Text erkennen</value></data>
+  <data name="Shortcut_RecognizeText" xml:space="preserve"><value>Text erkennen</value></data>
+  <data name="Settings_OcrLanguage" xml:space="preserve"><value>Sprache der Texterkennung</value></data>
+  <data name="Settings_OcrLanguageHint" xml:space="preserve"><value>Es können nur installierte Windows-Sprachpakete verwendet werden. Weitere fügen Sie in den Windows-Einstellungen hinzu. Die Sprache lässt sich auch im Ergebnisfenster ändern.</value></data>
 </root>

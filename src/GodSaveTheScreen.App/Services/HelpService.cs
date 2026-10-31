@@ -27,6 +27,7 @@ public static class HelpTopics
     public const string Layers = "layers";
     public const string Colors = "colors";
     public const string Shortcuts = "shortcuts";
+    public const string Ocr = "ocr";
     public const string SettingsGeneral = "settings-general";
     public const string SettingsCapture = "settings-capture";
     public const string SettingsPostCapture = "settings-postcapture";

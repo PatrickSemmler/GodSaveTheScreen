@@ -65,6 +65,10 @@ public sealed class WindowSmokeTests
         var dialog = new MessageDialog("Titel", "Nachricht", DialogKind.Warning, [new DialogButton("OK", 0, IsPrimary: true)]);
         dialog.Show();
         dialog.Close();
+        var ocrViewModel = new OcrResultViewModel(new GodSaveTheScreen.Core.Imaging.PixelBuffer(40, 30), OcrSamples.Service(null, "de-DE"), Substitute.For<IClipboardService>(), new FakeSettings());
+        var ocrWindow = new OcrResultWindow(ocrViewModel, Substitute.For<IThemeService>(), Substitute.For<IAppShell>());
+        ocrWindow.Show();
+        ocrWindow.Close();
         var viewModel = CreateSettingsViewModel();
         var window = new SettingsWindow(viewModel, Substitute.For<IThemeService>(), Substitute.For<IAppShell>());
         window.Show();

@@ -44,6 +44,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
     private readonly IRecentFilesService _recents;
     private readonly ILogger<EditorViewModel> _logger;
     private readonly IImageInsertDialogs _imageDialogs;
+    private readonly IOcrResultPresenter? _ocr;
     private readonly System.Windows.Threading.Dispatcher _dispatcher;
     private bool _blurHintShown;
     private ToolBase? _toolBeforePipette;
@@ -63,7 +64,8 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         IProjectService projects,
         IRecentFilesService recents,
         ILogger<EditorViewModel> logger,
-        IImageInsertDialogs? imageDialogs = null)
+        IImageInsertDialogs? imageDialogs = null,
+        IOcrResultPresenter? ocr = null)
     {
         Context = context;
         Tools = tools;
@@ -78,6 +80,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         _recents = recents;
         _logger = logger;
         _imageDialogs = imageDialogs ?? new ImageInsertDialogs();
+        _ocr = ocr;
         _dispatcher = System.Windows.Threading.Dispatcher.CurrentDispatcher;
         _recents.Changed += OnRecentsChanged;
 
@@ -719,6 +722,21 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
 
     [RelayCommand]
     private void NewFromClipboard() => _editors.OpenFromClipboard();
+
+    /// <summary>
+    /// „Text erkennen“: erkennt den Text des ganzen Bildes (ohne Rahmen) bzw. der vorhandenen Bereichsauswahl (<c>W</c>) und zeigt
+    /// das Ergebnis im Ergebnisfenster; die Auswahl begrenzt die Erkennung, alles außerhalb ihrer Deckung wird weiß gefüllt.
+    /// </summary>
+    [RelayCommand]
+    private void RecognizeText()
+    {
+        if (IsCropping || _ocr is null)
+        {
+            return;
+        }
+
+        _ocr.Show(OcrSource.Prepare(Document, Context.Exporter, Context.AreaSelection));
+    }
 
     [RelayCommand]
     private void DismissInfo() => InfoMessage = null;

@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <!-- Windows.Media.Ocr braucht die Windows-SDK-Projektion (ab Windows 10 2004); nur dieses Projekt kennt WinRT. -->
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
+    <RootNamespace>GodSaveTheScreen.Ocr</RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GodSaveTheScreen.Core\GodSaveTheScreen.Core.csproj" />
+  </ItemGroup>
+</Project>

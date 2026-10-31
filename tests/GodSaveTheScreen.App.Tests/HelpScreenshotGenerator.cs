@@ -16,6 +16,7 @@ using GodSaveTheScreen.App.Views.Settings;
 using GodSaveTheScreen.Core.Capture;
 using GodSaveTheScreen.Core.Imaging;
 using GodSaveTheScreen.Core.Project;
+using GodSaveTheScreen.Core.Ocr;
 using GodSaveTheScreen.Core.Services;
 using GodSaveTheScreen.Core.Settings;
 using GodSaveTheScreen.Rendering;
@@ -77,6 +78,7 @@ public sealed class HelpScreenshotGenerator
             EditorShots(directory, texts);
             SettingsShots(directory);
             ShortcutsShot(directory);
+            OcrShot(directory, texts);
         }
     }
 
@@ -121,6 +123,27 @@ public sealed class HelpScreenshotGenerator
                 Settle(window);
                 SaveWindow(window, directory, name);
             }
+        }
+        finally
+        {
+            window.Close();
+        }
+    }
+
+    private static void OcrShot(string directory, MockTexts texts)
+    {
+        var german = texts.German;
+        var image = PixelBufferExtensions.FromBitmapSource(MockScreenshot.Render(texts));
+        string[] lines = [texts.Title, texts.Heading, .. texts.Fields.Select(f => f.Label + " " + f.Value)];
+        var result = new OcrResult(german ? "de-DE" : "en-US", [.. lines.Select((text, i) => OcrSamples.Line(text, 10, 10 + (i * 22), 260))]);
+        var ocr = OcrSamples.Service(result, "de-DE", "en-US");
+        var viewModel = new OcrResultViewModel(image, ocr, Substitute.For<IClipboardService>(), new FakeSettings());
+        viewModel.RecognizeAsync().GetAwaiter().GetResult();
+        var window = new OcrResultWindow(viewModel, Substitute.For<IThemeService>(), Substitute.For<IAppShell>());
+        ShowOffscreen(window);
+        try
+        {
+            SaveWindow(window, directory, "ocr-window");
         }
         finally
         {

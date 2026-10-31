@@ -1,0 +1,94 @@
+<ui:FluentWindow x:Class="GodSaveTheScreen.App.Views.OcrResultWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:l="clr-namespace:GodSaveTheScreen.App.Localization"
+                 Title="{l:Loc Ocr_Title}"
+                 Width="920"
+                 Height="600"
+                 MinWidth="640"
+                 MinHeight="420"
+                 WindowStartupLocation="CenterScreen"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowBackdropType="Mica"
+                 PreviewKeyDown="OnPreviewKeyDown">
+  <Window.Resources>
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+  </Window.Resources>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    <ui:TitleBar Grid.Row="0" Title="{l:Loc Ocr_Title}" ShowMinimize="False" ShowMaximize="True" />
+
+    <!-- Optionen -->
+    <DockPanel Grid.Row="1" Margin="16,4,16,8" LastChildFill="False">
+      <StackPanel DockPanel.Dock="Left" Orientation="Horizontal">
+        <TextBlock Text="{l:Loc Ocr_Language}" VerticalAlignment="Center" Margin="0,0,8,0" />
+        <ComboBox ItemsSource="{Binding Languages}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                  SelectedValue="{Binding LanguageTag, Mode=TwoWay}" MinWidth="220"
+                  AutomationProperties.Name="{l:Loc Ocr_Language}" />
+        <CheckBox Content="{l:Loc Ocr_Columns}" IsChecked="{Binding SeparateColumns, Mode=TwoWay}" Margin="16,0,0,0"
+                  ToolTip="{l:Loc Ocr_ColumnsTip}" />
+      </StackPanel>
+      <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+        <ui:Button Content="{l:Loc Ocr_Cancel}" Command="{Binding CancelCommand}" Margin="0,0,8,0"
+                   Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}" />
+        <ui:Button Content="{l:Loc Ocr_Again}" Icon="{ui:SymbolIcon ArrowSync24}" Command="{Binding RecognizeCommand}" />
+      </StackPanel>
+    </DockPanel>
+
+    <!-- Fortschritt und Meldungen -->
+    <StackPanel Grid.Row="2" Margin="16,0,16,8">
+      <StackPanel Visibility="{Binding IsBusy, Converter={StaticResource BoolToVisibility}}">
+        <ProgressBar IsIndeterminate="True" />
+        <TextBlock Text="{l:Loc Ocr_Working}" Opacity="0.75" Margin="0,4,0,0" />
+      </StackPanel>
+      <TextBlock Text="{l:Loc Ocr_Empty}" TextWrapping="Wrap"
+                 Visibility="{Binding IsEmptyResult, Converter={StaticResource BoolToVisibility}}" />
+      <StackPanel Visibility="{Binding IsNoLanguage, Converter={StaticResource BoolToVisibility}}">
+        <TextBlock Text="{l:Loc Ocr_NoLanguage}" TextWrapping="Wrap" />
+        <ui:Button Content="{l:Loc Ocr_OpenSettings}" Command="{Binding OpenLanguageSettingsCommand}" Margin="0,8,0,0" />
+      </StackPanel>
+      <TextBlock Text="{Binding ErrorMessage}" TextWrapping="Wrap" Foreground="{DynamicResource SystemFillColorCriticalBrush}"
+                 Visibility="{Binding HasError, Converter={StaticResource BoolToVisibility}}" />
+      <TextBlock Text="{Binding Notice}" Opacity="0.75" />
+    </StackPanel>
+
+    <!-- Bild und Text -->
+    <Grid Grid.Row="3" Margin="16,0,16,8">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="260" MinWidth="120" />
+        <ColumnDefinition Width="12" />
+        <ColumnDefinition Width="*" />
+      </Grid.ColumnDefinitions>
+      <Border BorderThickness="1" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" CornerRadius="4" ClipToBounds="True">
+        <Image Source="{Binding Preview}" Stretch="Uniform" StretchDirection="DownOnly" RenderOptions.BitmapScalingMode="HighQuality"
+               AutomationProperties.Name="{l:Loc Ocr_PreviewName}" />
+      </Border>
+      <TextBox x:Name="ResultText" Grid.Column="2" Style="{x:Null}" Padding="8" AcceptsReturn="True" AcceptsTab="True" TextWrapping="Wrap"
+               VerticalScrollBarVisibility="Auto" FontFamily="Consolas, Segoe UI" FontSize="14"
+               Background="{DynamicResource ControlFillColorDefaultBrush}" Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+               BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+               Text="{Binding Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+               AutomationProperties.Name="{l:Loc Ocr_TextName}" />
+    </Grid>
+
+    <!-- Fuß: Dauerhafter Hinweis und Befehle -->
+    <DockPanel Grid.Row="4" Margin="16,0,16,16" LastChildFill="True">
+      <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+        <ui:Button Content="{l:Loc Ocr_OpenInEditor}" Icon="{ui:SymbolIcon Edit24}" Command="{Binding OpenInEditorCommand}" Margin="0,0,8,0" />
+        <ui:Button Content="{l:Loc Ocr_Copy}" Icon="{ui:SymbolIcon Copy24}" Appearance="Primary" Command="{Binding CopyCommand}"
+                   ToolTip="{l:Loc Ocr_CopyTip}" />
+      </StackPanel>
+      <StackPanel Margin="0,0,16,0">
+        <TextBlock Text="{l:Loc Ocr_Check}" TextWrapping="Wrap" />
+        <TextBlock Text="{Binding Statistics}" Opacity="0.65" Margin="0,2,0,0" />
+      </StackPanel>
+    </DockPanel>
+  </Grid>
+</ui:FluentWindow>

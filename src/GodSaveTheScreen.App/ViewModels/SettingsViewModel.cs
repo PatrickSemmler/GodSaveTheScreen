@@ -10,6 +10,7 @@ using GodSaveTheScreen.App.Resources;
 using GodSaveTheScreen.App.Services;
 using GodSaveTheScreen.Core.Capture;
 using GodSaveTheScreen.Core.Hotkeys;
+using GodSaveTheScreen.Core.Ocr;
 using GodSaveTheScreen.Core.Services;
 using GodSaveTheScreen.Core.Settings;
 
@@ -73,6 +74,7 @@ public sealed partial class SettingsViewModel : ObservableObject
     private readonly IDialogService _dialogs;
     private readonly IHelpService _help;
     private readonly string _startLanguage;
+    private readonly IOcrService? _ocr;
 
     public SettingsViewModel(
         ISettingsService settings,
@@ -81,7 +83,8 @@ public sealed partial class SettingsViewModel : ObservableObject
         IThemeService theme,
         IAppPaths paths,
         IDialogService dialogs,
-        IHelpService help)
+        IHelpService help,
+        IOcrService? ocr = null)
     {
         _settings = settings;
         _autostart = autostart;
@@ -90,6 +93,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         _paths = paths;
         _dialogs = dialogs;
         _help = help;
+        _ocr = ocr;
         _startLanguage = settings.Current.Language;
 
         Languages =
@@ -140,7 +144,7 @@ public sealed partial class SettingsViewModel : ObservableObject
         ];
 
         Hotkeys = new ObservableCollection<HotkeyEntryViewModel>(
-            new[] { CaptureMode.Rectangle, CaptureMode.Window, CaptureMode.Freeform, CaptureMode.FullScreen }
+            new[] { CaptureMode.Rectangle, CaptureMode.Window, CaptureMode.Freeform, CaptureMode.FullScreen, CaptureMode.Text }
                 .Select(mode => new HotkeyEntryViewModel(mode, CaptureModeNames.Get(mode), settings.Current.GetHotkey(mode))));
         foreach (var entry in Hotkeys)
         {
@@ -154,6 +158,11 @@ public sealed partial class SettingsViewModel : ObservableObject
     public IReadOnlyList<Choice<string>> Languages { get; }
 
     public IReadOnlyList<Choice<ThemeSetting>> Themes { get; }
+
+    /// <summary>Sprachen der Texterkennung: Automatik plus alle installierten Windows-Sprachen (zum Zeitpunkt des Öffnens).</summary>
+    public IReadOnlyList<Choice<string>> OcrLanguages => _ocrLanguages ??= BuildOcrLanguages();
+
+    private IReadOnlyList<Choice<string>>? _ocrLanguages;
 
     public IReadOnlyList<Choice<TrayClickActionSetting>> TrayActions { get; }
 
@@ -227,6 +236,31 @@ public sealed partial class SettingsViewModel : ObservableObject
     {
         get => _settings.Current.DefaultMode;
         set => Update(s => s with { DefaultMode = value });
+    }
+
+    /// <summary>Sprache der Texterkennung (leer = automatisch).</summary>
+    public string OcrLanguage
+    {
+        get => _settings.Current.OcrLanguage;
+        set => Update(s => s with { OcrLanguage = value ?? string.Empty });
+    }
+
+    private List<Choice<string>> BuildOcrLanguages()
+    {
+        var list = new List<Choice<string>> { new(Strings.Ocr_LanguageAuto, string.Empty) };
+        if (_ocr is not null)
+        {
+            list.AddRange(_ocr.AvailableLanguages.Select(l => new Choice<string>(l.DisplayName, l.Tag)));
+        }
+
+        // Eine gespeicherte, inzwischen nicht mehr installierte Sprache bleibt auswählbar sichtbar (die Erkennung fällt auf Automatik zurück).
+        var saved = _settings.Current.OcrLanguage;
+        if (!string.IsNullOrEmpty(saved) && list.All(c => !string.Equals(c.Value, saved, StringComparison.OrdinalIgnoreCase)))
+        {
+            list.Add(new Choice<string>(saved, saved));
+        }
+
+        return list;
     }
 
     public int DefaultTimerSeconds

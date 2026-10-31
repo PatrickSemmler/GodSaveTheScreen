@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net10.0-windows</TargetFramework>
+    <TargetFramework>net10.0-windows10.0.19041.0</TargetFramework>
     <UseWPF>true</UseWPF>
     <RootNamespace>GodSaveTheScreen.App</RootNamespace>
     <AssemblyName>GodSaveTheScreen</AssemblyName>
@@ -26,6 +26,7 @@
     <ProjectReference Include="..\GodSaveTheScreen.Core\GodSaveTheScreen.Core.csproj" />
     <ProjectReference Include="..\GodSaveTheScreen.Capture\GodSaveTheScreen.Capture.csproj" />
     <ProjectReference Include="..\GodSaveTheScreen.Rendering\GodSaveTheScreen.Rendering.csproj" />
+    <ProjectReference Include="..\GodSaveTheScreen.Ocr\GodSaveTheScreen.Ocr.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Assets\**\*" />

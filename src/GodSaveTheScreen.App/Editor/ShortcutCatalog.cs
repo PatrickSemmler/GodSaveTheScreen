@@ -29,6 +29,7 @@ public static class ShortcutCatalog
         ("Shortcuts_Edit", "Shortcut_CopyImage", "Ctrl+Shift+C"),
         ("Shortcuts_Edit", "Shortcut_Cut", "Ctrl+X"),
         ("Shortcuts_Edit", "Shortcut_Duplicate", "Ctrl+D"),
+        ("Shortcuts_Edit", "Shortcut_RecognizeText", "Ctrl+Shift+T"),
         ("Shortcuts_Edit", "Shortcut_Delete", "Del"),
         ("Shortcuts_Edit", "Shortcut_SelectAll", "Ctrl+A"),
         ("Shortcuts_Edit", "Shortcut_BringToFront", "Ctrl+Shift+]"),
@@ -77,6 +78,7 @@ public static class ShortcutCatalog
             (CaptureMode.Window, "Mode_Window"),
             (CaptureMode.Freeform, "Mode_Freeform"),
             (CaptureMode.FullScreen, "Mode_Fullscreen"),
+            (CaptureMode.Text, "Mode_Text"),
         })
         {
             if (HotkeyGesture.TryParse(settings.GetHotkey(mode)) is { } gesture)

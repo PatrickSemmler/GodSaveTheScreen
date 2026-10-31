@@ -632,4 +632,33 @@ Tip: You can assign the Print Screen key to a capture mode in the settings. On W
   <data name="Frame_Preset_Social" xml:space="preserve"><value>Social 1:1</value></data>
   <data name="Frame_Preset_Slide" xml:space="preserve"><value>Slide 16:9</value></data>
   <data name="Field_Height" xml:space="preserve"><value>Height</value></data>
+  <data name="Mode_Text" xml:space="preserve"><value>Capture text</value></data>
+  <data name="Overlay_HintText" xml:space="preserve"><value>Drag to select the area with the text · Esc to cancel</value></data>
+  <data name="Ocr_Title" xml:space="preserve"><value>Recognized text</value></data>
+  <data name="Ocr_Language" xml:space="preserve"><value>Language</value></data>
+  <data name="Ocr_LanguageAuto" xml:space="preserve"><value>Automatic (Windows languages)</value></data>
+  <data name="Ocr_Columns" xml:space="preserve"><value>Separate columns with tabs</value></data>
+  <data name="Ocr_ColumnsTip" xml:space="preserve"><value>Puts tabs between columns so a table can be pasted into Excel. Does not fit every layout. Changing it rebuilds the text and discards your edits.</value></data>
+  <data name="Ocr_Again" xml:space="preserve"><value>Recognize again</value></data>
+  <data name="Ocr_Copy" xml:space="preserve"><value>Copy</value></data>
+  <data name="Ocr_CopyTip" xml:space="preserve"><value>Copy the text (Ctrl+C without a selection copies everything)</value></data>
+  <data name="Ocr_OpenInEditor" xml:space="preserve"><value>Open in editor</value></data>
+  <data name="Ocr_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Ocr_Working" xml:space="preserve"><value>Recognizing text…</value></data>
+  <data name="Ocr_Check" xml:space="preserve"><value>Please check the recognized text: similar characters such as O and 0 are easily confused.</value></data>
+  <data name="Ocr_Empty" xml:space="preserve"><value>No text was found. Try another language or a larger area.</value></data>
+  <data name="Ocr_NoLanguage" xml:space="preserve"><value>No language for text recognition is installed. Add a language pack in the Windows settings (Time &amp; language, Language &amp; region), then recognize again.</value></data>
+  <data name="Ocr_OpenSettings" xml:space="preserve"><value>Open Windows language settings</value></data>
+  <data name="Ocr_Failed" xml:space="preserve"><value>Text recognition failed: {0}</value></data>
+  <data name="Ocr_Cancelled" xml:space="preserve"><value>Recognition cancelled.</value></data>
+  <data name="Ocr_Copied" xml:space="preserve"><value>Copied to the clipboard.</value></data>
+  <data name="Ocr_Statistics" xml:space="preserve"><value>{0} characters, {1} lines</value></data>
+  <data name="Ocr_PreviewName" xml:space="preserve"><value>Preview of the captured area</value></data>
+  <data name="Ocr_TextName" xml:space="preserve"><value>Recognized text (editable)</value></data>
+  <data name="Editor_RecognizeText" xml:space="preserve"><value>Recognize text</value></data>
+  <data name="Editor_RecognizeTextTip" xml:space="preserve"><value>Recognize text in the image or in the selected area (Ctrl+Shift+T)</value></data>
+  <data name="Menu_RecognizeText" xml:space="preserve"><value>Recognize text</value></data>
+  <data name="Shortcut_RecognizeText" xml:space="preserve"><value>Recognize text</value></data>
+  <data name="Settings_OcrLanguage" xml:space="preserve"><value>Text recognition language</value></data>
+  <data name="Settings_OcrLanguageHint" xml:space="preserve"><value>Only installed Windows language packs can be used. Add more in the Windows settings. The language can also be changed in the result window.</value></data>
 </root>

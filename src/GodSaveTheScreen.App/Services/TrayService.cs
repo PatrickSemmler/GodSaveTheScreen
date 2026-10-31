@@ -148,6 +148,7 @@ public sealed class TrayService : IHostedService, INotificationService, IDisposa
         menu.Items.Add(Item(Strings.Mode_Window, () => Capture(CaptureMode.Window)));
         menu.Items.Add(Item(Strings.Mode_Freeform, () => Capture(CaptureMode.Freeform)));
         menu.Items.Add(Item(Strings.Mode_Fullscreen, () => Capture(CaptureMode.FullScreen)));
+        menu.Items.Add(Item(Strings.Mode_Text, () => Capture(CaptureMode.Text)));
 
         var timer = new MenuItem { Header = Strings.Tray_WithTimer };
         menu.Items.Add(timer);

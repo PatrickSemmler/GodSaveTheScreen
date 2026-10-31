@@ -18,6 +18,10 @@
       <ComboBox ItemsSource="{Binding TimerChoices}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding DefaultTimerSeconds}" MinWidth="220" HorizontalAlignment="Left" />
       <TextBlock Style="{StaticResource Label}" Text="{l:Loc Settings_WindowSource}" />
       <ComboBox ItemsSource="{Binding WindowSources}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding WindowSource}" MinWidth="220" HorizontalAlignment="Left" Margin="0,0,0,16" />
+      <TextBlock Style="{StaticResource Label}" Text="{l:Loc Settings_OcrLanguage}" />
+      <ComboBox ItemsSource="{Binding OcrLanguages}" DisplayMemberPath="Label" SelectedValuePath="Value" SelectedValue="{Binding OcrLanguage}" MinWidth="220" HorizontalAlignment="Left"
+                AutomationProperties.Name="{l:Loc Settings_OcrLanguage}" />
+      <TextBlock Text="{l:Loc Settings_OcrLanguageHint}" TextWrapping="Wrap" Opacity="0.7" Margin="0,4,0,16" />
       <CheckBox Content="{l:Loc Settings_CaptureCursor}" IsChecked="{Binding CaptureCursor}" />
       <CheckBox Content="{l:Loc Settings_RoundedCorners}" IsChecked="{Binding RoundedCornersTransparent}" />
       <CheckBox Content="{l:Loc Settings_FreeformAA}" IsChecked="{Binding FreeformAntiAlias}" />

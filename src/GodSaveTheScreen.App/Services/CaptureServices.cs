@@ -24,6 +24,9 @@ public interface ISelectionService
 {
     /// <summary>Liefert die Auswahl oder <c>null</c> bei Abbruch.</summary>
     Task<SelectionResult?> SelectAsync(ScreenSnapshot snapshot, CaptureMode mode, CancellationToken cancellationToken = default);
+
+    /// <summary>Wie <see cref="SelectAsync(ScreenSnapshot, CaptureMode, CancellationToken)"/>, mit eigenem Hinweistext im Overlay (<c>null</c> = der zum Modus passende).</summary>
+    Task<SelectionResult?> SelectAsync(ScreenSnapshot snapshot, CaptureMode mode, string? hint, CancellationToken cancellationToken = default);
 }
 
 /// <summary>Ergebnis einer Aufnahme, auf dem die Nachaufnahme-Aktionen arbeiten.</summary>

@@ -19,7 +19,10 @@ public sealed class SelectionService : ISelectionService
         _settings = settings;
     }
 
-    public Task<SelectionResult?> SelectAsync(ScreenSnapshot snapshot, CaptureMode mode, CancellationToken cancellationToken = default)
+    public Task<SelectionResult?> SelectAsync(ScreenSnapshot snapshot, CaptureMode mode, CancellationToken cancellationToken = default) =>
+        SelectAsync(snapshot, mode, null, cancellationToken);
+
+    public Task<SelectionResult?> SelectAsync(ScreenSnapshot snapshot, CaptureMode mode, string? hint, CancellationToken cancellationToken = default)
     {
         var completion = new TaskCompletionSource<SelectionResult?>();
         var state = new SelectionState(snapshot.VirtualBounds);
@@ -28,7 +31,7 @@ public sealed class SelectionService : ISelectionService
         var showMagnifier = _settings.Current.ShowMagnifier;
 
         var overlays = snapshot.Monitors
-            .Select(monitor => new SelectionOverlayWindow(monitor, bitmap, snapshot, viewModel, showMagnifier))
+            .Select(monitor => new SelectionOverlayWindow(monitor, bitmap, snapshot, viewModel, showMagnifier, hint))
             .ToList();
 
         viewModel.Finished += result =>

@@ -16,7 +16,7 @@ Get the latest version from the [Releases](../../releases) page. Each release is
 | `GodSaveTheScreen-<version>-<platform>.msi` | For software deployment (GPO, Intune, SCCM); German/English selected automatically |
 | `GodSaveTheScreen-<version>-<platform>.zip` | Portable, no installation required |
 
-Requirements: Windows 10 (version 2004) or later. The .NET runtime is included.
+Requirements: Windows 10 (version 2004) or later. The .NET runtime is included. Text recognition uses the language packs installed in Windows.
 
 ## Features
 
@@ -28,6 +28,7 @@ Requirements: Windows 10 (version 2004) or later. The .NET runtime is included.
 - Adjustable timer; multiple monitors with different scaling
 - Global hotkeys, tray icon, start window, Windows jump list
 - After capturing, optionally: copy to clipboard, save automatically, open the editor
+- **Capture text (OCR):** drag an area and the text in it is recognized locally with the Windows text recognition and shown in a result window where you can check, correct and copy it (also as a table with tabs); in the editor via `Ctrl+Shift+T` for the whole image or the selected area. Needs an installed Windows language pack (Settings → Time & language → Language & region); nothing leaves your computer.
 
 ### Editor
 
@@ -84,7 +85,7 @@ Requirements: Windows 10 (version 2004) or later. The .NET runtime is included.
 
 | Key | Function |
 |---|---|
-| `Ctrl+Shift+1` … `4` | Capture: rectangle / window / freeform / full screen (default, configurable) |
+| `Ctrl+Shift+1` … `5` | Capture: rectangle / window / freeform / full screen / text (default, configurable) |
 | `V` `R` `E` `L` `A` `G` `P` | Select, rectangle, ellipse, line, arrow, triangle, polygon |
 | `T` `K` `S` `M` `J` `I` | Text, callout, stamp, marker, emoji, image |
 | `B` `H` `X` `U` `Z` `C` | Pen, highlighter, eraser, blur, magnifier, crop |

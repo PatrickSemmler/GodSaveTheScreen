@@ -93,5 +93,14 @@ foreach ($package in $packages) {
 [void]$sb.AppendLine('  Description:  The emoji artwork comes from the Windows font installed on the computer and is drawn at runtime; it is not part of this program.')
 [void]$sb.AppendLine('')
 
+[void]$sb.AppendLine('Windows SDK für .NET (Microsoft.Windows.SDK.NET, WinRT.Runtime) / Windows SDK for .NET')
+[void]$sb.AppendLine('  Autor(en):  Microsoft')
+[void]$sb.AppendLine('  Copyright:  © Microsoft Corporation. All rights reserved.')
+[void]$sb.AppendLine('  Lizenz:     Windows-SDK-Lizenz https://aka.ms/WinSDKLicenseURL (Projektion der Windows-Laufzeit); WinRT.Runtime (C#/WinRT): MIT')
+[void]$sb.AppendLine('  Projekt:    https://github.com/microsoft/CsWinRT')
+[void]$sb.AppendLine('  Beschreibung: Zielframework-Paket Microsoft.Windows.SDK.NET.Ref (Windows-Laufzeit-Projektion für Windows.Media.Ocr, Texterkennung); die Assemblies liegen im Programm. Das Paket steht nicht in der NuGet-Paketliste, weil es ein Targeting Pack ist.')
+[void]$sb.AppendLine('  Description:  Targeting pack Microsoft.Windows.SDK.NET.Ref (Windows Runtime projection for Windows.Media.Ocr, text recognition); the assemblies are part of the program. It is not in the NuGet package list because it is a targeting pack.')
+[void]$sb.AppendLine('')
+
 Set-Content -Path $Output -Value $sb.ToString() -Encoding UTF8
 Write-Host "Geschrieben: $Output ($($packages.Count) Pakete)"

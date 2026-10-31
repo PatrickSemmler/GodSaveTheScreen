@@ -1234,4 +1234,62 @@ public static class Strings
     public static string Frame_Preset_Slide => ResourceManager.GetString("Frame_Preset_Slide", Culture) ?? "Frame_Preset_Slide";
 
     public static string Field_Height => ResourceManager.GetString("Field_Height", Culture) ?? "Field_Height";
+
+    public static string Mode_Text => ResourceManager.GetString("Mode_Text", Culture) ?? "Mode_Text";
+
+    public static string Overlay_HintText => ResourceManager.GetString("Overlay_HintText", Culture) ?? "Overlay_HintText";
+
+    public static string Ocr_Title => ResourceManager.GetString("Ocr_Title", Culture) ?? "Ocr_Title";
+
+    public static string Ocr_Language => ResourceManager.GetString("Ocr_Language", Culture) ?? "Ocr_Language";
+
+    public static string Ocr_LanguageAuto => ResourceManager.GetString("Ocr_LanguageAuto", Culture) ?? "Ocr_LanguageAuto";
+
+    public static string Ocr_Columns => ResourceManager.GetString("Ocr_Columns", Culture) ?? "Ocr_Columns";
+
+    public static string Ocr_ColumnsTip => ResourceManager.GetString("Ocr_ColumnsTip", Culture) ?? "Ocr_ColumnsTip";
+
+    public static string Ocr_Again => ResourceManager.GetString("Ocr_Again", Culture) ?? "Ocr_Again";
+
+    public static string Ocr_Copy => ResourceManager.GetString("Ocr_Copy", Culture) ?? "Ocr_Copy";
+
+    public static string Ocr_CopyTip => ResourceManager.GetString("Ocr_CopyTip", Culture) ?? "Ocr_CopyTip";
+
+    public static string Ocr_OpenInEditor => ResourceManager.GetString("Ocr_OpenInEditor", Culture) ?? "Ocr_OpenInEditor";
+
+    public static string Ocr_Cancel => ResourceManager.GetString("Ocr_Cancel", Culture) ?? "Ocr_Cancel";
+
+    public static string Ocr_Working => ResourceManager.GetString("Ocr_Working", Culture) ?? "Ocr_Working";
+
+    public static string Ocr_Check => ResourceManager.GetString("Ocr_Check", Culture) ?? "Ocr_Check";
+
+    public static string Ocr_Empty => ResourceManager.GetString("Ocr_Empty", Culture) ?? "Ocr_Empty";
+
+    public static string Ocr_NoLanguage => ResourceManager.GetString("Ocr_NoLanguage", Culture) ?? "Ocr_NoLanguage";
+
+    public static string Ocr_OpenSettings => ResourceManager.GetString("Ocr_OpenSettings", Culture) ?? "Ocr_OpenSettings";
+
+    public static string Ocr_Failed => ResourceManager.GetString("Ocr_Failed", Culture) ?? "Ocr_Failed";
+
+    public static string Ocr_Cancelled => ResourceManager.GetString("Ocr_Cancelled", Culture) ?? "Ocr_Cancelled";
+
+    public static string Ocr_Copied => ResourceManager.GetString("Ocr_Copied", Culture) ?? "Ocr_Copied";
+
+    public static string Ocr_Statistics => ResourceManager.GetString("Ocr_Statistics", Culture) ?? "Ocr_Statistics";
+
+    public static string Ocr_PreviewName => ResourceManager.GetString("Ocr_PreviewName", Culture) ?? "Ocr_PreviewName";
+
+    public static string Ocr_TextName => ResourceManager.GetString("Ocr_TextName", Culture) ?? "Ocr_TextName";
+
+    public static string Editor_RecognizeText => ResourceManager.GetString("Editor_RecognizeText", Culture) ?? "Editor_RecognizeText";
+
+    public static string Editor_RecognizeTextTip => ResourceManager.GetString("Editor_RecognizeTextTip", Culture) ?? "Editor_RecognizeTextTip";
+
+    public static string Menu_RecognizeText => ResourceManager.GetString("Menu_RecognizeText", Culture) ?? "Menu_RecognizeText";
+
+    public static string Shortcut_RecognizeText => ResourceManager.GetString("Shortcut_RecognizeText", Culture) ?? "Shortcut_RecognizeText";
+
+    public static string Settings_OcrLanguage => ResourceManager.GetString("Settings_OcrLanguage", Culture) ?? "Settings_OcrLanguage";
+
+    public static string Settings_OcrLanguageHint => ResourceManager.GetString("Settings_OcrLanguageHint", Culture) ?? "Settings_OcrLanguageHint";
 }

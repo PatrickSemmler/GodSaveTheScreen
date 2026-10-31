@@ -11,6 +11,7 @@ public static class CaptureModeNames
         CaptureMode.Rectangle => Strings.Mode_Rectangle,
         CaptureMode.Window => Strings.Mode_Window,
         CaptureMode.Freeform => Strings.Mode_Freeform,
+        CaptureMode.Text => Strings.Mode_Text,
         _ => Strings.Mode_Fullscreen,
     };
 }

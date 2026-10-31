@@ -303,11 +303,11 @@ public sealed class StartViewModelTimerTests
     }
 
     [Fact]
-    public void Modi_EnthaltenAlleVierAufnahmearten()
+    public void Modi_EnthaltenAlleAufnahmearten()
     {
         var (vm, _) = Create();
 
-        vm.Modes.Select(m => m.Mode).Distinct().Count().ShouldBe(4);
+        vm.Modes.Select(m => m.Mode).Distinct().Count().ShouldBe(5);
     }
 }
 
@@ -326,6 +326,8 @@ internal sealed class TestCoordinator
 
     public required IWindowVisibilityService Visibility { get; init; }
 
+    public required IOcrResultPresenter Ocr { get; init; }
+
     public static TestCoordinator Create(ISettingsService settings, params IPostCaptureAction[] actions)
     {
         var capture = Substitute.For<IScreenCaptureService>();
@@ -340,6 +342,7 @@ internal sealed class TestCoordinator
         var dialogs = Substitute.For<IDialogService>();
         var visibility = Substitute.For<IWindowVisibilityService>();
         visibility.HideAll().Returns(Substitute.For<IDisposable>());
+        var ocr = Substitute.For<IOcrResultPresenter>();
 
         var coordinator = new CaptureCoordinator(
             capture,
@@ -351,7 +354,8 @@ internal sealed class TestCoordinator
             actions,
             settings,
             dialogs,
-            NullLogger<CaptureCoordinator>.Instance);
+            NullLogger<CaptureCoordinator>.Instance,
+            ocr);
 
         return new TestCoordinator
         {
@@ -361,6 +365,7 @@ internal sealed class TestCoordinator
             Selection = selection,
             Dialogs = dialogs,
             Visibility = visibility,
+            Ocr = ocr,
         };
     }
 }

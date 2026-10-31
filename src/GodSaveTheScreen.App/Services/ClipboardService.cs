@@ -27,6 +27,14 @@ public sealed class ClipboardService : IClipboardService
         SetData(CreateImageData(image));
     }
 
+    public void SetText(string text)
+    {
+        ArgumentNullException.ThrowIfNull(text);
+        var data = new DataObject();
+        data.SetText(text, TextDataFormat.UnicodeText);
+        SetData(data);
+    }
+
     public void SetAnnotations(IReadOnlyList<Annotation> annotations, PixelBuffer? renderedFallback)
     {
         ArgumentNullException.ThrowIfNull(annotations);

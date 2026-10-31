@@ -3,6 +3,7 @@
     <Project Path="src/GodSaveTheScreen.App/GodSaveTheScreen.App.csproj" />
     <Project Path="src/GodSaveTheScreen.Capture/GodSaveTheScreen.Capture.csproj" />
     <Project Path="src/GodSaveTheScreen.Core/GodSaveTheScreen.Core.csproj" />
+    <Project Path="src/GodSaveTheScreen.Ocr/GodSaveTheScreen.Ocr.csproj" />
     <Project Path="src/GodSaveTheScreen.Rendering/GodSaveTheScreen.Rendering.csproj" />
   </Folder>
   <Folder Name="/tests/">

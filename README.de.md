@@ -16,7 +16,7 @@ Die aktuelle Version gibt es unter [Releases](../../releases), jeweils für `win
 | `GodSaveTheScreen-<Version>-<Plattform>.msi` | Für Softwareverteilung (GPO, Intune, SCCM); Deutsch/Englisch automatisch |
 | `GodSaveTheScreen-<Version>-<Plattform>.zip` | Portabel, ohne Installation |
 
-Voraussetzung: Windows 10 (Version 2004) oder neuer. Die .NET-Laufzeit ist enthalten.
+Voraussetzung: Windows 10 (Version 2004) oder neuer. Die .NET-Laufzeit ist enthalten. Die Texterkennung nutzt die in Windows installierten Sprachpakete.
 
 ## Funktionen
 
@@ -28,6 +28,7 @@ Voraussetzung: Windows 10 (Version 2004) oder neuer. Die .NET-Laufzeit ist entha
 - Frei einstellbarer Timer, mehrere Monitore mit unterschiedlicher Skalierung
 - Globale Hotkeys, Tray-Symbol, Startfenster, Windows-Sprungliste
 - Nach der Aufnahme optional: in die Zwischenablage kopieren, automatisch speichern, Editor öffnen
+- **Text aufnehmen (OCR):** Bereich aufziehen, und der Text darin wird lokal mit der Windows-Texterkennung erkannt und in einem Ergebnisfenster zum Prüfen, Korrigieren und Kopieren angezeigt (auch als Tabelle mit Tabulatoren); im Editor mit `Strg+Umschalt+T` für das ganze Bild oder den ausgewählten Bereich. Braucht ein installiertes Windows-Sprachpaket (Einstellungen → Zeit und Sprache → Sprache und Region); nichts verlässt den Rechner.
 
 ### Editor
 
@@ -84,7 +85,7 @@ Voraussetzung: Windows 10 (Version 2004) oder neuer. Die .NET-Laufzeit ist entha
 
 | Taste | Funktion |
 |---|---|
-| `Strg+Umschalt+1` … `4` | Aufnahme: Rechteck / Fenster / Freiform / Vollbild (Standard, änderbar) |
+| `Strg+Umschalt+1` … `5` | Aufnahme: Rechteck / Fenster / Freiform / Vollbild / Text (Standard, änderbar) |
 | `V` `R` `E` `L` `A` `G` `P` | Auswahl, Rechteck, Ellipse, Linie, Pfeil, Dreieck, Polygon |
 | `T` `K` `S` `M` `J` `I` | Text, Sprechblase, Stempel, Marker, Emoji, Bild |
 | `B` `H` `X` `U` `Z` `C` | Stift, Textmarker, Radierer, Unschärfe, Lupe, Zuschneiden |

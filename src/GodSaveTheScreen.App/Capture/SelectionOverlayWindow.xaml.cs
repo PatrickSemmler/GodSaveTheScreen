@@ -38,7 +38,8 @@ public partial class SelectionOverlayWindow : Window
         BitmapSource snapshotBitmap,
         ScreenSnapshot snapshot,
         SelectionOverlayViewModel viewModel,
-        bool showMagnifier = true)
+        bool showMagnifier = true,
+        string? hint = null)
     {
         _showMagnifier = showMagnifier;
         _monitor = monitor;
@@ -52,7 +53,7 @@ public partial class SelectionOverlayWindow : Window
         var local = monitor.Bounds.Offset(-snapshot.VirtualLeft, -snapshot.VirtualTop);
         BackgroundImage.Source = new CroppedBitmap(snapshotBitmap, new Int32Rect(local.X, local.Y, local.Width, local.Height));
 
-        HintText.Text = viewModel.Mode switch
+        HintText.Text = hint ?? viewModel.Mode switch
         {
             CaptureMode.Window => Strings.Overlay_HintWindow,
             CaptureMode.Freeform => Strings.Overlay_HintFreeform,

@@ -33,7 +33,7 @@ internal static class TestDoubles
 /// <summary>Baut Kontext, Werkzeuge und ViewModel eines Editors mit gefälschten Diensten.</summary>
 internal sealed class EditorHarness
 {
-    public EditorHarness(ImageDocument? document = null)
+    public EditorHarness(ImageDocument? document = null, IOcrResultPresenter? ocr = null)
     {
         Document = document ?? new ImageDocument(new PixelBuffer(200, 150));
         Settings = new FakeSettings();
@@ -51,7 +51,7 @@ internal sealed class EditorHarness
         ImageDialogs.PickImageFiles().Returns([]);
         Context = new EditorContext(Document, Defaults, Settings, Exporter);
         Tools = ToolRegistry.Create(Context);
-        ViewModel = new EditorViewModel(Context, Tools, Dialogs, Clipboard, Codec, Exporter, Editors, Settings, Capture, Projects, Recents, NullLogger<EditorViewModel>.Instance, ImageDialogs);
+        ViewModel = new EditorViewModel(Context, Tools, Dialogs, Clipboard, Codec, Exporter, Editors, Settings, Capture, Projects, Recents, NullLogger<EditorViewModel>.Instance, ImageDialogs, ocr);
     }
 
     public IImageInsertDialogs ImageDialogs { get; }
