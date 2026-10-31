@@ -249,7 +249,7 @@ public sealed record AppSettings
         var presets = new ToolPresetMap();
         foreach (var (key, list) in ToolPresets ?? [])
         {
-            presets[key] = new ToolPresetList((list ?? []).Where(p => p is not null && PresetNames.IsValid(p.Name)));
+            presets[key] = new ToolPresetList((list ?? []).Where(p => p is not null && PresetNames.IsValid(p.Name)).Select(p => p.Frame is { Background.Image: not null } ? p with { Frame = p.Frame.WithoutImage() } : p));
         }
 
         return this with
@@ -269,7 +269,7 @@ public sealed record AppSettings
             },
             CalloutDefaults = callout.Normalized(),
             ImageDefaults = (ImageDefaults ?? new ImageStyle()).Normalized(),
-            FrameDefaults = (FrameDefaults ?? new FrameStyle()).Clamped(),
+            FrameDefaults = (FrameDefaults ?? new FrameStyle()).WithoutImage().Clamped(),
             EmojiRecent = EmojiRecent ?? [],
             EmojiFavorites = EmojiFavorites ?? [],
             RecentColors = RecentColors ?? [],

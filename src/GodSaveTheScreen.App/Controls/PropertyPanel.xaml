@@ -1192,6 +1192,99 @@
           <StackPanel DataContext="{Binding FrameProperties}" Visibility="{Binding IsApplicable, Converter={StaticResource BoolToVisibility}}">
             <TextBlock Text="{l:Loc Frame_Hint}" TextWrapping="Wrap" Opacity="0.7" Margin="0,4,0,8" />
 
+            <controls:PanelSection Header="{l:Loc Frame_Background}" SectionKey="FrameBackground" DefaultExpanded="False" HasSwitch="True"
+                                   IsOn="{Binding IsBackgroundOn}">
+              <controls:PanelSection.Summary>
+                <StackPanel Orientation="Horizontal">
+                  <Border Style="{StaticResource SummarySwatch}" Background="{Binding BackgroundColorA, Converter={StaticResource ColorBrush}}"
+                          Visibility="{Binding IsBackgroundColorKind, Converter={StaticResource BoolToVisibility}}" />
+                  <Border Style="{StaticResource SummarySwatch}" Background="{Binding BackgroundColorB, Converter={StaticResource ColorBrush}}"
+                          Visibility="{Binding IsBackgroundGradient, Converter={StaticResource BoolToVisibility}}" />
+                  <TextBlock Style="{StaticResource SummaryText}" Text="{l:Loc Frame_Background_Image}"
+                             Visibility="{Binding HasBackgroundImage, Converter={StaticResource BoolToVisibility}}" />
+                </StackPanel>
+              </controls:PanelSection.Summary>
+              <StackPanel>
+                <TextBlock Text="{l:Loc Frame_BackgroundKind}" Style="{StaticResource FieldLabel}" />
+                <ComboBox ItemsSource="{Binding BackgroundKinds}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                          SelectedValue="{Binding BackgroundKind, Mode=TwoWay}" HorizontalAlignment="Stretch"
+                          AutomationProperties.Name="{l:Loc Frame_BackgroundKind}" />
+                <Grid Margin="0,8,0,0" Visibility="{Binding IsBackgroundColorKind, Converter={StaticResource BoolToVisibility}}">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="Auto" />
+                  </Grid.ColumnDefinitions>
+                  <StackPanel>
+                    <TextBlock Text="{l:Loc Frame_GradientFrom}" Style="{StaticResource FieldLabel}" />
+                    <controls:ColorButton Style="{StaticResource CompactColor}" SelectedColor="{Binding BackgroundColorA, Mode=TwoWay}" />
+                  </StackPanel>
+                  <StackPanel Grid.Column="2" Visibility="{Binding IsBackgroundGradient, Converter={StaticResource BoolToVisibility}}">
+                    <TextBlock Text="{l:Loc Frame_GradientTo}" Style="{StaticResource FieldLabel}" />
+                    <controls:ColorButton Style="{StaticResource CompactColor}" SelectedColor="{Binding BackgroundColorB, Mode=TwoWay}" />
+                  </StackPanel>
+                </Grid>
+                <StackPanel Visibility="{Binding IsBackgroundGradient, Converter={StaticResource BoolToVisibility}}">
+                  <TextBlock Text="{l:Loc Frame_Angle}" Style="{StaticResource FieldLabel}" />
+                  <DockPanel>
+                    <controls:SpinBox DockPanel.Dock="Right" Style="{StaticResource SliderSpin}" Minimum="-360" Maximum="360" SmallChange="1" LargeChange="15" Unit="°"
+                                      Value="{Binding BackgroundAngle}" AutomationProperties.Name="{l:Loc Frame_Angle}" />
+                    <Slider Minimum="-360" Maximum="360" SmallChange="1" LargeChange="15" VerticalAlignment="Center"
+                            Value="{Binding BackgroundAngleValue, Mode=TwoWay}" AutomationProperties.Name="{l:Loc Frame_Angle}" />
+                  </DockPanel>
+                </StackPanel>
+                <StackPanel Margin="0,8,0,0" Visibility="{Binding IsBackgroundImage, Converter={StaticResource BoolToVisibility}}">
+                  <Border Width="96" Height="60" HorizontalAlignment="Left" CornerRadius="4" BorderThickness="1" ClipToBounds="True"
+                          BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+                          Visibility="{Binding HasBackgroundImage, Converter={StaticResource BoolToVisibility}}">
+                    <Image Source="{Binding BackgroundImagePreview}" Stretch="UniformToFill" />
+                  </Border>
+                  <TextBlock Text="{l:Loc Frame_ImageChosen}" TextWrapping="Wrap" Opacity="0.7" Margin="0,4,0,0"
+                             Visibility="{Binding HasBackgroundImage, Converter={StaticResource BoolToVisibility}}" />
+                  <TextBlock Text="{l:Loc Frame_ImageNone}" TextWrapping="Wrap" Opacity="0.7"
+                             Visibility="{Binding HasNoBackgroundImage, Converter={StaticResource BoolToVisibility}}" />
+                </StackPanel>
+                <ui:Button Content="{l:Loc Frame_ChooseImage}" Icon="{ui:SymbolIcon Image24}" Margin="0,8,0,0" HorizontalAlignment="Stretch"
+                           Command="{Binding ChooseBackgroundImageCommand}"
+                           Visibility="{Binding IsBackgroundImage, Converter={StaticResource BoolToVisibility}}" />
+              </StackPanel>
+            </controls:PanelSection>
+
+            <controls:PanelSection Header="{l:Loc Frame_Layout}" SectionKey="FrameLayout" DefaultExpanded="False">
+              <controls:PanelSection.Summary>
+                <TextBlock Style="{StaticResource SummaryText}" Text="{Binding LayoutSummary}" />
+              </controls:PanelSection.Summary>
+              <StackPanel>
+                <TextBlock Text="{l:Loc Frame_Padding}" Style="{StaticResource FieldLabel}" />
+                <controls:SpinBox Minimum="0" Maximum="2000" SmallChange="1" LargeChange="10" Unit="px"
+                                  Value="{Binding Padding}" AutomationProperties.Name="{l:Loc Frame_Padding}" />
+                <TextBlock Text="{l:Loc Frame_Aspect}" Style="{StaticResource FieldLabel}" Margin="0,8,0,0" />
+                <ComboBox ItemsSource="{Binding AspectChoices}" DisplayMemberPath="Label" SelectedValuePath="Value"
+                          SelectedValue="{Binding AspectKind, Mode=TwoWay}" HorizontalAlignment="Stretch"
+                          AutomationProperties.Name="{l:Loc Frame_Aspect}" />
+                <Grid Margin="0,8,0,0" Visibility="{Binding IsAspectCustom, Converter={StaticResource BoolToVisibility}}">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="8" />
+                    <ColumnDefinition Width="*" />
+                  </Grid.ColumnDefinitions>
+                  <StackPanel>
+                    <TextBlock Text="{l:Loc Field_Width}" Style="{StaticResource FieldLabel}" />
+                    <controls:SpinBox Minimum="1" Maximum="100" SmallChange="1" LargeChange="5"
+                                      Value="{Binding AspectWidth}" AutomationProperties.Name="{l:Loc Frame_AspectWidth}" />
+                  </StackPanel>
+                  <StackPanel Grid.Column="2">
+                    <TextBlock Text="{l:Loc Field_Height}" Style="{StaticResource FieldLabel}" />
+                    <controls:SpinBox Minimum="1" Maximum="100" SmallChange="1" LargeChange="5"
+                                      Value="{Binding AspectHeight}" AutomationProperties.Name="{l:Loc Frame_AspectHeight}" />
+                  </StackPanel>
+                </Grid>
+                <TextBlock Text="{l:Loc Frame_AspectHint}" TextWrapping="Wrap" Opacity="0.7" Margin="0,6,0,0" />
+                <TextBlock Text="{l:Loc Frame_AspectLimited}" TextWrapping="Wrap" Margin="0,6,0,0" Foreground="{DynamicResource SystemFillColorCautionBrush}"
+                           Visibility="{Binding IsAspectLimited, Converter={StaticResource BoolToVisibility}}" />
+              </StackPanel>
+            </controls:PanelSection>
+
             <controls:PanelSection Header="{l:Loc Frame_Border}" SectionKey="FrameBorder" DefaultExpanded="False" HasSwitch="True"
                                    IsOn="{Binding IsBorderOn}">
               <controls:PanelSection.Summary>

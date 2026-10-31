@@ -21,6 +21,23 @@
              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
              PreviewKeyDown="OnListKeyDown"
              AutomationProperties.Name="{l:Loc Text_Presets}">
+      <ListBox.Style>
+        <Style TargetType="ListBox" BasedOn="{StaticResource {x:Type ListBox}}">
+          <Style.Triggers>
+            <!-- Rahmenvorlagen: Raster mit Vorschaubildern -->
+            <DataTrigger Binding="{Binding ShowGrid}" Value="True">
+              <Setter Property="MaxHeight" Value="Infinity" />
+              <Setter Property="ItemsPanel">
+                <Setter.Value>
+                  <ItemsPanelTemplate>
+                    <WrapPanel />
+                  </ItemsPanelTemplate>
+                </Setter.Value>
+              </Setter>
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </ListBox.Style>
       <ListBox.ItemContainerStyle>
         <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
           <EventSetter Event="MouseLeftButtonUp" Handler="OnItemClick" />
@@ -29,7 +46,13 @@
       </ListBox.ItemContainerStyle>
       <ListBox.ItemTemplate>
         <DataTemplate>
-          <Grid>
+          <Grid AutomationProperties.Name="{Binding Name}">
+            <StackPanel Width="96" Visibility="{Binding HasThumbnail, Converter={StaticResource BoolToVisibility}}">
+              <Image Source="{Binding Thumbnail}" Width="96" Height="64" Stretch="Uniform" />
+              <TextBlock Text="{Binding Name}" FontSize="11" Margin="0,2,0,0" TextAlignment="Center" TextTrimming="CharacterEllipsis"
+                         ToolTip="{Binding Name}" />
+            </StackPanel>
+            <Grid Visibility="{Binding IsListEntry, Converter={StaticResource BoolToVisibility}}">
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="Auto" />
               <ColumnDefinition Width="*" />
@@ -41,6 +64,7 @@
                          Visibility="{Binding ShowSample, Converter={StaticResource BoolToVisibility}}" />
             </Border>
             <TextBlock Grid.Column="1" Text="{Binding Name}" Margin="10,0,0,0" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+            </Grid>
           </Grid>
         </DataTemplate>
       </ListBox.ItemTemplate>

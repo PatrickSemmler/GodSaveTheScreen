@@ -39,6 +39,7 @@ Voraussetzung: Windows 10 (Version 2004) oder neuer. Die .NET-Laufzeit ist entha
 - **Farbige Emojis** (alle Windows-Emojis außer Länderflaggen) mit Suche auf Deutsch und Englisch, Kategorien, Favoriten und Hauttönen
 - **Bilder als Objekte:** alle WIC-Formate und SVG per Werkzeug, Drag & Drop oder `Strg+Umschalt+V` einfügen, drehbar, spiegelbar, mit Kontur und Schatten
 - **Rahmen und Kanteneffekte:** Rand (je Seite), Schatten, abgerundete Ecken, abgerissene Kante, Vignette und Graustufen für das ganze Bild - nicht-destruktiv, mit Vorlagen wie Polaroid
+- **Bild verschönern:** Screenshot auf einfarbigem, verlaufendem oder eigenem Bildhintergrund mit Innenabstand, runden Ecken, Schatten und auf Wunsch festem Seitenverhältnis (16:9, 4:3, 1:1, 9:16) - Vorlagen mit einem Klick für Folien und soziale Medien
 - **Bildbereiche entfernen:** Bereiche per Rechteck, Ellipse, Lasso oder Zauberstab bzw. mit dem Hintergrundradierer transparent machen – nicht-destruktiv und jederzeit wiederherstellbar
 - **Die Zeichenfläche wächst mit**, wenn Objekte über den Bildrand hinausragen; der zusätzliche Bereich wird transparent exportiert
 - Alle Objekte bleiben bearbeitbar: Auswahl, Griffe, Ebenenliste, Z-Reihenfolge, Sperren, Undo/Redo

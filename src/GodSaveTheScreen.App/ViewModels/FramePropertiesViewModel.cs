@@ -1,3 +1,5 @@
+using System.Globalization;
+using System.Windows.Media;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using GodSaveTheScreen.App.Editor;
@@ -5,6 +7,7 @@ using GodSaveTheScreen.App.Editor.Tools;
 using GodSaveTheScreen.App.Resources;
 using GodSaveTheScreen.Core.Annotations;
 using GodSaveTheScreen.Core.Imaging;
+using GodSaveTheScreen.Rendering;
 
 namespace GodSaveTheScreen.App.ViewModels;
 
@@ -18,6 +21,7 @@ public sealed partial class FramePropertiesViewModel : ObservableObject, IDispos
 {
     private readonly EditorContext _context;
     private readonly Func<ToolBase?> _activeTool;
+    private readonly Func<ImageAsset?> _pickBackground;
     private readonly Random _random = new();
 
     /// <summary>Randbreite je Seite getrennt einstellen (nur Panel-Zustand, nicht gespeichert).</summary>
@@ -26,10 +30,11 @@ public sealed partial class FramePropertiesViewModel : ObservableObject, IDispos
     [NotifyPropertyChangedFor(nameof(IsBorderUniform))]
     private bool _borderPerSide;
 
-    public FramePropertiesViewModel(EditorContext context, Func<ToolBase?> activeTool)
+    public FramePropertiesViewModel(EditorContext context, Func<ToolBase?> activeTool, Func<ImageAsset?>? pickBackground = null)
     {
         _context = context;
         _activeTool = activeTool;
+        _pickBackground = pickBackground ?? (() => null);
         _context.Undo.Changed += OnStateChanged;
         _context.Frame.Changed += OnStateChanged;
     }
@@ -292,6 +297,178 @@ public sealed partial class FramePropertiesViewModel : ObservableObject, IDispos
         }
     }
 
+    // ---- Hintergrund ----
+
+    /// <summary>Wählbare Hintergrundarten (die Auswahl „Bild“ öffnet die Dateiauswahl).</summary>
+    public IReadOnlyList<BackgroundKindChoice> BackgroundKinds { get; } =
+    [
+        new(FrameBackgroundKind.Solid, Strings.Frame_Background_Solid),
+        new(FrameBackgroundKind.Gradient, Strings.Frame_Background_Gradient),
+        new(FrameBackgroundKind.Image, Strings.Frame_Background_Image),
+    ];
+
+    public bool? IsBackgroundOn
+    {
+        get => Frame?.HasBackground ?? false;
+        set => SetEffect(FrameEffect.Background, value);
+    }
+
+    private FrameBackground CurrentBackground => Working.Background ?? new FrameBackground { Kind = FrameBackgroundKind.Solid };
+
+    /// <summary>Art des Hintergrunds; Wechsel auf „Bild“ fragt eine Datei ab (Abbruch ändert nichts).</summary>
+    public FrameBackgroundKind BackgroundKind
+    {
+        get => CurrentBackground.Kind == FrameBackgroundKind.None ? FrameBackgroundKind.Solid : CurrentBackground.Kind;
+        set
+        {
+            if (value == BackgroundKind && Frame?.HasBackground == true)
+            {
+                return;
+            }
+
+            if (value == FrameBackgroundKind.Image)
+            {
+                ChooseBackgroundImage();
+                Refresh();
+                return;
+            }
+
+            Update(f => f with { Background = (f.Background ?? CurrentBackground) with { Kind = value }, Padding = f.HasPadding ? f.Padding : DefaultPadding() }, Strings.Frame_Background);
+        }
+    }
+
+    public bool IsBackgroundSolid => BackgroundKind == FrameBackgroundKind.Solid;
+
+    public bool IsBackgroundGradient => BackgroundKind == FrameBackgroundKind.Gradient;
+
+    public bool IsBackgroundImage => BackgroundKind == FrameBackgroundKind.Image;
+
+    public ArgbColor? BackgroundColorA
+    {
+        get => CurrentBackground.ColorA;
+        set
+        {
+            if (value is { } color)
+            {
+                Update(f => f with { Background = (f.Background ?? CurrentBackground) with { ColorA = color } }, Strings.Frame_Background);
+            }
+        }
+    }
+
+    public ArgbColor? BackgroundColorB
+    {
+        get => CurrentBackground.ColorB;
+        set
+        {
+            if (value is { } color)
+            {
+                Update(f => f with { Background = (f.Background ?? CurrentBackground) with { ColorB = color } }, Strings.Frame_Background);
+            }
+        }
+    }
+
+    public double? BackgroundAngle
+    {
+        get => Math.Round(CurrentBackground.AngleDegrees, 1);
+        set
+        {
+            if (value is { } angle)
+            {
+                Update(f => f with { Background = (f.Background ?? CurrentBackground) with { AngleDegrees = Math.Clamp(angle, -360, 360) } }, Strings.Frame_Background);
+            }
+        }
+    }
+
+    public double BackgroundAngleValue
+    {
+        get => BackgroundAngle ?? FrameBackground.DefaultAngle;
+        set => BackgroundAngle = Math.Round(value);
+    }
+
+    /// <summary>Kleine Vorschau des Hintergrundbilds; <c>null</c> ohne Bild.</summary>
+    public ImageSource? BackgroundImagePreview => Frame?.Background?.Image is { } asset ? ImageAssetCache.Shared.Get(asset, 96, 96) : null;
+
+    public bool HasBackgroundImage => Frame?.Background?.Image is not null;
+
+    public bool HasNoBackgroundImage => !HasBackgroundImage;
+
+    /// <summary>Einfarbig oder Verlauf (Farbfelder sichtbar).</summary>
+    public bool IsBackgroundColorKind => !IsBackgroundImage;
+
+    // ---- Innenabstand und Seitenverhältnis ----
+
+    public IReadOnlyList<AspectChoice> AspectChoices { get; } =
+    [
+        new(FrameAspectKind.Free, Strings.Frame_Aspect_Free),
+        new(FrameAspectKind.Wide16x9, Strings.Frame_Aspect_16x9),
+        new(FrameAspectKind.Standard4x3, Strings.Frame_Aspect_4x3),
+        new(FrameAspectKind.Square, Strings.Frame_Aspect_Square),
+        new(FrameAspectKind.Tall9x16, Strings.Frame_Aspect_9x16),
+        new(FrameAspectKind.Custom, Strings.Frame_Aspect_Custom),
+    ];
+
+    public double? Padding
+    {
+        get => Working.Padding;
+        set
+        {
+            if (value is { } padding)
+            {
+                Update(f => f with { Padding = (int)Math.Clamp(Math.Round(padding), 0, FrameStyle.MaxPadding) }, Strings.Frame_Padding);
+            }
+        }
+    }
+
+    public FrameAspectKind AspectKind
+    {
+        get => Working.AspectRatio?.Kind ?? FrameAspectKind.Free;
+        set
+        {
+            if (value == AspectKind)
+            {
+                return;
+            }
+
+            // Wechsel in „Benutzerdefiniert“ behält das bisherige Verhältnis als Ausgangswert.
+            Update(
+                f =>
+                {
+                    var current = f.AspectRatio ?? FrameAspect.Free;
+                    var ratio = current.Ratio ?? (current.Width, current.Height);
+                    return f with { AspectRatio = current with { Kind = value, Width = ratio.Item1, Height = ratio.Item2 } };
+                },
+                Strings.Frame_Aspect);
+        }
+    }
+
+    public bool IsAspectCustom => AspectKind == FrameAspectKind.Custom;
+
+    public double? AspectWidth
+    {
+        get => Working.AspectRatio?.Width ?? 16;
+        set => SetAspectPart(value, (a, v) => a with { Width = v });
+    }
+
+    public double? AspectHeight
+    {
+        get => Working.AspectRatio?.Height ?? 9;
+        set => SetAspectPart(value, (a, v) => a with { Height = v });
+    }
+
+    /// <summary>Das gewählte Seitenverhältnis wird nicht angewendet, weil das Ergebnis zu groß würde.</summary>
+    public bool IsAspectLimited => Frame is { HasAspect: true } frame && FrameLayout.Compute(_context.Document.EffectiveBounds, frame).AspectLimited;
+
+    /// <summary>Kurzfassung der eingeklappten Karte, z. B. „32 px · 16:9“.</summary>
+    public string LayoutSummary
+    {
+        get
+        {
+            var padding = string.Format(CultureInfo.CurrentUICulture, "{0} px", Working.Padding);
+            var ratio = Working.AspectRatio?.Ratio;
+            return ratio is { } r ? $"{padding} · {r.Width}:{r.Height}" : padding;
+        }
+    }
+
     public void Refresh() => OnPropertyChanged(string.Empty);
 
     public void Dispose()
@@ -310,6 +487,24 @@ public sealed partial class FramePropertiesViewModel : ObservableObject, IDispos
         }
     }
 
+    /// <summary>Fragt eine Bilddatei ab und setzt sie als Hintergrundbild (Abbruch ändert nichts).</summary>
+    [RelayCommand]
+    private void ChooseBackgroundImage()
+    {
+        if (_pickBackground() is not { } asset)
+        {
+            return;
+        }
+
+        Update(
+            f => f with
+            {
+                Background = (f.Background ?? CurrentBackground) with { Kind = FrameBackgroundKind.Image, Image = asset },
+                Padding = f.HasPadding ? f.Padding : DefaultPadding(),
+            },
+            Strings.Frame_Background);
+    }
+
     /// <summary>Würfelt das Muster der abgerissenen Kante neu.</summary>
     [RelayCommand]
     private void RerollTorn()
@@ -319,6 +514,17 @@ public sealed partial class FramePropertiesViewModel : ObservableObject, IDispos
     }
 
     partial void OnBorderPerSideChanged(bool value) => OnPropertyChanged(nameof(IsBorderPerSideVisible));
+
+    private int DefaultPadding() => _context.Frame.Defaults.HasPadding ? _context.Frame.Defaults.Padding : FrameToolState.DefaultPadding;
+
+    private void SetAspectPart(double? value, Func<FrameAspect, int, FrameAspect> change)
+    {
+        if (value is { } part)
+        {
+            var clamped = (int)Math.Clamp(Math.Round(part), 1, FrameAspect.MaxPart);
+            Update(f => f with { AspectRatio = change(f.AspectRatio ?? new FrameAspect { Kind = FrameAspectKind.Custom }, clamped) }, Strings.Frame_Aspect);
+        }
+    }
 
     private static int ToBorder(double width) => (int)Math.Clamp(Math.Round(width), 0, FrameStyle.MaxBorder);
 
@@ -376,6 +582,13 @@ public sealed partial class FramePropertiesViewModel : ObservableObject, IDispos
         FrameEffect.Shadow => Strings.Section_Shadow,
         FrameEffect.Corners => Strings.Frame_Corners,
         FrameEffect.Torn => Strings.Frame_TornEdge,
+        FrameEffect.Background => Strings.Frame_Background,
         _ => Strings.Frame_Vignette,
     };
 }
+
+/// <summary>Eintrag der Auswahl der Hintergrundart.</summary>
+public sealed record BackgroundKindChoice(FrameBackgroundKind Value, string Label);
+
+/// <summary>Eintrag der Auswahl des Seitenverhältnisses.</summary>
+public sealed record AspectChoice(FrameAspectKind Value, string Label);

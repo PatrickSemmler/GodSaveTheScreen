@@ -106,7 +106,7 @@ public static class PresetStyles
             case PresetKind.Image:
                 return new ToolPreset { Name = name, Image = CaptureImage(context.Image.Style, selection.OfType<ImageAnnotation>().ToList()) };
             case PresetKind.Frame:
-                return new ToolPreset { Name = name, Frame = context.Document.Frame ?? new Core.Imaging.FrameStyle() };
+                return new ToolPreset { Name = name, Frame = (context.Document.Frame ?? new Core.Imaging.FrameStyle()).WithoutImage() };
             default:
                 throw new ArgumentException("Werkzeug ohne Vorlagen.", nameof(toolId));
         }
@@ -132,7 +132,7 @@ public static class PresetStyles
         if (KindOf(toolId) == PresetKind.Frame)
         {
             // Eine Rahmenvorlage ersetzt den ganzen Rahmen des Dokuments (ein Undo-Schritt).
-            context.Frame.Set(preset.Frame ?? new Core.Imaging.FrameStyle(), preset.Name, FrameToolState.PresetKey);
+            context.Frame.Set(Core.Imaging.FrameStyle.FromPreset(preset.Frame ?? new Core.Imaging.FrameStyle(), context.Document.Frame), preset.Name, FrameToolState.PresetKey);
             return 0;
         }
 

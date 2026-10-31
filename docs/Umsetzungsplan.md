@@ -187,6 +187,10 @@ Jeder Meilenstein liefert eine lauffähige, getestete Anwendung mit abgeschlosse
 | M11 | Feinschliff & Portable Release | Vollständige Lokalisierung, Barrierefreiheit, Performance, Single-File-ZIP | [M11](meilensteine/M11-Feinschliff-Release.md) |
 | M12 | Werkzeugvorlagen & letzte Konfiguration | Eigene Vorlagen für alle Zeichenwerkzeuge (Liste, Speichern, Umbenennen, Löschen), letzte Konfiguration je Werkzeug gespeichert | [M12](meilensteine/M12-Werkzeugvorlagen.md) |
 | M13 | Farbige Emojis | Emoji-Werkzeug mit Suche (DE/EN), Kategorien, Zuletzt/Favoriten, Hauttönen; farbiges Rendering über DirectWrite; Drehen, Spiegeln, proportionales Skalieren | [M13](meilensteine/M13-Emojis.md) |
+| M14 | Rahmen und Kanteneffekte | Rand, Schatten, runde Ecken, abgerissene Kante, Vignette, Graustufen für das ganze Bild, nicht-destruktiv | [M14](meilensteine/M14-Rahmen-Kanteneffekte.md) |
+| M15 | Bild verschönern | Hintergrund (Farbe, Verlauf, Bild), Innenabstand, festes Seitenverhältnis, Vorlagen | [M15](meilensteine/M15-Bild-verschoenern.md) |
+| M16 | Texterkennung (geplant) | Aufnahmeart „Text aufnehmen“ und Befehl im Editor, lokal über `Windows.Media.Ocr` | [M16](meilensteine/M16-Texterkennung.md) |
+| M17 | Scroll-Capture (geplant) | Lange Inhalte vertikal aufnehmen, automatisch oder von Hand gescrollt, bis 16.384 px | [M17](meilensteine/M17-Scroll-Capture.md) |
 
 ### 4.1 Abhängigkeiten der Meilensteine
 
@@ -203,6 +207,9 @@ M0 ─► M1 ─► M2
 M11 nach allen anderen
 M12 nach M11 (Erweiterung; baut auf M5–M8 und M10 auf)
 M13 nach M12 (Erweiterung; baut auf M5, M10 und M12 auf)
+M14 nach M13 (baut auf M9, M10 und den Vorlagen aus M12 auf)
+M15 nach M14
+M16 und M17 nach M13, unabhängig voneinander und von M14/M15 (vereinbarte Reihenfolge: M14, M15, M16, M17)
 ```
 
 - M2 und M3 sind unabhängig von M4+ und können parallel zum Editor entwickelt werden.
@@ -227,7 +234,12 @@ M13 nach M12 (Erweiterung; baut auf M5, M10 und M12 auf)
 | M11 | 4 |
 | M12 | 4 |
 | M13 | 6 |
-| **Summe** | **≈ 51** |
+| **Summe M0–M13** | **≈ 51** |
+| M14 | 6 |
+| M15 | 4 |
+| M16 (geplant) | 5 |
+| M17 (geplant) | 13 |
+| **Summe M14–M17** | **≈ 28** |
 
 ## 5. Bedienkonzept (Übersicht)
 

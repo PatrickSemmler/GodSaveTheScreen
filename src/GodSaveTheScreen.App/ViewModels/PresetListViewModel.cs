@@ -23,7 +23,15 @@ public sealed class PresetItem
         FillBrush = ToBrush(fill);
         LineBrush = ToBrush(line);
         ShowSample = preset.Text is not null || preset.Callout is not null;
+        HasThumbnail = preset.Frame is not null;
     }
+
+    /// <summary>Rahmenvorlagen zeigen statt des Farbfelds ein Vorschaubild des Rahmens um ein Musterfenster.</summary>
+    public bool HasThumbnail { get; }
+
+    public bool IsListEntry => !HasThumbnail;
+
+    public ImageSource? Thumbnail => Preset.Frame is { } frame ? FramePresetThumbnails.Get(frame) : null;
 
     public ToolPreset Preset { get; }
 
@@ -128,6 +136,9 @@ public sealed partial class PresetListViewModel : ObservableObject, IDisposable
     public bool IsApplicable => ToolId is not null;
 
     public bool HasItems => Items.Count > 0;
+
+    /// <summary>Die Vorlagen werden als Raster mit Vorschaubildern gezeigt (Rahmen-Werkzeug).</summary>
+    public bool ShowGrid => ToolId == FrameTool.ToolId;
 
     public bool IsEmpty => IsApplicable && !HasItems;
 

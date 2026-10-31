@@ -162,6 +162,62 @@ public static class ProjectSerializer
         return result;
     }
 
+    /// <summary>
+    /// Liest den Rahmen tolerant (im Bereich der Bilddateien). Fehlt die Datei des Hintergrundbilds, entfällt nur der
+    /// Hintergrund (Warnung); ein sonst defekter Rahmen wird ganz ignoriert.
+    /// </summary>
+    private static FrameStyle? ReadFrame(JsonNode? node, List<string> warnings)
+    {
+        if (node is null)
+        {
+            return null;
+        }
+
+        if (node is not JsonObject frameNode)
+        {
+            warnings.Add("Der Rahmen wurde ignoriert: ungültiges Format.");
+            return null;
+        }
+
+        try
+        {
+            ImageAsset? image = null;
+            var imageMissing = false;
+            if (frameNode["Background"] is JsonObject background && background["Image"] is { } imageNode)
+            {
+                try
+                {
+                    image = imageNode.Deserialize<ImageAsset>(Options);
+                }
+                catch (Exception ex) when (ex is JsonException or NotSupportedException or InvalidOperationException or FormatException)
+                {
+                    imageMissing = true;
+                    warnings.Add($"Das Hintergrundbild des Rahmens wurde ignoriert: {ex.Message}");
+                }
+
+                background.Remove("Image");
+            }
+
+            var frame = frameNode.Deserialize<FrameStyle>(Options);
+            if (frame is null)
+            {
+                return null;
+            }
+
+            if (frame.Background is { } read)
+            {
+                frame = frame with { Background = image is not null ? read with { Image = image } : (imageMissing || read.Kind == FrameBackgroundKind.Image ? null : read) };
+            }
+
+            return frame.Normalized();
+        }
+        catch (Exception ex) when (ex is JsonException or NotSupportedException or InvalidOperationException or FormatException)
+        {
+            warnings.Add($"Der Rahmen wurde ignoriert: {ex.Message}");
+            return null;
+        }
+    }
+
     // ---- Schreiben ----
 
     public static void Write(Stream output, ProjectContent content)
@@ -195,16 +251,16 @@ public static class ProjectSerializer
             },
         };
 
-        // Nur schreiben, wenn gesetzt: Projekte ohne Rahmen bleiben unverändert (ältere Versionen ignorieren das Feld).
-        if (content.Frame is { } frame)
-        {
-            document["frame"] = JsonSerializer.SerializeToNode(frame, Options);
-        }
-
-        // Bilddateien der Bildobjekte stehen nicht im JSON, sondern als eigene Einträge (je Hash einmal).
+        // Bilddateien der Bildobjekte und des Rahmen-Hintergrunds stehen nicht im JSON, sondern als eigene Einträge (je Hash einmal).
         IReadOnlyCollection<ImageAsset> assets;
         using (var scope = ImageAssetScope.ForWriting())
         {
+            // Nur schreiben, wenn gesetzt: Projekte ohne Rahmen bleiben unverändert (ältere Versionen ignorieren das Feld).
+            if (content.Frame is { } frame)
+            {
+                document["frame"] = JsonSerializer.SerializeToNode(frame, Options);
+            }
+
             document["annotations"] = JsonSerializer.SerializeToNode(content.Annotations.ToList(), Options);
             assets = [.. scope.Written];
         }
@@ -291,24 +347,12 @@ public static class ProjectSerializer
                 crop = clamped.IsEmpty || clamped == new PixelRect(0, 0, width, height) ? null : clamped;
             }
 
-            FrameStyle? frame = null;
-            if (document["frame"] is { } frameNode)
-            {
-                try
-                {
-                    frame = frameNode.Deserialize<FrameStyle>(Options)?.Normalized();
-                }
-                catch (Exception ex) when (ex is JsonException or NotSupportedException or InvalidOperationException or FormatException)
-                {
-                    warnings.Add($"Der Rahmen wurde ignoriert: {ex.Message}");
-                }
-            }
-
             var metadata = new DocumentMetadata(
                 document["metadata"]?["captureMode"]?.GetValue<string>(),
                 document["metadata"]?["windowTitle"]?.GetValue<string>());
 
             List<Annotation> annotations;
+            FrameStyle? frame = null;
             long assetBytes = 0;
             var assetCache = new Dictionary<string, byte[]?>(StringComparer.Ordinal);
             using (ImageAssetScope.ForReading((hash, format) =>
@@ -330,6 +374,7 @@ public static class ProjectSerializer
                 return data;
             }))
             {
+                frame = ReadFrame(document["frame"], warnings);
                 annotations = document["annotations"] is JsonArray array ? ReadAnnotations(array, warnings) : [];
             }
 

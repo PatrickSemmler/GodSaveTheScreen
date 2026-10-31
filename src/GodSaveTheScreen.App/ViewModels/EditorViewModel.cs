@@ -93,7 +93,7 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
         CalloutProperties = new CalloutPropertiesViewModel(context, () => ActiveTool);
         ImageProperties = new ImagePropertiesViewModel(context, () => ActiveTool, () => InsertImage());
         ShadowProperties = new ShadowPropertiesViewModel(context, () => ActiveTool);
-        FrameProperties = new FramePropertiesViewModel(context, () => ActiveTool);
+        FrameProperties = new FramePropertiesViewModel(context, () => ActiveTool, PickBackgroundImage);
         RotationProperties = new RotationPropertiesViewModel(context);
         MaskTools = new MaskToolsViewModel(context, () => ActiveTool, tools.Tools.OfType<BackgroundEraserTool>().FirstOrDefault());
         EmojiPicker = new EmojiPickerViewModel(context);
@@ -829,6 +829,25 @@ public sealed partial class EditorViewModel : ObservableObject, IDisposable
             _logger.LogError(ex, "Einfügen aus der Zwischenablage fehlgeschlagen");
             _dialogs.ShowError(Strings.Error_Title, string.Format(CultureInfo.CurrentUICulture, Strings.Image_InsertFailed, ex.Message));
         }
+    }
+
+    /// <summary>Hintergrundbild für den Rahmen: Dateiauswahl, erste lesbare Datei; <c>null</c> bei Abbruch oder Fehler (Meldung).</summary>
+    private ImageAsset? PickBackgroundImage()
+    {
+        var paths = _imageDialogs.PickImageFiles();
+        if (paths.Count == 0)
+        {
+            return null;
+        }
+
+        var failed = new List<string>();
+        var images = ImageInsert.Load(paths.Take(1), _imageDialogs, failed);
+        if (failed.Count > 0)
+        {
+            _dialogs.ShowError(Strings.Frame_Background, string.Format(CultureInfo.CurrentUICulture, Strings.Frame_ImageFailed, string.Join(Environment.NewLine, failed)));
+        }
+
+        return images.Count > 0 ? images[0].Image.Asset : null;
     }
 
     /// <summary>„Bild einfügen…“: Dateiauswahl, eingefügt mittig im sichtbaren Bereich.</summary>

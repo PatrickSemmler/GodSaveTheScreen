@@ -537,11 +537,13 @@
 <figure class="shot"><img src="images/panel-background-eraser.png" alt="Eigenschaften des Hintergrundradierers"><figcaption>Hintergrundradierer</figcaption></figure>
 </div>
 
-<h3 id="tool-frame"><img class="icon" src="images/icon-frame.png" alt="">Rahmen und Kanteneffekte <kbd>F</kbd></h3>
+<h3 id="tool-frame"><img class="icon" src="images/icon-frame.png" alt="">Rahmen, Kanteneffekte und Bild verschönern <kbd>F</kbd></h3>
 <div class="split">
 <div>
-<p>Mit einem Klick bekommt das <em>ganze Bild</em> einen Rand, einen Schatten, abgerundete Ecken, eine abgerissene Kante, eine Vignette oder Graustufen. Die Effekte sind nicht endgültig: Sie wirken sofort auf der Zeichenfläche, lassen sich jederzeit mit <kbd>Strg+Z</kbd> zurücknehmen und werden im Projekt gespeichert. Beim Exportieren, Kopieren und Ziehen des Bildes sehen Sie dasselbe wie im Editor.</p>
+<p>Mit einem Klick bekommt das <em>ganze Bild</em> einen Hintergrund mit Innenabstand, einen Rand, einen Schatten, abgerundete Ecken, eine abgerissene Kante, eine Vignette oder Graustufen. Die Effekte sind nicht endgültig: Sie wirken sofort auf der Zeichenfläche, lassen sich jederzeit mit <kbd>Strg+Z</kbd> zurücknehmen und werden im Projekt gespeichert. Beim Exportieren, Kopieren und Ziehen des Bildes sehen Sie dasselbe wie im Editor.</p>
 <ul>
+  <li><b>Hintergrund</b> – hinter dem Screenshot und im Innenabstand: <span class="ui">Einfarbig</span>, <span class="ui">Verlauf</span> aus zwei Farben mit Winkel (die Farben enden genau in den Ecken) oder ein eigenes <span class="ui">Bild</span> (<span class="ui">Bild wählen…</span>; alle Bildformate und SVG). Das Bild füllt die ganze Fläche, behält sein Seitenverhältnis, und der Überstand wird mittig abgeschnitten.</li>
+  <li><b>Innenabstand und Format</b> – Abstand zwischen Rand und Bildkante sowie ein festes <b>Seitenverhältnis</b> (16:9, 4:3, 1:1, 9:16 oder benutzerdefiniert). Das Ergebnis wird nur vergrößert, der Screenshot steht mittig und wird nie beschnitten oder skaliert. Ohne Hintergrund ist der Innenabstand transparent.</li>
   <li><b>Rand</b> – Farbe und Breite, auf Wunsch je Seite getrennt (etwa für ein Polaroid mit breiter Unterkante).</li>
   <li><b>Schatten</b> – fällt nach rechts unten und folgt dem Umriss des Bildes, auch bei runden Ecken oder entfernten Bereichen.</li>
   <li><b>Abgerundete Ecken</b> – Radius in Bildpixeln.</li>
@@ -549,11 +551,11 @@
   <li><b>Vignette</b> – dunkelt die Ränder ab (Stärke und Ausdehnung), auch über den Objekten.</li>
   <li><b>Graustufen</b> – nur der Screenshot wird grau. Objekte bleiben farbig; Unschärfe und Lupe zeigen den Screenshot ebenfalls grau.</li>
 </ul>
-<p>Jeder Effekt hat einen Schalter in der Kartenüberschrift. Wieder eingeschaltet, hat er die zuletzt benutzten Werte. Die <b>Vorlagen</b> <span class="ui">Dezenter Schatten</span>, <span class="ui">Einfacher Rand</span>, <span class="ui">Polaroid</span>, <span class="ui">Abgerissen unten</span> und <span class="ui">Vignette</span> sind fest eingebaut; eigene Looks speichern Sie wie bei den anderen Werkzeugen als Vorlage. <span class="ui">Rahmen entfernen</span> schaltet alle Effekte in einem Schritt aus.</p>
+<p>Jeder Effekt hat einen Schalter in der Kartenüberschrift. Wieder eingeschaltet, hat er die zuletzt benutzten Werte. Die <b>Vorlagen</b> erscheinen als Raster mit Vorschaubildern. Fest eingebaut sind <span class="ui">Dezenter Schatten</span>, <span class="ui">Einfacher Rand</span>, <span class="ui">Polaroid</span>, <span class="ui">Abgerissen unten</span> und <span class="ui">Vignette</span> sowie die Looks zum Verschönern <span class="ui">Präsentation Blau</span>, <span class="ui">Sonnenuntergang</span>, <span class="ui">Neutral Grau</span>, <span class="ui">Dunkel</span>, <span class="ui">Social 1:1</span> und <span class="ui">Folie 16:9</span> (Hintergrund, Innenabstand, runde Ecken und Schatten – ein Klick genügt); eigene Looks speichern Sie wie bei den anderen Werkzeugen als Vorlage. <span class="ui">Rahmen entfernen</span> schaltet alle Effekte in einem Schritt aus.</p>
 </div>
 <figure class="shot"><img src="images/panel-frame.png" alt="Eigenschaften des Rahmen-Werkzeugs"><figcaption>Rahmen</figcaption></figure>
 </div>
-<div class="box note"><p>Rand und Schatten liegen <em>um</em> dem Bild: Das exportierte Bild wird entsprechend größer. Objekte, die Sie in diesem Bereich zeichnen, vergrößern die Zeichenfläche wie gewohnt, und der Rahmen rückt nach außen. Im Zuschnittmodus sind die Effekte ausgeblendet. JPG und BMP füllen transparente Stellen (Schatten, Ecken, Riss) weiß. Ältere Programmversionen zeigen ein Projekt mit Rahmen ohne Rahmen und in Farbe.</p></div>
+<div class="box note"><p>Hintergrund, Innenabstand, Rand und Schatten liegen <em>um</em> dem Bild: Das exportierte Bild wird entsprechend größer. Würde ein gewähltes Seitenverhältnis das Ergebnis zu groß machen (über 16.384 Pixel je Seite oder 100 Millionen Pixel), wird es nicht angewendet und das Panel weist darauf hin. Ein Hintergrundbild wird im Projekt eingebettet, das Projekt lässt sich also ohne die Originaldatei öffnen; Vorlagen und Einstellungen merken nur die Art, nicht das Bild. Neue Aufnahmen bekommen nie automatisch einen Hintergrund. Objekte, die Sie in diesem Bereich zeichnen, vergrößern die Zeichenfläche wie gewohnt, und der Rahmen rückt nach außen. Im Zuschnittmodus sind die Effekte ausgeblendet. JPG und BMP füllen transparente Stellen (Schatten, Ecken, Riss) weiß. Ältere Programmversionen zeigen ein Projekt mit Rahmen ohne Rahmen und in Farbe.</p></div>
 
 <h3 id="tool-crop"><img class="icon" src="images/icon-crop.png" alt="">Zuschneiden <kbd>C</kbd></h3>
 <p>Im Zuschnittmodus legen Sie den sichtbaren Bildausschnitt fest. Das Zuschneiden ist nicht endgültig: Das ganze Bild bleibt erhalten, und Sie können den Ausschnitt später wieder vergrößern.</p>

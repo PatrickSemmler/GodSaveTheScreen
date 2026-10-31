@@ -527,7 +527,7 @@ public sealed class FramePresetTests
     {
         var presets = FramePresets.BuiltIn;
 
-        presets.Count.ShouldBe(5);
+        presets.Count.ShouldBe(11);
         presets.Select(p => p.Name).ShouldBeUnique();
         presets.ShouldAllBe(p => p.Frame != null && !p.Frame.IsEmpty);
         var polaroid = presets[2].Frame!;
@@ -544,7 +544,7 @@ public sealed class FramePresetTests
         var presets = harness.ViewModel.Presets;
 
         presets.ToolId.ShouldBe("frame");
-        presets.Items.Count(i => i.IsBuiltIn).ShouldBe(5);
+        presets.Items.Count(i => i.IsBuiltIn).ShouldBe(11);
 
         presets.SelectedItem = presets.Items[0];
         presets.RenameCommand.CanExecute(null).ShouldBeFalse();

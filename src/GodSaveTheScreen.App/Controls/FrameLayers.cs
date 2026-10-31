@@ -47,7 +47,7 @@ public sealed class FrameBackLayer : FrameworkElement
         }
 
         drawingContext.PushTransform(new TranslateTransform(-_origin.X, -_origin.Y));
-        FrameRenderer.DrawBehind(drawingContext, _layout, style, _shadow);
+        FrameRenderer.DrawBehind(drawingContext, _layout, style, _shadow, FrameRenderer.PreviewBackgroundPixels);
         drawingContext.Pop();
     }
 }

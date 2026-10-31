@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using GodSaveTheScreen.Core.Annotations;
 
 namespace GodSaveTheScreen.Core.Imaging;
@@ -17,7 +18,7 @@ public enum FrameSides
 /// <summary>
 /// Rahmen und Kanteneffekte des ganzen Bildes (Rand, Schatten, runde Ecken, abgerissene Kante, Vignette, Graustufen).
 /// Unveränderlich; Änderungen per <c>with</c>. Ein Effekt ist „aus“, wenn sein Wert neutral ist (Rand 0, transparenter
-/// Schatten, Radius 0, keine Rissseiten, Vignettenstärke 0). Sind alle Effekte aus, ist der Rahmen leer
+/// Schatten, Radius 0, keine Rissseiten, Vignettenstärke 0, kein Hintergrund, Innenabstand 0, freies Seitenverhältnis). Sind alle Effekte aus, ist der Rahmen leer
 /// (<see cref="IsEmpty"/>) und wird am Dokument als <c>null</c> abgelegt (<see cref="Normalized"/>).
 /// </summary>
 public sealed record FrameStyle
@@ -35,6 +36,8 @@ public sealed record FrameStyle
     public const double MaxTornWidth = 300;
 
     public const double MinVignetteSize = 0.1;
+
+    public const int MaxPadding = 2000;
 
     /// <summary>Farbe des Rands.</summary>
     public ArgbColor BorderColor { get; init; } = ArgbColor.White;
@@ -74,20 +77,48 @@ public sealed record FrameStyle
     /// <summary>Screenshot in Graustufen; Objekte bleiben farbig.</summary>
     public bool Grayscale { get; init; }
 
+    /// <summary>Hintergrund hinter dem Screenshot und im Innenabstand; <c>null</c> = keiner.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public FrameBackground? Background { get; init; }
+
+    /// <summary>Innenabstand zwischen Rand und Ausgaberand in Bildpixeln (0 = keiner).</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public int Padding { get; init; }
+
+    /// <summary>Festes Seitenverhältnis der Ausgabe; <c>null</c> = frei.</summary>
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public FrameAspect? AspectRatio { get; init; }
+
+    [JsonIgnore]
     public bool HasBorder => !BorderColor.IsTransparent && (BorderLeft > 0 || BorderTop > 0 || BorderRight > 0 || BorderBottom > 0);
 
+    [JsonIgnore]
     public bool HasShadow => Shadow is { IsVisible: true };
 
+    [JsonIgnore]
     public bool HasCorners => CornerRadius >= 0.5;
 
+    [JsonIgnore]
     public bool HasTorn => TornSides != FrameSides.None && TornHeight >= MinTornHeight;
 
+    [JsonIgnore]
     public bool HasVignette => VignetteStrength > 0.001;
 
+    [JsonIgnore]
+    public bool HasBackground => Background is { IsVisible: true };
+
+    [JsonIgnore]
+    public bool HasPadding => Padding > 0;
+
+    [JsonIgnore]
+    public bool HasAspect => AspectRatio is { IsFixed: true };
+
     /// <summary>Alle Effekte sind aus.</summary>
-    public bool IsEmpty => !HasBorder && !HasShadow && !HasCorners && !HasTorn && !HasVignette && !Grayscale;
+    [JsonIgnore]
+    public bool IsEmpty => !HasBorder && !HasShadow && !HasCorners && !HasTorn && !HasVignette && !Grayscale && !HasBackground && !HasPadding && !HasAspect;
 
     /// <summary>Alle vier Randbreiten sind gleich.</summary>
+    [JsonIgnore]
     public bool HasUniformBorder => BorderLeft == BorderTop && BorderTop == BorderRight && BorderRight == BorderBottom;
 
     /// <summary>Werte auf ihren zulässigen Bereich begrenzt; die Effekte bleiben, wie sie sind.</summary>
@@ -108,7 +139,29 @@ public sealed record FrameStyle
         TornWidth = Math.Clamp(Finite(TornWidth, 16), MinTornWidth, MaxTornWidth),
         VignetteStrength = Math.Clamp(Finite(VignetteStrength), 0, 1),
         VignetteSize = Math.Clamp(Finite(VignetteSize, 0.6), MinVignetteSize, 1),
+        Background = Background is { Kind: not FrameBackgroundKind.None } background ? background.Clamped() : null,
+        Padding = Math.Clamp(Padding, 0, MaxPadding),
+        AspectRatio = AspectRatio is { IsFixed: true } aspect ? aspect.Clamped() : null,
     };
+
+    /// <summary>Ohne Hintergrundbild (für Einstellungen und Vorlagen, die kein Bild speichern).</summary>
+    public FrameStyle WithoutImage() => Background is { Image: not null } background ? this with { Background = background.WithoutImage() } : this;
+
+    /// <summary>
+    /// Rahmen aus einer Vorlage: Hat die Vorlage einen Bild-Hintergrund, bleibt das Bild des <paramref name="current"/>en Rahmens
+    /// erhalten; gibt es keines, fällt der Hintergrund auf Einfarbig (<see cref="FrameBackground.ColorA"/>) zurück.
+    /// </summary>
+    public static FrameStyle FromPreset(FrameStyle preset, FrameStyle? current)
+    {
+        ArgumentNullException.ThrowIfNull(preset);
+        if (preset.Background is not { Kind: FrameBackgroundKind.Image } background)
+        {
+            return preset;
+        }
+
+        var image = background.Image ?? current?.Background?.Image;
+        return preset with { Background = image is not null ? background with { Image = image } : background with { Kind = FrameBackgroundKind.Solid } };
+    }
 
     /// <summary>Begrenzte Werte; sind alle Effekte aus, <c>null</c> (so verhält sich das Dokument wie ohne Rahmen).</summary>
     public FrameStyle? Normalized()

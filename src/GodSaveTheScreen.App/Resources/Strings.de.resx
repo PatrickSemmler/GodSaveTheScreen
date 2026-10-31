@@ -600,4 +600,36 @@ Tipp: In den Einstellungen können Sie die Taste Druck einem Aufnahmemodus zuwei
   <data name="Frame_Preset_Torn" xml:space="preserve"><value>Abgerissen unten</value></data>
   <data name="Frame_Preset_Vignette" xml:space="preserve"><value>Vignette</value></data>
   <data name="Preset_BuiltInName" xml:space="preserve"><value>Dieser Name gehört zu einer eingebauten Vorlage. Bitte einen anderen Namen wählen.</value></data>
+  <data name="Frame_Background" xml:space="preserve"><value>Hintergrund</value></data>
+  <data name="Frame_BackgroundKind" xml:space="preserve"><value>Art</value></data>
+  <data name="Frame_Background_Solid" xml:space="preserve"><value>Einfarbig</value></data>
+  <data name="Frame_Background_Gradient" xml:space="preserve"><value>Verlauf</value></data>
+  <data name="Frame_Background_Image" xml:space="preserve"><value>Bild</value></data>
+  <data name="Frame_GradientFrom" xml:space="preserve"><value>Von</value></data>
+  <data name="Frame_GradientTo" xml:space="preserve"><value>Nach</value></data>
+  <data name="Frame_Angle" xml:space="preserve"><value>Winkel</value></data>
+  <data name="Frame_ChooseImage" xml:space="preserve"><value>Bild wählen…</value></data>
+  <data name="Frame_ImageNone" xml:space="preserve"><value>Kein Bild gewählt. Das Bild füllt das ganze Ergebnis, Überstand wird abgeschnitten.</value></data>
+  <data name="Frame_ImageChosen" xml:space="preserve"><value>Das Bild füllt das ganze Ergebnis, Überstand wird abgeschnitten.</value></data>
+  <data name="Frame_ImageFailed" xml:space="preserve"><value>Das Hintergrundbild konnte nicht geladen werden: {0}</value></data>
+  <data name="Frame_Layout" xml:space="preserve"><value>Innenabstand und Format</value></data>
+  <data name="Frame_Padding" xml:space="preserve"><value>Innenabstand</value></data>
+  <data name="Frame_Aspect" xml:space="preserve"><value>Seitenverhältnis</value></data>
+  <data name="Frame_Aspect_Free" xml:space="preserve"><value>Frei</value></data>
+  <data name="Frame_Aspect_16x9" xml:space="preserve"><value>16:9</value></data>
+  <data name="Frame_Aspect_4x3" xml:space="preserve"><value>4:3</value></data>
+  <data name="Frame_Aspect_Square" xml:space="preserve"><value>1:1 (quadratisch)</value></data>
+  <data name="Frame_Aspect_9x16" xml:space="preserve"><value>9:16</value></data>
+  <data name="Frame_Aspect_Custom" xml:space="preserve"><value>Benutzerdefiniert…</value></data>
+  <data name="Frame_AspectWidth" xml:space="preserve"><value>Verhältnis Breite</value></data>
+  <data name="Frame_AspectHeight" xml:space="preserve"><value>Verhältnis Höhe</value></data>
+  <data name="Frame_AspectHint" xml:space="preserve"><value>Das Ergebnis wird nur vergrößert, der Screenshot wird nie beschnitten oder skaliert.</value></data>
+  <data name="Frame_AspectLimited" xml:space="preserve"><value>Das gewählte Seitenverhältnis wird nicht angewendet, weil das Ergebnis sonst zu groß würde.</value></data>
+  <data name="Frame_Preset_PresentationBlue" xml:space="preserve"><value>Präsentation Blau</value></data>
+  <data name="Frame_Preset_Sunset" xml:space="preserve"><value>Sonnenuntergang</value></data>
+  <data name="Frame_Preset_NeutralGray" xml:space="preserve"><value>Neutral Grau</value></data>
+  <data name="Frame_Preset_Dark" xml:space="preserve"><value>Dunkel</value></data>
+  <data name="Frame_Preset_Social" xml:space="preserve"><value>Social 1:1</value></data>
+  <data name="Frame_Preset_Slide" xml:space="preserve"><value>Folie 16:9</value></data>
+  <data name="Field_Height" xml:space="preserve"><value>Höhe</value></data>
 </root>

@@ -49,7 +49,7 @@ public sealed class HelpScreenshotGenerator
     private static readonly string[] SectionKeys =
     [
         "Style", "Font", "Colors", "Drawing", "Effect", "Geometry", "Magnifier", "MaskBrush", "MaskSelection", "Numbering",
-        "StampQuickText", "CalloutShape", "FrameBorder", "FrameShadow", "FrameCorners", "FrameTorn", "FrameVignette", "FrameGrayscale",
+        "StampQuickText", "CalloutShape", "FrameBackground", "FrameLayout", "FrameBorder", "FrameShadow", "FrameCorners", "FrameTorn", "FrameVignette", "FrameGrayscale",
     ];
 
     [StaFact]
@@ -173,7 +173,7 @@ public sealed class HelpScreenshotGenerator
                 if (id == FrameTool.ToolId)
                 {
                     // Das Rahmen-Panel zeigt mit einer Vorlage geöffnete Karten mit Werten.
-                    h.Context.Frame.Set(FramePresets.BuiltIn[2].Frame, "Vorlage");
+                    h.Context.Frame.Set(FramePresets.BuiltIn[5].Frame, "Vorlage");
                 }
 
                 Settle(window);

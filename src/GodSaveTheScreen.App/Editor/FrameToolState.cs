@@ -14,6 +14,7 @@ public enum FrameEffect
     Corners,
     Torn,
     Vignette,
+    Background,
 }
 
 /// <summary>
@@ -70,6 +71,7 @@ public sealed class FrameToolState
         FrameEffect.Corners => frame.HasCorners,
         FrameEffect.Torn => frame.HasTorn,
         FrameEffect.Vignette => frame.HasVignette,
+        FrameEffect.Background => frame.HasBackground,
         _ => false,
     };
 
@@ -98,12 +100,32 @@ public sealed class FrameToolState
             TornWidth = remembered.TornWidth,
             TornSeed = remembered.TornSeed,
         },
+        FrameEffect.Background => TurnOnBackground(frame, remembered),
         _ => frame with
         {
             VignetteStrength = remembered.HasVignette ? remembered.VignetteStrength : 0.5,
             VignetteSize = remembered.VignetteSize,
         },
     };
+
+    /// <summary>Standard-Innenabstand, wenn der Hintergrund eingeschaltet wird und noch keiner eingestellt ist.</summary>
+    public const int DefaultPadding = 48;
+
+    private static FrameStyle TurnOnBackground(FrameStyle frame, FrameStyle remembered)
+    {
+        // Ein gemerkter Bild-Hintergrund kommt ohne Bild zurück: dann bleibt das aktuelle Bild bzw. er wird einfarbig.
+        var background = remembered.HasBackground
+            ? remembered.Background!
+            : new FrameBackground { Kind = FrameBackgroundKind.Gradient };
+        if (background.Kind == FrameBackgroundKind.Image)
+        {
+            background = frame.Background?.Image is { } image ? background with { Image = image } : background with { Kind = FrameBackgroundKind.Solid };
+        }
+
+        // Ohne Innenabstand läge der Hintergrund hinter dem Bild und bliebe unsichtbar.
+        var padding = frame.HasPadding ? frame.Padding : remembered.HasPadding ? remembered.Padding : DefaultPadding;
+        return frame with { Background = background, Padding = padding };
+    }
 
     /// <summary>Schaltet einen Effekt aus (neutrale Werte).</summary>
     public static FrameStyle TurnOff(FrameStyle frame, FrameEffect effect) => effect switch
@@ -112,6 +134,7 @@ public sealed class FrameToolState
         FrameEffect.Shadow => frame with { Shadow = frame.Shadow with { Color = ArgbColor.Transparent } },
         FrameEffect.Corners => frame with { CornerRadius = 0 },
         FrameEffect.Torn => frame with { TornSides = FrameSides.None },
+        FrameEffect.Background => frame with { Background = null },
         _ => frame with { VignetteStrength = 0 },
     };
 
@@ -147,6 +170,21 @@ public sealed class FrameToolState
         if (frame.HasVignette)
         {
             result = result with { VignetteStrength = frame.VignetteStrength, VignetteSize = frame.VignetteSize };
+        }
+
+        if (frame.HasBackground)
+        {
+            result = result with { Background = frame.Background!.WithoutImage() };
+        }
+
+        if (frame.HasPadding)
+        {
+            result = result with { Padding = frame.Padding };
+        }
+
+        if (frame.HasAspect)
+        {
+            result = result with { AspectRatio = frame.AspectRatio };
         }
 
         return result;
@@ -223,5 +261,58 @@ public static class FramePresets
             Name = Strings.Frame_Preset_Vignette,
             Frame = new FrameStyle { VignetteStrength = 0.55, VignetteSize = 0.6 },
         },
+        new ToolPreset
+        {
+            Name = Strings.Frame_Preset_PresentationBlue,
+            Frame = Presented(Gradient(0x1E3C72, 0x2A5298, 135), padding: 64, radius: 12, shadowAlpha: 120),
+        },
+        new ToolPreset
+        {
+            Name = Strings.Frame_Preset_Sunset,
+            Frame = Presented(Gradient(0xFF512F, 0xF09819, 135), padding: 64, radius: 12, shadowAlpha: 100),
+        },
+        new ToolPreset
+        {
+            Name = Strings.Frame_Preset_NeutralGray,
+            Frame = Presented(Gradient(0xF3F4F6, 0xD1D5DB, 90), padding: 48, radius: 8, shadowAlpha: 70),
+        },
+        new ToolPreset
+        {
+            Name = Strings.Frame_Preset_Dark,
+            Frame = Presented(Gradient(0x111827, 0x1F2937, 90), padding: 56, radius: 10, shadowAlpha: 160),
+        },
+        new ToolPreset
+        {
+            Name = Strings.Frame_Preset_Social,
+            Frame = Presented(Gradient(0x6A11CB, 0x2575FC, 135), padding: 48, radius: 14, shadowAlpha: 110) with
+            {
+                AspectRatio = new FrameAspect { Kind = FrameAspectKind.Square },
+            },
+        },
+        new ToolPreset
+        {
+            Name = Strings.Frame_Preset_Slide,
+            Frame = Presented(Gradient(0x0F2027, 0x2C5364, 135), padding: 64, radius: 10, shadowAlpha: 130) with
+            {
+                AspectRatio = new FrameAspect { Kind = FrameAspectKind.Wide16x9 },
+            },
+        },
     ];
+
+    private static FrameBackground Gradient(int rgbA, int rgbB, double angle) => new()
+    {
+        Kind = FrameBackgroundKind.Gradient,
+        ColorA = ArgbColor.FromRgb((byte)(rgbA >> 16), (byte)(rgbA >> 8), (byte)rgbA),
+        ColorB = ArgbColor.FromRgb((byte)(rgbB >> 16), (byte)(rgbB >> 8), (byte)rgbB),
+        AngleDegrees = angle,
+    };
+
+    /// <summary>Hintergrund mit Innenabstand, runden Ecken und Schatten.</summary>
+    private static FrameStyle Presented(FrameBackground background, int padding, double radius, byte shadowAlpha) => new()
+    {
+        Background = background,
+        Padding = padding,
+        CornerRadius = radius,
+        Shadow = new ShadowStyle(new ArgbColor(shadowAlpha, 0, 0, 0), 10, 28),
+    };
 }

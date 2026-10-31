@@ -600,4 +600,36 @@ Tip: You can assign the Print Screen key to a capture mode in the settings. On W
   <data name="Frame_Preset_Torn" xml:space="preserve"><value>Torn at the bottom</value></data>
   <data name="Frame_Preset_Vignette" xml:space="preserve"><value>Vignette</value></data>
   <data name="Preset_BuiltInName" xml:space="preserve"><value>This name belongs to a built-in preset. Please choose another name.</value></data>
+  <data name="Frame_Background" xml:space="preserve"><value>Background</value></data>
+  <data name="Frame_BackgroundKind" xml:space="preserve"><value>Type</value></data>
+  <data name="Frame_Background_Solid" xml:space="preserve"><value>Solid color</value></data>
+  <data name="Frame_Background_Gradient" xml:space="preserve"><value>Gradient</value></data>
+  <data name="Frame_Background_Image" xml:space="preserve"><value>Image</value></data>
+  <data name="Frame_GradientFrom" xml:space="preserve"><value>From</value></data>
+  <data name="Frame_GradientTo" xml:space="preserve"><value>To</value></data>
+  <data name="Frame_Angle" xml:space="preserve"><value>Angle</value></data>
+  <data name="Frame_ChooseImage" xml:space="preserve"><value>Choose image…</value></data>
+  <data name="Frame_ImageNone" xml:space="preserve"><value>No image chosen. The image fills the whole result; overhang is cropped.</value></data>
+  <data name="Frame_ImageChosen" xml:space="preserve"><value>The image fills the whole result; overhang is cropped.</value></data>
+  <data name="Frame_ImageFailed" xml:space="preserve"><value>The background image could not be loaded: {0}</value></data>
+  <data name="Frame_Layout" xml:space="preserve"><value>Padding and format</value></data>
+  <data name="Frame_Padding" xml:space="preserve"><value>Padding</value></data>
+  <data name="Frame_Aspect" xml:space="preserve"><value>Aspect ratio</value></data>
+  <data name="Frame_Aspect_Free" xml:space="preserve"><value>Free</value></data>
+  <data name="Frame_Aspect_16x9" xml:space="preserve"><value>16:9</value></data>
+  <data name="Frame_Aspect_4x3" xml:space="preserve"><value>4:3</value></data>
+  <data name="Frame_Aspect_Square" xml:space="preserve"><value>1:1 (square)</value></data>
+  <data name="Frame_Aspect_9x16" xml:space="preserve"><value>9:16</value></data>
+  <data name="Frame_Aspect_Custom" xml:space="preserve"><value>Custom…</value></data>
+  <data name="Frame_AspectWidth" xml:space="preserve"><value>Ratio width</value></data>
+  <data name="Frame_AspectHeight" xml:space="preserve"><value>Ratio height</value></data>
+  <data name="Frame_AspectHint" xml:space="preserve"><value>The result is only enlarged; the screenshot is never cropped or scaled.</value></data>
+  <data name="Frame_AspectLimited" xml:space="preserve"><value>The chosen aspect ratio is not applied because the result would become too large.</value></data>
+  <data name="Frame_Preset_PresentationBlue" xml:space="preserve"><value>Presentation blue</value></data>
+  <data name="Frame_Preset_Sunset" xml:space="preserve"><value>Sunset</value></data>
+  <data name="Frame_Preset_NeutralGray" xml:space="preserve"><value>Neutral gray</value></data>
+  <data name="Frame_Preset_Dark" xml:space="preserve"><value>Dark</value></data>
+  <data name="Frame_Preset_Social" xml:space="preserve"><value>Social 1:1</value></data>
+  <data name="Frame_Preset_Slide" xml:space="preserve"><value>Slide 16:9</value></data>
+  <data name="Field_Height" xml:space="preserve"><value>Height</value></data>
 </root>

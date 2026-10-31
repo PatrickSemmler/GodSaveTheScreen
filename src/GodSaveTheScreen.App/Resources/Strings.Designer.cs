@@ -1170,4 +1170,68 @@ public static class Strings
     public static string Frame_Preset_Vignette => ResourceManager.GetString("Frame_Preset_Vignette", Culture) ?? "Frame_Preset_Vignette";
 
     public static string Preset_BuiltInName => ResourceManager.GetString("Preset_BuiltInName", Culture) ?? "Preset_BuiltInName";
+
+    public static string Frame_Background => ResourceManager.GetString("Frame_Background", Culture) ?? "Frame_Background";
+
+    public static string Frame_BackgroundKind => ResourceManager.GetString("Frame_BackgroundKind", Culture) ?? "Frame_BackgroundKind";
+
+    public static string Frame_Background_Solid => ResourceManager.GetString("Frame_Background_Solid", Culture) ?? "Frame_Background_Solid";
+
+    public static string Frame_Background_Gradient => ResourceManager.GetString("Frame_Background_Gradient", Culture) ?? "Frame_Background_Gradient";
+
+    public static string Frame_Background_Image => ResourceManager.GetString("Frame_Background_Image", Culture) ?? "Frame_Background_Image";
+
+    public static string Frame_GradientFrom => ResourceManager.GetString("Frame_GradientFrom", Culture) ?? "Frame_GradientFrom";
+
+    public static string Frame_GradientTo => ResourceManager.GetString("Frame_GradientTo", Culture) ?? "Frame_GradientTo";
+
+    public static string Frame_Angle => ResourceManager.GetString("Frame_Angle", Culture) ?? "Frame_Angle";
+
+    public static string Frame_ChooseImage => ResourceManager.GetString("Frame_ChooseImage", Culture) ?? "Frame_ChooseImage";
+
+    public static string Frame_ImageNone => ResourceManager.GetString("Frame_ImageNone", Culture) ?? "Frame_ImageNone";
+
+    public static string Frame_ImageChosen => ResourceManager.GetString("Frame_ImageChosen", Culture) ?? "Frame_ImageChosen";
+
+    public static string Frame_ImageFailed => ResourceManager.GetString("Frame_ImageFailed", Culture) ?? "Frame_ImageFailed";
+
+    public static string Frame_Layout => ResourceManager.GetString("Frame_Layout", Culture) ?? "Frame_Layout";
+
+    public static string Frame_Padding => ResourceManager.GetString("Frame_Padding", Culture) ?? "Frame_Padding";
+
+    public static string Frame_Aspect => ResourceManager.GetString("Frame_Aspect", Culture) ?? "Frame_Aspect";
+
+    public static string Frame_Aspect_Free => ResourceManager.GetString("Frame_Aspect_Free", Culture) ?? "Frame_Aspect_Free";
+
+    public static string Frame_Aspect_16x9 => ResourceManager.GetString("Frame_Aspect_16x9", Culture) ?? "Frame_Aspect_16x9";
+
+    public static string Frame_Aspect_4x3 => ResourceManager.GetString("Frame_Aspect_4x3", Culture) ?? "Frame_Aspect_4x3";
+
+    public static string Frame_Aspect_Square => ResourceManager.GetString("Frame_Aspect_Square", Culture) ?? "Frame_Aspect_Square";
+
+    public static string Frame_Aspect_9x16 => ResourceManager.GetString("Frame_Aspect_9x16", Culture) ?? "Frame_Aspect_9x16";
+
+    public static string Frame_Aspect_Custom => ResourceManager.GetString("Frame_Aspect_Custom", Culture) ?? "Frame_Aspect_Custom";
+
+    public static string Frame_AspectWidth => ResourceManager.GetString("Frame_AspectWidth", Culture) ?? "Frame_AspectWidth";
+
+    public static string Frame_AspectHeight => ResourceManager.GetString("Frame_AspectHeight", Culture) ?? "Frame_AspectHeight";
+
+    public static string Frame_AspectHint => ResourceManager.GetString("Frame_AspectHint", Culture) ?? "Frame_AspectHint";
+
+    public static string Frame_AspectLimited => ResourceManager.GetString("Frame_AspectLimited", Culture) ?? "Frame_AspectLimited";
+
+    public static string Frame_Preset_PresentationBlue => ResourceManager.GetString("Frame_Preset_PresentationBlue", Culture) ?? "Frame_Preset_PresentationBlue";
+
+    public static string Frame_Preset_Sunset => ResourceManager.GetString("Frame_Preset_Sunset", Culture) ?? "Frame_Preset_Sunset";
+
+    public static string Frame_Preset_NeutralGray => ResourceManager.GetString("Frame_Preset_NeutralGray", Culture) ?? "Frame_Preset_NeutralGray";
+
+    public static string Frame_Preset_Dark => ResourceManager.GetString("Frame_Preset_Dark", Culture) ?? "Frame_Preset_Dark";
+
+    public static string Frame_Preset_Social => ResourceManager.GetString("Frame_Preset_Social", Culture) ?? "Frame_Preset_Social";
+
+    public static string Frame_Preset_Slide => ResourceManager.GetString("Frame_Preset_Slide", Culture) ?? "Frame_Preset_Slide";
+
+    public static string Field_Height => ResourceManager.GetString("Field_Height", Culture) ?? "Field_Height";
 }
