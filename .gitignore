@@ -491,5 +491,7 @@ dist/
 # Lokale Arbeitsdateien, nicht im Repository
 /Verbesserungsliste.html
 /publish.ps1
+docs/testkatalog/Testkatalog.html
+Kostenschaetzung.html
 /docs/Umsetzungsplan.md
 /docs/meilensteine/
