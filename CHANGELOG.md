@@ -2,7 +2,9 @@
 
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/). Die Versionen sind vierstellig (`Major.Minor.Patch.Fix`): neue Funktion → 2. Stelle, erweiterte Funktion → 3. Stelle, Fehlerbehebung → 4. Stelle.
 
-## [Unveröffentlicht]
+## [1.14.0.2] – 2026-11-01
+
+Enthält alle Änderungen seit 1.10.2.0 ([Release](https://github.com/PatrickSemmler/GodSaveTheScreen/releases/tag/v1.14.0.2)).
 
 ### Neu
 - **Scroll-Aufnahme (1.14.0.0):** Neue Aufnahmeart (`Strg+Umschalt+6`, Tray, Startfenster, Editor-Menü „Neu“, `--capture scroll`): Fenster anklicken (aufgenommen wird das größte scrollbare Element darin) oder Bereich aufziehen, und lange Inhalte werden als ein Bild aufgenommen, bis 16.384 px Höhe. GodSaveTheScreen probiert der Reihe nach UI-Automation, Mausrad, Fensternachrichten und Tastatur, scrollt Schritt für Schritt, wartet jeweils auf Stillstand und setzt die Bilder zusammen (Zeilenvergleich mit Toleranz für Rauschen und Bruchteil-Scrollen; feststehende Kopf- und Fußzeilen erscheinen einmal, Seitenleisten werden ignoriert, eine Bildlaufleiste wird abgeschnitten). Reagiert ein Programm nicht, wechselt die Steuerleiste in den manuellen Modus: Sie scrollen selbst, die Bilder werden laufend zusammengesetzt; beide Modi lassen sich jederzeit umschalten. Rahmen und Steuerleiste (Status, Höhe, Vorschau, „Zuerst zum Anfang scrollen“, „Fertig“, „Abbrechen“) erscheinen nie im Bild; `Eingabe` beendet, `Esc` verwirft. Bei Limit, Zeitlimit (5 Minuten) oder Bruch der Überlappung erhalten Sie das bisherige Ergebnis mit Hinweis. Einstellungen: Hotkey, Zusatzwartezeit für nachladende Seiten, „Zuerst zum Anfang scrollen“.
