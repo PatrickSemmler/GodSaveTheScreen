@@ -131,16 +131,24 @@
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="Auto" />
                   </Grid.ColumnDefinitions>
-                  <ToggleButton x:Name="HeaderButton"
-                                Grid.ColumnSpan="4"
-                                FocusVisualStyle="{x:Null}"
-                                Template="{StaticResource SectionHeaderTemplate}"
-                                IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
-                                AutomationProperties.Name="{Binding Header, RelativeSource={RelativeSource TemplatedParent}}" />
                   <ContentPresenter ContentSource="Header" Margin="12,0,8,0" VerticalAlignment="Center" IsHitTestVisible="False"
                                     TextElement.FontWeight="SemiBold" />
                   <ContentPresenter x:Name="SummaryHost" Grid.Column="1" Content="{TemplateBinding Summary}" Margin="0,0,4,0"
                                     HorizontalAlignment="Right" VerticalAlignment="Center" IsHitTestVisible="False" Opacity="0.75" />
+                  <!-- Über Titel und Kurzfassung (die sonst Klicks abfangen), unter dem Ein/Aus-Schalter; füllt den ganzen Kopf -->
+                  <ToggleButton x:Name="HeaderButton"
+                                Grid.ColumnSpan="4"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch"
+                                HorizontalContentAlignment="Stretch"
+                                VerticalContentAlignment="Stretch"
+                                MinHeight="0"
+                                Padding="0"
+                                Margin="0"
+                                FocusVisualStyle="{x:Null}"
+                                Template="{StaticResource SectionHeaderTemplate}"
+                                IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
+                                AutomationProperties.Name="{Binding Header, RelativeSource={RelativeSource TemplatedParent}}" />
                   <ui:ToggleSwitch x:Name="PART_Switch" Grid.Column="2" Margin="4,0,0,0" VerticalAlignment="Center" Visibility="Collapsed"
                                    IsChecked="{Binding IsOn, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}"
                                    ToolTip="{l:Loc Section_Switch}" AutomationProperties.Name="{l:Loc Section_Switch}" />

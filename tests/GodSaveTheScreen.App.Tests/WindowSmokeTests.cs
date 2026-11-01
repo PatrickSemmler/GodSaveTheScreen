@@ -169,6 +169,7 @@ public sealed class WindowSmokeTests
             h.ViewModel.Layers.Items.Count.ShouldBe(1);
             h.ViewModel.Properties.IsApplicable.ShouldBeTrue();
             Screenshot(window, "panel-rectangle");
+            HeaderClickToggles(window);
 
             // Ein/Aus-Schalter des Schattens klappt den Abschnitt auf und setzt eine sichtbare Farbe.
             h.ViewModel.ShadowProperties.IsShadowOn = true;
@@ -276,6 +277,39 @@ public sealed class WindowSmokeTests
                 window.Close();
             }
         }
+    }
+
+    /// <summary>Ein Klick auf den Kopf einer Karte (ohne Ein/Aus-Schalter) klappt sie auf bzw. zu.</summary>
+    private static void HeaderClickToggles(Window window)
+    {
+        var section = Descendants<GodSaveTheScreen.App.Controls.PanelSection>(window)
+            .First(s => s.IsVisible && !s.HasSwitch);
+        var header = Descendants<System.Windows.Controls.Primitives.ToggleButton>(section).First(b => b.Name == "HeaderButton");
+        var before = section.IsExpanded;
+
+        // Der Kopf deckt die ganze Karte ab und nimmt Klicks überall entgegen (Titel, Mitte, Pfeil).
+        header.ActualWidth.ShouldBe(section.ActualWidth, 2, $"Kopf {header.ActualWidth} x {header.ActualHeight}, Karte {section.ActualWidth}");
+        foreach (var fraction in new[] { 0.05, 0.5, 0.95 })
+        {
+            var point = header.TranslatePoint(new Point(header.ActualWidth * fraction, header.ActualHeight / 2), window);
+            var hit = window.InputHitTest(point) as DependencyObject; // wie die Maus: beachtet IsHitTestVisible
+            hit.ShouldNotBeNull();
+            var chain = new List<string>();
+            for (var node = hit; node is not null; node = System.Windows.Media.VisualTreeHelper.GetParent(node))
+            {
+                chain.Add(node.GetType().Name);
+                if (ReferenceEquals(node, section))
+                {
+                    break;
+                }
+            }
+
+            chain.ShouldContain("ToggleButton", string.Join(" < ", chain));
+        }
+
+        var peer = (System.Windows.Automation.Provider.IToggleProvider)System.Windows.Automation.Peers.UIElementAutomationPeer.CreatePeerForElement(header);
+        peer.Toggle();
+        section.IsExpanded.ShouldBe(!before);
     }
 
     private static IEnumerable<T> Descendants<T>(DependencyObject root)

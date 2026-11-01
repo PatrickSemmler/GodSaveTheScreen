@@ -297,6 +297,15 @@ Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `doc
 - **Warum**: Ein vollflächiges, durchklickbares Fenster eines anderen Programms (hier die Bildschirmüberlagerung der Claude-App) lag über dem Ziel; die Fensterauswahl nahm es als Treffer, und die Scroll-Aufnahme lief auf dem ganzen Bildschirm statt auf Chrome
 - **Seiteneffekte / Hinweise**: Gilt für alle Fenster-Aufnahmen. Fenster mit beiden Stilen sind nicht mehr wählbar (Windows trifft sie bei der Mausauswahl ebenfalls nicht)
 
+### Karten im Eigenschaftenpanel klappen per Klick auf – 1.11.2026
+- **Kategorie**: Bugfix
+- **Verbesserungsliste-ID**: – (Nutzermeldung)
+- **Version**: 1.14.0.2
+- **Geänderte Dateien**: `src/GodSaveTheScreen.App/Controls/PropertyPanel.xaml`, `tests/GodSaveTheScreen.App.Tests/WindowSmokeTests.cs`, `CHANGELOG.md`, `Directory.Build.props`
+- **Was wurde gemacht**: Der Kopf-`ToggleButton` der `PanelSection`-Vorlage füllt jetzt den ganzen Kopf (`HorizontalAlignment`/`VerticalAlignment` = Stretch, `MinHeight`/`Padding`/`Margin` = 0) und liegt über Titel und Kurzfassung, unter dem Ein/Aus-Schalter
+- **Warum**: Der implizite WPF-UI-Stil des `ToggleButton` richtet ihn links aus; die Vorlage hat keinen Inhalt, daher war der Button nur 2 × 2 Pixel groß (Rahmenstärke) und Klicks auf den Kopf erreichten ihn nicht. Nur Karten mit Schalter klappten auf/zu (über `OnSwitchClick` bzw. den `IsOn`-Trigger)
+- **Seiteneffekte / Hinweise**: Regressionsprüfung im Editor-Smoke-Test (`HeaderClickToggles`: Kopfbreite = Kartenbreite, `InputHitTest` links/Mitte/rechts trifft den Button, Umschalten über die Automation setzt `IsExpanded`). Tests: App 774 grün; manuelle Prüfung der Mausbedienung im laufenden Editor steht noch aus
+
 ### Meilensteine und Umsetzungsplan nur noch lokal – 1.11.2026
 - **Kategorie**: Technik
 - **Verbesserungsliste-ID**: – (Nutzerwunsch)
@@ -305,3 +314,4 @@ Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `doc
 - **Was wurde gemacht**: Beide per `git rm --cached` aus dem Repository genommen und in die `.gitignore` eingetragen; Links in den READMEs entfernt
 - **Warum**: Nutzerwunsch
 - **Seiteneffekte / Hinweise**: Die Dateien liegen weiter lokal, frische Klone haben sie nicht. In der Git-Historie bleiben die alten Stände erhalten
+
