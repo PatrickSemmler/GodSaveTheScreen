@@ -9,7 +9,7 @@ Verified against working tree on top of commit e7168c5 (Installer uncommitted) o
 ## Overview
 - Zweck: Screenshot-Tool (Tray + Hotkeys) mit nicht-destruktivem Annotations-Editor
 - Stack: .NET 10, C#, WPF + WPF-UI, MVVM (CommunityToolkit.Mvvm), Generic Host, xUnit v3
-- Layout: `GodSaveTheScreen.slnx`; `src/` 5 Projekte, `tests/` 2 Projekte, `build/` (Release-Skripte); Plan in `docs/Umsetzungsplan.md`, Meilensteine in `docs/meilensteine/M*.md`
+- Layout: `GodSaveTheScreen.slnx`; `src/` 5 Projekte, `tests/` 2 Projekte, `build/` (Release-Skripte); Plan in `docs/Umsetzungsplan.md`, Meilensteine in `docs/meilensteine/M*.md` (beide nur lokal, per `.gitignore` nicht im Repository)
 
 ## Modules
 | Pfad | Verantwortung | darf abhängen von |

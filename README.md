@@ -151,7 +151,6 @@ Notes:
 - User guide: sources in [docs/help](docs/help/) (bundled into a single HTML file per language at build time)
 - [Architecture notes for AI agents](docs/agent/architecture.md) – the project is developed with the help of Claude Code; see also [CLAUDE.md](CLAUDE.md)
 - [Changelog](CHANGELOG.md)
-- Internal planning documents (German): [implementation plan](docs/Umsetzungsplan.md), [milestones](docs/meilensteine/)
 
 ## License
 

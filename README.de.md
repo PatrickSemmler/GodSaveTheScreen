@@ -152,7 +152,6 @@ Hinweise:
 - Lizenzseite: Quellen in [docs/license](docs/license/) (`GodSaveTheScreen-Lizenz.html`/`-License.html` neben der EXE, aufrufbar unter Einstellungen → Info)
 - [Architektur für KI-Agenten](docs/agent/architecture.md) – das Projekt entsteht mit Unterstützung von Claude Code, siehe auch [CLAUDE.md](CLAUDE.md)
 - [Änderungen](CHANGELOG.md)
-- [Umsetzungsplan](docs/Umsetzungsplan.md) und [Meilensteine](docs/meilensteine/)
 
 ## Lizenz
 

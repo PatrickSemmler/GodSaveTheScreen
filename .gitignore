@@ -491,3 +491,5 @@ dist/
 # Lokale Arbeitsdateien, nicht im Repository
 /Verbesserungsliste.html
 /publish.ps1
+/docs/Umsetzungsplan.md
+/docs/meilensteine/

@@ -1,6 +1,6 @@
 # GodSaveTheScreen
 
-Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `docs/Umsetzungsplan.md`, Meilensteine: `docs/meilensteine/`.
+Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `docs/Umsetzungsplan.md`, Meilensteine: `docs/meilensteine/` (beide nur lokal, per `.gitignore` nicht im Repository).
 
 - Sprache für Doku und UI-Texte: Deutsch (UI zusätzlich Englisch über `.resx`)
 - Commit-Nachrichten auf Englisch, Präfix nach Art der Änderung: `Feature:`, `Fix:`, `Docs:`, `Chore:` (ältere Commits sind deutsch)
@@ -297,3 +297,11 @@ Screenshot- und Annotationstool, .NET 10 / C# / WPF (MVVM). Umsetzungsplan: `doc
 - **Warum**: Ein vollflächiges, durchklickbares Fenster eines anderen Programms (hier die Bildschirmüberlagerung der Claude-App) lag über dem Ziel; die Fensterauswahl nahm es als Treffer, und die Scroll-Aufnahme lief auf dem ganzen Bildschirm statt auf Chrome
 - **Seiteneffekte / Hinweise**: Gilt für alle Fenster-Aufnahmen. Fenster mit beiden Stilen sind nicht mehr wählbar (Windows trifft sie bei der Mausauswahl ebenfalls nicht)
 
+### Meilensteine und Umsetzungsplan nur noch lokal – 1.11.2026
+- **Kategorie**: Technik
+- **Verbesserungsliste-ID**: – (Nutzerwunsch)
+- **Version**: unverändert (keine Code-Änderung)
+- **Geänderte Dateien**: `.gitignore`, `README.md`, `README.de.md`, `docs/agent/architecture.md`, `CLAUDE.md`; aus dem Repository entfernt: `docs/Umsetzungsplan.md`, `docs/meilensteine/*`
+- **Was wurde gemacht**: Beide per `git rm --cached` aus dem Repository genommen und in die `.gitignore` eingetragen; Links in den READMEs entfernt
+- **Warum**: Nutzerwunsch
+- **Seiteneffekte / Hinweise**: Die Dateien liegen weiter lokal, frische Klone haben sie nicht. In der Git-Historie bleiben die alten Stände erhalten
